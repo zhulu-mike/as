@@ -76,7 +76,6 @@ package
 			param.release = obj.release;
 			param.alone = obj.alone;
 			param.isLoadXML = obj.hasOwnProperty("isLoadXML") ? obj.isLoadXML : true;
-			FacadeManager.startupFacade(PipeEvent.STARTUP_SHELL, {parameters:param, decode:null});
 		}
 	}
 }
