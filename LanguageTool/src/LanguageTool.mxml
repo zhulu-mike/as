@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   width="390" height="404">
+	
+	<fx:Script>
+		<![CDATA[
+			import flash.net.dns.AAAARecord;
+			import flash.utils.getTimer;
+			
+			import mx.controls.Alert;
+			private var srcfile:File = new File();
+			private var fileStream:FileStream = new FileStream();
+			private var beginid:int=1;
+			private var fileCount:int=0;
+			private var outcome:String;
+			private var vos:Array = [];
+			private var pause:Boolean = false;
+			private var handing:Boolean = false;
+			private var log:String;
+			private static const YINHAO:RegExp = /'[- \da-zA-Z：:！，,？?。.【】←→；]*[\u4e00-\u9fa5]+[\u4e00-\u9fa5 \da-zA-Z：:！，,？?。.【】←→；]*'|"[- \da-zA-Z：:！，,？?。.【】←→；]*[\u4e00-\u9fa5]+[\u4e00-\u9fa5 \da-zA-Z：:！，,？?。.【】←→；]*"/g;///"[^"\n]*[\u4e00-\u9fa5]+[^"]*"|'[^'\n]*[\u4e00-\u9fa5]+[^']*'/g;
+//			private static const YINHAO:RegExp = /"[^"\n]*[\u4e00-\u9fa5]+[^"]*"|'[^'\n]*[\u4e00-\u9fa5]+[^']*'/g;
+			private static const DANYINHAO:RegExp = /'[^'\n]*[\u4e00-\u9fa5]+[^']*'/g;
+			private var keys:Object = {};
+			
+			protected function openFile(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				srcfile.browseForDirectory('请选择要操作的文件目录');
+				srcfile.addEventListener(Event.SELECT,selectComplete);
+			}
+
+			private function selectComplete(event:Event):void
+			{
+				var directory:File = event.target as File;
+				fileurl.text = directory.url;
+			}
+			
+			
+			protected function begin(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				keys = {};
+				fileCount = 0;
+				outcome = "";
+				report.text = "";
+				vos.length = 0;
+				log = "";
+				try
+				{
+					srcfile = new File(fileurl.text);
+				}catch (e:Error)
+				{
+					Alert.show("文件路径不对");
+					return;
+				}
+				if (!srcfile.exists)
+				{
+					Alert.show("文件不存在");
+					return;
+				}
+				var files:Array = srcfile.getDirectoryListing();
+				var len:int = files.length, i:int=0, tempDirectory:File;
+				if (len <= 0)
+				{
+					Alert.show("选择的目录下面没有任何文件");
+					return;
+				}
+				if (int(startid.text) > 0)
+					beginid = int(startid.text);
+				else
+					beginid = 1;
+				handleFile(srcfile);
+				if (vos.length > 0)
+					replaceFile(vos.shift());
+				
+			}
+
+			private function saveCom(event:Event):void
+			{
+				event.target.removeEventListener(Event.COMPLETE, saveCom);
+			}
+			
+			/** */
+			private function handleFile(f:File):void
+			{
+				if (!f || !f.exists)
+					return;
+				if (f.isDirectory)
+				{
+					var files:Array = f.getDirectoryListing();
+					var len:int = files.length, i:int=0, tempDirectory:File;
+					for(i; i < len; i++)
+					{
+						handleFile(files[i]);
+					}
+				}
+				else
+				{
+					if (f.extension != "as")
+						return;
+					var vo:FileVO = new FileVO();
+					vo.url = f.url;
+					vos.push(vo);
+				}
+				
+			}
+			
+			/** */
+			private function replaceFile(vo:FileVO):void
+			{
+				var f:File = new File(vo.url);
+				fileCount++;
+				if (report.text.length > 300)
+					report.text = "";
+				report.appendText("正在解析第" + fileCount + "个文件：" + f.name + "\n");
+				log = log + "正在解析第" + fileCount + "个文件：" + f.name + "\n";
+				fileStream.open(f, FileMode.READ);
+				var str:String = fileStream.readUTFBytes(fileStream.bytesAvailable);
+				var temp:RegExp = reg.text.length > 0 ? new RegExp(reg.text, "g") : YINHAO;
+				var come:Array = str.match(temp) as Array;
+				if (come.length > 0)
+				{
+					var l:int = come.length, j:int = 0, ortempStr:String, tempStr:String;
+					var time:int = getTimer();
+					for (j=0;j<l;j++)
+					{
+						ortempStr = come[j];
+						if (ortempStr.indexOf("\n") >= 0 || ortempStr.indexOf("font") >= 0 || ortempStr.indexOf("LanResManager") >= 0 || ortempStr.indexOf(">") >= 0)
+						{
+							continue;
+						}
+						if (report.text.length > 300)
+							report.text = "";
+						var ttt:String = ortempStr.substr(0,1);
+						tempStr = ortempStr.substr(1,ortempStr.length-2);
+						if (!keys.hasOwnProperty(tempStr))
+						{
+							keys[tempStr] = {id:beginid, beginstr:ttt};
+							beginid++;
+						}
+						report.appendText("正在替换字符：" + tempStr + ",对应ID为：" + keys[tempStr].id +"\n");
+						log = log + "正在替换字符：" + tempStr + ",对应ID为：" + keys[tempStr].id +"\n";
+						str = str.replace(ortempStr, 'Language.getKey("' + keys[tempStr].id + '")');
+					}
+					fileStream.open(f, FileMode.WRITE);
+			
+					fileStream.writeUTFBytes(str);
+					fileStream.close();
+					time = getTimer() - time;
+					log = log + "消耗：" + time + "ms\n";
+				}
+				
+				if (report.text.length > 300)
+					report.text = "";
+				report.appendText("解析第" + fileCount + "个文件完毕" + "\n");
+				log = log + "解析第" + fileCount + "个文件完毕" + "\n";
+				handing = false;
+				if (vos.length > 0)
+				{
+					if (pause)
+						return;
+					handing = true;
+					callLater(replaceFile, [vos.shift()]);
+				}else
+				{
+					var byte:ByteArray = new ByteArray();
+					byte = new ByteArray();
+					outcome = "";
+					var kk:String;
+					var keyArr:Array = [];
+					for (kk in keys)
+					{
+						keyArr.push({id:keys[kk].id, beginstr:keys[kk].beginstr, key:kk});
+					}
+					keyArr.sortOn("id", Array.NUMERIC);
+					var vObj:Object;
+					for each (vObj in keyArr)
+					{
+						outcome = outcome + "\n" + '<p key="' + vObj.id + '">' + "<![CDATA["+ vObj.key +StringConst.houzhui;
+					}
+					byte.writeUTFBytes(outcome);
+					var ff:File = new File();
+					ff.addEventListener(Event.COMPLETE, saveCom);
+					ff.save(byte,"Language"+timeToStr(new Date())+".xml");
+					
+					var furl:String = "";
+					ff = File.desktopDirectory;
+					furl = ff.url + "/log/";
+					furl = furl + "log_"+timeToStr(new Date())+".txt";
+					ff = new File(furl);
+					fileStream.open(ff, FileMode.WRITE);
+					fileStream.writeUTFBytes(log);
+					fileStream.close();
+				}
+			}
+			
+			/** */
+			private function pauseHandle():void
+			{
+				pause = !pause;
+				if (pause)
+					pauseBtn.label = "继续";
+				else
+					pauseBtn.label = "暂停";
+				if (!pause && !handing)
+				{
+					if (vos.length > 0)
+					{
+						if (report.text.length > 2000)
+							report.text = "";
+						callLater(replaceFile, [vos.shift()]);
+					}
+				}
+			}
+			
+			/** */
+			private function timeToStr(t:Date):String
+			{
+				var str:String = "";
+				str = str + t.getFullYear() + "-";
+				str = str + int(t.getMonth()+1) + "-";
+				str = str + t.getDate() + "-";
+				str = str + t.getHours() + "-";
+				str = str + t.getMinutes() + "-";
+				str = str + t.getSeconds();
+				return str;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:TitleWindow x="28" y="27" width="330" height="354" isPopUp="true">
+		<s:Label x="9" y="21" text="匹配表达式："/>
+		<s:TextInput x="84" y="16" width="209" id="reg" toolTip="默认不用填，如果填了，则采用输入的模式匹配"/>
+		<s:Button x="9" y="55" width="60" label="浏览：" click="openFile(event)"/>
+		<s:TextInput x="85" y="54" width="208" id="fileurl"/>
+		<s:Button x="61" y="133" label="开始" click="begin(event)"/>
+		<s:Button x="165" y="133" label="暂停" click="pauseHandle()" id="pauseBtn"/>
+		<s:Label x="10" y="98" text="起始ID："/>
+		<s:TextInput x="86" y="90" width="207" id="startid"/>
+		<s:TextArea x="10" y="170" width="308" height="141" id="report" horizontalScrollPolicy="off" editable="false"/>
+	</s:TitleWindow>
+</s:WindowedApplication>
