@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   width="500" height="400" addedToStage="addToStage(event)">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.adobe.crypto.MD5;
+			
+			import display.CircleLoopEffect;
+			import display.LoaderBar;
+			
+			import manager.ResizeManager;
+			
+			import mx.controls.Alert;
+			
+			import utils.XMLFile;
+			
+			public var md5Sign:String;
+			
+			protected function addToStage(event:Event):void
+			{
+				// TODO Auto-generated method stub
+//				this.removeElement(loginPanel);
+				ResizeManager.init(stage);
+			}
+			
+			/**
+			 * 登陆
+			 *
+			 */			
+			private function login():void
+			{
+				var pwd:String = pwdTxt.text;
+				var len:int = pwd.length;
+				if (len < 6)
+				{
+					Alert.show(Language.TIP3);
+					return;
+				}
+				if (len > 18)
+				{
+					Alert.show(Language.TIP4);
+					return;
+				}
+				md5Sign = MD5.hash(pwd+AppConfig.pwdMd5Key);
+//				trace(MD5.hash("123456"+AppConfig.pwdMd5Key));
+				
+				this.removeElement(loginPanel);
+				AppInstance.topLayer = topLayer;
+				
+				LoaderBar.getInstance().show();
+				
+				XMLFile.load("data/data.xml",loadComplete);
+			}
+			
+			private function loadComplete(data:XML):void
+			{
+				var pwd:XML = data.pwd[0];
+				var sign:String = pwd.text().toString();
+				LoaderBar.getInstance().close();
+				if (sign != md5Sign)
+				{
+					Alert.show(Language.TIP6);
+					this.addElementAt(loginPanel,0);
+					return;
+				}
+				var panel:AccountList = new AccountList();
+				this.addElementAt(panel, 0);
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Style source="common.css"/>
+	<s:Group width="100%" height="100%" id="loginPanel">
+		<s:Label x="86" y="184" text="请输入密码："/>
+		<s:TextInput x="166" y="175" width="165" height="30" displayAsPassword="true" restrict="A-z 0-9 _" id="pwdTxt"/>
+		<s:Button x="210" y="226" width="80" height="40" label="{Language.TIP2}" click="login()"/>
+		<s:Label x="166" y="120" width="165" height="45" text="登陆密码可由数字0-9、字符A-z、下划线_组成，长度为6-18位"/>
+	</s:Group>
+	
+	<s:Group width="100%" height="100%"  id="topLayer"/>
+</s:WindowedApplication>

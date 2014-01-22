@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="500" height="400">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:List x="10" y="36" width="233" height="354"></s:List>
+	<s:Label x="10" y="16" text="{Language.TIP7}" />
+	<s:BorderContainer x="251" y="36" width="239" height="354">
+	</s:BorderContainer>
+	<s:Label x="251" y="16" text="{Language.TIP8}"/>
+</s:Group>

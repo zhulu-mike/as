@@ -1,0 +1,17 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+.loaderBar
+{
+	textAlign:center;
+	fontSize:20;
+}
+mx|ToolTip
+{
+	fontSize:13;
+}
+mx|DataTip
+{
+	color:#000000;
+}
