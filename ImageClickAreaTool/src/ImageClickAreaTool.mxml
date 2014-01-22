@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   width="640" height="543" minWidth="600" minHeight="500" creationComplete="windowedapplication1_creationCompleteHandler(event)">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import flash.filters.DisplacementMapFilter;
+			
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.graphics.codec.JPEGEncoder;
+			import mx.graphics.codec.PNGEncoder;
+			/**
+			 * 可以选择的文件类型
+			 */
+			private var availableFile:Array = [new FileFilter("*.png", "*.png"), new FileFilter(".jpg", "*.jpg")];
+			
+			private var file:File;
+			private var png:PNGEncoder = new PNGEncoder();
+			private var jpg:JPEGEncoder = new JPEGEncoder();
+			private var loader:Loader;
+			private var wid:Number;
+			private var hei:Number;
+			private var editImage:BitmapData;
+			private var editUrl:String;
+			private var rw:Number = 0;
+			private var rh:Number = 0;
+			private var rc:uint;
+			private var ra:Number;
+			private var rx:Number;
+			private var ry:Number;
+			private var fileStream:FileStream = new FileStream();
+			private var rectSprite:Sprite = new Sprite();
+			private var dragCircle:Circle = new Circle();
+			private var replaceArr:Array;
+			private var saveing:Boolean = false;
+			private var replaceBit:BitmapData;
+
+			private var oldColor:uint;
+
+			private var newColor:uint;
+			
+			private var colorReplace:Boolean = false;
+			
+			/**
+			 * 导入图片
+			 */
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				file = new File();
+				file.addEventListener(Event.SELECT, onSelect);
+				file.browse(availableFile);
+			}
+			
+			/** */
+			private function onSelect(e:Event):void
+			{
+				file.removeEventListener(Event.SELECT, onSelect);
+				file.addEventListener(Event.COMPLETE, onComplete);
+				file.load();
+			}
+
+
+			private function onComplete(event:Event):void
+			{
+				editUrl = file.url;
+				file.removeEventListener(Event.COMPLETE, onComplete);
+				loader = new Loader();
+				loader.loadBytes(file.data);
+				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadImageComplete);
+			}
+
+			private function loadImageComplete(event:Event):void
+			{
+				loader.contentLoaderInfo.removeEventListener(Event.COMPLETE, loadImageComplete);
+				img.source = loader.contentLoaderInfo.content;
+				wid = loader.contentLoaderInfo.content.width;
+				hei = loader.contentLoaderInfo.content.height;
+				
+				editImage = (loader.contentLoaderInfo.content as Bitmap).bitmapData;
+				imgParent.width = wid;
+				imgParent.height = hei;
+				buttomPanel.y = imgParent.y + imgParent.height + 15;
+				bg.graphics.moveTo(0,0);
+				bg.graphics.lineStyle(2,0xff0000);
+				bg.graphics.lineTo(wid, 0);
+				bg.graphics.lineTo(wid, hei);
+				bg.graphics.lineTo(0, hei);
+				bg.graphics.lineTo(0,0);
+			}
+			
+			
+			
+			protected function img_mouseMoveHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				pos.text = event.localX + "," + event.localY;
+				color.text = "0x" + editImage.getPixel32(event.localX, event.localY).toString(16);
+			}
+			
+			/**
+			 * 修改矩形区域
+			 */
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				var w:Number = Number(widthInput.text);
+				var h:Number = Number(heightInput.text);
+				if (w <= 0.0 || h <= 0.0)
+				{
+					Alert.show("数据非法");
+					return;
+				}
+				rw = w;
+				rh = h;
+				var xpos:Number = Number(xInput.text);
+				var ypos:Number = Number(yInput.text);
+				rx = xpos;
+				ry = ypos;
+				var co:uint = uint(colorInput.text) & 0xffffffff;
+				rc = uint(colorInput.text) & 0xffffff; 
+				var al:Number = (co >> 24 & 0xff) / 255;
+				ra = al;
+//				rect.graphics.clear();
+//				rect.graphics.beginFill(rc, 0.5);
+//				rect.graphics.drawRect(xpos, ypos, w, h);
+//				rect.graphics.endFill();
+				if (rectSprite.parent == null)
+				{
+					rect.addChild(rectSprite);
+					stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+				}
+				rectSprite.graphics.clear();
+				rectSprite.graphics.beginFill(rc,ra);
+				rectSprite.graphics.drawRect(0, 0, w, h);
+				rectSprite.graphics.endFill();
+				rectSprite.x = rx;
+				rectSprite.y = ry;
+				dragCircle.x = w;
+				dragCircle.y = h;
+				
+				
+			}
+
+			private function onKeyDown(event:KeyboardEvent):void
+			{
+				var vx:int, vy:int;
+				switch (event.keyCode)
+				{
+					case Keyboard.UP:
+						vy = -1;
+						break;
+					case Keyboard.DOWN:
+						vy = 1;
+						break;
+					case Keyboard.LEFT:
+						vx = -1;
+						break;
+					case Keyboard.RIGHT:
+						vx = 1;
+						break;
+					default:
+						return;
+				}
+				rectSprite.x += vx;
+				rectSprite.y += vy;
+				rx = rectSprite.x;
+				ry = rectSprite.y;
+				xInput.text = rx.toString();
+				yInput.text = ry.toString();			
+			}
+			
+			
+			
+			/**
+			 * 替换颜色值
+			 */
+			protected function button3_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				if (editImage == null)
+					return;
+				if (beInplaceColor.text == "" || inplaceColor.text == "")
+				{
+					Alert.show("请输入颜色值");
+					return;
+				}
+				var beColor:uint = uint(beInplaceColor.text) & 0xffffffff;
+				var color:uint = uint(inplaceColor.text) & 0xffffffff;
+				trace(color.toString(16));
+				var i:int = 0, j:int = 0;
+				editImage.lock();
+				for (;i<wid;i++)
+				{
+					for (j=0;j<hei;j++)
+					{
+						if (editImage.getPixel32(i,j) == beColor)
+						{
+							editImage.setPixel32(i,j,color);
+						}
+					}
+				}
+				editImage.unlock();
+				img.source = editImage;
+			}
+			
+			
+			
+			protected function save(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				if (editImage == null)
+					return;
+				var bit:BitmapData = editImage.clone();
+				if (rw > 1.0 && rh > 1.0)
+				{
+					var rectBit:BitmapData = new BitmapData(rw,rh,true,0x000000);
+					var s:Sprite = new Sprite();
+					s.graphics.beginFill(rc, ra);
+					s.graphics.drawRect(0,0,rw,rh);
+					s.graphics.endFill();
+					rectBit.draw(s);
+					bit.copyPixels(rectBit,rectBit.rect,new Point(rx,ry),null,null,true);
+				}
+				var arr:ByteArray = png.encode(bit);
+				fileStream.open(file, FileMode.WRITE);
+				fileStream.writeBytes(arr);
+				fileStream.close();
+				Alert.show("成功");
+			}
+			
+			protected function clearRect(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				rectSprite.graphics.clear();
+				if (rectSprite.parent)
+					rect.removeChild(rectSprite);
+				stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+				rw = rh = 0;
+			}
+			
+			/** */
+			private function controlRect():void
+			{
+				rect.visible = !rect.visible;
+				if (rect.visible)
+					rectBtn.label = "隐藏";
+				else
+					rectBtn.label = "显示";
+			}
+			
+			protected function windowedapplication1_creationCompleteHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				rectSprite.addChild(dragCircle);
+				dragCircle.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+			}
+
+			private function onMouseDown(event:MouseEvent):void 
+			{
+				dragCircle.startDrag();
+				dragCircle.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+				dragCircle.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+				dragCircle.addEventListener(MouseEvent.MOUSE_OUT, onMouseUp);
+			}
+
+			private function onMouseMove(event:MouseEvent):void
+			{
+				if (dragCircle.x <= 0)
+				{
+					dragCircle.x = 1;
+				}
+				if (dragCircle.y <= 0)
+				{
+					dragCircle.y = 1;
+				}
+				rw = dragCircle.x;
+				rh = dragCircle.y;
+				rectSprite.graphics.clear();
+				rectSprite.graphics.beginFill(rc, ra);
+				rectSprite.graphics.drawRect(0, 0, rw, rh);
+				rectSprite.graphics.endFill();
+				widthInput.text = rw.toString();
+				heightInput.text = rh.toString();
+			}
+
+			private function onMouseUp(event:MouseEvent):void
+			{
+				dragCircle.stopDrag();
+				onMouseMove(null);
+				dragCircle.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+				dragCircle.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+				dragCircle.removeEventListener(MouseEvent.MOUSE_OUT, onMouseUp);
+			}
+			
+			protected function replaceAll(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				if (saveing)
+				{
+					Alert.show("保存中，请稍后再试");
+					return;
+				}
+				if (replaceUrl.text == "")
+				{
+					Alert.show("请输入路径");
+					return;
+				}
+				if (colorBox.selected)
+				{
+					oldColor = uint(beInplaceColor.text) & 0xffffffff;
+					newColor = uint(inplaceColor.text) & 0xffffffff;
+					colorReplace = true;
+				}else{
+					colorReplace = false;
+				}
+				var f:File = new File(replaceUrl.text);
+				if (f && f.isDirectory)
+				{
+					if (rw > 0 && rh > 0)
+					{
+						replaceBit = new BitmapData(rw,rh,true,0x000000);
+						var s:Sprite = new Sprite();
+						s.graphics.beginFill(rc, ra);
+						s.graphics.drawRect(0,0,rw,rh);
+						s.graphics.endFill();
+						replaceBit.draw(s);
+					}else{
+						replaceBit = null;
+					}
+					replaceArr = f.getDirectoryListing();
+					if (replaceArr.length > 0)
+					{
+						saveing = true;
+						replacePicture();
+					}
+				}else{
+					return;
+				}
+			}
+			
+			/** */
+			private function replacePicture():void
+			{
+				if (replaceArr.length <= 0)
+				{
+					saveing = false;
+					Alert.show("全部替换成功");
+					return;
+				}
+				var f:File = replaceArr.shift();
+				var loader:Loader = new Loader();
+				loader.load(new URLRequest(f.url));
+				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadComplete);
+			}
+
+			private function loadComplete(event:Event):void
+			{
+				var loader:LoaderInfo = event.target as LoaderInfo;
+				loader.removeEventListener(Event.COMPLETE, loadComplete);
+				var bit:BitmapData = (loader.content as Bitmap).bitmapData;
+				
+				if (colorReplace)
+				{
+					var i:int = 0, j:int = 0;
+					var bitW:int = bit.width, bitH:int = bit.height;
+					bit.lock();
+					for (;i<bitW;i++)
+					{
+						for (j=0;j<bitH;j++)
+						{
+							if (bit.getPixel32(i,j) == oldColor)
+							{
+								bit.setPixel32(i,j,newColor);
+							}
+						}
+					}
+					bit.unlock();
+				}
+				if (replaceBit)
+					bit.copyPixels(replaceBit,replaceBit.rect,new Point(rx,ry),null,null,true);
+				
+				var f:File = new File(loader.url);
+				var arr:ByteArray = png.encode(bit);
+				fileStream.open(f, FileMode.WRITE);
+				fileStream.writeBytes(arr);
+				fileStream.close();
+				replacePicture();
+			}
+		]]>
+	</fx:Script>
+	<s:Button x="19" y="20" width="60" label="导入" click="button1_clickHandler(event)"/>
+	<s:Group x="10" y="100" width="509" height="232" id="imgParent">
+		<s:SpriteVisualElement id="bg"/>
+		<s:Image x="0" y="0" id="img" mouseMove="img_mouseMoveHandler(event)"/>
+		<s:SpriteVisualElement id="rect"/>
+	</s:Group>
+	<s:Group x="0" y="371" width="100%" height="200" id="buttomPanel">
+		<s:Button x="22" y="10" width="60" label="保存" toolTip="仅保存当前图片" click="save(event)"/>
+		<s:Button x="22" y="66" label="替换所有" toolTip="替换输入路径下面的所有图片" click="replaceAll(event)"/>
+		<s:TextInput x="114" y="66" width="483" id="replaceUrl"/>
+	</s:Group>
+	<s:Label x="117" y="24" text="鼠标处颜色值："/>
+	<s:Label x="209" y="24" text="Label" id="color"/>
+	<s:Label x="300" y="24" text="鼠标处坐标："/>
+	<s:Label x="392" y="24" text="Label" id="pos"/>
+	<s:Button x="485" y="45" width="60" label="确定" click="button2_clickHandler(event)"/>
+	<s:Label x="19" y="49" text="x："/>
+	<s:Label x="102" y="49" text="y："/>
+	<s:TextInput x="38" y="44" width="56" restrict="0-9 ." id="xInput"/>
+	<s:TextInput x="121" y="44" width="56" restrict="0-9 ." id="yInput"/>
+	<s:Label x="185" y="49" text="长："/>
+	<s:TextInput x="210" y="44" width="56" restrict="0-9 ." id="widthInput"/>
+	<s:Label x="274" y="49" text="宽："/>
+	<s:TextInput x="299" y="44" width="56" restrict="0-9 ." id="heightInput"/>
+	<s:Label x="11" y="77" text="被替换颜色值："/>
+	<s:TextInput x="94" y="72" width="72" id="beInplaceColor" text="0x00000000"/>
+	<s:Label x="174" y="77" text="替换颜色值："/>
+	<s:Button x="329" y="73" width="60" label="替换" click="button3_clickHandler(event)"/>
+	<s:TextInput x="244" y="72" width="67" id="inplaceColor" text="0xff00ff00"/>
+	<s:Label x="363" y="49" text="颜色："/>
+	<s:TextInput x="402" y="44" width="66" id="colorInput" text="0xff000000"/>
+	<s:Button x="560" y="45" width="60" label="清除" click="clearRect(event)"/>
+	<s:Button x="401" y="73" width="60" label="隐藏" toolTip="显示或者隐藏矩形区域" click="controlRect()" id="rectBtn"/>
+	<s:CheckBox x="468" y="74" label="全部替换时生效" id="colorBox"/>
+</s:WindowedApplication>
