@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			
+			import spark.components.SkinnableContainer;
+			private var cName:String = "";//类名
+			private var pName:String = "";//包名
+			private var fileStream:FileStream = new FileStream();
+			private var file:File;
+			private var modelFile:File;
+			private static const CLASSINSTEADNAME:String = "CLASSINSTEADXXX";
+			private static const PACKAGE:String = "PACKAGENAMEXXX.";
+			private static const PACKAGE2:String = "PACKAGENAMEXXX";
+			
+			protected function createCode(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				if (moduleName.text == "")
+				{
+					Alert.show("模块名不能为空");
+					return;
+				}
+				pName = packageName.text;
+				cName = moduleName.text;
+				createCodeBlock();
+			}
+			
+			private static var instance:CreateView;
+			
+			public static function getInstance():CreateView
+			{
+				if (!instance)
+					instance = new CreateView();
+				return instance;
+			}
+			
+			public function onClose():void
+			{
+				trace(instance.parent is ASmaker);
+				if (instance.parent)
+					Group(instance.parent).removeElement(instance);
+			}
+			
+			private function createCodeBlock():void
+			{
+				createController();
+				createModel();
+				createView();
+				createModule();
+				Alert.show("创建成功!");
+			}
+			
+			private function createController():void
+			{
+				file = File.desktopDirectory;
+				var url:String = file.url + "/" + "AS代码块" + "/";
+//				file = file.resolvePath("AS代码块");
+				var arr:Array = pName.split(".");
+				var dir:String = "";
+				dir = arr.length > 0 ? arr[arr.length - 1] : dir;
+				if (dir != "")
+				{
+					url += dir + "/";
+				}
+				url += "controller/";
+				url += cName + "_StartupCommand.as";
+				var content:String = getControllerContent();
+				file = new File(url);
+				fileStream.open(file, FileMode.WRITE);
+				fileStream.writeUTFBytes(content);
+				fileStream.close();
+			}
+			
+			private function createModel():void
+			{
+				file = File.desktopDirectory;
+				var url:String = file.url + "/" + "AS代码块" + "/";
+				var arr:Array = pName.split(".");
+				var dir:String = "";
+				dir = arr.length > 0 ? arr[arr.length - 1] : dir;
+				if (dir != "")
+				{
+					url += dir + "/";
+				}
+				url += "model/";
+				url += cName + "_MsgReceivedProxy.as";
+				var content:String = getModelReceivedContent();
+				file = new File(url);
+				fileStream.open(file, FileMode.WRITE);
+				
+				fileStream.writeUTFBytes(content);
+				fileStream.close();
+				file = file.parent;
+				content = getModelSendContent();
+				file = new File(file.url + "/" + cName + "_MsgSendProxy.as");
+				fileStream.open(file, FileMode.WRITE);
+				
+				fileStream.writeUTFBytes(content);
+				fileStream.close();
+			}
+			
+			private function createView():void
+			{
+				file = File.desktopDirectory;
+				var url:String = file.url + "/" + "AS代码块" + "/";
+				var arr:Array = pName.split(".");
+				var dir:String = "";
+				dir = arr.length > 0 ? arr[arr.length - 1] : dir;
+				if (dir != "")
+				{
+					url += dir + "/";
+				}
+				url += "view/";
+				url += cName + "_" + cName + "Mediator.as";
+				var content:String = getViewContent();
+				file = new File(url);
+				fileStream.open(file, FileMode.WRITE);
+				
+				fileStream.writeUTFBytes(content);
+				fileStream.close();
+			}
+			
+			private function createModule():void
+			{
+				file = File.desktopDirectory;
+				var url:String = file.url + "/" + "AS代码块" + "/";
+				var arr:Array = pName.split(".");
+				var dir:String = "";
+				dir = arr.length > 0 ? arr[arr.length - 1] : dir;
+				if (dir != "")
+				{
+					url += dir + "/";
+				}
+				url += cName + "_ApplicationFacade.as";
+				var content:String = getModuleFacade();
+				file = new File(url);
+				fileStream.open(file, FileMode.WRITE);
+				
+				fileStream.writeUTFBytes(content);
+				fileStream.close();
+				file = file.parent;
+				content = getModule();
+				file = new File(file.url + "/" + cName + "Module.as");
+				fileStream.open(file, FileMode.WRITE);
+				
+				fileStream.writeUTFBytes(content);
+				fileStream.close();
+			}
+			
+			private function getControllerContent():String
+			{
+				var str:String = "";
+				modelFile = File.applicationDirectory;
+				modelFile = modelFile.resolvePath("asset");
+				modelFile = modelFile.resolvePath("controller");
+				modelFile = modelFile.resolvePath("startup.txt");
+				fileStream.open(modelFile, FileMode.READ);
+				str = fileStream.readUTFBytes(fileStream.bytesAvailable);
+				var pNamePrev:String = pName == "" ? "" : pName + ".";
+				while (str.search(PACKAGE) >= 0)
+				{
+					str = str.replace(PACKAGE, pNamePrev);
+				}
+				
+				while (str.search(CLASSINSTEADNAME) >= 0)
+				{
+					str = str.replace(CLASSINSTEADNAME, cName);
+				}
+				return str;
+			}
+			
+			private function getModelReceivedContent():String
+			{
+				var str:String = "";
+				modelFile = File.applicationDirectory;
+				modelFile = modelFile.resolvePath("asset");
+				modelFile = modelFile.resolvePath("model");
+				modelFile = modelFile.resolvePath("modelReceived.txt");
+				fileStream.open(modelFile, FileMode.READ);
+				str = fileStream.readUTFBytes(fileStream.bytesAvailable);
+				var pNamePrev:String = pName == "" ? "" : pName + ".";
+				while (str.search(PACKAGE) >= 0)
+				{
+					str = str.replace(PACKAGE, pNamePrev);
+				}
+				
+				while (str.search(CLASSINSTEADNAME) >= 0)
+				{
+					str = str.replace(CLASSINSTEADNAME, cName);
+				}
+				return str;
+			}
+			
+			private function getModelSendContent():String
+			{
+				var str:String = "";
+				modelFile = File.applicationDirectory;
+				modelFile = modelFile.resolvePath("asset");
+				modelFile = modelFile.resolvePath("model");
+				modelFile = modelFile.resolvePath("modelSend.txt");
+				fileStream.open(modelFile, FileMode.READ);
+				str = fileStream.readUTFBytes(fileStream.bytesAvailable);
+				var pNamePrev:String = pName == "" ? "" : pName + ".";
+				while (str.search(PACKAGE) >= 0)
+				{
+					str = str.replace(PACKAGE, pNamePrev);
+				}
+				
+				while (str.search(CLASSINSTEADNAME) >= 0)
+				{
+					str = str.replace(CLASSINSTEADNAME, cName);
+				}
+				return str;
+			}
+			
+			private function getViewContent():String
+			{
+				var str:String = "";
+				modelFile = File.applicationDirectory;
+				modelFile = modelFile.resolvePath("asset");
+				modelFile = modelFile.resolvePath("view");
+				modelFile = modelFile.resolvePath("mediator.txt");
+				fileStream.open(modelFile, FileMode.READ);
+				str = fileStream.readUTFBytes(fileStream.bytesAvailable);
+				var pNamePrev:String = pName == "" ? "" : pName + ".";
+				while (str.search(PACKAGE) >= 0)
+				{
+					str = str.replace(PACKAGE, pNamePrev);
+				}
+				
+				while (str.search(CLASSINSTEADNAME) >= 0)
+				{
+					str = str.replace(CLASSINSTEADNAME, cName);
+				}
+				return str;
+			}
+			
+			private function getModuleFacade():String
+			{
+				var str:String = "";
+				modelFile = File.applicationDirectory;
+				modelFile = modelFile.resolvePath("asset");
+				modelFile = modelFile.resolvePath("facade.txt");
+				fileStream.open(modelFile, FileMode.READ);
+				str = fileStream.readUTFBytes(fileStream.bytesAvailable);
+				var pNamePrev:String = pName == "" ? "" : pName + ".";
+				while (str.search(PACKAGE) >= 0)
+				{
+					str = str.replace(PACKAGE, pNamePrev);
+				}
+				while (str.search(PACKAGE2) >= 0)
+				{
+					str = str.replace(PACKAGE2, pName);
+				}
+				
+				while (str.search(CLASSINSTEADNAME) >= 0)
+				{
+					str = str.replace(CLASSINSTEADNAME, cName);
+				}
+				return str;
+			}
+			
+			private function getModule():String
+			{
+				var str:String = "";
+				modelFile = File.applicationDirectory;
+				modelFile = modelFile.resolvePath("asset");
+				modelFile = modelFile.resolvePath("module.txt");
+				fileStream.open(modelFile, FileMode.READ);
+				str = fileStream.readUTFBytes(fileStream.bytesAvailable);
+				var pNamePrev:String = pName == "" ? "" : pName + ".";
+				while (str.search(PACKAGE) >= 0)
+				{
+					str = str.replace(PACKAGE, pNamePrev);
+				}
+				while (str.search(PACKAGE2) >= 0)
+				{
+					str = str.replace(PACKAGE2, pName);
+				}
+				
+				while (str.search(CLASSINSTEADNAME) >= 0)
+				{
+					str = str.replace(CLASSINSTEADNAME, cName);
+				}
+				return str;
+			} 
+			
+			
+			/* private function getControllerContent():String
+			{
+				var str:String = "package ";
+				var pNamePrev:String = pName == "" ? "" : pName + ".";
+				str = str + pNamePrev + "controller\n{\n\t";
+				str = str + "import " + pNamePrev + "model." + cName + "_MsgReceivedProxy;\n\t";
+				str = str + "import " + pNamePrev + "model." + cName + "_MsgSendProxy;\n\t";
+				str = str + "import " + pNamePrev + "view." + cName + "_" + cName + "Mediator;\n\t";
+				str = str + "import " + "org.puremvc.as3.multicore.interfaces.INotification;\n\t";
+				str = str + "import " + "org.puremvc.as3.multicore.patterns.command.SimpleCommand;\n\t";
+				str = str + "public class " + cName + "_StartupCommand extends SimpleCommand\n\t{\n\n\t\t";
+				str = str + "public function " + cName + "_StartupCommand()\n\t\t{\n\t\t\t";
+				str = str + "return;\n\t\t}\n\n";
+				str = str + "\t\toverride public function execute(param1:INotification) : void\n\t\t{\n\t\t\t";
+				str = str + "facade.registerProxy(new " + cName + "_MsgSendProxy());\n\t\t\tfacade.registerProxy(new " + cName + "_MsgReceivedProxy());\n\t\t\tfacade.registerMediator();\n\t\t\treturn;\n\t\t}\n\t}\n}"
+				return str;
+			}
+			
+			private function getModelReceivedContent():String
+			{
+				var str:String = "package ";
+				var pNamePrev:String = pName == "" ? "" : pName + ".";
+				str = str + pNamePrev + "model\n{\n\t";
+				str = str + "import " + "com.thinkido.framework.common.observer.Notification;\n\t";
+				str = str + "import " + "flash.utils.ByteArray;\n\t";
+				str = str + "import " + "game.manager.NetWorkManager;\n\t";
+				str = str + "import " + "org.osflash.thunderbolt.Logger;\n\t";
+				str = str + "import " + "org.puremvc.as3.multicore.patterns.proxy.Proxy;\n\t";
+				str = str + "public class " + cName + "_MsgReceivedProxy extends Proxy\n\t{\n\n\t\t";
+				str = str + "private var _msgSenderProxy:" + cName + "_MsgSendProxy;\n\t\t";
+				str = str + 'public static const NAME:String = "' + cName + '_MsgReceivedProxy";\n\n\t\t';
+				
+				str = str + "public function " + cName + "_MsgReceivedProxy()\n\t\t{\n\t\t\t";
+				str = str + "super(NAME, null);\n\t\t\t";
+				str = str + "return;\n\t\t}\n\n";
+				
+				str = str + "\t\tpublic function " + "onRegister() : void\n\t\t{\n\t\t\t";
+				str = str + "NetWorkManager.registerMsgs([], this.receivedMsgHandle, NAME);\n\t\t\t";
+				str = str + "return;\n\t\t}\n\n";
+				
+				str = str + "\t\tpublic function " + "onRemove() : void\n\t\t{\n\t\t\t";
+				str = str + "NetWorkManager.removeMsgs([], NAME);\n\t\t\t";
+				str = str + "return;\n\t\t}\n\n";
+				
+				str = str + "\t\tprivate function get msgSenderProxy() : " + cName + "_MsgSendProxy\n\t\t{\n\t\t\t";
+				str = str + "if (this._msgSenderProxy == null)\n\t\t\t{\n";
+				str = str + "\t\t\t\tthis._msgSenderProxy = facade.retrieveProxy(" + cName + "_MsgSendProxy.NAME) as " + cName + "_MsgSendProxy;\n\t\t\t}\n";
+				str = str + "\t\t\treturn this._msgSenderProxy;\n\t\t}\n\n";
+				
+				str = str + "\t\tprivate function receivedMsgHandle(param1:Notification) : void\n\t\t{\n";
+				str = str + "\t\t\tvar _loc_2:* = param1.name;\n";
+				str = str + "\t\t\tvar _loc_3:* = param1.body as ByteArray;\n";
+				str = str + '\t\t\tif (this.hasOwnProperty("received_" + _loc_2))\n';
+				str = str + "\t\t\t{\n";
+				str = str + '\t\t\t\tthis["received_" + _loc_2](_loc_3);\n';
+				str = str + "\t\t\t}\n";
+				str = str + "\t\t\telse\n";
+				str = str + "\t\t\t{\n";
+				str = str + '\t\t\t\tLogger.info("协议号" + _loc_2 + "不存在");\n';
+				str = str + "\t\t\t}\n";
+				str = str + "\t\t\treturn;\n\t\t}\n\t}\n}";
+				return str;
+			}
+			
+			private function getModelSendContent():String
+			{
+				var str:String = "package ";
+				var pNamePrev:String = pName == "" ? "" : pName + ".";
+				str = str + pNamePrev + "model\n{\n\t";
+				str = str + "import " + "org.puremvc.as3.multicore.patterns.proxy.Proxy;\n\t";
+				
+				str = str + "public class " + cName + "_MsgSendProxy extends Proxy\n\t{\n\n\t\t";
+				str = str + 'public static const NAME:String = "' + cName + '_MsgSendProxy";\n\n\t\t';
+				
+				str = str + "public function " + cName + "_MsgSendProxy(param1:String = null, param2:Object = null)\n\t\t{\n\t\t\t";
+				str = str + "super(NAME);\n\t\t\t";
+				str = str + "return;\n\t\t}\n\n\t}\n}";
+				return str;
+			}
+			
+			private function getViewContent():String
+			{
+				var str:String = "package ";
+				var pNamePrev:String = pName == "" ? "" : pName + ".";
+				str = str + pNamePrev + "view\n{\n\t";
+				str = str + "import " + pNamePrev + "model." + cName + "_MsgSendProxy;\n\t";
+				str = str + "import " + "org.puremvc.as3.multicore.interfaces.INotification;\n\t";
+				str = str + "import " + "org.puremvc.as3.multicore.patterns.mediator.Mediator;\n\n\t";
+				
+				str = str + "public class " + cName + "_" + cName + "Mediator extends Mediator\n\t{\n\n\t\t";
+				str = str + 'private var _msgSenderProxy:"' + cName + '_MsgSendProxy";\n\t\t';
+				str = str + 'public static const NAME:String = "' + cName + "_" + cName + 'Mediator";\n\n\t\t';
+				
+				str = str + "public function " + cName + "_" + cName + "Mediator(viewComponent:" + "Object" + ")\n\t\t{\n\t\t\t";
+				str = str + "super(NAME, viewComponent);\n\t\t}\n\n";
+				str = str + "\t\tprotected function get mainUI() : " + "Object" + "\n\t\t{\n\t\t\t";
+				str = str + "return viewComponent as Object;\n\t\t}\n\n";
+				str = str + "\t\toverride public function onRegister() : void\n\t\t{\n\t\t\t";
+				str = str + "return;\n\t\t}\n\n";
+				str = str + "\t\toverride public function listNotificationInterests() : Array\n\t\t{\n\t\t\t";
+				str = str + "return [];\n\t\t}\n\n";
+				str = str + "\t\toverride public function handleNotification(param1:INotification) : void\n\t\t{\n\t\t\t";
+				str = str + "switch(param1.getName())\n";
+				str = str + "\t\t\t{\n";
+				str = str + "\t\t\t\tdefault:\n\t\t\t\t{\n";
+				str = str + "\t\t\t\t\tbreak;\n\t\t\t\t}\n\t\t\t}\n";
+				str = str + "\t\t\treturn;\n\t\t}\n\n\t\t";
+				str = str + "private function get msgSenderProxy() : " + cName + "_MsgSendProxy\n\t\t{\n\t\t\t";
+				str = str + "if (this._msgSenderProxy == null)\n";
+				str = str + "\t\t\t{\n";
+				str = str + "\t\t\t\tthis._msgSenderProxy = facade.retrieveProxy(" + cName + "_MsgSendProxy.NAME) as " + cName + "_MsgSendProxy;\n";
+				str = str + "\t\t\t}\n";
+				str = str + "\t\t\treturn this._msgSenderProxy;\n";
+				str = str + "\t\t}\n\t}\n}";
+				return str;
+			}
+			
+			private function getModuleFacade():String
+			{
+				var str:String = "package ";
+				var pNamePrev:String = pName == "" ? "" : pName + ".";
+				str = str + pName + "\n{\n\t";
+				str = str + "import " + "com.thinkido.framework.common.observer.Notification;\n\t";
+				str = str + "import " + pNamePrev + "controller." + cName + "_StartupCommand;\n\t";
+				str = str + "import " + "org.puremvc.as3.multicore.patterns.facade.Facade;\n\n";
+				
+				str = str + "\tpublic class " + cName + "_ApplicationFacade extends Facade\n\t{\n\n\t\t";
+				str = str + 'public static const NAME:String = "' + pNamePrev + cName + '_ApplicationFacade";\n';
+				str = str + '\t\tpublic static const STARTUP:String = "STARTUP";\n\n';
+				str = str + "\t\tpublic function " + cName + "_ApplicationFacade(param1:String)\n\t\t{\n";
+				str = str + '\t\t\tsuper(param1);\n';
+				str = str + '\t\t\treturn;\n\t\t}\n\n';
+				str = str + "\t\toverride protected function initializeController() : void\n\t\t{\n";
+				str = str + '\t\t\tsuper.initializeController();\n';
+				str = str + '\t\t\tregisterCommand(STARTUP, ' + cName + '_StartupCommand);\n';
+				str = str + '\t\t\treturn;\n\t\t}\n\n';
+				
+				str = str + "\t\tprivate function startup() : void\n\t\t{\n";
+				str = str + '\t\t\tsendNotification(STARTUP);\n';
+				str = str + '\t\t\treturn;\n\t\t}\n\n';
+				
+				str = str + "\t\tpublic static function getInstance() : " + cName + "_ApplicationFacade\n\t\t{\n";
+				str = str + '\t\t\tif (instanceMap[NAME] == null)\n';
+				str = str + '\t\t\t{\n';
+				str = str + '\t\t\t\tinstanceMap[NAME] = new ' + cName + '_ApplicationFacade(NAME);\n';
+				str = str + '\t\t\t}\n';
+				str = str + '\t\t\treturn instanceMap[NAME] as ' + cName + '_ApplicationFacade;\n\t\t}\n\t}\n}';
+				return str;
+			}
+			
+			
+			private function getModule():String
+			{
+				var str:String = "package ";
+				var pNamePrev:String = pName == "" ? "" : pName + ".";
+				str = str + pName + "\n{\n\t";
+				str = str + "import " + "flash.display.Sprite;\n\n"
+				
+				str = str + "\tpublic class " + cName + "Module extends Sprite\n\t{\n\n";
+				
+				str = str + "\t\tpublic function " + cName + "Module()\n\t\t{\n";
+				str = str + '\t\t\ttrace(' + cName + '_ApplicationFacade.NAME);\n';
+				str = str + '\t\t\tnew ' + cName + '_ApplicationFacade(' + cName + '_ApplicationFacade.NAME);\n';
+				str = str + '\t\t}\n\t}\n}';
+				
+				return str;
+			} */
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:Panel x="10" y="10" width="380" height="281" textAlign="center" title="新建">
+		<s:Label x="23" y="22" text="请输入完整包名："/>
+		<s:TextInput x="63" y="44" width="243" id="packageName"/>
+		<s:Button x="83" y="164" label="确定" click="createCode(event)"/>
+		<s:Button x="208" y="164" label="关闭" click="onClose()"/>
+		<s:Label x="23" y="76" text="请输入模块名："/>
+		<s:TextInput x="63" y="96" width="243" id="moduleName"/>
+	</s:Panel>
+</s:Group>

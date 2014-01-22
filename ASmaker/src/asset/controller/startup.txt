@@ -1,0 +1,26 @@
+package PACKAGENAMEXXX.controller
+{
+	import PACKAGENAMEXXX.model.CLASSINSTEADXXX_MsgReceivedProxy;
+	import PACKAGENAMEXXX.model.CLASSINSTEADXXX_MsgSendProxy;
+	import PACKAGENAMEXXX.view.CLASSINSTEADXXX_CLASSINSTEADXXXMediator;
+	import org.puremvc.as3.multicore.interfaces.INotification;
+	import org.puremvc.as3.multicore.patterns.command.SimpleCommand;
+
+    public class CLASSINSTEADXXX_StartupCommand extends SimpleCommand
+    {
+
+        public function CLASSINSTEADXXX_StartupCommand()
+        {
+            return;
+        }
+
+        override public function execute(param1:INotification) : void
+        {
+            facade.registerProxy(new CLASSINSTEADXXX_MsgSendProxy());
+            facade.registerProxy(new CLASSINSTEADXXX_MsgReceivedProxy());
+            facade.registerMediator();
+            return;
+        }
+
+    }
+}

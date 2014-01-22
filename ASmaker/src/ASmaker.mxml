@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   width="1000" height="600">
+	
+	<fx:Script>
+		<![CDATA[
+			
+			/**
+			 * 创建新的代码块
+			 */
+			protected function createNewCode(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				if (CreateView.getInstance().parent)
+				{
+					CreateView.getInstance().onClose();
+					return;
+				}
+				addElement(CreateView.getInstance());
+				CreateView.getInstance().x = (this.width - CreateView.getInstance().width) * 0.5;
+				CreateView.getInstance().y = (this.height - CreateView.getInstance().height) * 0.5;
+			}
+			
+			protected function createNewData():void
+			{
+				// TODO Auto-generated method stub
+				if (CreateDataView.getInstance().parent)
+				{
+					CreateDataView.getInstance().onClose();
+					return;
+				}
+				addElement(CreateDataView.getInstance());
+				CreateDataView.getInstance().x = (this.width - CreateDataView.getInstance().width) * 0.5;
+				CreateDataView.getInstance().y = (this.height - CreateDataView.getInstance().height) * 0.5;
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:Button x="10" y="10" label="新建模块" click="createNewCode(event)"/>
+	<s:Button x="10" y="51" label="新建Data" click="createNewData()"/>
+	
+</s:WindowedApplication>

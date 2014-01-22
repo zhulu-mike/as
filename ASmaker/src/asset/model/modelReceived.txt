@@ -1,0 +1,60 @@
+﻿package PACKAGENAMEXXX.model
+{
+    import com.thinkido.framework.common.observer.Notification;
+    import flash.utils.ByteArray;
+    import game.manager.NetWorkManager;
+    import org.osflash.thunderbolt.Logger;
+    import com.thinkido.framework.net.NProtocol;
+    import org.puremvc.as3.multicore.patterns.proxy.Proxy;
+
+    public class CLASSINSTEADXXX_MsgReceivedProxy extends Proxy
+    {
+        private var _msgSenderProxy:CLASSINSTEADXXX_MsgSendProxy;
+        public static const NAME:String = "CLASSINSTEADXXX_MsgReceivedProxy";
+
+        public function CLASSINSTEADXXX_MsgReceivedProxy()
+        {
+            super(NAME, null);
+            return;
+        }
+
+        override public function onRegister() : void
+        {
+            NetWorkManager.registerMsgs([], this.receivedMsgHandle, NAME);
+            return;
+        }
+
+        override public function onRemove() : void
+        {
+            NetWorkManager.removeMsgs([], NAME);
+            return;
+        }
+
+        private function get msgSenderProxy() : CLASSINSTEADXXX_MsgSendProxy
+        {
+            if (this._msgSenderProxy == null)
+            {
+                this._msgSenderProxy = facade.retrieveProxy(CLASSINSTEADXXX_MsgSendProxy.NAME) as CLASSINSTEADXXX_MsgSendProxy;
+            }
+            return this._msgSenderProxy;
+        }
+
+        private function receivedMsgHandle(param1:Notification) : void
+        {
+            var _loc_2:* = param1.name;
+            var _loc_3:* = param1.body as NProtocol;
+            if (this.hasOwnProperty("received_" + _loc_2))
+            {
+                this["received_" + _loc_2](_loc_3);
+            }
+            else
+            {
+                 Logger.info("协议号" + _loc_2 + "不存在");
+            }
+            return;
+        }
+
+       
+
+    }
+}

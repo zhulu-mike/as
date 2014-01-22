@@ -1,0 +1,80 @@
+package PACKAGENAMEXXX
+{
+	import com.thinkido.framework.common.observer.Notification;
+	import PACKAGENAMEXXX.controller.CLASSINSTEADXXX_StartupCommand;
+	import org.puremvc.as3.multicore.patterns.facade.Facade;
+	import PACKAGENAMEXXX.view.CLASSINSTEADXXX_CLASSINSTEADXXXMediator;
+	import game.manager.POPWindowManager;
+	import game.manager.PipeManager;
+	import flash.display.DisplayObject;
+
+	public class CLASSINSTEADXXX_ApplicationFacade extends Facade
+	{
+
+		public static const NAME:String = "PACKAGENAMEXXX.CLASSINSTEADXXX_ApplicationFacade";
+		public static const STARTUP:String = "STARTUP";
+		public static const SHOW_MAINUI:String = "SHOW_MAINUI";
+		public static const CLOSE_MAINUI:String = "CLOSE_MAINUI";
+
+		public function CLASSINSTEADXXX_ApplicationFacade(param1:String)
+		{
+			super(param1);
+			PipeManager.registerMsgs([], this.handlePipeMessage, CLASSINSTEADXXX_ApplicationFacade);
+			return;
+		}
+		
+		private function registerEvents():void
+		{
+			PipeManager.registerMsgs([], this.handlePipeMessage, CLASSINSTEADXXX_ApplicationFacade);
+			return;
+		}
+		private function removeEvents():void
+		{
+			PipeManager.removeMsgs([], CLASSINSTEADXXX_ApplicationFacade);
+		}
+
+		override protected function initializeController() : void
+		{
+			super.initializeController();
+			registerCommand(STARTUP, CLASSINSTEADXXX_StartupCommand);
+			return;
+		}
+		
+		private function handlePipeMessage(param1:Notification) : void
+		{
+			var _loc_2:Object = null;
+			var _loc_3:Boolean = false;
+			_loc_2 = param1.body;
+			switch(param1.name)
+			{
+				
+			}
+		}
+
+		private function startup() : void
+		{
+			sendNotification(STARTUP);
+			return;
+		}
+
+		public static function getInstance() : CLASSINSTEADXXX_ApplicationFacade
+		{
+			if (instanceMap[NAME] == null)
+			{
+				instanceMap[NAME] = new CLASSINSTEADXXX_ApplicationFacade(NAME);
+			}
+			return instanceMap[NAME] as CLASSINSTEADXXX_ApplicationFacade;
+		}
+		
+		public function dispose():void
+		{
+			removeEvents();
+			var mediator:CLASSINSTEADXXX_CLASSINSTEADXXXMediator = this.retrieveMediator(CLASSINSTEADXXX_CLASSINSTEADXXXMediator.NAME) as CLASSINSTEADXXX_CLASSINSTEADXXXMediator;
+			var ui:DisplayObject = mediator.getViewComponent() as DisplayObject;
+			if (ui && ui.parent)
+			{
+				POPWindowManager.removeSmallWindow(ui, NAME);
+			}
+		}
+	}
+}

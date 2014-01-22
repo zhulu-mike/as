@@ -1,0 +1,14 @@
+package PACKAGENAMEXXX
+{
+	import flash.display.Sprite;
+
+	public class CLASSINSTEADXXXModule extends Sprite
+	{
+
+		public function CLASSINSTEADXXXModule()
+		{
+			trace(CLASSINSTEADXXX_ApplicationFacade.NAME);
+			new CLASSINSTEADXXX_ApplicationFacade(CLASSINSTEADXXX_ApplicationFacade.NAME);
+		}
+	}
+}

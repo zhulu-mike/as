@@ -1,0 +1,16 @@
+package PACKAGENAMEXXX.model
+{
+    import org.puremvc.as3.multicore.patterns.proxy.Proxy;
+
+    public class CLASSINSTEADXXX_MsgSendProxy extends Proxy
+    {
+        public static const NAME:String = "CLASSINSTEADXXX_MsgSendProxy";
+
+        public function CLASSINSTEADXXX_MsgSendProxy(param1:String = null, param2:Object = null)
+        {
+            super(NAME);
+            return;
+        }
+
+    }
+}
