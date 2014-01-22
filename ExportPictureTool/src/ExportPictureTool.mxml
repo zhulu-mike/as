@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   width="654" height="700" creationComplete="windowedapplication1_creationCompleteHandler(event)">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.events.ResizeEvent;
+			import mx.graphics.codec.PNGEncoder;
+			
+			private var _file:File = new File();
+			private var _fileFilter:Array = [new FileFilter(".swf", "*.swf")];
+			private var _loader:Loader = new Loader();
+			private var _classDic:Array;
+			private var _loaderContext:LoaderContext;
+			private var _listData:Array = [];
+			private var _index:int = 0;
+			private var png:PNGEncoder = new PNGEncoder();
+			private var fileStream:FileStream = new FileStream();
+			private var _baseUrl:String = "";
+			
+			protected function browseFile(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				_file.browse(_fileFilter);
+				_file.addEventListener(Event.SELECT, onSelect);
+			}
+			
+			private function onSelect(event:Event):void
+			{
+				_file.removeEventListener(Event.SELECT, onSelect);
+				_file.load();
+				_file.addEventListener(Event.COMPLETE, onComplete);
+			}
+			
+			private function onComplete(event:Event):void
+			{
+				_file.removeEventListener(Event.COMPLETE, onComplete);
+				var byte:ByteArray = new ByteArray();
+				_file.data.readBytes(byte);
+				_classDic = GetSwfAllPicture.getSWFImages(byte);
+//				_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadSwfComplete);
+//				_loaderContext = new LoaderContext();
+//				_loaderContext.allowCodeImport = true;
+//				_loader.loadBytes(_file.data, _loaderContext);
+				loadSwfComplete(null);
+			}
+			
+			private function loadSwfComplete(event:Event):void
+			{
+//				_loader.contentLoaderInfo.removeEventListener(Event.COMPLETE, loadSwfComplete);
+				_listData.length = 0;
+				var len:int = _classDic.length, i:int = 0, tempBitmap:BitmapData, tempIns:*;
+				var trans:Boolean;
+				for (;i<len;i++)
+				{
+					if (_classDic[i].type == 36)
+						trans = true;
+					else
+						trans = false;
+					tempBitmap = new BitmapData(_classDic[i].width, _classDic[i].height, trans, 0x000000);
+					setColor(tempBitmap, _classDic[i].data, _classDic[i].width, _classDic[i].height, _classDic[i].type);
+					if (tempBitmap != null)
+					{
+						_listData.push(new ItemVO(tempBitmap, true, _classDic[i].type));
+					}
+				}
+				list.dataProvider = new ArrayCollection(_listData);
+			}
+			
+			/** */
+			private function setColor(bitmap:BitmapData, data:ByteArray, w:int, h:int, type:int):void
+			{
+//				data.endian = Endian.LITTLE_ENDIAN;
+				var i:int =0, j:int = 0, color:uint, al:uint, red:uint, green:uint, blue:uint, realAl:Number;
+				for (i;i<h;i++)
+				{
+					for (j=0;j<w;j++)
+					{
+						if (type == 20){
+							al = data.readUnsignedByte();
+							red = data.readUnsignedByte();
+							green = data.readUnsignedByte();
+							blue = data.readUnsignedByte();
+							color = red << 16 | green << 8 | blue;
+							bitmap.setPixel(j,i,color);
+						}else if (type == 36){
+							al = data.readUnsignedByte();
+							red = data.readUnsignedByte();
+							green = data.readUnsignedByte();
+							blue = data.readUnsignedByte();
+							realAl = al/255;
+							red = red/realAl;
+							green = green/realAl;
+							blue = blue/realAl;
+							color = al<<24 | red << 16 | green << 8 | blue;
+							bitmap.setPixel32(j,i,color);
+						}
+						
+						
+					}
+				}
+			}
+			
+			private function selectAll(flag:Boolean):void
+			{
+				var len:int = _listData.length, i:int = 0;
+				for (;i<len;i++)
+				{
+					_listData[i].selected = flag;
+				}
+			}
+			
+			protected function export(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				var len:int = _listData.length;
+				_index = 0;
+				maskShape.visible = true;
+				_baseUrl = _file.parent.url + "/";
+				_baseUrl += _file.name.substr(0,_file.name.length-4);
+				_baseUrl += "/";
+				savePicture();
+			}
+			
+			/** */
+			private function savePicture():void
+			{
+				if (_listData.length < _index+1)
+				{
+					maskShape.visible = false;
+					Alert.show("成功");
+					return;
+				}
+				if (_listData[_index].selected)
+				{
+					var tempIns:BitmapData = _listData[_index].cla;
+					var dataByte:ByteArray;
+					dataByte = png.encode(tempIns);
+					var exten:String = ".png";
+					if (_listData[_index].type != 36 && _listData[_index].type != 20)
+						exten = ".jpg";
+					var f:File = new File(_baseUrl+"image_"+_index+exten);
+					fileStream.open(f, FileMode.WRITE);
+					fileStream.writeBytes(dataByte);
+					fileStream.close();
+				}
+				_index++;
+				savePicture();
+			}
+			
+			protected function maskShape_resizeHandler(event:ResizeEvent):void
+			{
+				// TODO Auto-generated method stub
+				if (stage == null)
+					return;
+				maskShape.graphics.clear();
+				maskShape.graphics.beginFill(0x000000, 0.5);
+				maskShape.graphics.drawRect(0,0,stage.stageWidth, stage.stageHeight);
+				maskShape.graphics.endFill();
+				tips.x = (stage.stageWidth - tips.width) * 0.5;
+				tips.y = (stage.stageHeight - tips.height) * 0.5;
+			}
+			
+			protected function windowedapplication1_creationCompleteHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				maskShape_resizeHandler(null);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:Button x="21" y="20" label="浏览" toolTip="打开一个swf文件" click="browseFile(event)"/>
+	<s:Group x="21" y="85" width="611" height="525">
+		<mx:TileList x="10" y="10" width="579" height="505" itemRenderer="PictureItem" id="list" selectable="false" columnWidth="110" rowHeight="128">
+		</mx:TileList>
+	</s:Group>
+	<s:Button x="20" y="59" label="全选" click="selectAll(true)"/>
+	<s:Button x="98" y="59" label="全取消" click="selectAll(false)"/>
+	<s:Button x="220" y="59" label="导出" click="export(event)"/>
+	<s:Group width="100%" height="100%" id="maskShape" visible="false" resize="maskShape_resizeHandler(event)">
+		<s:Label text="保存中......" id="tips" width="60"/>
+	</s:Group>
+</s:WindowedApplication>

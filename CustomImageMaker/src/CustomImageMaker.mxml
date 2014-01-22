@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   width="1044" height="580" creationComplete="windowedapplication1_creationCompleteHandler(event)">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.graphics.codec.PNGEncoder;
+			private var picW:Number ;
+			private var picH:Number;
+			private var picnum:int;
+			private var pictype:int;
+			private var piccolor:uint;
+			private var prev:String;
+			private var pic:Picture = new Picture();
+			private var pngencoder:PNGEncoder = new PNGEncoder();
+			private var fileStream:FileStream = new FileStream();
+			private var file:File;
+			private var gridW:Number;
+			private var gridH:Number;
+			private var beginorder:int;
+			private var shapeArr:ArrayCollection = new ArrayCollection([{label:"矩形"}, {label:"圆形"}]);
+			private var shapeType:int;
+			
+			protected function savePictures(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				if (int(wid.text) <= 0 || int(hei.text) <= 0)
+				{
+					Alert.show("宽高必须大于0");
+					return;
+				}
+				if (other.selected && int(piccount.text) <= 0)
+				{
+					Alert.show("图片数量必须大于0");
+					return;
+				}
+				if (!scene.selected && !other.selected)
+				{
+					Alert.show("请选择一个图片类型");
+					return;
+				}
+				if (scene.selected && (int(gridw.text) <= 0 || int(gridh.text) <= 0))
+				{
+					Alert.show("请选择一个图片类型");
+					return;
+				}
+				shapeType = shapeCom.selectedIndex;
+				picW = int(wid.text);
+				picH = int(hei.text);
+				picnum = int(piccount.text);
+				pictype = scene.selected ? 1 : 2;
+				piccolor = colorpic.selectedColor;
+				prev = prevName.text == "" ? "" : prevName.text+"_";
+				
+				if (pictype == 1)
+				{
+					gridW = int(gridw.text);
+					gridH = int(gridh.text);
+					createSceneBackground();
+				}
+				else
+				{
+					beginorder = int(order.text) <= 0 ? 1 : int(order.text);
+					createPictures();
+				}
+			}
+			
+			/**生成场景大图片*/
+			private function createSceneBackground():void
+			{
+				var row:int = picW / gridW;
+				var col:int = picH / gridH;
+				var i:int = 0, j:int =0;
+				var tempBitmap:BitmapData = new BitmapData(picW, picH, false, 0x000000);
+				var sp:Sprite = new Sprite();
+				sp.graphics.beginFill(piccolor);
+				sp.graphics.drawRect(0, 0, picW, picH);
+				sp.graphics.endFill();
+				var temp:TextField;
+				var format:TextFormat = new TextFormat(null, 12, 0xffffff, null, null, null, null, null, TextFormatAlign.CENTER);
+				
+				
+				for (i;i<row;i++)
+				{
+					for (j=0;j<col;j++)
+					{
+						temp = new TextField();
+						temp.defaultTextFormat = new TextFormat(null, 8, 0xffffff, null, null, null, null, null, TextFormatAlign.CENTER);
+						temp.width = gridW;
+						temp.height= 22;
+						sp.addChild(temp);
+						temp.text = i + "_" + j;
+						temp.y = j * gridH + gridH * 0.5 - 11;
+						temp.x = i * gridW;
+					}
+				}
+				
+				tempBitmap.draw(sp);
+				
+				var arr:ByteArray = pngencoder.encode(tempBitmap);
+				file = File.desktopDirectory;
+				var url:String = file.url + "/" + "测试图片" + "/";
+				url = url + (prevName.text == "" ? "" : prevName.text+"/");
+				url = url + prevName.text + ".jpg";
+				file = new File(url);
+				fileStream.open(file, FileMode.WRITE);
+				fileStream.writeBytes(arr);
+				fileStream.close();
+				Alert.show("成功");
+				
+				exampleImg.source = tempBitmap;
+			}
+			
+			/** */
+			private function createPictures():void
+			{
+				var i:int = 0;
+				for (i;i<picnum;i++)
+				{
+					createPicture(i);
+				}
+				Alert.show("成功");
+			}
+			
+			/** */
+			private function createPicture(num:int):void
+			{
+				var tempBitmap:BitmapData = new BitmapData(picW, picH, false, 0xffffff);
+				pic.graphics.clear();
+				pic.graphics.beginFill(piccolor);
+				if (shapeType == 0)//矩形
+				{
+					pic.graphics.drawRect(0, 0, picW, picH);
+				}else{
+					pic.graphics.drawCircle(picW*0.5, picW*0.5, picW*0.5);
+				}
+				pic.graphics.endFill();
+				num = beginorder + num;
+				pic.content.text = num.toString();
+				pic.content.width = pic.width;
+				pic.content.height = 22;
+				pic.content.x = 0;
+				pic.content.y = (pic.height - 22)*0.5;
+				
+				tempBitmap.draw(pic);
+				
+				var arr:ByteArray = pngencoder.encode(tempBitmap);
+				file = File.desktopDirectory;
+				var url:String = file.url + "/" + "测试图片" + "/";
+				url = url + (prevName.text == "" ? "" : prevName.text+"/");
+				url = url + prev + num + ".jpg";
+				file = new File(url);
+				fileStream.open(file, FileMode.WRITE);
+				fileStream.writeBytes(arr);
+				fileStream.close();
+			}
+			
+			
+			protected function windowedapplication1_creationCompleteHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				shapeCom.textInput.editable = false;
+			}
+			
+		]]>
+	</fx:Script>
+	<s:TitleWindow x="10" y="10" width="335" height="313" isPopUp="true" textAlign="center"
+				   title="新建图片">
+		<s:layout>
+			<s:BasicLayout/>
+		</s:layout>
+		<s:Label x="10" y="10" text="宽度："/>
+		<s:TextInput x="51" y="5" width="86" restrict="0-9" id="wid"/>
+		<s:Label x="165" y="10" text="高度："/>
+		<s:TextInput x="208" y="5" width="86" restrict="0-9" id="hei"/>
+		<mx:ColorPicker x="52" y="40" id="colorpic"/>
+		<s:Label x="10" y="46" text="颜色："/>
+		<s:Button x="131" y="254" label="保存" click="savePictures(event)"/>
+		<s:RadioButton x="164" y="40" label="场景图" id="scene"/>
+		<s:RadioButton x="240" y="40" label="其他" id="other"/>
+		<s:Label x="119" y="45" text="类型："/>
+		<s:Group x="10" y="60" width="298" height="57" visible="{scene.selected}">
+			<s:Label x="10" y="10" text="格子宽："/>
+			<s:Label x="10" y="35" text="格子高："/>
+			<s:TextInput x="66" y="4" id="gridw"/>
+			<s:TextInput x="66" y="29" id="gridh"/>
+		</s:Group>
+		<s:Group x="9" y="125" width="299" height="70" visible="{other.selected}">
+			<s:Label x="11" y="11" text="数量："/>
+			<s:TextInput id="piccount" x="55" y="5" width="86" restrict="0-9"/>
+			<s:Label x="149" y="10" text="开始序号:"/>
+			<s:TextInput x="205" y="5" width="84" id="order" restrict="0-9"/>
+			<s:ComboBox x="55" y="37" width="86" dataProvider="{shapeArr}" selectedIndex="0" id="shapeCom"/>
+			<s:Label x="10" y="42" text="形状:"/>
+		</s:Group>
+		<s:Label x="11" y="209" text="命名前缀："/>
+		<s:TextInput x="76" y="203" width="71" id="prevName"/>
+		<s:Label x="11" y="231" width="210" textAlign="left" text="图片的名字将为{prevName.text}_1.jpg"/>
+	</s:TitleWindow>
+	<s:Image id="exampleImg" x="430" y="12"/>
+</s:WindowedApplication>
