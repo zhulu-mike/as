@@ -1,0 +1,662 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   width="800" height="600" applicationComplete="init()" >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.leman.data.ImageInfo;
+			
+			import helper.SWFHelper;
+			import helper.bmpdHelper;
+			
+			import mx.controls.Alert;
+			import mx.controls.Image;
+			import mx.controls.ProgressBar;
+			import mx.graphics.codec.JPEGEncoder;
+			import mx.graphics.codec.PNGEncoder;
+			
+			import org.libspark.swfassist.image.MyPNGEncoder;
+			
+			import vo.ActionVO;
+			import vo.DirectoryVO;
+			
+			private var row:int = 0;   //方向维数 
+			private var col:int = 0;  //一个方向动画帧数
+			private var imgInfoArr:Array = [];
+			private var baseDir:String;  //根目录
+			private var dirName:String;  //目录名
+			
+			private var localX:Number = 42;
+			private var localY:Number = 55;
+			
+			private var allDirectory:Vector.<DirectoryVO> = new Vector.<DirectoryVO>();//所有的目录
+			
+			private var currentDir:DirectoryVO;//当前执行的目录
+			
+			private var currentBitmapByteArray:ByteArray;//当前操作目录的bitmapData
+			
+			private var currentXML:String = "";//同上， xml;
+			
+			private var registerPoint:int = 0;//0表示原点，1表示注册点
+			
+			private var playTime:int = 0;//播放时间
+			
+			private var rootFile:File;
+			
+			private var fileTotal:int = 0;	//要加载的文件个数
+			private var fileLoadedNum:int = 0;	//已加载文件个数
+			
+			private var stageBitmap:Bitmap;
+			
+			private function init():void
+			{
+				stageMask.graphics.beginFill(0xffffff,0.4);
+				stageMask.graphics.drawRect(0,0,this.stage.stageWidth, this.stage.stageHeight);
+				stageMask.graphics.endFill();
+				
+				stageBitmap = new Bitmap(new BitmapData(800,800,true,0xff0000));
+				can.addChild(stageBitmap);
+			}
+			
+			/**
+			 * 	导入源文件夹
+			 */	 
+			private function importSourcesFile():void
+			{
+				textBtn.visible = true;
+//				stageMask.visible = true;
+				var fl:File = File.desktopDirectory;
+				try{
+					fl.browseForDirectory('请选择目录');
+					fl.addEventListener(Event.SELECT,selectComplete);
+				}catch(error:Error){
+					trace('failed : ',error.message);
+				}
+			}
+			
+			private function selectComplete(evt:Event):void
+			{
+				var directory:File = evt.target as File;
+				rootFile = directory;
+				var files:Array = directory.getDirectoryListing();
+				var len:int = files.length, i:int=0, tempDirectory:DirectoryVO;
+				if (len <= 0)
+				{
+					Alert.show("选择的目录下面没有任何东西");
+					return;
+				}
+				allDirectory.slice(0, allDirectory.length);
+				for(i; i < len; i++)
+				{
+					if(files[i].isDirectory == true)
+					{
+						tempDirectory = new DirectoryVO();
+						tempDirectory.url = (files[i] as File).url;
+						tempDirectory.fileName = (files[i] as File).name;
+						tempDirectory.file = files[i] as File;
+						allDirectory.push(tempDirectory);
+					}
+				}
+				if (allDirectory.length <= 0)
+				{
+					Alert.show("选择的目录下面没有子目录");
+					return;
+				}
+				readAllDirectory();
+			}
+			
+			private function readAllDirectory():void
+			{
+				if (allDirectory.length <= 0)
+					return;
+				var len:int = allDirectory.length, i:int = 0;
+				
+				for (i;i<len;i++)
+				{
+					readDirectory(allDirectory[i]);
+				}
+			}
+			
+			/**
+			 * 	读取sc一个动作的文件夹
+			 */ 
+			private function readFiles(temp:DirectoryVO):void
+			{
+				var dir = temp.standFile;
+				var files:Array = dir.getDirectoryListing();
+				var len:int = files.length;
+				var img:Image;
+				var tempArr:Array = [];
+				var tempBmd:BitmapData;
+				var rect:Rectangle;
+				for(var i:uint = 0; i < len; i++)
+				{
+					if((files[i] as File).extension == 'png')
+					{
+						this.fileTotal++;
+						img = new Image();
+						img.name = (files[i]['name'] as String).split('.')[0];
+						img.data = dir.name;
+						img.source = files[i].url;
+						sta.addElement(img);
+						tempArr.push(img);
+					}
+				}
+				/* var itemvo:ActionVO = new ActionVO();
+				itemvo.tempArr = tempArr;
+				itemvo.name = temp.standName; */
+				var index:int = 0;
+				if (temp.standName == "attack")
+					index = 0;
+				else if (temp.standName == "death")
+					index = 1;
+				else if (temp.standName == "injured")
+					index = 2;
+				else if (temp.standName == "skill")
+					index = 3;
+				else if (temp.standName == "stand")
+					index = 4;
+				else if (temp.standName == "walk")
+					index = 5;
+				else if (temp.standName == "sit")
+					index = 6;
+				else if (temp.standName == "skill1")
+					index = 7;
+				temp.imgArr[index].tempArr = tempArr;
+				temp.imgArr[index].name = temp.standName;
+			}
+			
+			private function progressHandler(event:ProgressEvent):void
+			{
+				textBtn.label == '加载完成！' + event.bytesLoaded / event.bytesTotal;
+			}
+			
+			private function loadedHandler(event:Event = null):void
+			{
+				this.fileLoadedNum++;
+				if(this.fileLoadedNum == this.fileTotal)
+				{
+					Alert.show('加载完成！');
+				}
+				else
+				{
+					textBtn.label == '正在加载。。' + this.fileLoadedNum + ' / ' + this.fileTotal;
+					outPNG.label = '正在加载。。' + this.fileLoadedNum + ' / ' + this.fileTotal;
+				}
+			}
+			
+			
+			private var isAddToStage:Boolean = false; 	//是否已将第一个sc的图片添加到舞台
+			
+			/**
+			 * 	读取一个sc的文件夹(读取一个或多个sc时，只将第一个sc的所有图片添加到舞台)
+			 */ 
+			private function readDirectory(temp:DirectoryVO):void
+			{
+				var dir = temp.file;
+				var files:Array = dir.getDirectoryListing();
+				var len:int = files.length, i:int = 0;
+				for (i;i<len;i++)
+				{
+					if (files[i].isDirectory == true)
+					{
+						switch(files[i]['name']){
+							case 'death' : 
+							case 'walk' : 
+							case 'skill' : 
+							case 'attack' : 
+							case 'injured' :
+							case 'stand' : 
+							case 'sit' : 
+							case 'skill1' : //战魂技
+								temp.standFile = files[i] as File;
+								temp.standName = files[i]['name'];
+								temp.standUrl  = files[i]['url'];
+								if(this.isAddToStage == false)
+								{
+									readFiles(temp);
+								}
+								break;
+							default:
+								//								throw new Error('有不符合条件的文件夹存在');
+						}
+					}
+					this.isAddToStage = true;
+				}
+				
+			}
+			
+			/**
+			 * 获取所有小图片的信息
+			 */
+			private function getImageInfo(imgArr:Array):void
+			{
+				var imgInfo:ImageInfo;
+				for each(var image:Image in imgArr)
+				{
+					imgInfo = new ImageInfo(null);
+					imgInfoArr.push(imgInfo);
+					getImgInfo(imgInfo,image);
+				}
+			}
+			
+			private function reSetAllParam():void
+			{
+				imgInfoArr = [];
+				row = 0;
+				col = 0;
+				maxRect.w = 1;
+				maxRect.h = 1;
+			}
+			
+			
+			/**
+			 * 获取单个小图片的信息
+			 */
+			private function getImgInfo(imgInfo:ImageInfo,image:Image):void
+			{
+				var bmd:BitmapData = image.content['bitmapData'];
+				var arr:Array = bmpdHelper.getImgProp(bmd);
+				imgInfo.tx = arr[0];
+				imgInfo.ty = arr[1];
+				imgInfo.min_w = arr[2];
+				imgInfo.min_h = arr[3];
+				imgInfo.bmd = new BitmapData(arr[2],arr[3]);
+				imgInfo.bmd.copyPixels(bmd,new Rectangle(arr[0],arr[1],arr[2],arr[3]),new Point(0,0));
+				var tempArr:Array = image.name.split('_');
+				imgInfo.r = int(tempArr[0]);
+				imgInfo.frame = int(tempArr[1]);
+			}
+			
+			/**
+			 * 根据图片文件名获取row x col
+			 * imgName ：[ row_col ]
+			 */ 
+			private function getRowCol():void
+			{
+				var tempRow:Array = [], tempCol:Array = [];
+				for each(var item:Object in imgInfoArr)
+				{
+					if(tempRow.indexOf(item['r']) == -1){
+						row++;
+						tempRow.push(item['r']);
+					}
+					if(tempCol.indexOf(item['frame']) == -1){
+						col++;
+						tempCol.push(item['frame']);
+					}
+				}
+				row = row < 1 ? 1 : row;
+				col = col < 1 ? 1 : col;
+			}
+			
+			
+			private var maxRect:Object = {w: 0, h : 0};
+			private function  getMaxWH():void
+			{
+				for each(var item:Object in imgInfoArr)
+				{
+					if(item['min_w'] > maxRect['w']){
+						maxRect['w'] = item['min_w'];
+					}
+					if(item['min_h'] > maxRect['h']){
+						maxRect['h'] = item['min_h'];
+					}
+				}
+			}
+			
+			/**
+			 *  根据方位(r)、帧(frame)排列imgInfoArr, r从小到大， frame从小到大
+			 */ 
+			private function sortByRFrame():void
+			{
+				var len:int = imgInfoArr.length;
+				var temp:ImageInfo;
+				for(var i:int = 0; i < len - 1; i++)
+					for(var j:int = i + 1; j < len; j++)
+					{
+						if(imgInfoArr[i]['r'] > imgInfoArr[j]['r']){
+							temp = imgInfoArr[i];
+							imgInfoArr[i] = imgInfoArr[j];
+							imgInfoArr[j] = temp;
+						}else if(imgInfoArr[i]['r'] == imgInfoArr[j]['r']){
+							if(imgInfoArr[i]['frame'] > imgInfoArr[j]['frame'])
+							{
+								temp = imgInfoArr[i];
+								imgInfoArr[i] = imgInfoArr[j];
+								imgInfoArr[j] = temp;
+							}
+						}
+					}
+			}
+			
+			
+			/**
+			 *  根据图片的宽度排列imgInfoArr, 从大到小
+			 */ 
+			private function sortByWidth():void
+			{
+				var len:int = imgInfoArr.length;
+				var temp:ImageInfo;
+				for(var i:int = 0; i < len - 1; i++)
+					for(var j:int = i + 1; j < len; j++)
+					{
+						if(imgInfoArr[i]['min_w'] > imgInfoArr[j]['min_w']){
+							temp = imgInfoArr[i];
+							imgInfoArr[i] = imgInfoArr[j];
+							imgInfoArr[j] = temp;
+						}
+					}
+			}
+			
+			private function createAllNewImages():void
+			{
+				registerPoint = xValue.selected ? 0 : yValue.selected ? 1 : 2;
+				var len:int = allDirectory.length, i:int = 0;
+				var tempDirect:DirectoryVO;
+				for (i;i<len;i++)
+				{
+					tempDirect = allDirectory[i];
+					if (tempDirect && tempDirect.imgArr.length > 0)
+					{
+						currentDir = tempDirect;
+						createNewImages();
+					}
+				}
+			}
+			
+			private var xmlStr:String;
+			/**
+			 * 	创建一个sc的多个动作图片（站立、行走、死亡。。。）
+			 */ 
+			private function createNewImages():void
+			{
+				//clear();
+				if (registerPoint == 0)
+				{
+					localX = localY = 0;
+				}
+				xmlStr = "package\n{\n\timport flash.display.MovieClip;\n\timport flash.system.Security;\n\n\tpublic class " + currentDir.fileName + " extends MovieClip\n\t{\n\t\tpublic static const X_M_L:XML = <r>";
+				var len:int = currentDir.imgArr.length;
+				currentXML = "<r>";
+				
+//				var flag:int = 0;
+//				for(var j:int = 0; j < len; j++)
+//				{
+//					if (currentDir.imgArr[i].tempArr.length > 0)
+//					{
+//						flag++;
+//					}
+//				}
+				
+				for(var i:int = 0; i < len; i++)
+				{
+					createSingleImage(currentDir.imgArr[i]);
+					xmlStr += createXmlStr(currentDir.imgArr[i].name);
+					if (currentDir.imgArr[i].tempArr.length > 0)
+						createBmdClass(currentDir.imgArr[i].name);
+				}
+				currentXML += "</r>";
+				xmlStr += "</r>;\n\t\tpublic function " + currentDir.fileName + "()\n\t\t{\n\t\t\taddFrameScript(0, frame1);\n\t\t\treturn;\n\t\t}\n\n\t\tfunction frame1()\n\t\t{\n\t\t\ttry\n\t\t\t{\n\t\t\t\tSecurity.allowDomain('*');\n\t\t\t}\n\t\t\tcatch (e:Error)\n\t\t\t{\n\t\t\t}\n\t\t\treturn;\n\t\t}\n\t}\n}" 
+				
+				var ws:FileStream = new FileStream();
+				var file1:File ;
+				//var fileName:String = currentDir.url  + '/' + currentDir.fileName + ".as";//
+				var fileName:String = rootFile.url  + '/outcome/' + currentDir.fileName + ".as";//
+				file1= new File(fileName);
+				ws.open(file1,FileMode.WRITE);
+				ws.writeUTFBytes(xmlStr);
+				ws.close();
+				
+//				var swfFile:FileStream = new FileStream();
+//				fileName = currentDir.url  + '/' + currentDir.fileName + ".swf";
+//				file1 = new File(fileName);
+//				swfFile.open(file1,FileMode.WRITE);
+//				swfFile.writeBytes(SWFHelper.makeSWFByteArray(currentDir.imgArr, currentDir.fileName, currentXML));
+//				swfFile.close();
+				Alert.show('成功创建新图片','创建图片');
+			}
+			
+			private function clear():void
+			{
+				sta.removeAllElements();	
+			}
+			
+			private function createBmdClass(fileName:String):void
+			{
+				var str:String = "﻿package " + currentDir.fileName + "\n{\n\timport flash.display.BitmapData;\n\n\tdynamic public class " + fileName + " extends BitmapData\n\t{\n\t\t public function " + fileName + "(param1:int = " + (maxRect.w * col) +", param2:int = " + (maxRect.h * row) +")\n\t\t{\n\t\t\tsuper(param1, param2);\n\t\t\treturn;\n\t\t}\n\t}\n}";
+				
+				var ws:FileStream = new FileStream();
+				var file1:File ;
+				var fileName:String = rootFile.url  + '/outcome/' + currentDir.fileName + '/' + fileName + ".as";
+				file1= new File(fileName);
+				ws.open(file1,FileMode.WRITE);
+				ws.writeUTFBytes(str);
+				ws.close();
+			}
+			
+			private function createSingleImage(voo:ActionVO):void
+			{
+				var imgArr:Array = voo.tempArr;
+				reSetAllParam();
+				getImageInfo(imgArr);
+				getRowCol();
+				getMaxWH();
+				sortByRFrame();
+				
+				var bmd:BitmapData;
+				var len:int = imgInfoArr.length;
+				var info:ImageInfo;
+				
+				var tempBmd:BitmapData;
+				if(row == 1 && len > 10)		//如果只有一个方向，并且图片的数量超过10
+				{
+					
+					var tempCol:int = Math.ceil(len / 2);
+					tempBmd = new BitmapData(maxRect.w * tempCol, maxRect.h * 2,true,0x00ff0000);
+					var count:int = 0;
+					var currIndex:int = 0;
+					var widthTotal:int = 0;
+					for(var i:int = 0; i < len; i++)
+					{
+						info = i % 2 == 0 ? imgInfoArr[int(i / 2)] : imgInfoArr[len - 1 - int(i / 2)];
+						if(i % tempCol == 0)
+						{
+							info.sx = 0;
+							widthTotal = info.min_w;
+							
+						}else
+						{
+							info.sx = widthTotal;
+							widthTotal += info.min_w;
+						}
+//						info.sx = i % tempCol * maxRect.w;
+						info.sy = int(i / tempCol) * maxRect.h;
+						copyImg(tempBmd,info,i);
+					}
+					var rect:Rectangle = tempBmd.getColorBoundsRect(0xFF000000,0x00000000,false);
+					bmd = new BitmapData(rect.width, rect.height, true, 0xff0000);
+					bmd.copyPixels(tempBmd,rect,new Point(0,0));
+				}
+				else
+				{
+					bmd = new BitmapData(maxRect.w * col, maxRect.h * row,true,0x00ff0000);
+					for(var i:int = 0; i < len; i++)
+					{
+						info = imgInfoArr[i];
+						info.sx = i % col * maxRect.w;
+						info.sy = int(i / col) * maxRect.h;
+						copyImg(bmd,info,i);
+					}
+				}
+				
+				
+				var pngenc:PNGEncoder = new PNGEncoder();
+				var imgByteArray:ByteArray = pngenc.encode(bmd);
+//				imgByteArray.compress('deflate');
+//				var pngenc2:JPEGEncoder = new JPEGEncoder(80);
+//				var imgByteArray:ByteArray = pngenc2.encode(bmd);
+//				imgByteArray2.compress();
+//				voo.bitmapByte = imgByteArray2;//org.libspark.swfassist.image.MyPNGEncoder.getIDATData(bmd);
+//				i=0;
+//				var j:int = 0, w:int = bmd.width, h:int = bmd.height, co:uint, al:uint;
+//				for (;i<h;i++)
+//				{
+//					for (j=0;j<w;j++)
+//					{
+//						co = bmd.getPixel32(j,i);
+//						al = co >> 24;
+//						voo.bitAlphaByte.writeByte(al & 0xff);
+//					}
+//				}
+//				voo.bitAlphaByte.compress();
+				
+//				voo.height = maxRect.h * row;
+//				voo.width = maxRect.w * col;
+				if (imgArr.length > 0)
+				{
+					var ws:FileStream = new FileStream();
+					var file1:File ;	
+					var fileName:String = rootFile.url  + '/outcome/' + currentDir.fileName + '/' + imgArr[0].data + ".png";
+					file1= new File(fileName);
+					ws.openAsync(file1,FileMode.WRITE);
+					ws.writeBytes(imgByteArray,0,imgByteArray.bytesAvailable);
+					ws.close();
+				}
+			}
+			
+			private function createXmlStr(node:String):String
+			{
+				var tempStr:String = "<s k='" + node + "' t='" + playTime +"' f='" + col + "'>\n";
+				var len:int = imgInfoArr.length;
+				
+				var a:int;
+				var sy:int;
+				var tempTx:Number = 0;
+				var tempTy:Number = 0;
+				for(var i:int = 0; i < len; i++)
+				{
+					if (registerPoint==1)
+					{
+						//中心点的时候，直接取新图片的中心坐标
+						localX = maxRect.w / 2;
+						localY = maxRect.h / 2;
+					}
+					if (registerPoint == 2)
+					{
+						tempTx = imgInfoArr[i]['tx'];
+						tempTy = imgInfoArr[i]['ty'];
+					}else{
+						tempTx = tempTy = 0;
+					}
+					if(imgInfoArr[i]['r'] == 0)
+					{
+						a = imgInfoArr[i]['r'];
+						sy = 0;
+						
+//						tempStr += "\t<p a='" + a + "' f='" + imgInfoArr[i]['frame'] + "' sx='" + (imgInfoArr[i]['frame'] * maxRect.w ) + "' sy='" + sy + "' w='" + imgInfoArr[i]['min_w'] + "' h='" + imgInfoArr[i]['min_h'] + "' tx='" + (localX-tempTx) + "' ty='" + (localY-tempTy) + "' ox='0' oy='0'/>\n"
+						tempStr += "\t<p a='" + imgInfoArr[i]['r'] + "' f='" + imgInfoArr[i]['frame'] + "' sx='" + imgInfoArr[i].sx + "' sy='" + imgInfoArr[i].sy + "' w='" + imgInfoArr[i]['min_w'] + "' h='" + imgInfoArr[i]['min_h'] + "' tx='" + (localX-tempTx) + "' ty='" + (localY-tempTy) + "' ox='0' oy='0'/>\n"
+					}else{
+//						tempStr += "\t<p a='" + (imgInfoArr[i]['r'] ) + "' f='" + imgInfoArr[i]['frame'] + "' sx='" + (imgInfoArr[i]['frame'] * maxRect.w ) + "' sy='" + ((int(i / col)) * maxRect.h) + "' w='" + imgInfoArr[i]['min_w'] + "' h='" + imgInfoArr[i]['min_h'] + "' tx='" + (localX-tempTx) + "' ty='" + (localY-tempTy) + "' ox='0' oy='0'/>\n"	
+						tempStr += "\t<p a='" + imgInfoArr[i]['r'] + "' f='" + imgInfoArr[i]['frame'] + "' sx='" + imgInfoArr[i].sx + "' sy='" + imgInfoArr[i].sy + "' w='" + imgInfoArr[i]['min_w'] + "' h='" + imgInfoArr[i]['min_h'] + "' tx='" + (localX-tempTx) + "' ty='" + (localY-tempTy) + "' ox='0' oy='0'/>\n"	
+					}
+				}
+				tempStr += '</s>\n';
+				currentXML += tempStr;
+				return tempStr;
+			}
+			
+			/**
+			 *  拷贝位图数据到bmd
+			 * param bmd:目标  info ：源  index ：imgInfoArr数组的下标
+			 */
+			private function copyImg(bmd:BitmapData,info:ImageInfo,index:int):void
+			{
+				var w:int = info.min_w;
+				var h:int = info.min_h;
+				var sx:int = info.sx;
+				var sy:int = info.sy;
+				
+				bmd.copyPixels(info.bmd,new Rectangle(0,0,info.bmd.width, info.bmd.height), new Point(info.sx,info.sy));
+				return;
+				
+				for(var i:int = 0; i < w; i++)
+					for(var j:int = 0; j < h; j++)
+					{
+//						bmd.setPixel32(index % col * maxRect.w + i,int(index / col) * maxRect.h + j, info.bmd.getPixel32(i,j));
+						bmd.setPixel32(info.sx + i,info.sy + j, info.bmd.getPixel32(i,j));
+					}
+			}
+			
+			
+			import spark.events.TextOperationEvent;
+			
+			protected function xValue_changeHandler(event:Event):void
+			{
+				// TODO Auto-generated method stub
+				//localX = int(xValue.text) ;
+				registerPoint = xValue.selected ? 0 : yValue.selected ? 1 : 2;
+			}
+			protected function xValue_changeHandler1(event:Event):void
+			{
+				// TODO Auto-generated method stub
+				//localY = int(yValue.text) ;
+				registerPoint = yValue.selected ? 1 : 0;
+			}
+			
+			protected function xPos_changeHandler(event:TextOperationEvent):void
+			{
+				// TODO Auto-generated method stub
+				localX = int(xPos.text);
+			}
+			
+			protected function yPos_changeHandler(event:TextOperationEvent):void
+			{
+				// TODO Auto-generated method stub
+				localY = int(yPos.text);
+			}
+			
+			protected function timeChange(event:TextOperationEvent):void
+			{
+				// TODO Auto-generated method stub
+				playTime = int(time.text);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	
+	<s:Group id="sta" width="100%" height="100%"/>
+	<s:SpriteVisualElement id="can" width="100%" height="100%" />
+	<s:TitleWindow id="panel" x="220" y="240" width="267" height="286" isPopUp = "true">
+		<s:layout>
+			<s:TileLayout/>
+		</s:layout>
+		<s:Button id="bg" x="14" y="10" label="导入图片" click="importSourcesFile()"/>
+		<s:Button id="small" x="168" y="10" label="缩小"/>
+		<s:Button id="big" x="91" y="10" label="放大" />
+		<s:Button id="newOne" label="新建"/>
+		<s:Button id="outPNG" label="保存图片" click="createAllNewImages()"/>
+		<s:Button id="outXML" label="清理" click="clear()"/>
+		<s:RadioButton id="xValue" change="xValue_changeHandler(event)" width="100" label="默认点" selected="true"/>
+		<s:RadioButton id="yValue" change="xValue_changeHandler(event)" label="中心点" selected="false"/>
+		<s:RadioButton id="zValue" change="xValue_changeHandler(event)" label="自定义点" selected="false"/>
+		<s:Label/>
+		
+		<s:TextInput id="xPos" color="0x000000" restrict="0-9 ." width="100" change="xPos_changeHandler(event)" visible="{zValue.selected}"/>
+		<s:TextInput id="yPos" color="0x000000" restrict="0-9 ." width="100" change="yPos_changeHandler(event)" visible="{zValue.selected}"/>
+		<s:Label text="播放时间：" width="100"/>
+		<s:TextInput id="time" color="0x000000" restrict="0-9 ." width="100" change="timeChange(event)"/>
+	</s:TitleWindow>
+	<s:Group>
+		<s:Button id="textBtn" label="正在导入文件" x="400" y="200" width="200" height="100" visible="false"/>
+	</s:Group>
+	<s:Group id="stageMask" width="{this.stage.stageWidth}" height="{this.stage.stageHeight}" visible="false">
+	</s:Group>
+</s:WindowedApplication>
+

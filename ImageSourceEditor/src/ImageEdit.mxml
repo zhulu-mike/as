@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   xmlns:view="com.leman.view.*"
+					   width="800" height="600" applicationComplete="init()"
+					   backgroundColor="0x666666">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.leman.SwfPacker;
+			import com.leman.data.ActionType;
+			
+			import helper.SingleScFolderHelper;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.controls.Image;
+			import mx.managers.DragManager;
+			
+			import spark.events.TextOperationEvent;
+			
+			import vo.DirectoryVO;
+			
+			private var allDirectory:Vector.<DirectoryVO> = new Vector.<DirectoryVO>();//所有的目录
+			
+			private var fileTotal:int = 0;	//要加载的文件个数
+			private var fileLoadedNum:int = 0;	//已加载文件个数
+			
+			private var registerDot:Sprite;	//注册点图形
+			
+			private var swfPacker:SwfPacker = new SwfPacker;
+			
+			private var scFolders:Array;
+			private var loadIndex:int = 0;		//顺序处理动作文件夹，loadIndex指向actionFiles索引
+			
+			
+			private static const TIME_INTERVAL:int = 1;			//时间间隔
+			private static const TIME_TOTAL:int = 2;			//总时间
+			
+			[Embed(source='assets/shadow.png')]
+			private var IMG_Shadow:Class;
+			
+			[Embed(source='assets/player.png')]
+			private var IMG_Player:Class;
+			
+			private var shadow:Bitmap;		//阴影图像
+			
+			private var timeSetData:ArrayCollection = new ArrayCollection( [{label:'时间间隔',type:TIME_INTERVAL}, {label:'总时间', type:TIME_TOTAL}]);
+			
+			private function init():void
+			{
+				draw();
+				this.shadow = new IMG_Shadow() as Bitmap;
+				this.shadowGroup.addChild(this.shadow);
+				this.setShadowXY();
+				
+				initEvent();
+				
+			}
+			
+			private var playerFigure:BitmapData;
+			
+			/**
+			 * 	绘制
+			 */ 
+			private function draw(isShowPlayer:Boolean = false):void
+			{
+				if(this.registerDot == null)
+				{
+					this.registerDot = new Sprite();
+					this.registerDot.x = 100;
+					this.registerDot.y = 100;
+					can.addChild(this.registerDot);
+				}
+				
+				this.registerDot.graphics.clear();
+				if(isShowPlayer == true)
+				{
+					if(this.playerFigure == null)
+					{
+						var bmd:BitmapData = (new IMG_Player() as Bitmap).bitmapData;
+						var rect:Rectangle = bmd.getColorBoundsRect(0xFF000000,0x00000000,false);
+						this.playerFigure = new BitmapData(rect.width, rect.height, true,0x000000);
+						this.playerFigure.copyPixels(bmd,rect, new Point(0,0));
+					}
+					var matrix:Matrix = new Matrix();
+					var dx:int = -this.playerFigure.width / 2;
+					var dy:int = -this.playerFigure.height + 10;
+					matrix.translate(dx, dy);
+					this.registerDot.graphics.beginBitmapFill(this.playerFigure,matrix);
+					this.registerDot.graphics.drawRect(dx, dy, this.playerFigure.width, this.playerFigure.height);
+					this.registerDot.graphics.endFill();
+				}
+				
+				this.registerDot.graphics.lineStyle(2,0x00ff00);
+				this.registerDot.graphics.beginFill(0xff0000);
+				this.registerDot.graphics.drawCircle(0,0,5);
+				this.registerDot.graphics.endFill();
+			}
+			
+			private function initEvent():void
+			{
+				this.registerDot.addEventListener(MouseEvent.MOUSE_DOWN, registerDotDownHandler);
+				
+				swfPacker.addEventListener(SwfPacker.CREATE_SWF_COMPLETE, singleSwfCreated);
+				this.addEventListener(NativeDragEvent.NATIVE_DRAG_ENTER, onDragIn);
+				this.addEventListener(NativeDragEvent.NATIVE_DRAG_DROP,onDrop);
+				
+				ctrlPanel.importBtn.addEventListener(MouseEvent.CLICK,importSourcesFile);
+				ctrlPanel.checkBox.addEventListener(Event.CHANGE, showPlayerFigureHandler);
+				ctrlPanel.outPNG.addEventListener(MouseEvent.CLICK,createAllNewImages);
+				ctrlPanel.xPos.addEventListener(TextOperationEvent.CHANGE, setRegisterCircleHandler);
+				ctrlPanel.yPos.addEventListener(TextOperationEvent.CHANGE, setRegisterCircleHandler);
+			}
+			
+			private function showPlayerFigureHandler(event:Event):void
+			{
+				draw(ctrlPanel.checkBox.selected);
+			}
+			
+			/**
+			 * 	设置阴影位置
+			 */ 
+			private function setShadowXY():void
+			{
+				this.shadow.x = this.registerDot.x - this.shadow.width / 2;
+				this.shadow.y = this.registerDot.y - this.shadow.height / 2;
+			}
+			
+			private function onDragIn(event:NativeDragEvent):void
+			{
+				if(event.clipboard.hasFormat(ClipboardFormats.FILE_LIST_FORMAT))
+				{
+					DragManager.acceptDragDrop(this);
+				}
+			}
+			
+			private function onDrop(event:NativeDragEvent):void
+			{
+				this.clear();
+				var arr:Array = event.clipboard.getData(ClipboardFormats.FILE_LIST_FORMAT) as Array;
+				var file:File = new File(arr[0].nativePath);
+				var tempArr:Array = file.getDirectoryListing();
+				if(this.hasStandFile(tempArr) == true)
+				{
+					this.scFolders = arr;
+				}
+				else
+				{
+					this.scFolders = tempArr;
+				}
+				this.addAllActionImgToStage();
+			}
+			
+			private function registerDotDownHandler(event:MouseEvent):void
+			{
+				registerDot.stage.addEventListener(MouseEvent.MOUSE_UP,registerDotUpHandler);
+				registerDot.stage.addEventListener(MouseEvent.MOUSE_MOVE,registerDotMoveHandler);
+			}
+			
+			/**
+			 * 	释放鼠标
+			 */ 
+			private function registerDotUpHandler(event:MouseEvent):void
+			{
+				registerDot.stage.removeEventListener(MouseEvent.MOUSE_UP,registerDotUpHandler);
+				registerDot.stage.removeEventListener(MouseEvent.MOUSE_MOVE,registerDotMoveHandler);
+			}
+			
+			/**
+			 * 	移动鼠标
+			 */
+			private function registerDotMoveHandler(event:MouseEvent):void
+			{
+				this.registerDot.x = event.stageX;
+				this.registerDot.y = event.stageY;
+				ctrlPanel.xPos.text = event.stageX.toString();
+				ctrlPanel.yPos.text = event.stageY.toString();
+				this.setShadowXY();
+			}
+			
+			/**
+			 * 	导入源文件夹
+			 */	 
+			private function importSourcesFile(event:MouseEvent):void
+			{
+				this.clear();
+				
+				var fl:File = File.desktopDirectory;
+				try{
+					fl.browseForDirectory('请选择目录');
+					fl.addEventListener(Event.SELECT,selectComplete);
+				}catch(error:Error){
+					trace('failed : ',error.message);
+				}
+			}
+			
+			private function selectComplete(evt:Event):void
+			{
+				var directory:File = evt.target as File;
+//				this.scFolders = directory.getDirectoryListing();
+				this.scFolders = this.getScFiles(directory);
+				
+				this.addAllActionImgToStage();
+			}
+			
+			/**
+			 *  添加所有动作图片到舞台
+			 */ 
+			private function addAllActionImgToStage():void
+			{
+				setTimeInterval();
+				
+				var len:int = this.scFolders.length;
+				var tempDirectory:DirectoryVO;
+				
+				for(var i:int = 0; i < len; i++)
+				{
+					if(this.scFolders[i].isDirectory == true)
+					{
+						tempDirectory = new DirectoryVO();
+						tempDirectory.url = (this.scFolders[i] as File).url;
+						tempDirectory.fileName = (this.scFolders[i] as File).name;
+						tempDirectory.file = this.scFolders[i] as File;
+						allDirectory.push(tempDirectory);
+					}
+				}
+				if (allDirectory.length <= 0)
+				{
+					Alert.show("选择的目录下面没有子目录");
+					return;
+				}
+				readAllDirectory();
+			}
+			
+			/**
+			 * 	设置时间间隔
+			 */ 
+			private function setTimeInterval():void
+			{
+				if(this.scFolders && this.scFolders.length > 0)
+				{
+					var targetFolder:File = this.scFolders[0];
+					var infos:Array = SingleScFolderHelper.analyse(targetFolder);
+					ctrlPanel.updateTimeInterval(infos);
+				}
+			}
+			
+			
+			/**
+			 * 	获取sc目录数组，
+			 *  param dir	所选目录，该目录可能是一个sc目录，也可能是多个sc目录的父目录
+			 */ 
+			private function getScFiles(dir:File):Array
+			{
+				var folders:Array = dir.getDirectoryListing();
+				var bool:Boolean = this.hasStandFile(folders);
+				
+				return bool == true ? [dir] : folders;
+			}
+			
+			/**
+			 * 	检测是否含有stand文件夹
+			 */ 
+			private function hasStandFile(files:Array):Boolean
+			{
+				var num:int = files.length;
+				var fileName:String;
+				for(var i:int = 0; i < num; i++)
+				{
+					fileName = (files[i] as File).name;
+					if(fileName == ActionType.STAND)
+					{
+						return true;
+					}
+				}
+				return false
+			}
+			
+			private function readAllDirectory():void
+			{
+				if (allDirectory.length <= 0)
+					return;
+				
+				var len:int = allDirectory.length;
+				for (var i:int = 0; i<len; i++)
+				{
+					readDirectory(allDirectory[i]);
+				}
+			}
+			
+			/**
+			 * 	读取sc一个动作的文件夹
+			 */ 
+			private function readFiles(temp:DirectoryVO):void
+			{
+				var dir:File = temp.standFile;
+				var files:Array = dir.getDirectoryListing();
+				var len:int = files.length;
+				var img:Image;
+				var tempArr:Array = [];
+				var tempBmd:BitmapData;
+				var rect:Rectangle;
+				for(var i:uint = 0; i < len; i++)
+				{
+					if(((files[i] as File).extension).toLowerCase() == 'png')
+					{
+						this.fileTotal++;
+						img = new Image();
+						img.name = (files[i]['name'] as String).split('.')[0];
+						img.data = dir.name;
+						img.source = files[i].url;
+						sta.addElement(img);
+						tempArr.push(img);
+					}
+				}
+				/* var itemvo:ActionVO = new ActionVO();
+				itemvo.tempArr = tempArr;
+				itemvo.name = temp.standName; */
+				var index:int = 0;
+				if (temp.standName == "attack")
+					index = 0;
+				else if (temp.standName == "death")
+					index = 1;
+				else if (temp.standName == "injured")
+					index = 2;
+				else if (temp.standName == "skill")
+					index = 3;
+				else if (temp.standName == "stand")
+					index = 4;
+				else if (temp.standName == "walk")
+					index = 5;
+				else if (temp.standName == "sit")
+					index = 6;
+				else if (temp.standName == "skill1")
+					index = 7;
+				temp.imgArr[index].tempArr = tempArr;
+				temp.imgArr[index].name = temp.standName;
+			}
+			
+			
+			private var isAddToStage:Boolean = false; 	//是否已将第一个sc的图片添加到舞台
+			
+			/**
+			 * 	读取一个sc的文件夹(读取一个或多个sc时，只将第一个sc的所有图片添加到舞台)
+			 */ 
+			private function readDirectory(temp:DirectoryVO):void
+			{
+				var dir:File = temp.file;
+				var files:Array = dir.getDirectoryListing();
+				var len:int = files.length, i:int = 0;
+				for (i;i<len;i++)
+				{
+					if (files[i].isDirectory == true)
+					{
+						switch(files[i]['name']){
+							case 'death' : 
+							case 'walk' : 
+							case 'skill' : 
+							case 'attack' : 
+							case 'injured' :
+							case 'sit' : 
+							case 'skill1' : //战魂技
+								break;
+							case 'stand' : 
+								temp.standFile = files[i] as File;
+								temp.standName = files[i]['name'];
+								temp.standUrl  = files[i]['url'];
+								if(this.isAddToStage == false)
+								{
+									readFiles(temp);
+								}
+								this.isAddToStage = true;
+								break;
+							default:
+								//								throw new Error('有不符合条件的文件夹存在');
+						}
+					}
+				}
+			}
+			
+			private function singleSwfCreated(event:Event = null):void
+			{
+				this.probar.visible = true;
+				var len:int = this.allDirectory.length;
+				this.probar.update(this.loadIndex, len);
+				
+				if(this.loadIndex < len)
+				{
+					trace('创建下一个swf')
+					swfPacker.createSWF(this.scFolders[this.loadIndex++], ctrlPanel.getInfo());
+				}
+				else
+				{
+					this.probar.visible = false;
+					this.loadIndex = 0;
+					Alert.show('创建完成');
+				}
+			}
+			
+			private function createAllNewImages(event:MouseEvent):void
+			{
+				swfPacker.registerPoint = ctrlPanel.xValue.selected ? 0 : ctrlPanel.yValue.selected ? 1 : 2;
+				if(ctrlPanel.xValue.selected == true)
+				{
+					swfPacker.localX = 0;
+					swfPacker.localY = 0;
+				}
+				else if(ctrlPanel.zValue.selected == true)
+				{
+					swfPacker.localX = int(ctrlPanel.xPos.text);
+					swfPacker.localY = int(ctrlPanel.yPos.text);
+				}
+				swfPacker.playTime = int(ctrlPanel.intervalTime_textInput.text);
+				singleSwfCreated();
+			}
+			
+			private function clear():void
+			{
+				this.allDirectory = new Vector.<DirectoryVO>();
+				this.isAddToStage = false;
+				this.loadIndex = 0;
+				sta.removeAllElements();
+				ctrlPanel.clear();
+			}
+			
+			private function setRegisterCircleHandler(event:TextOperationEvent):void
+			{
+				this.registerDot.x = int(ctrlPanel.xPos.text);
+				this.registerDot.y = int(ctrlPanel.yPos.text);
+				this.setShadowXY();
+			}
+		]]>
+	</fx:Script>
+	
+	
+	<s:SpriteVisualElement id="shadowGroup" width="100%" height="100%"/>
+	<s:Group id="sta" width="100%" height="100%"/>
+	<s:SpriteVisualElement id="can" width="100%" height="100%"/>
+	<view:ControlPanel id="ctrlPanel" x="478" bottom="203" width="269" height="332" isPopUp="true"/>
+	<view:ProBar id="probar" visible="false" width="{this.stage.stageWidth}"
+				 height="{this.stage.stageHeight}"/>
+</s:WindowedApplication>
+

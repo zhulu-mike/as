@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="264" height="369" minHeight="233">
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.leman.data.ActionType;
+			
+			import mx.collections.ArrayCollection;
+			
+			public static const TIME_INTERVAL:int = 1;			//时间间隔
+			public static const TIME_TOTAL:int = 2;			//总时间
+			
+			private var timeSetData:ArrayCollection = new ArrayCollection( [{label:'两帧间隔时间',type:TIME_INTERVAL}, {label:'总时间', type:TIME_TOTAL}]);
+			
+			private function init():void
+			{
+				
+			}
+			
+			/* private function switchTimeType():void
+			{
+				var type:int = comboBox.selectedItem.type;
+				if(type == TIME_INTERVAL)
+				{
+					intervalTime_textInput.visible = true;
+					actionTimePanel.visible = false;
+				}
+				else
+				{
+					intervalTime_textInput.visible = false;
+					actionTimePanel.visible = true;
+				}
+			} */
+			
+			private var infos:Array = [];
+			
+			/**
+			 * 	更新数据
+			 */ 
+			public function updateTimeInterval($infos:Array = null):void
+			{
+				if($infos != null)
+				{
+					this.infos = $infos;
+				}
+				
+				var type:int = comboBox.selectedItem.type;
+				if(type == TIME_INTERVAL)
+				{
+					intervalTime_textInput.visible = true;
+					actionTimePanel.visible = false;
+				}
+				else
+				{
+					intervalTime_textInput.visible = false;
+					actionTimePanel.visible = true;
+					setActionTimePanelData();
+				}
+				
+				
+			}
+			
+			private function setActionTimePanelData():void
+			{
+				var arr:Array = ActionType.actNameArr;
+				var num:int = arr.length;
+				for(var i:int = 0; i < num; i++)
+				{
+					this[arr[i][0] + '_textInput'].visible = false;
+					this[arr[i][0] + '_label'].visible = false;
+				}
+				num = this.infos.length;
+				for(i = 0; i < num; i++)
+				{
+					this[infos[i].action + '_textInput'].visible = true;
+					this[infos[i].action + '_label'].visible = true;
+					this[infos[i].action + '_label'].text = ActionType.getActionNameByType(infos[i].action) + '： ' +　infos[i].frames;
+					//					this[infos[i].action + '_textInput'].text = infos[i].frames;
+				}
+			}
+			
+			/**
+			 * 	
+			 * return {type, data}
+			 */ 
+			public function getInfo():Object
+			{
+				var type:int = comboBox.selectedItem.type;
+				if(type == TIME_INTERVAL)
+				{
+					return {type:TIME_INTERVAL, data:int(intervalTime_textInput.text)}
+				}
+				else
+				{
+					var tempObj:Object = {type:TIME_TOTAL,data:{}};
+					var num:int = this.infos.length;
+					for(var i:int = 0; i < num; i++)
+					{
+						tempObj.data[infos[i].action] = Math.floor(int(this[infos[i].action + '_textInput'].text) / infos[i].frames);
+					}
+					return tempObj;
+				}
+				return null;
+			}
+			
+			public function clear():void
+			{
+				for(var i:int = 0; i < num; i++)
+				{
+					var arr:Array = ActionType.actNameArr;
+					var num:int = arr.length;
+					this[arr[i][0] + '_textInput'].text = '';
+				}
+//				this.intervalTime_textInput.text = '';
+				this.infos = [];
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Group x="10">
+		<s:layout>
+			<s:TileLayout/>
+		</s:layout>
+		<s:Button id="importBtn" x="14" y="10" label="导入图片"/>
+		<s:Button id="small" x="168" y="10" label="缩小"/>
+		<s:Button id="big" x="91" y="10" label="放大" />
+		<s:Button id="newOne" label="新建"/>
+		<s:Button id="outPNG" label="保存图片"/>
+		<s:Button id="outXML" label="清理"/>
+		
+		<s:CheckBox id="checkBox" label="显示人物参考模型"/>
+		<s:Label color="#FFFFFF"/>
+		
+		<s:RadioButton id="xValue" width="100" label="默认点" selected="false"/>
+		<s:RadioButton id="yValue" label="中心点" selected="false"/>
+		<s:RadioButton id="zValue" label="自定义点" selected="true"/>
+		<s:Label/>
+		
+		<s:TextInput id="xPos" color="#FFFFFF" restrict="0-9 ." width="100" includeInLayout="{zValue.selected}" visible="{zValue.selected}"/>
+		<s:TextInput id="yPos" color="#FFFFFF" restrict="0-9 ." width="100" includeInLayout="{zValue.selected}" visible="{zValue.selected}"/>
+		<s:Label text="时间间隔类型：" paddingTop="5" textAlign="center" width="100"/>
+		<s:DropDownList id="comboBox" dataProvider="{this.timeSetData}" width="100" selectedIndex="0" change="updateTimeInterval()"/>
+		<s:Label text="两帧间隔时间：" paddingTop="5" textAlign="center" visible="{intervalTime_textInput.visible}"  includeInLayout="{intervalTime_textInput.visible}"/>
+		<s:TextInput id="intervalTime_textInput" text="67" color="#FFFFFF" restrict="0-9 ." width="100" includeInLayout="{intervalTime_textInput.visible}"/>
+	</s:Group>
+	<s:Group id="actionTimePanel" includeInLayout="{actionTimePanel.visible}" visible="false" color="0xff0000" direction="ltr">
+		<s:layout>
+			<s:TileLayout orientation="columns"/>
+		</s:layout>
+		<s:Label text="站立：" id="stand_label" paddingTop="5" textAlign="right" visible="true" includeInLayout="{stand_label.visible}"/>
+		<s:TextInput text="" id="stand_textInput" visible="true" width="100" restrict="0-9" includeInLayout="{stand_textInput.visible}"/>
+		
+		<s:Label text="行走" id="walk_label" paddingTop="5" textAlign="right" visible="false" includeInLayout="{walk_label.visible}"/>
+		<s:TextInput id="walk_textInput" visible="false" width="100" restrict="0-9" includeInLayout="{walk_textInput.visible}"/>
+		
+		<s:Label text="死亡" id="death_label" paddingTop="5" textAlign="right" visible="false" includeInLayout="{death_label.visible}"/>
+		<s:TextInput id="death_textInput" visible="false" width="100" restrict="0-9" includeInLayout="{death_textInput.visible}"/>
+		
+		<s:Label text="攻击" id="attack_label" paddingTop="5" textAlign="right" visible="false" includeInLayout="{attack_label.visible}"/>
+		<s:TextInput id="attack_textInput" visible="false" width="100" restrict="0-9" includeInLayout="{attack_textInput.visible}"/>
+		
+		<s:Label text="受伤害" id="injured_label" paddingTop="5" textAlign="right" visible="false" includeInLayout="{injured_label.visible}"/>
+		<s:TextInput id="injured_textInput" visible="false" width="100" restrict="0-9" includeInLayout="{injured_textInput.visible}"/>
+		
+		<s:Label text="坐下" id="sit_label" paddingTop="5" textAlign="right" visible="false" includeInLayout="{sit_label.visible}"/>
+		<s:TextInput id="sit_textInput" visible="false" width="100" restrict="0-9" includeInLayout="{sit_textInput.visible}"/>
+		
+		<s:Label text="技能" id="skill_label" paddingTop="5" textAlign="right" visible="false" includeInLayout="{skill_label.visible}"/>
+		<s:TextInput id="skill_textInput" visible="false" width="100" restrict="0-9" includeInLayout="{skill_textInput.visible}"/>
+		
+		<s:Label text="战魂技" id="skill1_label" paddingTop="5" textAlign="right" visible="false" includeInLayout="{skill1_label.visible}"/>
+		<s:TextInput id="skill1_textInput" visible="false" width="100" restrict="0-9" includeInLayout="{skill1_textInput.visible}"/>
+	</s:Group>
+</s:TitleWindow>
