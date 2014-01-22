@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="770" height="582"
+		 implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import org.puremvc.as3.multicore.core.Model;
+			
+			import spark.events.GridSelectionEvent;
+			
+			import tools.common.vo.SkillBaseInfo;
+			import tools.common.vo.SoulFosterVO;
+			import tools.managers.SkillManager;
+			import tools.managers.SoulLevelManager;
+			import tools.modules.fightspirit.model.FighterSpiritModel;
+			import tools.modules.passport.model.PassportModel;
+			
+			private var model:PassportModel=PassportModel.getInstance();
+			
+			[Bindable]
+			private var searchList:ArrayList = new ArrayList([{label:Language.SELECT_PASSPOTR_CHECK,data:1},{label:Language.PLAT_CHECK,data:2},{label:Language.ALL_CHECK,data:3}]);
+			/**
+			 * 当舞台大小改变时，同步缩放某些组件的大小
+			 */
+			public function resize(w:Number, h:Number):void
+			{
+				this.height = Global.MODULE_HEIGHT + Global.getChangeHeight();
+				this.width = Global.MODULE_WIDTH + Global.getChangeWidth();
+				dg.width = 750 + Global.getChangeWidth();
+				dg.height = 451 + Global.getChangeHeight();
+			}
+			
+			
+			protected function dg_selectionChangeHandler(event:GridSelectionEvent):void
+			{
+				var data:Object=dg.selectedItem;
+				model.id=data.id;
+				model.user_level=data.level;
+				model.permission=data.permission;
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Label x="25" y="48" color="#AAAAAA" text="{Language.CHOOSE_SEARCH_WAY}："/>
+	<s:ComboBox id="searchWay" x="114" y="41" dataProvider="{searchList}" selectedIndex="2" initialize="searchWay.textInput.editable=false"/>
+	<s:Group x="305" y="19" width="137" height="29" id="searchChoose1" visible="true">
+		<s:TextInput id="searchIuput" x="2" y="22" textAlign="center" visible="true"/>
+	</s:Group>
+	<s:Button id="searchBtn" x="262" y="42" label="{Language.RESEARCH}"/>
+	<s:DataGrid id="dg" x="7" y="123" width="750" height="451" requestedRowCount="4" textAlign="center" selectionChange="dg_selectionChangeHandler(event)">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="passport" headerText="{Language.PASSPORT}"></s:GridColumn>
+				<s:GridColumn dataField="platName" headerText="{Language.PLAT}" ></s:GridColumn>
+				<s:GridColumn dataField="account_level" headerText="{Language.PASSPORT_LEVEL}" ></s:GridColumn>
+				<s:GridColumn dataField="regtime" headerText="{Language.REG_TIME}"></s:GridColumn>
+				<s:GridColumn dataField="fightpower" headerText="{Language.PERMISSION}" itemRenderer="tools.modules.passport.view.components.PermissionItem">
+				</s:GridColumn>
+				<s:GridColumn dataField="state" headerText="{Language.OPERATION}" itemRenderer="tools.modules.passport.view.components.OperationItem">
+				</s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<s:Button id="creatPsBtn" x="25" y="81" width="75." label="{Language.CREAT_PASSPORT}"/>
+	
+</s:Group>

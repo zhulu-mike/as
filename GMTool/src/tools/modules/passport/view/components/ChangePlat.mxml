@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="200">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayList;
+			[Bindable]
+			private var choosePlat:ArrayList=new ArrayList(Global.mainVO.platChosArr);
+			
+		]]>
+	</fx:Script>
+	<s:Panel x="0" y="0" width="400" height="200" title="修改平台">
+		<s:ComboBox id="platChoose" x="147" y="42" dataProvider="{choosePlat}"/>
+		<s:Label x="76" y="47" text="平台选择："/>
+		<s:Button id="onSureBtn" x="92" y="102" width="75" label="确定"/>
+		<s:Button id="onCancelBtn" x="218" y="102" width="75" label="取消"/>
+	</s:Panel>
+</s:Group>

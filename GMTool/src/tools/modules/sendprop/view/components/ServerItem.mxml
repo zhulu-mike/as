@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				width="111" height="31" autoDrawBackground="true">
+	
+	<fx:Script>
+		<![CDATA[
+			import tools.events.DataEvent;
+			import tools.modules.sendprop.model.SendPropModel;
+			
+			public static const OP_EVENT:String = "OP_EVENT";
+			private var clickNum:int=1;
+			private var model:SendPropModel=SendPropModel.getInstance();
+			override public function set data(value:Object):void
+			{
+				super.data = value;
+				serveList.label = value.name;
+//				serveList.label = value.data + value.name;
+				serveList.selected=false;
+				this.owner.addEventListener(OP_EVENT,onSelect);
+			}
+			
+			protected function onSelect(event:tools.events.DataEvent):void
+			{
+				var select:Boolean = event.data as Boolean;
+				if(select)
+				{
+					serveList.selected=true;
+					if(model.serverList.indexOf(serveList.label)==-1)
+					{
+						model.serverList.push(serveList.label);
+					}
+					
+				}
+				else
+				{
+					model.range=Language.NO_CHOOSE_SERVER;
+					serveList.selected=false;
+				}
+				
+			}
+			
+			protected function serveList_changeHandler(event:Event):void
+			{
+				if(serveList.selected)
+				{
+					model.serverList.push(serveList.label);
+				}
+				else if(serveList.selected==false)
+				{
+					if(model.serverList.length>model.arrLength)
+					{
+						model.serverList.shift();
+					}
+					var num1:int=(model.serverList as Array).indexOf(serveList.label);
+					(model.serverList as Array).splice(num1,1);
+					
+					
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<s:CheckBox id="serveList" width="93" label="" change="serveList_changeHandler(event)" horizontalCenter="0" verticalCenter="0" selected="false"/>
+	
+</s:ItemRenderer>

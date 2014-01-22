@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="250">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:Panel x="0" y="0" width="400" height="250" title="{Language.COMPILE_ANNOUNCE}">
+		<s:TextArea id="contentText" x="10" y="16" width="379" height="155" prompt="{Language.LIMITED_NUMBER}" maxChars="50"/>
+		<s:Button id="onSureContent" x="98" y="184" width="75" label="{Language.SUBMIT}"/>
+		<s:Button id="onCloseBtn" x="233" y="184" width="75" label="{Language.ONCLOSE}"/>
+		<mx:ColorPicker id="selectColor" x="344" y="-28" width="39" selectedColor="#10A0D5"/>
+		<s:Label x="281" y="-23" text="{Language.ZANBUKAIFANG}："/>
+	</s:Panel>
+</s:Group>

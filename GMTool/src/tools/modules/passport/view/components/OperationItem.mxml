@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:GridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx" clipAndEnableScrolling="true">
+	
+	<fx:Script>
+		<![CDATA[
+			import tools.modules.passport.model.PassportModel;
+			
+			public static const CHANGE_PASSWORD:String = "CHANGE_PASSWORD";
+			public static const DELETE_ID:String = "DELETE_ID";
+			public static const CHANGE_PLAT:String = "CHANGE_PLAT";
+			private var model:PassportModel=PassportModel.getInstance();
+			override public function set data(value:Object):void
+			{
+				if(value==null)
+				{
+					return;
+				}
+				else
+				{
+					model.delId=value.id;
+					model.delLevel=value.level;
+				}
+				
+			}
+			
+			//修改密码
+			protected function changePsw_clickHandler(event:MouseEvent):void
+			{
+				this.owner.dispatchEvent(new Event(CHANGE_PASSWORD));
+			}
+			
+			protected function deleteBtn_clickHandler(event:MouseEvent):void
+			{
+				this.owner.dispatchEvent(new Event(DELETE_ID));
+			}
+			
+			protected function changeplat_clickHandler(event:MouseEvent):void
+			{
+				this.owner.dispatchEvent(new Event(CHANGE_PLAT));
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Button id="deleteBtn" width="75" label="{Language.DELETE}" horizontalCenter="-110" verticalCenter="0" click="deleteBtn_clickHandler(event)"/>
+	<s:Button id="changePsw" horizontalCenter="-35" verticalCenter="0" click="changePsw_clickHandler(event)" label="{Language.CHANGE_PSW}"/>
+	<!---<s:Button id="changeplat" horizontalCenter="35" verticalCenter="0" click="changeplat_clickHandler(event)" label="{Language.CHANGE_PLAT}"/>-->
+	
+</s:GridItemRenderer>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="770" height="582"
+		 implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import org.puremvc.as3.multicore.core.Model;
+			
+			import spark.events.GridSelectionEvent;
+			
+			import tools.common.vo.SkillBaseInfo;
+			import tools.common.vo.SoulFosterVO;
+			import tools.managers.SkillManager;
+			import tools.managers.SoulLevelManager;
+			import tools.modules.fightspirit.model.FighterSpiritModel;
+			
+			private var model:FighterSpiritModel=FighterSpiritModel.getInstance();
+			
+			[Bindable]
+			private var searchList:ArrayList = new ArrayList([{label:Language.JUESEMINGCHAXUN,data:1},{label:Language.PINGTAIIDCHAXUN,data:2},{label:Language.YOUXIIDCHAXUN,data:3}]);
+			/**
+			 * 当舞台大小改变时，同步缩放某些组件的大小
+			 */
+			public function resize(w:Number, h:Number):void
+			{
+				this.height = Global.MODULE_HEIGHT + Global.getChangeHeight();
+				this.width = Global.MODULE_WIDTH + Global.getChangeWidth();
+				dg.height = 450 + Global.getChangeHeight();
+				dg.width = 375 + Global.getChangeWidth();
+				gp.x=dg.width+10;
+				gp.height = dg.height;
+			}
+			
+			
+			protected function dg_selectionChangeHandler(event:GridSelectionEvent):void
+			{
+				var data:Object=dg.selectedItem;
+				var data1:Object=data.user_parter_base;//
+				var data2:Object=data1.v_hero_skill;//技能
+				var skillBase:SkillBaseInfo;
+				var soulFoster:SoulFosterVO;
+				var soulf:int=0;
+				soulFoster = SoulLevelManager.getLevelVO(data.rankid);
+				skillBase = SkillManager.getInstance().getZhanHunSkillLevelVO(data2[0].id,data2[0].level);
+				nameTxt.text=data.name;//名字
+				soulf=soulFoster.changePro+data.transrate;//总转化率
+				skill.text=skillBase.name;//技能配置id
+//				skillType.text=skillBase.type;//高攻近战？
+				level.text=data.level;//等级
+				////可转化为主角加成
+				hpUp.text=String(soulf*(data1.max_hp));////血量？
+				attackUp.text=String(soulf*(data1.attack));//攻击
+				defenseUp.text=String(soulf*(data1.defense));//攻击
+				critUp.text=String(soulf*(data1.crit));//暴击等级
+				kill_levelUp.text=String(soulf*(data.kill_level));//暴击等级
+				dcpUp.text=String(soulf*(data1.dcp));//抗暴
+				////
+				exp.text=data.exp+" / "+data.nextexp;
+				fightpower.text=data1.fightpower;
+				rankid.text=data.rankid;
+				attack.text=data1.attack;
+				defense.text=data1.defense;
+				crit.text=data1.crit;
+				kill_level.text=data.kill_level;
+				dcp.text=data1.dcp;
+				mspd.text=data1.mspd;
+				if(data1.isheritage==0)
+				{
+					beingheritage.text=Language.WEICHUANCHENG;
+				}
+				else if(data1.isheritage==1)
+				{
+					beingheritage.text=Language.CHUANCHENGGUOLAI;
+				}
+				else
+				{
+					beingheritage.text=Language.BEICHUANCHENG;
+				}
+				HP.text=data1.cur_hp+"/"+data1.max_hp;//血量
+				power.text=data.power;
+				ep.text=data.ep;
+				bp.text=data.bp;
+//				attack.text=
+				model.gameuid=data.uid;
+				model.partnerid=data.id;
+				model.is_main=data.ismain;
+				
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Label x="25" y="60" color="#AAAAAA" text="{Language.CHOOSE_SEARCH_WAY}"/>
+	<s:ComboBox id="searchWay" x="114" y="53" dataProvider="{searchList}" selectedIndex="0" initialize="searchWay.textInput.editable=false"/>
+	<s:Group x="305" y="19" width="137" height="29" id="searchChoose1" visible="true">
+		<s:TextInput id="searchIuput" x="2" y="34" textAlign="center"/>
+	</s:Group>
+	<s:Button id="searchBtn" x="262" y="54" label="{Language.RESEARCH}"/>
+	<s:DataGrid id="dg" x="7" y="123" width="375" height="450" requestedRowCount="4" editable="true" textAlign="center" selectionChange="dg_selectionChangeHandler(event)">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="uid" headerText="ID"></s:GridColumn>
+				<s:GridColumn dataField="name" headerText="{Language.FIGHTER_SOUL_NAME}" ></s:GridColumn>
+				<s:GridColumn dataField="careerType" headerText="{Language.FIGHTER_SOUL_TYPE}" ></s:GridColumn>
+				<s:GridColumn dataField="level" headerText="{Language.LEVEL}"></s:GridColumn>
+				<s:GridColumn dataField="fightpower" headerText="{Language.FIGHTER_POWER}"></s:GridColumn>
+				<s:GridColumn dataField="state" headerText="{Language.STATE}"></s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<s:Group id="gp" x="389" y="123" width="375" height="450">
+		<s:Label x="21" y="22" color="#AAAAAA" text="{Language.FIGHTER_INFO}"/>
+		<s:Label x="21" y="43" color="#AAAAAA" text="{Language.FIGHTER_SOUL_NAME}："/>
+		<s:Label id="nameTxt" x="69" y="44" color="#AAAAAA"/>
+		<s:Label x="151" y="43" color="#AAAAAA" text="{Language.TYPE}："/>
+		<s:Label id="skillType" x="189" y="43" color="#AAAAAA"/>
+		<s:Label x="256" y="43" color="#AAAAAA" text="{Language.QUALITY}："/>
+		<s:Label id="quality" x="298" y="43" color="#AAAAAA"/>
+		<s:Label x="22" y="117" color="#AAAAAA" text="{Language.BASE_INFO}"/>
+		<s:Label x="22" y="136" color="#AAAAAA" text="{Language.HP}："/>
+		<s:Label id="HP" x="76" y="137" color="#AAAAAA"/>
+		<s:Label x="21" y="194" color="#AAAAAA" text="{Language.TILI}："/>
+		<s:Label id="bp" x="61" y="195" color="#AAAAAA"/>
+		<s:Label x="21" y="155" color="#AAAAAA" text="{Language.POWER}："/>
+		<s:Label id="power" x="60" y="156" color="#AAAAAA"/>
+		<s:Label x="21" y="175" color="#AAAAAA" text="{Language.NAILI}："/>
+		<s:Label id="ep" x="60" y="176" color="#AAAAAA"/>
+		<s:Label x="22" y="225" color="#AAAAAA" text="{Language.FIGHTER_INFO}"/>
+		<s:Label x="22" y="245" color="#AAAAAA" text="{Language.ONATTACK}："/>
+		<s:Label id="attack" x="57" y="247" color="#AAAAAA"/>
+		<s:Label x="23" y="267" color="#AAAAAA" text="{Language.BISHADENGJI}："/>
+		<s:Label id="kill_level" x="84" y="268" color="#AAAAAA"/>
+		<s:Label x="135" y="268" color="#AAAAAA" text="{Language.KANGBAODENGJI}："/>
+		<s:Label id="dcp" x="193" y="269" color="#AAAAAA"/>
+		<s:Label x="246" y="268" color="#AAAAAA" text="{Language.MOVE_SPEED}："/>
+		<s:Label id="mspd" x="304" y="270" color="#AAAAAA"/>
+		<s:Label x="165" y="245" color="#AAAAAA" text="{Language.ONDEFENSE}："/>
+		<s:Label id="defense" x="202" y="247" color="#AAAAAA"/>
+		<s:Label x="259" y="245" color="#AAAAAA" text="{Language.BAOJIDENGJI}："/>
+		<s:Label id="crit" x="315" y="246" color="#AAAAAA"/>
+		<s:Label x="24" y="303" color="#AAAAAA" text="{Language.TRANSE_FOR_USER}"/>
+		<s:Label x="24" y="323" color="#AAAAAA" text="{Language.HP}："/>
+		<s:Label id="hpUp" x="74" y="323" color="#AAAAAA"/>
+		<s:Label x="25" y="345" color="#AAAAAA" text="{Language.BAOJIDENGJI}："/>
+		<s:Label id="critUp" x="86" y="346" color="#AAAAAA"/>
+		<s:Label x="137" y="346" color="#AAAAAA" text="{Language.BISHADENGJI}："/>
+		<s:Label id="kill_levelUp" x="195" y="347" color="#AAAAAA"/>
+		<s:Label x="248" y="346" color="#AAAAAA" text="{Language.KANGBAO}："/>
+		<s:Label id="dcpUp" x="306" y="348" color="#AAAAAA"/>
+		<s:Label x="167" y="323" color="#AAAAAA" text="{Language.ONATTACK}："/>
+		<s:Label id="attackUp" x="204" y="325" color="#AAAAAA"/>
+		<s:Label x="261" y="323" color="#AAAAAA" text="{Language.ONDEFENSE}："/>
+		<s:Label id="defenseUp" x="317" y="324" color="#AAAAAA"/>
+		<s:Label x="21" y="67" color="#AAAAAA" text="{Language.SKILL}："/>
+		<s:Label id="skill" x="55" y="68" color="#AAAAAA"/>
+		<s:Label x="125" y="67" color="#AAAAAA" text="{Language.LEVEL}："/>
+		<s:Label id="level" x="166" y="68" color="#AAAAAA"/>
+		<s:Label x="221" y="67" color="#AAAAAA" text="{Language.EXP}："/>
+		<s:Label id="exp" x="263" y="68" color="#AAAAAA"/>
+		<s:Label x="22" y="90" color="#AAAAAA" text="{Language.FIGHTER_POWER}："/>
+		<s:Label id="fightpower" x="70" y="91" color="#AAAAAA"/>
+		<s:Label x="141" y="90" color="#AAAAAA" text="{Language.PINGJIE}："/>
+		<s:Label id="rankid" x="182" y="91" color="#AAAAAA"/>
+		<s:Label x="215" y="90" color="#AAAAAA" text="{Language.SHIFOUCHUANCHENG}："/>
+		<s:Label id="beingheritage" x="300" y="90" color="#AAAAAA"/>
+		<s:Button id="equipBtn" x="46" y="398" width="75" label="{Language.EQUIP}"/>
+		<s:Button id="supgasBtn" x="159" y="398" width="75" label="{Language.SUPER_GAS}"/>
+	</s:Group>
+</s:Group>

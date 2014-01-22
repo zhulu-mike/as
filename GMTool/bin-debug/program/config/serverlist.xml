@@ -1,0 +1,18 @@
+<data>
+<!--
+	一条server记录表示一个服务器。
+	id:服务器序号。
+	name:服务器名称。
+	
+-->
+	<server id="1" name="服务器名称"/>
+	<server id="2" name="服务器名称"/>
+	<server id="3" name="服务器名称"/>
+	<server id="4" name="服务器名称"/>
+	<server id="5" name="服务器名称"/>
+	<server id="6" name="服务器名称"/>
+	<server id="7" name="服务器名称"/>
+	<server id="8" name="服务器名称"/>
+	<server id="9" name="服务器名称"/>
+	
+</data>

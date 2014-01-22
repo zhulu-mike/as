@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="770" height="582"
+		 implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import spark.events.GridSelectionEvent;
+			
+			import tools.modules.announce.model.AnnounceModel;
+			[Bindable]
+			private var monthName:Array = [Language.JANUARY,Language.FEBRUARY,Language.MARCH,Language.APRIL,
+				Language.MAY,Language.JUNE,Language.JULY,Language.AUGUST,Language.SEPTEMBER,Language.OCTOBER,Language.NOVEMBER,Language.DECEMBER];
+			[Bindable]
+			private var weekName:Array = [Language.DAY,Language.ONE,Language.TWO,Language.THREE,Language.FOUR,Language.FIVE,Language.SIX];
+			[Bindable]
+			private var number:ArrayList = new ArrayList([{label:Language.ONCE,data:1},{label:Language.TWICE,data:2},{label:Language.THRICE,data:3},{label:Language.FOURTIMES,data:4},{label:Language.FIVETIMES,data:5}]);
+			private var model:AnnounceModel=AnnounceModel.getInstance();
+			/**
+			 * 当舞台大小改变时，同步缩放某些组件的大小
+			 */
+			public function resize(w:Number, h:Number):void
+			{
+				this.height = Global.MODULE_HEIGHT + Global.getChangeHeight();
+				this.width = Global.MODULE_WIDTH + Global.getChangeWidth();
+				dg.width = 750 + Global.getChangeWidth();
+				dg.height = 376 + Global.getChangeHeight();
+			}
+			
+			protected function dg_selectionChangeHandler(event:GridSelectionEvent):void
+			{
+				var data:Object=dg.selectedItem;
+				model.deleteId=data.id;
+			}
+			
+		]]>
+	</fx:Script>
+	<s:DataGrid id="dg" x="10" y="196" width="750" height="376" requestedRowCount="4" textAlign="center" selectionChange="dg_selectionChangeHandler(event)">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="id" headerText="{Language.NUMBER}" minWidth="300" itemRenderer="tools.modules.announce.view.components.AnnounceItem"></s:GridColumn>
+				<s:GridColumn dataField="zstate" headerText="{Language.STATE}" minWidth="150"></s:GridColumn>
+				<s:GridColumn dataField="operation" headerText="{Language.OPERATION}" minWidth="150" itemRenderer="tools.modules.announce.view.components.AnnOperationItem"></s:GridColumn>
+				<s:GridColumn dataField="ctime" headerText="{Language.TIME}" minWidth="200"></s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<s:Button id="addAnnounceBtn" x="16" y="15" width="100" label="{Language.ADD_ANNOUNCE}"/>
+	<s:ComboBox id="selectNum" x="16" y="51" width="75" dataProvider="{number}" selectedIndex="0"/>
+	<s:CheckBox id="ifInsertChat" x="18" y="91" label="{Language.IFINSERT_CHART}" selected="false"/>
+	<mx:DateField id="btime" x="106" y="121" width="186" color="#FFFFFF" dayNames="{weekName}" formatString="YYYY-MM-DD" monthNames="{monthName}"/>
+	<mx:DateField id="etime" x="409" y="120" width="193" height="24" color="#FFFFFF" dayNames="{weekName}" formatString="YYYY-MM-DD" monthNames="{monthName}"/>
+	<s:Label x="20" y="126" text="{Language.EFFECTIVE_BTIME}："/>
+	<s:Label x="312" y="125" text="{Language.EFFECTIVE_ETIME}："/>
+	<s:Button id="subminAnnBtn" x="633" y="121" width="75" label="{Language.SUBMIT}"/>
+	<s:TextInput id="showAnnounce" x="124" y="14" prompt="{Language.ANNOUNCE_PREVIEW}"/>
+	<s:TextInput id="bHours" x="106" y="152" width="42" text="0" maxChars="2"/>
+	<s:TextInput id="bMinute" x="170" y="152" width="42" text="0" maxChars="2"/>
+	<s:TextInput id="bSeconds" x="234" y="152" width="42" text="0" maxChars="2"/>
+	<s:Label x="155" y="159" text="{Language.HOURS}"/>
+	<s:Label x="219" y="159" text="{Language.MINUTES}"/>
+	<s:Label x="282" y="159" text="{Language.SECONDS}"/>
+	<s:TextInput id="eHours" x="413" y="152" width="42" text="0" maxChars="2"/>
+	<s:TextInput id="eMinute" x="477" y="152" width="42" text="0" maxChars="2"/>
+	<s:TextInput id="eSeconds" x="541" y="152" width="42" text="0" maxChars="2"/>
+	<s:Label x="462" y="159" text="{Language.HOURS}"/>
+	<s:Label x="526" y="159" text="{Language.MINUTES}"/>
+	<s:Label x="589" y="159" text="{Language.SECONDS}"/>
+
+</s:Group>

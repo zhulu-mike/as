@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="770" height="500"
+		 implements="tools.common.resize.IResize">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayList;
+			
+			import tools.modules.sendprop.model.SendPropModel;
+			private var model:SendPropModel=SendPropModel.getInstance();
+			public function resize(w:Number, h:Number):void
+			{
+				this.height = Global.MODULE_HEIGHT + Global.getChangeHeight();
+				this.width = Global.MODULE_WIDTH + Global.getChangeWidth();
+				panel.height = 482 + Global.getChangeHeight();
+				panel.width = 775 + Global.getChangeWidth();
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:Panel x="0" y="0" id="panel" width="770" height="500">
+		<s:Label id="title" x="10" y="-21" text="{Language.MAKE_SEND_LIST}"/>
+		<s:Label x="10" y="24" text="{Language.YUANBAO}："/>
+		<s:TextInput id="yuanbaoInput" x="55" y="19"/>
+		<s:Label x="267" y="24" text="{Language.MONEY}："/>
+		<s:TextInput id="tongMonInput" x="310" y="19"/>
+		<s:Label x="536" y="24" text="{Language.TILI}："/>
+		<s:TextInput id="bpInput" x="579" y="19"/>
+		<s:Label x="10" y="68" text="{Language.PROP}："/>
+		<s:List id="sysPropList" x="55" y="68" width="288" height="163" itemRenderer="tools.modules.sendprop.view.components.AddSelectItem">
+			<s:layout>
+				<s:TileLayout>
+				</s:TileLayout>
+			</s:layout>
+		</s:List>
+		<s:Label x="9" y="254" text="{Language.EQUIP}："/>
+		<s:List id="sysEquipList" x="53" y="253" width="290" height="166" itemRenderer="tools.modules.sendprop.view.components.AddSelectItem">
+			<s:layout>
+				<s:TileLayout>
+				</s:TileLayout>
+			</s:layout>
+		</s:List>
+		<s:List id="addPropList" x="423" y="68" width="293" height="163" itemRenderer="tools.modules.sendprop.view.components.AddPropItem">
+			<s:layout>
+				<s:TileLayout>
+				</s:TileLayout>
+			</s:layout>
+		</s:List>
+		<s:List id="addEquipList" x="424" y="253" width="292" height="166" itemRenderer="tools.modules.sendprop.view.components.AddEquipItem">
+			<s:layout>
+				<s:TileLayout>
+				</s:TileLayout>
+			</s:layout>
+		</s:List>
+		<s:Button id="addPropBtn" x="351" y="139" width="65" label="{Language.ADD}"/>
+		<s:Button id="addEquipBtn" x="351" y="322" width="65" label="{Language.ADD}"/>
+		<s:Button id="sureBtn" x="263" y="436" width="75" label="{Language.ONSURE}"/>
+		<s:Button id="onClose" x="433" y="436" width="75" label="{Language.ONCLOSE}"/>
+	</s:Panel>
+</s:Group>

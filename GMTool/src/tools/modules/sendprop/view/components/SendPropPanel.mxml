@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="770" height="582"
+		 implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayList;
+			
+			import spark.events.GridSelectionEvent;
+			import spark.events.TextOperationEvent;
+			
+			import tools.modules.sendprop.model.SendPropModel;
+			private var model:SendPropModel=SendPropModel.getInstance();
+			[Bindable]
+			private var choSend:ArrayList = new ArrayList([{label:Language.ANJUESEMING,data:1},{label:Language.WANJIAPINGTAIID,data:2}]);
+			[Bindable]
+			private var choRang:ArrayList = new ArrayList([{label:Language.SINGLE_PLAYER,data:1},{label:Language.MORE_PLAYER,data:2},{label:Language.SERVER,data:3}]);
+			public function resize(w:Number, h:Number):void
+			{
+				this.height = Global.MODULE_HEIGHT + Global.getChangeHeight();
+				this.width = Global.MODULE_WIDTH + Global.getChangeWidth();
+				dg.height = 260 + Global.getChangeHeight();
+				dg.width = 750 + Global.getChangeWidth();
+				
+				dg2.height = 260 + Global.getChangeHeight();
+				dg2.width = 750 + Global.getChangeWidth();
+			}
+				
+			protected function sendRangeInput_changeHandler(event:TextOperationEvent):void
+			{
+				model.simplePlayer=sendRangeInput.text;
+			}
+			
+			protected function sendInputMuch_changeHandler(event:TextOperationEvent):void
+			{
+				model.morePlayer=sendInputMuch.text;
+			}
+			
+			protected function dg_selectionChangeHandler(event:GridSelectionEvent):void
+			{
+				var data:Object=dg.selectedItem;
+				model.deleteId=data.apply_id;
+				
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Label x="22" y="25" text="{Language.SEND_WAY_CHOOSE}："/>
+	<s:Label x="22" y="70" text="{Language.SEND_RANGE_CHOOSE}："/>
+	<s:ComboBox id="choSendWay" x="118" y="19" dataProvider="{choSend}" selectedIndex="0" initialize="choSendWay.textInput.editable=false"/>
+	<s:ComboBox id="choRange" x="118" y="65" dataProvider="{choRang}" selectedIndex="0" initialize="choRange.textInput.editable=false"/>
+	<s:Label x="22" y="114" text="{Language.SEND_RANGE_INPUT}："/>
+	<s:Label x="22" y="280" text="{Language.SEND_LIST}："/>
+	<s:TextInput id="sendRangeInput" x="119" y="109" visible="true" change="sendRangeInput_changeHandler(event)"/>
+	<s:Label id="choServer" x="119"  y="113" color="#00FF00" text="{Language.CHECK_ALL_SERVER}" textDecoration="underline" buttonMode="true" visible="false"/>
+	<s:Button id="makeList" x="89" y="274" width="75" label="{Language.MAKE_LIST}"/>
+	<s:TextArea id="sendInputMuch" x="118" y="110" visible="false" change="sendInputMuch_changeHandler(event)"/>
+	<s:Label id="sendThingList" x="256" y="280" text="{Language.YUANBAO}……"/>
+	<s:Button id="finalSend" x="173" y="274" width="75" label="{Language.SEND}"/>
+	<s:DataGrid id="dg" x="10" y="311" width="750" height="260" visible="false" requestedRowCount="4" selectionChange="dg_selectionChangeHandler(event)" textAlign="center">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="range" headerText="{Language.PLAYER}" itemRenderer="tools.modules.sendprop.view.components.UserLabelItem"></s:GridColumn>
+				<s:GridColumn dataField="reason" headerText="{Language.TITLE}"></s:GridColumn>
+				<s:GridColumn dataField="list" headerText="{Language.THING_LIST}" itemRenderer="tools.modules.sendprop.view.components.ThingListItem"></s:GridColumn>
+				<s:GridColumn dataField="time" headerText="{Language.APPLICATION_TIME}"></s:GridColumn>
+				<s:GridColumn dataField="operation" headerText="{Language.OPERATION}" itemRenderer="tools.modules.sendprop.view.components.DeleteApplication"></s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<s:DataGrid id="dg2" x="10" y="311" width="750" height="260" visible="true" requestedRowCount="4" textAlign="center">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="range" headerText="{Language.PLAYER}"></s:GridColumn>
+				<s:GridColumn dataField="list" headerText="{Language.THING_LIST}" itemRenderer="tools.modules.sendprop.view.components.ThingListItem"></s:GridColumn>
+				<s:GridColumn dataField="time" headerText="{Language.SEND_TIME}"></s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<s:Label id="areaTips" x="319" y="115" width="113" text="{Language.INPUT_TIPS}"/>
+	<s:Button id="titleInput" x="18" y="153" width="95" label="{Language.SEND_PROP_TITLE}"/>
+</s:Group>

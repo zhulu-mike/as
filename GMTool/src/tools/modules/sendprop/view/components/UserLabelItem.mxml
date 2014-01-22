@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:GridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+					xmlns:s="library://ns.adobe.com/flex/spark"
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					width="123" clipAndEnableScrolling="true">
+	
+	<fx:Script>
+		<![CDATA[
+			override public function set data(value:Object):void {
+				if (value == null)
+					return;
+				if(value.range.length>10)
+				{
+					lblData.text = (value.range as String).substr(0,10)+"……";
+				}
+				else
+				{
+					lblData.text = value.range;
+				}
+				lblData.toolTip = value.range;
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Label id="lblData" textAlign="center" horizontalCenter="-2" top="10" left="50"/>
+	
+</s:GridItemRenderer>

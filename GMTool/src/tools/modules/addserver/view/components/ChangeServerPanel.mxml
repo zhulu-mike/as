@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="750" height="300">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:Panel x="-1" y="0" width="750" height="300" title="{Language.CHECK_CHANGE_SERVER}">
+		<s:Label x="12" y="53" text="{Language.SERVER_IP}："/>
+		<s:TextInput id="platIp" x="77" y="47" width="156"/>
+		<s:Label x="494" y="15" text="{Language.SERVER_DUANKOU}："/>
+		<s:TextInput id="platPort" x="578" y="10" width="156"/>
+		<s:Label x="303" y="52" text="{Language.SERVER_ADDRESS}："/>
+		<s:TextInput id="dbhost" x="425" y="47" width="214"/>
+		<s:Label x="15" y="96" text="{Language.SERVER_NAME}："/>
+		<s:TextInput id="dbuser" x="133" y="90" width="100"/>
+		<s:Label x="250" y="96" text="{Language.SERVER_DB_PSW}："/>
+		<s:TextInput id="dbpwd" x="363" y="90" width="124"/>
+		<s:Label x="495" y="96" text="{Language.SERVER_DB_NAME}："/>
+		<s:TextInput id="dbname" x="591" y="90" width="143"/>
+		<s:Label x="15" y="142" text="{Language.SERVER_DB_DUANKOU}："/>
+		<s:TextInput id="dbport" x="133" y="136" width="100"/>
+		<s:Label x="15" y="187" text="{Language.SERVER_MAINDB_PSW}："/>
+		<s:TextInput id="maindbpwd" x="133" y="181" width="100"/>
+		<s:Label x="499" y="141" text="{Language.SERVER_MAINDB_USERNAME}："/>
+		<s:TextInput id="maindbuser" x="639" y="136" width="95"/>
+		<s:Label x="237" y="142" text="{Language.SERVER_MAINDB_ADDRESS}："/>
+		<s:TextInput id="maindbhost" x="361" y="136" width="126"/>
+		<s:Label x="249" y="186" text="{Language.SERVER_MAINDB_NAME}："/>
+		<s:TextInput id="maindbname" x="361" y="181" width="126"/>
+		<s:Label x="497" y="186" text="{Language.SERVER_MAINDB_DUANKOU}："/>
+		<s:TextInput id="maindbport" x="635" y="181" width="98"/>
+		<s:Label x="10" y="15" text="{Language.SERVER_MINGCHENG}："/>
+		<s:TextInput id="serverName" x="82" y="10" width="156"/>
+		<s:Label x="265" y="15" text="{Language.PLAT_ID}："/>
+		<s:TextInput id="platId" x="318" y="10" width="164"/>
+		<s:Button id="onSureBtn" x="244" y="225" width="100" label="{Language.SURE_CHANGE}"/>
+		<s:Button id="onCloseBtn" x="361" y="225" width="100" label="{Language.ONCLOSE}"/>
+	</s:Panel>
+</s:Group>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   minWidth="1000" minHeight="600" backgroundAlpha="0.5"
+			   addedToStage="application1_creationCompleteHandler(event)" backgroundColor="#000000"
+			   implements="tools.common.resize.IResize">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import tools.events.PipeEvent;
+			import tools.managers.LayerManager;
+			import tools.managers.ModuleBindManager;
+			import tools.managers.NetWorkManager;
+			import tools.managers.PipeManager;
+			import tools.managers.ResizeManager;
+			
+			
+			protected function application1_creationCompleteHandler(event:Event):void
+			{
+				// TODO Auto-generated method stub
+				Global.mainServerIP = this.parameters["mainServerIP"];
+				Global.mainServerPort = this.parameters["mainServerPort"];
+				Global.fileBaseFolder = this.parameters["fileBaseFolder"];
+				Global.ins = this;
+				Security.allowDomain("*");
+				Security.allowInsecureDomain("*");
+				ModuleBindManager.init();
+				ResizeManager.init(stage);
+				ResizeManager.registerResize(this);
+				this.addElement(LayerManager.uiLayer);
+				this.addElement(LayerManager.higherLayer);
+				this.addElement(LayerManager.topestLayer);
+				PipeManager.sendMsg(PipeEvent.STARTUP_LOADRES);
+				NetWorkManager.init(stage);
+				Security.loadPolicyFile(Global.fileBaseFolder + "crossDomain.xml");
+				Security.loadPolicyFile("xmlsocket://" + Global.mainServerIP + ":843");
+				Security.loadPolicyFile("xmlsocket://" + Global.mainServerIP + ":" + Global.mainServerPort );
+			}
+			
+			public function resize(w:Number, h:Number):void
+			{
+				Global.stageScaleX = w / Global.STAGE_WIDTH;
+				Global.stageScaleY = h / Global.STAGE_HEIGHT;
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Style source="common.css"/>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	
+	</fx:Declarations>
+	
+</s:Application>

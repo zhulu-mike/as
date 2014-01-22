@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="435" height="450" implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import spark.events.GridSelectionEvent;
+			
+			import tools.managers.EquipManager;
+			
+			
+			public function resize(w:Number, h:Number):void
+			{
+				this.x = (w - this.width) >> 1;
+				this.y = (h - this.height) >> 1;
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Panel width="435" height="450">
+		<s:DataGrid id="skillDg" x="11" y="5" width="412" height="363" requestedRowCount="4"
+					textAlign="center">
+			<s:columns>
+				<s:ArrayList>
+					<s:GridColumn dataField="skillName" headerText="{Language.SKILL_NAME}" ></s:GridColumn>
+					<s:GridColumn dataField="skillLev" headerText="{Language.SKILL_LEVEL}" ></s:GridColumn>
+					<s:GridColumn dataField="skillType" headerText="{Language.SKILL_TYPE}" ></s:GridColumn>
+				</s:ArrayList>
+			</s:columns>
+		</s:DataGrid>
+		<s:Label x="13" y="-22" text="{Language.PLAYER_SKILL_INFO}"/>
+		<s:Button id="closeBtn" x="174" y="381" width="75" label="{Language.ONCLOSE}"/>
+	</s:Panel>
+</s:Group>

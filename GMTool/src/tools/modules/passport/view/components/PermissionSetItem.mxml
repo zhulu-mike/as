@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="228" height="30">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayList;
+			
+			public var itemID:int = 0;
+			
+			[Bindable]
+			private var choosePer:ArrayList = new ArrayList([{label:Language.ALL_READ_WRITE,data:3},{label:Language.ALL_READ,data:2},{label:Language.ALL_NO_READ,data:1}]);
+			
+			public function setData(data:Object):void
+			{
+				title.text = data.label;
+				itemID = data.data;
+			}
+		]]>
+	</fx:Script>
+	<s:Label x="3" y="10" text="{Language.BIAOQIAN}" id="title"/>
+	<s:ComboBox x="91" width="132" verticalCenter="0" dataProvider="{choosePer}" id="combox"/>
+</s:Group>

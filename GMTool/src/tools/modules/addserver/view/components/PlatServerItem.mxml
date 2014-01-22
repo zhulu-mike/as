@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				width="188" height="72" autoDrawBackground="true">
+	
+	<fx:Script>
+		<![CDATA[
+			public static const CHANGE_SERVER:String="CHANGE_SERVER";
+			override public function set data(value:Object):void
+			{
+				super.data = value;
+				serveList.text = value.name;
+			}
+			
+			/**点击查看弹出修改服务器界面*/
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				this.owner.dispatchEvent(new Event(CHANGE_SERVER));
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Label id="serveList" width="123" height="25" fontSize="14" horizontalCenter="47"
+			 verticalCenter="1"/>
+	<s:Button x="32" y="45" width="125" label="{Language.CHECK_CHANGE}" click="button1_clickHandler(event)"/>
+	<s:Label x="25" y="22" fontSize="14" text="{Language.SERVER}："/>
+	
+</s:ItemRenderer>

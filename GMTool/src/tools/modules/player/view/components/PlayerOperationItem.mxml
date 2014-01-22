@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:GridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+					xmlns:s="library://ns.adobe.com/flex/spark"
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					width="323" height="22" clipAndEnableScrolling="true">
+	
+	<fx:Script>
+		<![CDATA[
+			public static const FORBID_PASSPORT:String="FORBID_PASSPORT";
+			public static const FORBID_SPEAK:String="FORBID_SPEAK";
+			public static const KICK_PLAYER:String="KICK_PLAYER";
+			
+			override public function set data(value:Object):void
+			{
+				if(value!=null)
+				{
+					levelLabel.text=value.level;
+					if(value.ifForbidPass==1)
+					{
+						forbid_Passport.label=Language.UNFORBID_PASS;
+					}
+					else
+					{
+						forbid_Passport.label=Language.FORBID_PASSPORT;
+					}
+					
+					if(value.ifForbidSpeak==2)
+					{
+						forbid_Speak.label=Language.UNFORBID_SPEAK;
+					}
+					else
+					{
+						forbid_Speak.label=Language.FORBID_SPEAK;
+					}
+				}
+				
+			}
+			
+			/**封号指令发送*/
+			protected function forbid_Passport_clickHandler(event:MouseEvent):void
+			{
+				this.owner.dispatchEvent(new Event(FORBID_PASSPORT));
+			}
+			
+			/**禁言指令发送*/
+			protected function forbid_Speak_clickHandler(event:MouseEvent):void
+			{
+				this.owner.dispatchEvent(new Event(FORBID_SPEAK));
+			}
+			
+			/**踢人指令发送*/
+			protected function kick_Player_clickHandler(event:MouseEvent):void
+			{
+				this.owner.dispatchEvent(new Event(KICK_PLAYER));
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Button id="forbid_Passport" width="75" label="{Language.FORBID_PASSPORT}" horizontalCenter="-51" verticalCenter="0" click="forbid_Passport_clickHandler(event)"/>
+	<s:Button id="forbid_Speak" width="75" label="{Language.FORBID_SPEAK}" horizontalCenter="24"
+			  verticalCenter="0" click="forbid_Speak_clickHandler(event)"/>
+	<s:Button id="kick_Player" width="75" label="{Language.KICK_PLAYER}" horizontalCenter="99"
+			  verticalCenter="0" click="kick_Player_clickHandler(event)"/>
+	<s:Label y="7" horizontalCenter="-132" text="{Language.LEVEL}："/>
+	<s:Label id="levelLabel" y="8" horizontalCenter="-106"/>
+	
+</s:GridItemRenderer>

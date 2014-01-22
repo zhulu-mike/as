@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:components="tools.modules.passport.view.components.*"
+		 width="770" height="582" implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+		<s:RadioButtonGroup id="radiogroup1" selectedValue="0"/>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayList;
+			import mx.controls.Alert;
+			
+			import spark.events.GridSelectionEvent;
+			import spark.events.TextOperationEvent;
+			
+			import tools.common.staticdata.EquipPosition;
+			import tools.managers.EquipManager;
+			import tools.modules.passport.model.PassportModel;
+			
+			[Bindable]
+			private var choosAcount:ArrayList = new ArrayList([{label:Language.ZONG_ADMIN,data:1},{label:Language.ONE_LEVEL_ADMIN,data:2},{label:Language.TWO_LEVEL_ADMIN,data:3},{label:Language.THREE_LEVEL_ADMIN,data:4}]);
+			private var choosPeimiss:ArrayList = new ArrayList([{label:Language.ALL_READ_WRITE,data:3},{label:Language.ALL_READ,data:1},{label:Language.ALL_NO_READ,data:0}]);
+			private var model:PassportModel=PassportModel.getInstance();
+			[Bindable]
+			private var choosePlat:ArrayList = new ArrayList(model.platChossArr);
+			public function resize(w:Number, h:Number):void
+			{
+				this.x = (w - this.width) >> 1;
+				this.y = (h - this.height) >> 1;
+			}
+			
+			protected function passText_mouseFocusChangeHandler(event:FocusEvent):void
+			{
+				if(passText.text.length<6||passText.text.length>12)
+				{
+					tipsTxt.text=Language.ACCOUNT_TIPS;
+				}
+				else
+				{
+					tipsTxt.text=Language.CHANGDU_TIPS;
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Panel id="pn" x="2" y="1" width="770" height="582">
+		<s:Label id="showID" x="10" y="-22" text="{Language.CREAT_PASSPORT}"/>
+		<s:Label x="10" y="20" text="{Language.INPUT_PASSPORT}："/>
+		<s:TextInput id="passText" x="103" y="14" width="166" mouseFocusChange="passText_mouseFocusChangeHandler(event)"/>
+		<s:Label x="10" y="58" text="{Language.INPUT_PSW}："/>
+		<s:Label x="10" y="97" text="{Language.QING_CHOOSE_PLAT}："/>
+		<s:TextInput id="pswText" x="103" y="52" width="166"/>
+		<s:TextInput id="addPlatTxt" x="406" y="91" width="166"/>
+		<s:Label id="tipsTxt" x="287" y="20" text="{Language.CHANGDU_TIPS}"/>
+		<s:ComboBox id="chosPlat" x="103" y="92" dataProvider="{choosePlat}" initialize="chosPlat.textInput.editable=false"/>
+		<s:Label x="10" y="135" text="{Language.CHOOSE_ACCOUNT_LEVEL}："/>
+		<s:Label x="10" y="173" text="{Language.PERMISS_SET_UP}："/>
+		<s:ComboBox id="chosAcount" x="121" y="130" dataProvider="{choosAcount}" initialize="chosAcount.textInput.editable=false"/>
+		<s:Label x="269" y="97" text="{Language.ALSO_ADD_PLAT}"/>
+		<s:Button id="addPlatBtn" x="586" y="92" label="{Language.ADD}"/>
+		<s:Label x="281" y="135" text="{Language.ZONG_ADMIN_TIPS}"/>
+		<s:RadioButton x="90" y="171" label="{Language.ALL_READ_WRITE}" groupName="radiogroup1" value="1"/>
+		<s:RadioButton x="221" y="171" label="{Language.ALL_READ}" groupName="radiogroup1" value="2"/>
+		<s:RadioButton x="344" y="171" label="{Language.ALL_NO_READ}" groupName="radiogroup1" value="3"/>
+		<s:BorderContainer id="perBc" x="10" y="204" width="748" height="286">
+			<s:layout>
+				<s:TileLayout>
+				</s:TileLayout>
+			</s:layout>
+		</s:BorderContainer>
+		<s:Button id="sureBtn" x="264" y="507" width="75" label="{Language.ONSURE}"/>
+		<s:Button id="closeBtn" x="387" y="507" width="75" label="{Language.ONCLOSE}"/>
+	</s:Panel>
+</s:Group>

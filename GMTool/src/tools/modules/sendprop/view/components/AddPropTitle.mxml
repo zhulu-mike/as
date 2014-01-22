@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="300" height="190">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:Panel x="0" y="0" width="300" height="190" title="{Language.SEND_PROP_TITLE_WRITE}">
+		<s:Button id="onSureBtn" x="63" y="85" width="75" label="{Language.ONSURE}"/>
+		<s:Button id="onCancleBtn" x="173" y="85" width="75" label="{Language.ONCLOSE}"/>
+		<s:TextInput id="titleInput" x="95" y="40"/>
+		<s:Label x="52" y="46" text="{Language.TITLE}："/>
+	</s:Panel>
+</s:Group>

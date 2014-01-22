@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="500" height="450">
+	
+	<fx:Script>
+		<![CDATA[
+			import tools.events.DataEvent;
+			import tools.modules.sendprop.model.SendPropModel;
+			private var model:SendPropModel=SendPropModel.getInstance();
+			private var clickNum:int=1;
+			protected function allSelect_clickHandler(event:MouseEvent):void
+			{
+				model.serverList=[];
+				var selected:Boolean = allSelect.selected;
+				if (!selected)
+					model.serverList.length = 0;
+				serlist.dispatchEvent(new tools.events.DataEvent("OP_EVENT",false,false,selected));
+			}
+			
+			protected function sureBtn_clickHandler(event:MouseEvent):void
+			{
+				var item:Array=model.serverList;
+				var finalItem:Array=[];
+				var finalNum:Array=[];
+				for (var j:int = 0; j < item.length; j++) 
+				{
+					for (var k:int = 0; k < model.checkArr.length; k++) 
+					{
+						if(model.checkArr[k].label==item[j])
+						{
+							finalNum.push(model.checkArr[k].serverid);
+							finalItem.push(model.checkArr[k].label);
+						}
+					}
+					
+				}
+				var str:String='';
+				if(finalItem.length==model.arrLength)
+				{
+					model.range=Language.SELECT_ALL_SERVER;
+					for (var m:int = 0; m < finalNum.length-1; m++) 
+					{
+						model.rangeNum+=finalNum[m]+",";
+					}
+					model.rangeNum+=finalNum[finalNum.length-1];
+					return;
+				}
+				else if(finalItem.length==0)
+				{
+					model.range=Language.NO_CHOOSE_SERVER;
+				}
+				else
+				{
+					for (var i:int = 0; i < finalItem.length; i++) 
+					{
+						str+=String(finalItem[i])+",";
+					}
+					for (var x:int = 0; x < finalItem.length-1; x++) 
+					{
+						model.rangeNum+=finalNum[x]+",";
+					}
+					model.rangeNum+=finalNum[finalItem.length-1];
+					model.range=str;
+				}
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<s:Panel x="0" y="0" width="500" height="450">
+		<s:Label x="10" y="-21" text="{Language.CHECK_ALL_SERVER}："/>
+		<s:CheckBox id="allSelect" x="90" y="-21" label="全选" click="allSelect_clickHandler(event)"/>
+		<s:List id="serlist" x="10" y="10" width="478" height="348" itemRenderer="tools.modules.sendprop.view.components.ServerItem">
+			<s:layout>
+				<s:TileLayout>
+				</s:TileLayout>
+			</s:layout>
+		</s:List>
+		<s:Button id="sureBtn" x="153" y="370" width="75" label="{Language.ONSURE}" click="sureBtn_clickHandler(event)"/>
+		<s:Button id="closeBtn" x="254" y="370" width="75" label="{Language.ONCLOSE}"/>
+	</s:Panel>
+</s:Group>

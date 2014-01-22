@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="770" height="582"
+		 implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			/**
+			 * 当舞台大小改变时，同步缩放某些组件的大小
+			 */
+			public function resize(w:Number, h:Number):void
+			{
+				this.height = Global.MODULE_HEIGHT + Global.getChangeHeight();
+				this.width = Global.MODULE_WIDTH + Global.getChangeWidth();
+				dt.width = 750 + Global.getChangeWidth();
+				dt.height = 498 + Global.getChangeHeight();
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Button id="addPlayerCard" x="10" y="40" width="75" label="{Language.ADD}"/>
+	<s:Label x="10" y="20" text="{Language.CHECK_CARD_TYPE}"/>
+	<s:DataGrid id="dt" x="10" y="74" width="750" height="498" requestedRowCount="4" textAlign="center">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="id" headerText="ID"></s:GridColumn>
+				<s:GridColumn dataField="name" headerText="{Language.CARD_NAME}" ></s:GridColumn>
+				<s:GridColumn dataField="num" headerText="{Language.SHULIANG}" ></s:GridColumn>
+				<s:GridColumn dataField="range" headerText="{Language.USE_RANGE}"></s:GridColumn>
+				<s:GridColumn dataField="userTime" headerText="{Language.TIME_LIMIT}"></s:GridColumn>
+				<s:GridColumn dataField="list" headerText="{Language.CARD_THING}" itemRenderer="tools.modules.checkcard.view.components.CardPackageItem"></s:GridColumn>
+				<s:GridColumn dataField="state" headerText="{Language.STATE}"></s:GridColumn>
+				<s:GridColumn dataField="length" headerText="{Language.STATE_NUMBER}"></s:GridColumn>
+				<s:GridColumn dataField="use_state" headerText="{Language.USE_STATE}"></s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+</s:Group>

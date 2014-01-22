@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="650" height="520" implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			
+			public function resize(w:Number, h:Number):void
+			{
+				this.x = (w - this.width) >> 1;
+				this.y = (h - this.height) >> 1;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Panel x="0" y="1" width="650" height="520">
+		<s:Label x="10" y="-23" text="{Language.USER_SUPERGAS_INFO}"/>
+		<s:DataGrid id="bodyGas" x="10" y="27" width="628" height="181" textAlign="center" requestedRowCount="4">
+			<s:columns>
+				<s:ArrayList>
+					<s:GridColumn dataField="site" headerText="{Language.SUPER_STATE_NUM}"></s:GridColumn>
+					<s:GridColumn dataField="gasName" headerText="{Language.SUPER_STATE_NAME}"></s:GridColumn>
+					<s:GridColumn dataField="levle" headerText="{Language.SUPER_GAS_LEVEL}"></s:GridColumn>
+					<s:GridColumn dataField="que" headerText="{Language.SUPER_SUPERGAS_QUELITY}"></s:GridColumn>
+					<s:GridColumn dataField="gasExpUp" headerText="{Language.SUPER_GAS_EXP}"></s:GridColumn>
+					<s:GridColumn dataField="attribute" headerText="{Language.NATURE_UP}"></s:GridColumn>
+				</s:ArrayList>
+			</s:columns>
+		</s:DataGrid>
+		<s:DataGrid id="packGas" x="8" y="243" width="630" height="204" textAlign="center" requestedRowCount="4">
+			<s:columns>
+				<s:ArrayList>
+					<s:GridColumn dataField="site" headerText="{Language.LAN_STATE_NUM}"></s:GridColumn>
+					<s:GridColumn dataField="gasName" headerText="{Language.SUPER_STATE_NAME}"></s:GridColumn>
+					<s:GridColumn dataField="levle" headerText="{Language.SUPER_GAS_LEVEL}"></s:GridColumn>
+					<s:GridColumn dataField="que" headerText="{Language.SUPER_SUPERGAS_QUELITY}"></s:GridColumn>
+					<s:GridColumn dataField="gasExpUp" headerText="{Language.SUPER_GAS_EXP}"></s:GridColumn>
+					<s:GridColumn dataField="attribute" headerText="{Language.NATURE_UP}"></s:GridColumn>
+				</s:ArrayList>
+			</s:columns>
+		</s:DataGrid>
+		<s:Label x="10" y="7" text="{Language.BODY_SUPERGAS}："/>
+		<s:Label x="155" y="7" text="{Language.SUPER_POWER_NUM}："/>
+		<s:Label x="10" y="217" text="{Language.XIANQILAN_GAS}："/>
+		<s:Button id="close" x="288" y="455" width="75" label="{Language.ONCLOSE}"/>
+		<s:Label id="gasValue" x="205" y="8" text="1000"/>
+	</s:Panel>
+</s:Group>

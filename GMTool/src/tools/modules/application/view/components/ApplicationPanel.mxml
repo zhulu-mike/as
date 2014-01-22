@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="770" height="582"
+		 implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import spark.events.GridSelectionEvent;
+			
+			import tools.modules.application.model.ApplicationModel;
+			private var model:ApplicationModel=ApplicationModel.getInstance();
+			[Bindable]
+			private var choosePlat:ArrayList = new ArrayList(model.platChosArr);
+			public function resize(w:Number, h:Number):void
+			{
+				this.height = Global.MODULE_HEIGHT + Global.getChangeHeight();
+				this.width = Global.MODULE_WIDTH + Global.getChangeWidth();
+				dg.height = 484 + Global.getChangeHeight();
+				dg.width = 750 + Global.getChangeWidth();
+			}
+			
+			protected function dg_selectionChangeHandler(event:GridSelectionEvent):void
+			{
+				var data:Object=dg.selectedItem;
+				model.agreeId=data.apply_id;
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Label x="10" y="53" text="{Language.CHOOSE_PLAT}："/>
+	<s:Label x="10" y="17" text="{Language.THING_APPLICATION}"/>
+	<s:ComboBox id="chosPlat" x="75" y="49" dataProvider="{choosePlat}" selectedIndex="0" initialize="chosPlat.textInput.editable=false"/>
+	<s:DataGrid id="dg" x="10" y="88" width="750" height="484" requestedRowCount="4" selectionChange="dg_selectionChangeHandler(event)" textAlign="center">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="platname" headerText="{Language.PLAT}"></s:GridColumn>
+				<s:GridColumn dataField="passport" headerText="{Language.PASSPORT}"></s:GridColumn>
+				<s:GridColumn dataField="range" headerText="{Language.PLAYER}"></s:GridColumn>
+				<s:GridColumn dataField="reason" headerText="{Language.TITLE}" itemRenderer="tools.modules.application.view.components.PlayerItem"></s:GridColumn>
+				<s:GridColumn dataField="list" headerText="{Language.THING_LIST}" itemRenderer="tools.modules.application.view.components.ThingListItem"></s:GridColumn>
+				<s:GridColumn dataField="time" headerText="{Language.APPLICATION_TIME}"></s:GridColumn>
+				<s:GridColumn dataField="operation" headerText="{Language.OPERATION}" itemRenderer="tools.modules.application.view.components.CheckOpera"></s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+</s:Group>

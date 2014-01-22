@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="770" height="582"
+		 implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import tools.modules.newplayercard.model.PlayerCardModel;
+			private var model:PlayerCardModel=PlayerCardModel.getInstance();
+			[Bindable]
+			private var choseType:ArrayList = new ArrayList(model.allCardType);
+			/**
+			 * 当舞台大小改变时，同步缩放某些组件的大小
+			 */
+			public function resize(w:Number, h:Number):void
+			{
+				this.height = Global.MODULE_HEIGHT + Global.getChangeHeight();
+				this.width = Global.MODULE_WIDTH + Global.getChangeWidth();
+				dg.width = 750 + Global.getChangeWidth();
+				dg.height = 367 + Global.getChangeHeight();
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Button id="makeCardBtn" x="21" y="22" width="75" label="{Language.MAKE_NEWPLAYER_CARD}"/>
+	<s:Button id="checkCardBtn" x="104" y="22" width="100" label="{Language.CHECK_CARD_TYPE}"/>
+	<s:Label x="19" y="72" text="{Language.CHECK_ACTVIT_MA}："/>
+	<s:Label x="19" y="112" text="{Language.CHECK_ACTVIT_MA}："/>
+	<s:TextInput id="checkNum" x="101" y="67"/>
+	<s:Button id="onCheckNum" x="239" y="68" width="75" label="{Language.RESEARCH}"/>
+	<s:Button id="checkAll" x="255" y="107" width="75" label="{Language.RESEARCH}"/>
+	<s:ComboBox id="onChoseTypeBtn" x="101" y="107" dataProvider="{choseType}"/>
+	<s:DataGrid id="dg" x="8" y="207" width="750" height="367" requestedRowCount="4" textAlign="center">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="id" headerText="{Language.NUMBER}"></s:GridColumn>
+				<s:GridColumn dataField="num" headerText="{Language.CARD_NUMBER}" ></s:GridColumn>
+				<s:GridColumn dataField="type_id" headerText="{Language.TYPE_BIE}" ></s:GridColumn>
+				<s:GridColumn dataField="range" headerText="{Language.USE_RANGE}"></s:GridColumn>
+				<s:GridColumn dataField="userTime" headerText="{Language.TIME_LIMIT}"></s:GridColumn>
+				<s:GridColumn dataField="jihuo" headerText="{Language.STATE}"></s:GridColumn>
+				<s:GridColumn dataField="makeTime" headerText="{Language.MAKE_TIME}">
+				</s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<s:Button id="prePage" x="583" y="169" label="{Language.LAST_PAGE}"/>
+	<s:Button id="nextPage" x="674" y="169" label="{Language.NEXT_PAGE}"/>
+	<s:Label id="lblNum" x="642" y="175" text="1/2"/>
+	<s:Label x="22" y="169" color="#00FF00" text="{Language.ALL_NUMBER}："/>
+	<s:Label id="allNum" x="74" y="170" text="0"/>
+	<s:TextInput id="pageNum" x="384" y="167" width="38"/>
+	<s:Button id="goToPage" x="431" y="169" label="{Language.JUMP_TO}"/>
+</s:Group>

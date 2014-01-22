@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="770" height="582"
+		 implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			public function resize(w:Number, h:Number):void
+			{
+				this.height = Global.MODULE_HEIGHT + Global.getChangeHeight();
+				this.width = Global.MODULE_WIDTH + Global.getChangeWidth();
+				dg.height = 484 + Global.getChangeHeight();
+				dg.width = 750 + Global.getChangeWidth();
+			}
+			
+		]]>
+	</fx:Script>
+	<s:DataGrid id="dg" x="10" y="88" width="750" height="484" requestedRowCount="4" textAlign="center">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="id" headerText="{Language.EQUIP_ID}"></s:GridColumn>
+				<s:GridColumn dataField="name" headerText="{Language.EQUIP_NAME}" ></s:GridColumn>
+				<s:GridColumn dataField="fujia" headerText="{Language.ADD_ATTRIBUTES}" ></s:GridColumn>
+				<s:GridColumn dataField="pinzhi" headerText="{Language.QUALITY}"></s:GridColumn>
+				<s:GridColumn dataField="zhiye" headerText="{Language.CAREER}"></s:GridColumn>
+				<s:GridColumn dataField="dressLev" headerText="{Language.DRESS_LEVEL}"></s:GridColumn>
+				<s:GridColumn dataField="jiben" headerText="{Language.BASE_INFO}"></s:GridColumn>
+				<s:GridColumn dataField="posi" headerText="{Language.DRESS_STATE}"></s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<s:Button id="sendBtn" x="10" y="21" width="75" height="22" label="{Language.SEND_EQUIP}"/>
+	<s:Label x="10" y="60" color="#00FF00" text="{Language.SYSTEM_EQUIP}："/>
+</s:Group>

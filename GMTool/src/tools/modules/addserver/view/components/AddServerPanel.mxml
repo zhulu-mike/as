@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="770" height="600"
+		 implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayList;
+			
+			import tools.modules.addserver.model.AddServerModel;
+			
+			private var model:AddServerModel=AddServerModel.getInstance();
+			[Bindable]
+			private var choosePlat:ArrayList=new ArrayList(model.platArr);
+			public function resize(w:Number, h:Number):void
+			{
+				this.height = Global.MODULE_HEIGHT + Global.getChangeHeight();
+				this.width = Global.MODULE_WIDTH + Global.getChangeWidth();
+				lt.height = 253 + Global.getChangeHeight();
+				lt.width = 750 + Global.getChangeWidth();
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:List id="lt" x="10" y="310" width="750" height="283" itemRenderer="tools.modules.addserver.view.components.PlatServerItem">
+		<s:layout>
+			<s:TileLayout>
+			</s:TileLayout>
+		</s:layout>
+	</s:List>
+	<!---<s:ComboBox id="platChoose" x="75" y="282" dataProvider="{choosePlat}" selectedIndex="0" initialize="platChoose.textInput.editable=false"/>-->
+	<!---<s:Label x="11" y="287" text="选择平台："/>-->
+	<s:Label x="25" y="91" text="{Language.PLAT_IP}："/>
+	<s:TextInput id="platIp" x="95" y="85" width="156"/>
+	<s:Label x="518" y="53" text="{Language.PLAT_DUANKOU}："/>
+	<s:TextInput id="platPort" x="591" y="48" width="156"/>
+	<s:Label x="316" y="90" text="{Language.SERVER_ADDRESS}："/>
+	<s:TextInput id="dbhost" x="438" y="85" width="214"/>
+	<s:Label x="26" y="134" text="{Language.SERVER_NAME}："/>
+	<s:TextInput id="dbuser" x="146" y="128" width="100"/>
+	<s:Label x="263" y="134" text="{Language.SERVER_DB_PSW}："/>
+	<s:TextInput id="dbpwd" x="374" y="128" width="124"/>
+	<s:Label x="508" y="134" text="{Language.SERVER_DB_NAME}："/>
+	<s:TextInput id="dbname" x="604" y="128" width="143"/>
+	<s:Label x="27" y="180" text="{Language.SERVER_DB_DUANKOU}："/>
+	<s:TextInput id="dbport" x="146" y="174" width="100"/>
+	<s:Label x="27" y="225" text="{Language.SERVER_MAINDB_PSW}："/>
+	<s:TextInput id="maindbpwd" x="146" y="219" width="100"/>
+	<s:Label x="512" y="179" text="{Language.SERVER_MAINDB_USERNAME}："/>
+	<s:TextInput id="maindbuser" x="651" y="174" width="95"/>
+	<s:Label x="251" y="180" text="{Language.SERVER_MAINDB_ADDRESS}："/>
+	<s:TextInput id="maindbhost" x="374" y="174" width="126"/>
+	<s:Label x="262" y="224" text="{Language.SERVER_MAINDB_NAME}："/>
+	<s:TextInput id="maindbname" x="374" y="219" width="126"/>
+	<s:Label x="510" y="224" text="{Language.SERVER_MAINDB_DUANKOU}："/>
+	<s:TextInput id="maindbport" x="649" y="219" width="98"/>
+	<s:Label x="25" y="53" text="{Language.SERVER_MINGCHENG}："/>
+	<s:TextInput id="serverName" x="95" y="48" width="156"/>
+	<s:Label x="278" y="53" text="{Language.PLAT_ID}："/>
+	<s:TextInput id="platId" x="331" y="48" width="164"/>
+	<s:Button id="onSureBtn" x="341" y="262" width="100" label="{Language.SURE_ADD}"/>
+	<s:Label x="25" y="17" text="{Language.CREATE_SERVER}："/>
+</s:Group>

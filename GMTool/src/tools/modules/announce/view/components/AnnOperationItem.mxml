@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:GridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+					xmlns:s="library://ns.adobe.com/flex/spark"
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					height="26" clipAndEnableScrolling="true">
+	
+	<fx:Script>
+		<![CDATA[
+			public static const DELETE_ANNOUNCE:String="DELETE_ANNOUNCE";
+			override public function set data(value:Object):void{
+				if (value == null)
+					return;
+				if(value.state==0)
+				{
+					deleteBtn.label=Language.DELETE;
+				   	deleteBtn.visible=true;
+				}
+				else
+				{
+					deleteBtn.visible=false;
+				}
+			}
+			
+			protected function deleteBtn_clickHandler(event:MouseEvent):void
+			{
+				this.owner.dispatchEvent(new Event(DELETE_ANNOUNCE));
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Button id="deleteBtn" visible="false" width="75" click="deleteBtn_clickHandler(event)"
+			  horizontalCenter="0" verticalCenter="0"/>
+	
+</s:GridItemRenderer>

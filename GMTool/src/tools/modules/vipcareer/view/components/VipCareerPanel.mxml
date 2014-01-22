@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="770" height="582"
+		 implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			[Bindable]
+			private var levelChoose:ArrayList = new ArrayList([{label:1,data:1},{label:2,data:2},{label:3,data:3},{label:4,data:4}]);
+			/**
+			 * 当舞台大小改变时，同步缩放某些组件的大小
+			 */
+			public function resize(w:Number, h:Number):void
+			{
+				this.height = Global.MODULE_HEIGHT + Global.getChangeHeight();
+				this.width = Global.MODULE_WIDTH + Global.getChangeWidth();
+				dg1.height = 345 + Global.getChangeHeight();
+				
+				dg2.y=dg1.height+20+dg1.y;
+				
+				piechart2.x=piechart1.x=dg1.width+50;
+				
+				piechart1.width = 224 + Global.getChangeWidth()/4;
+				piechart1.height = 223 + Global.getChangeHeight();
+				piechart2.width = 224 + Global.getChangeWidth()*1.5;
+				piechart2.height = 223 + Global.getChangeHeight();
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Label x="11" y="24" text="{Language.VIP_LEVEL_JIANGE}："/>
+	<s:ComboBox id="levelJG" x="96" y="19" width="64" dataProvider="{levelChoose}" selectedIndex="0" initialize="levelJG.textInput.editable=false"/>
+	<s:DataGrid id="dg1" x="10" y="69" width="398" height="345" requestedRowCount="4">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="level" headerText="{Language.VIP_LEVEL}"></s:GridColumn>
+				<s:GridColumn dataField="num" headerText="{Language.MOMENT_PLAYER_NUMBER}"></s:GridColumn>
+				<s:GridColumn dataField="level_percent" headerText="{Language.PLYAER_BILI}"></s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<s:DataGrid id="dg2" x="10" y="433" width="398" height="131" requestedRowCount="4">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="career_z" headerText="{Language.CAREER}"></s:GridColumn>
+				<s:GridColumn dataField="num" headerText="{Language.PLAYER_NUMBER}"></s:GridColumn>
+				<s:GridColumn dataField="career_percent" headerText="{Language.BILI}"></s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<mx:PieChart id="piechart1" x="416" y="69" width="224" height="224" fontSize="15">
+		<mx:series>
+			<mx:PieSeries displayName="Series 1" nameField="level"  field="num" labelField="level" labelPosition="callout"/>
+		</mx:series>
+	</mx:PieChart>
+	<mx:PieChart id="piechart2" x="416" y="341" width="224" height="223" fontSize="15">
+		<mx:series>
+			<mx:PieSeries displayName="Series 1" nameField="career"  field="num" labelField="career_z" labelPosition="callout"/>
+		</mx:series>
+	</mx:PieChart>
+</s:Group>

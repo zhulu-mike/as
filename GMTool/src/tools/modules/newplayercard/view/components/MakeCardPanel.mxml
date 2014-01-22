@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="446" height="200">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayList;
+			
+			import tools.modules.newplayercard.model.PlayerCardModel;
+			private var model:PlayerCardModel=PlayerCardModel.getInstance();
+			[Bindable]
+			private var chooseType:ArrayList = new ArrayList(model.cardType);
+			
+		]]>
+	</fx:Script>
+	<s:Panel x="0" y="0" width="446" height="200">
+		<s:Label x="10" y="-22" text="{Language.MAKE_NEWPLAYER_CARD}"/>
+		<s:Label x="28" y="29" text="{Language.CHOONSE_CARD_TYPE}："/>
+		<s:ComboBox id="chosCardType" x="133" y="24" dataProvider="{chooseType}"/>
+		<s:Label x="28" y="75" text="{Language.INPUT_MAKE_NUMBER}："/>
+		<s:TextInput id="makeNum" x="133" y="71" width="148"/>
+		<s:Button id="onSuerMakeBtn" x="117" y="115" width="75" label="{Language.ONSURE}"/>
+		<s:Button id="closeBtn" x="242" y="115" width="75" label="{Language.ONCLOSE}"/>
+	</s:Panel>
+</s:Group>

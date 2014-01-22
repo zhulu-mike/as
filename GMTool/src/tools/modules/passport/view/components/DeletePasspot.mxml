@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="250" height="200">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:Panel x="0" y="0" width="250" height="200">
+		<s:Label x="10" y="-22" text="{Language.TISHI}："/>
+		<s:Label x="58" y="41" text="{Language.DELETE_SELECT_ACCOUNT}？"/>
+		<s:Button id="sureDeleBtn" x="40" y="85" width="75" label="{Language.ONSURE}"/>
+		<s:Button id="closeBtn" x="137" y="85" width="75" label="{Language.ONCLOSE}"/>
+	</s:Panel>
+</s:Group>

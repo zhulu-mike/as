@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="770" height="582"
+		 implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			
+			public function resize(w:Number, h:Number):void
+			{
+				
+			}
+		]]>
+	</fx:Script>
+	<s:BorderContainer x="6" y="10" width="218" height="562">
+		<s:ComboBox x="44" y="50" width="111"/>
+		<s:ComboBox x="44" y="10" width="111"/>
+		<s:TextArea x="15" y="99" height="371"/>
+		<s:Button x="64" y="521" width="80" height="30" label="{Language.ONSURE}"/>
+		<s:Label x="46" y="478" text="{Language.MUCH_PLAYER_GEKAI}"/>
+	</s:BorderContainer>
+	<s:BorderContainer x="232" y="10" width="528" height="562">
+		<s:DataGrid x="6" y="123" width="510" height="427" requestedRowCount="4">
+			<s:columns>
+				<s:ArrayList>
+					<s:GridColumn dataField="dataField1" headerText="id" width="50"></s:GridColumn>
+					<s:GridColumn dataField="dataField2" headerText="{Language.CONTENT}"></s:GridColumn>
+					<s:GridColumn dataField="dataField3" headerText="{Language.CHANGE}" width="70"></s:GridColumn>
+					<s:GridColumn dataField="dataField3" headerText="{Language.DELETE}" width="70"></s:GridColumn>
+				</s:ArrayList>
+			</s:columns>
+		</s:DataGrid>
+		<s:TextArea x="10" y="10" width="433" height="67"/>
+		<s:Button x="449" y="25" width="60" height="40" label="{Language.ADD}"/>
+		<s:Button x="6" y="89" width="80" height="30" label="{Language.REFRESH_GONGGAO}"/>
+	</s:BorderContainer>
+</s:Group>

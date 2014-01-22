@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 width="400" height="242" title="{Language.GONGGAO_CHANGE}">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:TextArea x="10" y="10" width="378"/>
+	<s:Button x="105" y="165" width="80" height="40" label="{Language.ONSURE}"/>
+	<s:Button x="205" y="165" width="80" height="40" label="{Language.ONCLOSE}"/>
+</s:Panel>

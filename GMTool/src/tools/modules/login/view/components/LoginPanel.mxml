@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="1000" height="600"
+		 implements="tools.common.resize.IResize"
+		>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			public function resize(w:Number, h:Number):void
+			{
+				this.width  = Global.stageScaleX * Global.STAGE_WIDTH;
+				this.height = Global.stageScaleY * Global.STAGE_HEIGHT;
+				login.x = (w - login.width) >> 1;
+				login.y = h > 600 ? 300 : h - 200;
+			}
+		]]>
+	</fx:Script>
+	<s:Group x="361" y="279" width="279" height="196" id="login">
+		<s:Label x="33" y="48" width="50" text="{Language.LOGIN_TIP}"/>
+		<s:Label x="33" y="80" text="{Language.LOGIN_PSD_TIP}"/>
+		<s:TextInput x="79" y="42" width="167" color="#ffffff" text="xiaxiaoyu" id="userTxt"/>
+		<s:TextInput x="79" y="74" width="167" color="#ffffff" displayAsPassword="true" text="123" id="psdTxt"/>
+		<s:Button id="loginBtn" x="79" y="116" width="167" height="27" label="{Language.LOGIN}"/>
+	</s:Group>
+	
+</s:Group>

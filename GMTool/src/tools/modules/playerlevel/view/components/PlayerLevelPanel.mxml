@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="770" height="582"
+		 implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import spark.events.GridSelectionEvent;
+			
+			import tools.modules.announce.model.AnnounceModel;
+			[Bindable]
+			private var monthName:Array = [Language.JANUARY,Language.FEBRUARY,Language.MARCH,Language.APRIL,
+				Language.MAY,Language.JUNE,Language.JULY,Language.AUGUST,Language.SEPTEMBER,Language.OCTOBER,Language.NOVEMBER,Language.DECEMBER];
+			[Bindable]
+			private var weekName:Array = [Language.DAY,Language.ONE,Language.TWO,Language.THREE,Language.FOUR,Language.FIVE,Language.SIX];
+			[Bindable]
+			private var level:ArrayList = new ArrayList([{label:Language.ONCE,data:1},{label:Language.TWICE,data:2},{label:Language.THRICE,data:3},{label:Language.FOURTIMES,data:4},{label:Language.FIVETIMES,data:5}]);
+			[Bindable]
+			private var dayNum:ArrayList = new ArrayList([{label:1},{label:2},{label:3},{label:4},{label:5},{label:6},{label:7},{label:8},{label:9},{label:10},{label:11},{label:12},{label:13},{label:14},{label:15},
+				{label:16},{label:17},{label:18},{label:19},{label:20},{label:21},{label:22},{label:23},{label:24},{label:25},{label:26},{label:27},{label:28},{label:29},{label:30}]);
+			private var model:AnnounceModel=AnnounceModel.getInstance();
+			/**
+			 * 当舞台大小改变时，同步缩放某些组件的大小
+			 */
+			public function resize(w:Number, h:Number):void
+			{
+				this.height = Global.MODULE_HEIGHT + Global.getChangeHeight();
+				this.width = Global.MODULE_WIDTH + Global.getChangeWidth();
+				dg.width = 750 + Global.getChangeWidth();
+				dg.height = 456 + Global.getChangeHeight();
+			}
+			
+			protected function dg_selectionChangeHandler(event:GridSelectionEvent):void
+			{
+				var data:Object=dg.selectedItem;
+				model.deleteId=data.id;
+			}
+			
+		]]>
+	</fx:Script>
+	<s:DataGrid id="dg" x="10" y="116" width="750" height="456" requestedRowCount="4" textAlign="center" selectionChange="dg_selectionChangeHandler(event)">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="platuid" headerText="{Language.PLAT_ID}"></s:GridColumn>
+				<s:GridColumn dataField="name" headerText="{Language.USER_PLAY_NAME}"></s:GridColumn>
+				<s:GridColumn dataField="level" headerText="{Language.PLAYER_LEVEL}"></s:GridColumn>
+				<s:GridColumn dataField="create_time" headerText="{Language.REG_TIME}"></s:GridColumn>
+				<s:GridColumn dataField="login_time" headerText="{Language.LAST_ONCE_LOGIN_TIME}"></s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<s:TextInput id="bHours" x="207" y="10" width="42" text="0"/>
+	<s:TextInput id="bMinute" x="271" y="10" width="42" text="0"/>
+	<s:TextInput id="bSeconds" x="335" y="10" width="42" text="0"/>
+	<s:Label x="256" y="17" text="{Language.HOURS}"/>
+	<s:Label x="320" y="17" text="{Language.MINUTES}"/>
+	<s:Label x="383" y="17" text="{Language.SECONDS}"/>
+	<mx:DateField id="btime" x="10" y="10" width="186" color="#FFFFFF" dayNames="{weekName}" formatString="YYYY-MM-DD" monthNames="{monthName}"/>
+	<s:Button id="searchBtn" x="10" y="81" width="75" label="{Language.SUBMIT}"/>
+	<s:ComboBox id="dayChoose" x="111" y="47" width="62" dataProvider="{dayNum}" selectedIndex="0"/>
+	<s:TextInput x="10" y="46" width="97" text="{Language.LOSE_RATE_DAY_SELECT}"/>
+	<s:TextInput id="loseRate" x="181" y="46" width="157"/>
+	
+</s:Group>

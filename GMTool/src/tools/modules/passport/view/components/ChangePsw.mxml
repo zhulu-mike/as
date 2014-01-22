@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300">
+	
+	<fx:Script>
+		<![CDATA[
+			import tools.modules.passport.model.PassportModel;
+			private var model:PassportModel=PassportModel.getInstance();
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:Panel id="fixBtn" x="0" y="0" width="400" height="300">
+		<s:Label x="10" y="-23" text="{Language.CHANGE_PSW}"/>
+		<s:Label x="50" y="38" text="{Language.YUAN_PSW}："/>
+		<s:TextInput id="lastPsw" x="119" y="32" width="199"/>
+		<s:Label x="50" y="88" text="{Language.NEW_PSW}："/>
+		<s:TextInput id="newPsw" x="119" y="82" width="199"/>
+		<s:Label x="50" y="141" text="{Language.ONSURE_PSW}："/>
+		<s:TextInput id="iknow" x="119" y="135" width="199"/>
+		<s:Button id="sureBtn" x="108" y="194" width="75" label="{Language.ONSURE}"/>
+		<s:Button id="closeBtn" x="215" y="195" width="75" label="{Language.ONCLOSE}"/>
+	</s:Panel>
+</s:Group>

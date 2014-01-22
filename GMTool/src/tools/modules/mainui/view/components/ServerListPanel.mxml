@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 width="570" height="430" alpha="0.5"
+		 implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayList;
+			
+			import tools.modules.mainui.model.ServerModel;
+			private var model:ServerModel=ServerModel.getInstance();
+			[Bindable]
+			private var choosePlat:ArrayList=new ArrayList(model.platArr);
+			public function resize(w:Number, h:Number):void
+			{
+				if (this.stage == null)
+					return;
+				this.width = w;
+				this.height = h;
+				panel.x = (w - panel.width) >> 1;
+				panel.y = (h - panel.height) >> 1;
+				
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Panel width="570" height="430" title="{Language.SERVER_LIEBIAO}" id="panel">
+		<s:List x="11" y="33" width="547" height="355" id="list" 
+					itemRenderer="tools.modules.mainui.view.components.ServerItem"
+					 horizontalScrollPolicy="off">
+			<s:layout>
+				<s:TileLayout horizontalGap="5" verticalGap="5" columnWidth="130"
+							  rowHeight="30">
+					
+				</s:TileLayout>
+			</s:layout>
+			
+		</s:List>
+		<s:Button x="507" y="-27" width="51" label="{Language.ONCLOSE}" id="closeBtn"/>
+		<s:Label x="10" y="10" text="{Language.PLAT_CHOOSE}："/>
+		<s:ComboBox id="platChoose" x="69" y="5" dataProvider="{choosePlat}" selectedIndex="0" initialize="platChoose.textInput.editable=false"/>
+		
+		
+	</s:Panel>
+</s:BorderContainer>

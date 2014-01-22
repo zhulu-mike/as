@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="435" height="450" implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import spark.events.GridSelectionEvent;
+			
+			import tools.common.staticdata.EquipPosition;
+			import tools.managers.EquipManager;
+			
+			
+			public function resize(w:Number, h:Number):void
+			{
+				this.x = (w - this.width) >> 1;
+				this.y = (h - this.height) >> 1;
+			}
+			
+			protected function skillDg_selectionChangeHandler(event:GridSelectionEvent):void
+			{
+				var data:Object=skillDg.selectedItem;
+				weaponName.text=data.name;
+				quaility.text=data.quaility;
+				type.text=data.equipType;
+				dressLev.text=data.dressLev;
+				career.text=data.career;
+				salePrice.text=data.salePrice;
+				buyPrice.text=data.buyPrice;
+				power.text=data.power;
+				bp.text=data.bp;
+				ep.text=data.ep;
+				var data1:Object=data.equip_att;
+				star_level.text=data1.sky_star_num;
+				streng_level.text=data1.streng_level;
+				var baseValue:int=int(basalValue(data.attack,data.defense,data.hp));//基本值
+				var baseType:String=baseType(data.attack,data.defense,data.hp);//基本类型
+				var streng:int=streng(data.attackUp,data.defenseUp,data.hpUp,data1.streng_level);//强化值
+				var star:int=(baseValue+streng)*EquipManager.starMulti*0.01*data1.sky_star_num;
+				
+				all_Attribute.text=baseType+String(baseValue+star+streng);
+				streng_Attribute.text=baseType+streng;//强化属性加成
+				star_Attribute.text=baseType+String(star);//天星属性加成
+				
+			}
+			private function streng(attackUp:int,defenseUp:int,hpUp:int,streng_level:int):int
+			{
+				if(attackUp>0)
+				{
+					return attackUp*streng_level;
+				}
+				else if(defenseUp>0)
+				{
+					return defenseUp*streng_level;
+				}
+				else
+				{
+					return hpUp*streng_level;
+				}
+			}
+			private function baseType(attack:int,defense:int,hp:int):String
+			{
+				var str:String
+				if(attack>0)
+				{
+					str=Language.ATTACK_UP;
+					return str;
+				}
+				else if(defense>0)
+				{
+					str=Language.DEFENSE_UP;
+					return str;
+				}
+				else
+				{
+					str=Language.HP_UP;
+					return str;
+				}
+			}
+			
+			private function basalValue(attack:int,defense:int,hp:int):int
+			{
+				if(attack>0)
+				{
+					return attack;
+				}
+				else if(defense>0)
+				{
+					return defense;
+				}
+				else
+				{
+					return hp;
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Panel x="0" y="0" width="435" height="450">
+		<s:DataGrid id="skillDg" x="11" y="5" width="412" height="155" textAlign="center" requestedRowCount="4" selectionChange="skillDg_selectionChangeHandler(event)">
+			<s:columns>
+				<s:ArrayList>
+					<s:GridColumn dataField="name" headerText="{Language.EQUIP_NAME}" width="100"></s:GridColumn>
+					<s:GridColumn dataField="equipType" headerText="{Language.EQUIP_STATE}" ></s:GridColumn>
+					<s:GridColumn dataField="other" headerText="{Language.OTHER}" ></s:GridColumn>
+				</s:ArrayList>
+			</s:columns>
+		</s:DataGrid>
+		<s:Label x="13" y="-22" text="{Language.PLAYER_EQUIP_INFO}"/>
+		<s:Group x="9" y="170" width="414" height="209">
+			<s:Label x="10" y="10" text="{Language.EQUIP_INFO}："/>
+			<s:Label x="10" y="29" text="{Language.EQUIP_NAME}："/>
+			<s:Label id="weaponName" x="67" y="29"/>
+			<s:Label x="138" y="29" text="{Language.QUALITY}："/>
+			<s:Label id="quaility" x="178" y="29"/>
+			<s:Label x="222" y="29" text="{Language.DRESS_STATE}："/>
+			<s:Label id="type" x="262" y="29"/>
+			<s:Label x="308" y="29" text="{Language.NEED_LEVEL}："/>
+			<s:Label id="dressLev" x="367" y="30"/>
+			<s:Label x="10" y="49" text="{Language.NEED_CARRER}："/>
+			<s:Label id="career" x="72" y="49"/>
+			<s:Label x="104" y="49" text="{Language.SALE_PRICE}："/>
+			<s:Label id="salePrice" x="164" y="50"/>
+			<s:Label x="10" y="74" text="{Language.STRENGTH_LEVEL}："/>
+			<s:Label id="streng_level" x="82" y="75"/>
+			<s:Label x="145" y="74" text="{Language.STRENGTH_INFO_UP}："/>
+			<s:Label id="streng_Attribute" x="238" y="74"/>
+			<s:Label x="10" y="99" text="{Language.STAR_LEVEL}："/>
+			<s:Label x="10" y="123" text="{Language.ADD_ATTRIBUTES}："/>
+			<s:Label id="power" x="49" y="151"/>
+			<s:Label id="power0" x="10" y="150" text="{Language.POWER}："/>
+			<s:Label id="power1" x="109" y="151" text="{Language.TILI_LI}："/>
+			<s:Label id="power2" x="203" y="150" text="{Language.NAILI}："/>
+			<s:Label id="bp" x="146" y="151"/>
+			<s:Label id="ep" x="240" y="151"/>
+			<s:Label id="star_level" x="82" y="100"/>
+			<s:Label x="145" y="99" text="{Language.STAR_INFO_UP}："/>
+			<s:Label id="star_Attribute" x="238" y="99"/>
+			<s:Label x="195" y="49" text="{Language.BUY_PRICE}："/>
+			<s:Label id="buyPrice" x="258" y="50"/>
+			<s:Label x="295" y="49" text="{Language.ALL_ATTITUBE}："/>
+			<s:Label id="all_Attribute" x="343" y="50"/>
+		</s:Group>
+		<s:Button id="close" x="179" y="387" width="75" label="{Language.ONCLOSE}"/>
+	</s:Panel>
+</s:Group>

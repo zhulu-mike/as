@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="1000" height="600" 
+		 creationComplete="group1_creationCompleteHandler(event)"
+		 implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayList;
+			import mx.events.FlexEvent;
+			
+			import tools.modules.mainui.model.ServerModel;
+			
+			public var moduleData:XML = <data>
+			<pnode label="我爱你">
+				<node label="用户管理" data="1"/>
+			</pnode>
+			<pnode label="我爱你">
+				<node label="用户管理" data="2"/>
+			</pnode>
+			<pnode label="我爱你">
+				<node label="用户管理" data="3"/>
+			</pnode>
+			<pnode label="我爱你">
+				<node label="用户管理" data="4"/>
+			</pnode>
+			<pnode label="我爱你">
+				<node label="用户管理" data="5"/>
+			</pnode>
+			</data>;
+			private var model:ServerModel=ServerModel.getInstance();
+			[Bindable]
+			private var choosePlat:ArrayList=new ArrayList(model.platArr);
+			protected function group1_creationCompleteHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+			}
+			
+			public function resize(w:Number, h:Number):void
+			{
+				this.width  = Global.stageScaleX * Global.STAGE_WIDTH;
+				this.height = Global.stageScaleY * Global.STAGE_HEIGHT;
+				tree.height = 400 + Global.getChangeHeight();
+				operateCanvas.height = Global.MODULE_HEIGHT + Global.getChangeHeight();
+				operateCanvas.width = Global.MODULE_WIDTH + Global.getChangeWidth();
+			}
+			
+		]]>
+	</fx:Script>
+	<s:BorderContainer x="0" y="0" width="100%" height="100%">
+	</s:BorderContainer>
+	<s:BorderContainer x="10" y="10" width="200" height="145">
+		<s:Label x="10" y="9" color="#CCCCCC" text="{Language.USER_NAME}"/>
+		<s:Label id="userName" x="69" y="10" color="#CCCCCC"/>
+		<s:Label x="10" y="37" color="#CCCCCC" text="{Language.USER_GROUP_NAME}"/>
+		<s:Label id="userGroup" x="69" y="38" color="#CCCCCC"/>
+		<s:Label x="10" y="65" color="#CCCCCC" text="{Language.LAST_LOGIN_TIME}"/>
+		<s:Label id="lastLoginTime" x="72" y="66" color="#CCCCCC"/>
+		<s:Label id="serverChooseLabel" x="10" y="118" color="#CCCCCC" text="{Language.SERVER_LIST}"/>
+		<s:Label id="platChoseLabel" x="10" y="91" text="{Language.PLAT_CHOOSE}："/>
+		<s:ComboBox id="platChoose" x="82" y="86" width="103" height="24" dataProvider="{choosePlat}" selectedIndex="0"/>
+		<s:ComboBox id="serverChooser" x="82" y="114" width="103" selectedIndex="0"/>
+	</s:BorderContainer>
+	<s:CheckBox id="allExpand" x="135" y="169" label="{Language.ALL_OPEN}" selected="true"/>
+	<mx:Tree x="10" y="192" width="200" height="400" labelField="@label" showRoot="false" id="tree"></mx:Tree>
+	<s:BorderContainer x="218" y="10" width="770" height="582" id="operateCanvas">
+	</s:BorderContainer>
+</s:Group>

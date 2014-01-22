@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:GridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+					xmlns:s="library://ns.adobe.com/flex/spark"
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					width="213" clipAndEnableScrolling="true">
+	
+	<fx:Script>
+		<![CDATA[
+			override public function prepare(hasBeenRecycled:Boolean):void {
+//				lblData.text = data[column.dataField]
+			}
+			public static const DISAGREE_APP:String = "DISAGREE_APP";
+			public static const AGREE_APP:String = "AGREE_APP";
+			
+			protected function agree_clickHandler(event:MouseEvent):void
+			{
+				this.owner.dispatchEvent(new Event(AGREE_APP));
+			}
+			
+			protected function refuse_clickHandler(event:MouseEvent):void
+			{
+				this.owner.dispatchEvent(new Event(DISAGREE_APP));
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Button id="refuse" left="113" top="1" width="75." label="{Language.DISAGREE}" click="refuse_clickHandler(event)" horizontalCenter="44"
+			  verticalCenter="0"/>
+	<s:Button id="agree" left="29" top="1" width="75" label="{Language.AGREE}" click="agree_clickHandler(event)" horizontalCenter="-40"
+			  verticalCenter="0"/>
+	
+</s:GridItemRenderer>

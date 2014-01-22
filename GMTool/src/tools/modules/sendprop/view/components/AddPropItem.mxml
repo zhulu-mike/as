@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				width="250" height="30" autoDrawBackground="true">
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayList;
+			
+			import spark.components.List;
+			import spark.events.TextOperationEvent;
+			
+			import tools.modules.sendprop.model.SendPropModel;
+			private var model:SendPropModel=SendPropModel.getInstance();
+			override public function set data(value:Object):void
+			{
+				super.data = value;
+				propLabel.text = value.name;
+				propNum.text = value.proNum;
+				
+			}
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				for (var i:int = 0; i < model.arrProp.length; i++) 
+				{
+					if(model.arrProp[i].name==propLabel.text)
+					{
+						model.arrProp.splice([i],1)
+					}
+					
+				}
+				(this.owner as List).dataProvider=new ArrayList(model.arrProp);
+			}
+			
+			protected function textinput1_changeHandler(event:TextOperationEvent):void
+			{
+				for (var i:int = 0; i < model.arrProp.length; i++) 
+				{
+					if(model.arrProp[i].name==propLabel.text)
+					{
+						model.arrProp[i].proNum=propNum.text;
+					}
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Label id="propLabel" width="129" horizontalCenter="-34" text="" verticalCenter="0"/>
+	<s:TextInput id="propNum" x="157" y="3" width="46" change="textinput1_changeHandler(event)"/>
+	<s:Button x="207" y="4" label="{Language.DELETE}" click="button1_clickHandler(event)"/>
+	
+</s:ItemRenderer>

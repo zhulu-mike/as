@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="770" height="582"
+		 implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import org.puremvc.as3.multicore.core.Model;
+			
+			import spark.events.GridSelectionEvent;
+			
+			import tools.common.staticdata.PlayerCareerType;
+			import tools.modules.player.model.PlayerModel;
+			
+			private var model:PlayerModel = PlayerModel.getInstance();
+			
+			[Bindable]
+			private var searchList:ArrayList = new ArrayList([Language.JUESEMINGCHAXUN,Language.PINGTAIIDCHAXUN,Language.CHECK_ALL_PLAYER]);
+			/**
+			 * 当舞台大小改变时，同步缩放某些组件的大小
+			 */
+			public function resize(w:Number, h:Number):void
+			{
+				this.height = Global.MODULE_HEIGHT + Global.getChangeHeight();
+				this.width = Global.MODULE_WIDTH + Global.getChangeWidth();
+				dg.height = 450 + Global.getChangeHeight();
+				dg.width = 375 + Global.getChangeWidth();
+				gp.x=dg.width+10;
+				gp.height = dg.height;
+			}
+			
+			
+			protected function dg_selectionChangeHandler(event:GridSelectionEvent):void
+			{
+				var data:Object=dg.selectedItem;
+				model.name=data.name;
+				nameTxt.text=data.name;
+				if(data.sex==1)
+				{
+					sex.text=Language.MALE;
+				}
+				else
+				{
+					sex.text=Language.FAMALE;
+				}
+				vip.text=data.vip;
+				if(data.career==PlayerCareerType.QIANGHAO)
+				{
+					model.career=data.career;
+					career.text=Language.QIANGHAO;
+				}
+				else if(data.career==PlayerCareerType.XIANLING)
+				{
+					model.career=data.career;
+					career.text=Language.YINGWU;
+				}
+				else
+				{
+					model.career=data.career;
+					career.text=Language.XIANLING;
+				}
+				level.text=data.level;
+				exp.text=data.exp;
+				money.text=data.money;
+				sliver.text=data.sliver;
+				energy.text=data.energy;
+				prestige_level.text=data.prestige_level;
+				fightpower.text=data.fightpower;
+				currank.text=data.currank;
+				HP.text=data.curHP+"/"+data.HP;
+				power.text=data.power;
+				bp.text=data.bp;
+				ep.text=data.ep;
+				attack.text=data.attack;
+				defense.text=data.defense;
+				crit.text=data.crit;
+				kill_level.text=data.kill_level;
+				dcp.text=data.dcp;
+				mspd.text=data.mspd;
+				model.gameuid = data.uid;
+				model.main_id = data.main_id;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:DataGrid id="dg" x="10" y="121" width="375" height="450" requestedRowCount="4" textAlign="center" selectionChange="dg_selectionChangeHandler(event)">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="plantuid" headerText="{Language.PLAYER_PLAT_ID}" width="175"></s:GridColumn>
+				<s:GridColumn dataField="uid" headerText="{Language.PLAYER_GAME_ID}" ></s:GridColumn>
+				<s:GridColumn dataField="name" headerText="{Language.USER_PLAY_NAME}" ></s:GridColumn>
+				<s:GridColumn dataField="ifForbid" headerText="{Language.LEVEL}" itemRenderer="tools.modules.player.view.components.PlayerOperationItem" minWidth="20"></s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<s:Label x="14" y="28" color="#AAAAAA" text="{Language.CHOOSE_SEARCH_WAY}"/>
+	<s:ComboBox id="searchWay" x="103" y="22" dataProvider="{searchList}" selectedIndex="2" initialize="searchWay.textInput.editable=false"/>
+	<s:Group x="305" y="19" width="203" height="29" id="searchChoose1" visible="false">
+		<s:TextInput id="searchIuput" x="2" y="3" textAlign="center"/>
+	</s:Group>
+	<s:Button id="searchBtn" x="263" y="23" label="{Language.RESEARCH}"/>
+	<s:Group id="gp" x="390" y="121" width="375" height="450">
+		<s:Label x="21" y="14" color="#AAAAAA" text="{Language.PLAYER_INFO}"/>
+		<s:Label x="21" y="50" color="#AAAAAA" text="{Language.USER_PLAY_NAME}："/>
+		<s:Label id="nameTxt" x="69" y="51" color="#AAAAAA"/>
+		<s:Label x="163" y="50" color="#AAAAAA" text="{Language.SEX}："/>
+		<s:Label id="sex" x="204" y="51" color="#AAAAAA"/>
+		<s:Label x="248" y="51" color="#AAAAAA" text="{Language.VIP_LEVEL}："/>
+		<s:Label id="vip" x="304" y="51" color="#AAAAAA"/>
+		<s:Label x="22" y="173" color="#AAAAAA" text="{Language.BASE_INFO}"/>
+		<s:Label x="22" y="206" color="#AAAAAA" text="{Language.HP}："/>
+		<s:Label id="HP" x="76" y="208" color="#AAAAAA"/>
+		<s:Label x="22" y="227" color="#AAAAAA" text="{Language.TILI_LI}："/>
+		<s:Label id="bp" x="66" y="228" color="#AAAAAA"/>
+		<s:Label x="165" y="206" color="#AAAAAA" text="{Language.POWER}："/>
+		<s:Label id="power" x="204" y="207" color="#AAAAAA"/>
+		<s:Label x="259" y="206" color="#AAAAAA" text="{Language.NAILI}："/>
+		<s:Label id="ep" x="297" y="207" color="#AAAAAA"/>
+		<s:Label x="21" y="252" color="#AAAAAA" text="{Language.FIGHTER_INFO}"/>
+		<s:Label x="21" y="288" color="#AAAAAA" text="{Language.ONATTACK}："/>
+		<s:Label id="attack" x="56" y="290" color="#AAAAAA"/>
+		<s:Label x="22" y="310" color="#AAAAAA" text="{Language.BISHADENGJI}："/>
+		<s:Label id="kill_level" x="83" y="311" color="#AAAAAA"/>
+		<s:Label x="134" y="311" color="#AAAAAA" text="{Language.KANGBAODENGJI}："/>
+		<s:Label id="dcp" x="192" y="312" color="#AAAAAA"/>
+		<s:Label x="245" y="311" color="#AAAAAA" text="{Language.MOVE_SPEED}："/>
+		<s:Label id="mspd" x="303" y="313" color="#AAAAAA"/>
+		<s:Label x="164" y="288" color="#AAAAAA" text="{Language.DEFENSE}："/>
+		<s:Label id="defense" x="211" y="290" color="#AAAAAA"/>
+		<s:Label x="258" y="288" color="#AAAAAA" text="{Language.BAOJIDENGJI}："/>
+		<s:Label id="crit" x="315" y="289" color="#AAAAAA"/>
+		<s:Label x="21" y="74" color="#AAAAAA" text="{Language.CAREER}："/>
+		<s:Label id="career" x="69" y="75" color="#AAAAAA"/>
+		<s:Label x="125" y="74" color="#AAAAAA" text="{Language.LEVEL}："/>
+		<s:Label id="level" x="166" y="75" color="#AAAAAA"/>
+		<s:Label x="218" y="74" color="#AAAAAA" text="{Language.EXP}："/>
+		<s:Label id="exp" x="263" y="75" color="#AAAAAA"/>
+		<s:Label x="22" y="97" color="#AAAAAA" text="{Language.YUANBAO}："/>
+		<s:Label id="money" x="56" y="98" color="#AAAAAA"/>
+		<s:Label x="133" y="97" color="#AAAAAA" text="{Language.TONG_MONEY}："/>
+		<s:Label id="sliver" x="174" y="98" color="#AAAAAA"/>
+		<s:Label x="22" y="125" color="#AAAAAA" text="{Language.DAOHANG}："/>
+		<s:Label id="prestige_level" x="64" y="126" color="#AAAAAA"/>
+		<s:Label x="22" y="145" color="#AAAAAA" text="{Language.JINGJICHANGPAIMING}："/>
+		<s:Label id="currank" x="99" y="146" color="#AAAAAA"/>
+		<s:Label x="185" y="124" color="#AAAAAA" text="{Language.FIGHTER_POWER}："/>
+		<s:Label id="fightpower" x="232" y="125" color="#AAAAAA"/>
+		<s:Label x="256" y="97" color="#AAAAAA" text="{Language.HUOLIZHI}："/>
+		<s:Label id="energy" x="311" y="98" color="#AAAAAA"/>
+		<s:Button id="equipBtn" x="46" y="362" width="75" label="{Language.EQUIP}"/>
+		<s:Button id="packageBtn" x="141" y="362" width="75" label="{Language.PACKAGE}"/>
+		<s:Button id="fightBtn" x="239" y="362" width="75" label="{Language.FIGHTER_SOUL}"/>
+		<s:Button id="supgasBtn" x="46" y="392" width="75" label="{Language.SUPER_GAS}"/>
+		<s:Button id="skillBtn" x="141" y="392" width="75" label="{Language.SKILL}"/>
+	</s:Group>
+	<s:BorderContainer x="435" y="77" width="298" height="30">
+		<s:Button id="preBtn" x="16" y="2" label="{Language.LAST_PAGE}" color="#FFFFFF"/>
+		<s:Button id="nextBtn" x="111" y="2" label="{Language.NEXT_PAGE}" color="#FFFFFF"/>
+		<s:Label id="labelNum" x="57" y="9" width="59" text="1/0" textAlign="center"
+				 verticalAlign="top"/>
+		<s:TextInput id="pageNum" x="181" y="2" width="43" color="#FFFFFF" text="0"
+					 textAlign="center"/>
+		<s:Button id="go" x="233" y="3" label="{Language.JUMP_TO}"/>
+	</s:BorderContainer>
+	<s:Label id="playerAllCount" x="72" y="93" width="22" color="#FFFFFF" text="0"/>
+	<s:Label x="16" y="91" color="#00FF00" text="{Language.ALLRECORD}"/>
+	<s:Label x="115" y="91" color="#00FF00" text="{Language.NO_CREATE_PLAYER_NUM}:"/>
+	<s:Label id="no_createLabel" x="204" y="93" text="0"/>
+	<s:Label x="256" y="91" color="#00FF00" text="{Language.ALONE_IP_NUM}:"/>
+	<s:Label id="uniqueLabel" x="323" y="93" text="0"/>
+</s:Group>

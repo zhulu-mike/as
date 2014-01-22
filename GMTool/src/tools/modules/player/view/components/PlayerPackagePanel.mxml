@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="435" height="450" implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import spark.events.GridSelectionEvent;
+			
+			import tools.managers.EquipManager;
+			
+			
+			public function resize(w:Number, h:Number):void
+			{
+				this.x = (w - this.width) >> 1;
+				this.y = (h - this.height) >> 1;
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Panel width="435" height="450">
+		<s:DataGrid id="pkDg" x="11" y="5" width="412" height="363" textAlign="center" requestedRowCount="4">
+			<s:columns>
+				<s:ArrayList>
+					<s:GridColumn dataField="number" headerText="{Language.BOX_ID}" width="100"></s:GridColumn>
+					<s:GridColumn dataField="type" headerText="{Language.THING_TYPE}" ></s:GridColumn>
+					<s:GridColumn dataField="packName" headerText="{Language.THING_NAME}" ></s:GridColumn>
+					<s:GridColumn dataField="count" headerText="{Language.THING_NUM}" ></s:GridColumn>
+				</s:ArrayList>
+			</s:columns>
+		</s:DataGrid>
+		<s:Label x="13" y="-22" text="{Language.PLAYER_PACKAGE_INFO}"/>
+		<s:Button id="closeBtn" x="174" y="381" width="75" label="{Language.ONCLOSE}"/>
+	</s:Panel>
+</s:Group>

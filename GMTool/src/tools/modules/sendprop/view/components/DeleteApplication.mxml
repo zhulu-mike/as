@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:GridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+					xmlns:s="library://ns.adobe.com/flex/spark"
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					width="148" height="21" clipAndEnableScrolling="true">
+	
+	<fx:Script>
+		<![CDATA[
+			import tools.modules.sendprop.model.SendPropModel;
+			private var model:SendPropModel=SendPropModel.getInstance();
+			override public function set data(value:Object):void{
+//				deleteApp.text = data[column.dataField]
+			}
+			public static const DELETE_APP:String = "DELETE_APP";
+			
+			protected function deleteApp_clickHandler(event:MouseEvent):void
+			{
+				this.owner.dispatchEvent(new Event(DELETE_APP));
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Button id="deleteApp" left="27" top="0" width="64" label="{Language.DELETE}"
+			  click="deleteApp_clickHandler(event)" horizontalCenter="0" verticalCenter="0"/>
+	
+</s:GridItemRenderer>

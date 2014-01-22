@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="770" height="582"
+		 implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			[Bindable]
+			private var monthName:Array = [Language.JANUARY,Language.FEBRUARY,Language.MARCH,Language.APRIL,
+				Language.MAY,Language.JUNE,Language.JULY,Language.AUGUST,Language.SEPTEMBER,Language.OCTOBER,Language.NOVEMBER,Language.DECEMBER];
+			[Bindable]
+			private var weekName:Array = [Language.DAY,Language.ONE,Language.TWO,Language.THREE,Language.FOUR,Language.FIVE,Language.SIX];
+			/**
+			 * 当舞台大小改变时，同步缩放某些组件的大小
+			 */
+			public function resize(w:Number, h:Number):void
+			{
+				this.height = Global.MODULE_HEIGHT + Global.getChangeHeight();
+				this.width = Global.MODULE_WIDTH + Global.getChangeWidth();
+				dg.width = 775 + Global.getChangeWidth();
+				dg.height = 378 + Global.getChangeHeight();
+				
+				platChargeAll.y=dg.y+dg.height+20;
+				moneyAll.y=dg.y+dg.height+20;
+				percent.y=dg.y+dg.height+20;
+				chargeAll.y=dg.y+dg.height+20*3;
+				chargeAllLabel.y=dg.y+dg.height+20*3;
+			}
+			
+		]]>
+	</fx:Script>
+	<mx:DateField id="btime" x="102" y="20" width="186" color="#FFFFFF" dayNames="{weekName}" formatString="YYYY-MM-DD" monthNames="{monthName}"/>
+	<mx:DateField id="etime" x="405" y="19" width="193" height="24" color="#FFFFFF" dayNames="{weekName}" formatString="YYYY-MM-DD" monthNames="{monthName}"/>
+	<s:Label x="16" y="25" text="{Language.EFFECTIVE_BTIME}："/>
+	<s:Label x="308" y="24" text="{Language.EFFECTIVE_ETIME}："/>
+	<s:TextInput id="bHours" x="102" y="51" width="42" text="0"/>
+	<s:TextInput id="bMinute" x="166" y="51" width="42" text="0"/>
+	<s:TextInput id="bSeconds" x="230" y="51" width="42" text="0"/>
+	<s:Label x="151" y="58" text="{Language.HOURS}"/>
+	<s:Label x="215" y="58" text="{Language.MINUTES}"/>
+	<s:Label x="278" y="58" text="{Language.SECONDS}"/>
+	<s:TextInput id="eHours" x="409" y="51" width="42" text="0"/>
+	<s:TextInput id="eMinute" x="473" y="51" width="42" text="0"/>
+	<s:TextInput id="eSeconds" x="537" y="51" width="42" text="0"/>
+	<s:Label x="458" y="58" text="{Language.HOURS}"/>
+	<s:Label x="522" y="58" text="{Language.MINUTES}"/>
+	<s:Label x="585" y="58" text="{Language.SECONDS}"/>
+	<s:DataGrid id="dg" x="8" y="95" width="755" height="378" requestedRowCount="4" textAlign="center">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="serverid" headerText="{Language.PLAT_NUMBER}" minWidth="200"></s:GridColumn>
+				<s:GridColumn dataField="money" headerText="{Language.JINE}" minWidth="200"></s:GridColumn>
+				<s:GridColumn dataField="opentime" headerText="{Language.OPEN_SERVER_TIME}" minWidth="200"></s:GridColumn>
+				<s:GridColumn dataField="day_money" headerText="{Language.PERCET_DAY_CHARGE}" minWidth="200"></s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<s:Button id="sumbitBtn" x="623" y="51" width="75" label="{Language.RESEARCH}"/>
+	<s:TextInput id="platChargeAll" x="9" y="535" width="89" text="{Language.PLAT_CHARGE_ALL_MONEY}：" editable="false"/>
+	<s:TextInput id="chargeAll" x="9" y="495" width="63" text="{Language.CHARGE_MONEY}：" editable="false"/>
+	<s:TextInput id="moneyAll" x="117" y="535"/>
+	<s:TextInput id="percent" x="266" y="495"/>
+	<s:TextInput id="chargeAllLabel" x="90" y="495"/>
+	
+</s:Group>

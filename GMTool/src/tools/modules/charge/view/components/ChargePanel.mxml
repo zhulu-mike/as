@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="770" height="582"
+		 implements="tools.common.resize.IResize">
+	<fx:Declarations>
+		<s:RadioButtonGroup id="radiogroup1" selectedValue="0"/>
+		<s:RadioButtonGroup id="radiogroup2" selectedValue="0"/>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			[Bindable]
+			private var monthName:Array = [Language.JANUARY,Language.FEBRUARY,Language.MARCH,Language.APRIL,
+				Language.MAY,Language.JUNE,Language.JULY,Language.AUGUST,Language.SEPTEMBER,Language.OCTOBER,Language.NOVEMBER,Language.DECEMBER];
+			[Bindable]
+			private var weekName:Array = [Language.DAY,Language.ONE,Language.TWO,Language.THREE,Language.FOUR,Language.FIVE,Language.SIX];
+			
+			/**
+			 * 当舞台大小改变时，同步缩放某些组件的大小
+			 */
+			public function resize(w:Number, h:Number):void
+			{
+				this.height = Global.MODULE_HEIGHT + Global.getChangeHeight();
+				this.width = Global.MODULE_WIDTH + Global.getChangeWidth();
+				dg.width = 750 + Global.getChangeWidth();
+				dg.height = 451 + Global.getChangeHeight();
+			}
+			
+		]]>
+	</fx:Script>
+	<s:DataGrid id="dg" x="10" y="121" width="750" height="451" requestedRowCount="4"
+				textAlign="center">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="id" headerText="ID" width="175"></s:GridColumn>
+				<s:GridColumn dataField="name" headerText="{Language.USER_PLAY_NAME}"></s:GridColumn>
+				<s:GridColumn dataField="recharge_num" headerText="{Language.CHARGE_MONEY}"></s:GridColumn>
+				<s:GridColumn dataField="ctime" headerText="{Language.CHARGE_TIME}" minWidth="100"></s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<s:Button id="searchBtn" x="10" y="63" width="103" label="{Language.RESEARCH}"/>
+	<s:HGroup x="10" y="10" width="215" color="#00FF00" id="userWay">
+		<s:RadioButton width="57" label="{Language.ALL}" groupName="radiogroup1" value="0"/>
+		<s:RadioButton width="65" label="{Language.PLAYER_NAME}" groupName="radiogroup1" value="1"/>
+		<s:RadioButton width="77" label="{Language.PLAYER_ID}" groupName="radiogroup1" value="2"/>
+	</s:HGroup>
+	<s:TextInput id="userName" visible="false" x="233" y="5" width="190" color="#00FF00"/>
+	<s:Label x="10" y="96" color="#00FF00" text="{Language.ALL_MONEY}"/>
+	<s:Label id="allCharge" x="66" y="98" width="83" color="#FFFFFF" text="0"/>
+	<s:Label x="182" y="96" color="#00FF00" text="{Language.ALL_COUNT}"/>
+	<s:Label id="allCount" x="235" y="98" color="#FFFFFF" text="0"/>
+	<s:BorderContainer x="462" y="89" width="298" height="30">
+		<s:Button id="preBtn" x="6" y="3" label="{Language.LAST_PAGE}" color="#FFFFFF"/>
+		<s:Button id="nextBtn" x="128" y="3" label="{Language.NEXT_PAGE}" color="#FFFFFF"/>
+		<s:Label id="labelNum" x="61" y="8" width="59" text="1/0" textAlign="center"
+				 verticalAlign="top"/>
+		<s:TextInput id="pageNum" x="206" y="2" width="43" color="#FFFFFF" text="0"
+					 textAlign="center"/>
+		<s:Button id="go" x="257" y="3" label="GO"/>
+	</s:BorderContainer>
+	<s:HGroup x="10" y="37">
+		<s:RadioButton width="45" label="{Language.TODAY}" color="#00FF00" groupName="radiogroup2" value="0"/>
+		<s:RadioButton width="45" label="{Language.YESTERDAY}" color="#00FF00" groupName="radiogroup2" value="1"/>
+		<s:RadioButton width="45" label="{Language.TOWEEK}" color="#00FF00" groupName="radiogroup2" value="2"/>
+		<s:RadioButton width="45" label="{Language.TOMONTH}" color="#00FF00" groupName="radiogroup2" value="3"/>
+		<s:RadioButton width="45" label="{Language.ALL}" color="#00FF00" groupName="radiogroup2" value="4"/>
+		<s:RadioButton width="45" label="{Language.OTHER}" color="#00FF00" groupName="radiogroup2"
+					   value="5"/>
+	</s:HGroup>
+	<s:Group x="319" y="32" width="424" height="23" id="otherTime" visible="false">
+		<mx:DateField x="69" y="0" id="btime" width="128" color="#FFFFFF" formatString="YYYY-MM-DD" monthNames="{monthName}" dayNames="{weekName}"/>
+		<mx:DateField x="284" y="0" id="etime" width="128" color="#FFFFFF" formatString="YYYY-MM-DD" monthNames="{monthName}" dayNames="{weekName}"/>
+		<s:Label x="7" y="6" color="#00FF00" text="{Language.BEGIN_TIME}"/>
+		<s:Label x="222" y="6" color="#00FF00" text="{Language.END_TIME}"/>
+	</s:Group>
+	
+</s:Group>

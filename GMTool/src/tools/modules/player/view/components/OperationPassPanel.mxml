@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="350" height="200">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:Panel x="0" y="0" width="350" height="200">
+		<s:Label x="10" y="-23" text="{Language.OPERATION}"/>
+		<s:Label id="label" x="31" y="48" text="{Language.REASON}："/>
+		<s:TextInput id="reasonInput" x="93" y="42" width="197"/>
+		<s:Button id="sureBtn" x="93" y="96" width="75" label="{Language.ONSURE}"/>
+		<s:Button id="closeBtn" x="198" y="96" width="75" label="{Language.ONCLOSE}"/>
+	</s:Panel>
+</s:Group>
