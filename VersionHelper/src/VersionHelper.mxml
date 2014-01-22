@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   width="636" height="600"
+					   showStatusBar="false" xmlns:local="*" creationComplete="initConfig()" 
+					   >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.thinkido.framework.data.LocalSO;
+			import com.thinkido.framework.utils.ObjectParser;
+			
+			import global.GlobalConfig;
+			
+			import mx.controls.Alert;
+			
+			import setting.Hostory;
+			
+			import utils.ChangeFileUtil;
+			import utils.CompressUtil;
+			import utils.FormatUtil;
+
+
+			private function appClose():void{
+				this.nativeWindow.close() ;
+			}
+			private function moveMe(evt:MouseEvent):void{
+				if( !evt.target.hasOwnProperty("id") || (evt.target.hasOwnProperty("id") && evt.target.id != "moveArea") ){
+					return ;
+				}
+				this.nativeWindow.startMove();
+				this.alpha = 0.6;
+			}
+			private function mouseUpHandle():void{
+				this.alpha = 1;
+			}
+			private var _hostory:Hostory = null;
+			private var hostorySo:LocalSO = new LocalSO("VersionHelperHostory");
+			
+			protected function initConfig():void
+			{
+				getHostoriy();
+			}
+			/**
+			 * 获取历史记录并赋值输入框  */
+			private function getHostoriy():void
+			{
+				var obj:Object = hostorySo.getAt("hostory") ;
+				hostory = ObjectParser.toClass(obj,Hostory) ;
+				
+			}
+			private var nativeProcessStartupInfo:NativeProcessStartupInfo;
+			
+			/** 1导出模块 */
+			public function exportVersion():void{
+				NativeApplication.nativeApplication.autoExit=true;
+				var _file:File = new File(File.applicationDirectory.nativePath + "/bat/version.exe") ;
+				nativeProcessStartupInfo = new NativeProcessStartupInfo();
+				nativeProcessStartupInfo.executable = _file;
+				var process:NativeProcess = new NativeProcess();
+				process.start(nativeProcessStartupInfo);
+			}
+			/** 2修改格式   */
+			public function formatVersion():void{
+				var _file:File= new File( hostory.formatFilePath );
+				if( !_file.exists ){
+					Alert.show("目标文件不存在!");
+					return ;
+				}
+				FormatUtil.getInstace().format(_file);
+			}
+			/** 3、把版本信息写入reversion.xml 中 */
+			public function changeVersionFile():void{
+				var str:String = versionFileInput.text ;
+				str = str.replace("\\","/");
+				var change:Boolean = false ;
+				if( pathFilterInput.text != hostory.pathFilters.join(",") ){
+					hostory.pathFilters =  pathFilterInput.text.split(",") ;
+					change = true ;
+				}
+				if( typeFilterInput.text != hostory.typeFilters.join(",") ){
+					hostory.typeFilters =  typeFilterInput.text.split(",") ;
+					change = true ;
+				}
+				if( str != hostory.versionFilePath ){
+					hostory.versionFilePath = str ;
+					change = true ;
+				}
+				if(change){
+					saveHostory();
+				}
+				ChangeFileUtil.instance.changeResversion() ;
+			}
+			
+			/** 4、压缩及导出 */
+			public function compressAndExport():void{
+				changeSet();
+				
+				var _file:File= new File( hostory.compressFilePath );
+				if( !_file.exists ){
+					Alert.show("压缩目录不存在!");
+					return ;
+				}
+				CompressUtil.getInstace().dirUrl = _file.url ;
+				CompressUtil.getInstace().hostory = hostory ;
+				CompressUtil.getInstace().readXML(_file);
+			}
+			
+
+			private function changeSet():void
+			{
+				var str:String = compressInput.text ;
+				var str1:String = exportInput.text ;
+				str = str.replace("\\","/");
+				str1 = str1.replace("\\","/");
+				if( hostory.compressFilePath != str || hostory.compressExportPath != str1 ){
+					hostory.compressFilePath = str ;
+					hostory.compressExportPath = str1 ;
+					saveHostory();
+				}else{
+					hostory.compressFilePath = str ;
+					hostory.compressExportPath = str1 ;
+				}
+			}
+			/**  版本文件写入config.xml中 */
+			private function modifyConfig():void{
+				var str:String = configFileInput.text ;
+				str = str.replace("\\","/");
+				if( str != hostory.configFilePath ){
+					hostory.configFilePath = str ;
+					saveHostory();
+				}
+				ChangeFileUtil.instance.changeConfig() ;
+			}
+
+			private function saveHostory():void{
+				hostorySo.setAt("hostory",hostory) ;
+				hostorySo.flush();
+			}
+			
+			[Bindable]
+			public function get hostory():Hostory
+			{
+				if( _hostory == null ){
+					_hostory = new Hostory() ;
+					_hostory.formatFilePath = "E:/newGame/code/client/NewGame/resService/version.xml";
+					_hostory.versionFilePath = "E:/newGame/code/client/NewGame/resService/program/config/config/resversion.xml";
+					_hostory.configFilePath = "E:/newGame/code/client/NewGame/resService/program/config/config.xml";
+					_hostory.compressFilePath = "E:/newGame/code/client/NewGame/resService";
+					_hostory.compressExportPath = "E:/newGame/code/client/NewGame/resService";
+					_hostory.typeFilters = String("thi,swf,mp3").split(",") ; 
+					_hostory.pathFilters = String("game/modules,res/data").split(",") ;
+					GlobalConfig.instance.hostory = _hostory ;
+				}
+				return _hostory;
+			}
+			
+			public function set hostory(value:Hostory):void
+			{
+				_hostory = value;
+				GlobalConfig.instance.hostory = _hostory ;
+			}
+
+		]]>
+	</fx:Script>
+	<s:TitleWindow id="app" width="636" height="600" close="appClose()" fontSize="14"
+				   mouseDown="moveMe(event)" mouseOut="mouseUpHandle()" mouseUp="mouseUpHandle()" title="版本发布工具">
+		<s:controlBarContent>
+			<s:Label text="By Thinkido.com"/>
+			<s:Label width="100%" text="Contact:QQ 4077725" textAlign="right"/>
+		</s:controlBarContent>
+		
+		<s:Label x="20" y="46" fontSize="14" text="第一步："/>
+		<s:Label x="20" y="327" fontSize="14" text="第四步："/>
+		<s:Label x="20" y="418" fontSize="14" text="第五步："/>
+		<s:Label x="55" y="449" fontSize="12" text="压缩目录："/>
+		<s:Label x="55" y="248" fontSize="12" text="包含后缀："/>
+		<s:Label x="55" y="131" fontSize="12" text="版本信息："/>
+		<s:Label x="55" y="478" fontSize="12" text="导出目录："/>
+		<s:Label x="20" y="102" fontSize="14" text="第二步："/>
+		<s:Label x="20" y="188" fontSize="14" text="第三步："/>
+		<s:TextArea x="118" y="46" width="471" height="25" editable="false" fontSize="14"
+					text="导出svn版本信息,不同电脑需要修改路径，路径在version.ini中"/>
+		<s:TextArea x="175" y="156" width="309" height="25" editable="false" fontSize="14"
+					text="生成new_version.xml和版本信息字典"/>
+		<s:Button x="118" y="156" label="改格式" click="formatVersion()"/>
+		<s:Button x="118" y="505" label="压缩" click="compressAndExport()" />
+		<s:Button x="118" y="303" label="修改Resversion.xml" click="changeVersionFile()"/>
+		<s:TextInput id="versionFileInput" text="{hostory.versionFilePath}" x="118" y="210" width="427"/>
+		<s:TextInput id="compressInput" text="{hostory.compressFilePath}" x="118" y="442" width="427"/>
+		<s:TextInput x="259" y="303" width="310" enabled="false" fontSize="14"
+					 text="格式化后的数据写入上面输入框中指定的文件中"/>
+		<s:TextInput id="exportInput" text="{hostory.compressExportPath}" x="118" y="473" width="427"/>
+		
+		<s:TextInput id="formatInput" text="{hostory.formatFilePath}" x="118" y="124" width="428"/>
+		<s:Button x="118" y="75" label="导出svn版本" click="exportVersion()" toolTip="debug或者运行时无效，绿色air能运行"/>
+		<s:TextInput id="configFileInput" x="118" y="354" width="377" text="{hostory.configFilePath}" toolTip="config.xml 路径"/>
+		<s:Button x="118" y="385" label="修改config.xml" click="modifyConfig()"/>
+		<s:TextInput id="typeFilterInput" text="{hostory.typeFilters.join(',')}" x="118" y="239" width="427"/>
+		<s:Label x="55" y="281" fontSize="12" text="包含路径："/>
+		<s:TextInput id="pathFilterInput" text="{hostory.pathFilters.join(',')}" x="118" y="272" width="427"/>
+		<s:Label x="101" y="9" width="274" color="#F60909"
+				 text="注意：路径中最好使用&quot;/&quot;，不要用&quot;\&quot;"/>
+	</s:TitleWindow>	
+	
+</s:WindowedApplication>

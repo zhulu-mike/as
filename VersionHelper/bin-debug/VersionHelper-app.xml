@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<application xmlns="http://ns.adobe.com/air/application/3.1">
+<id>VersionHelper</id>
+	<filename>VersionHelper</filename>
+	<supportedProfiles>extendedDesktop desktop</supportedProfiles>
+	<name>VersionHelper</name>
+	
+	<versionNumber>0.0.0</versionNumber>
+	<initialWindow>
+		<content>VersionHelper.swf</content>
+		<systemChrome>none</systemChrome>
+		<transparent>true</transparent>
+	<autoOrients>false</autoOrients>
+        <fullScreen>false</fullScreen>
+        <visible>false</visible>
+    </initialWindow>
+
+</application>
