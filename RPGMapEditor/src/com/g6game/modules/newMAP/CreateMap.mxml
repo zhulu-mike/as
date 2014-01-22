@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 xmlns:display="com.g6game.display.*"  
+		 width="536" height="300" title="新建地图" creationComplete="panel1_creationCompleteHandler(event)"
+		 mouseDown="onMouseDown(event)" isPopUp="true">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.g6game.managers.EditorConfig;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			
+			import spark.components.Group;
+			import spark.components.SkinnableContainer;
+			private var mapTypeSrc:ArrayCollection = new ArrayCollection(["选择地图类型", "公共地图", "个人地图", "组队地图", "公会地图", "个人PK地图","组队PK地图", "公会PK地图", "野外地图(允许个人和组队和公会的PVP、PVE地图)","奇门遁甲"]);
+			
+			protected function createMap(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				if (int(rows.text) <= 0)
+				{
+					Alert.show("地图行数必须大于0");
+					return;
+				}
+				
+				if (int(cols.text) <= 0)
+				{
+					Alert.show("地图列数必须大于0");
+					return;
+				}
+				
+				if (mapid.text == "")
+				{
+					Alert.show("地图ID必须填写");
+					return;
+				}
+				if (this.maptype.selectedIndex <= 0)
+				{
+					Alert.show("选择地图类型");
+					return;
+				}
+				EditorConfig.getInstance().mapVO.cols = int(cols.text);
+				EditorConfig.getInstance().mapVO.rows = int(rows.text);
+				EditorConfig.getInstance().mapVO.id = mapid.text;
+				EditorConfig.getInstance().mapVO.type = maptype.selectedIndex;
+				EditorConfig.getInstance().mapVO.name = mapName.text;
+				EditorConfig.getInstance().mapVO.born = false;
+				EditorConfig.getInstance().mapVO.bornX = 0;
+				EditorConfig.getInstance().mapVO.bornY = 0;
+				onClose();
+				EditorConfig.getInstance().createNewMap();
+			}
+			
+			private static var instance:CreateMap;
+			
+			public static function getInstance():CreateMap
+			{
+				if (!instance)
+					instance = new CreateMap();
+				return instance;
+			}
+			
+			public function onClose():void
+			{
+				if (instance.parent)
+				{
+					(instance.parent as Group).removeElement(instance);
+				}
+			}
+			
+			private function onMouseDown(e:MouseEvent):void
+			{
+				if (e.target != instance)
+					return;
+				instance.startDrag();
+				addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+				addEventListener(MouseEvent.MOUSE_OUT, onMouseUp);
+			}
+			
+			private function onMouseUp(e:MouseEvent):void
+			{
+				removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+				removeEventListener(MouseEvent.MOUSE_OUT, onMouseUp);
+				instance.stopDrag();
+			}
+			
+			protected function panel1_creationCompleteHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				maptype.textInput.editable = false;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Label x="88.5" y="33" text="地图名称："/>
+	<s:TextInput x="161.5" y="31" id="mapName"/>
+	<s:Label x="88.5" y="63" text="行数："/>
+	<display:MyTextInput x="161.5" y="61" restrict="0-9" id="rows" maxValue="500"/>
+	<s:Label x="88.5" y="91" text="列数："/>
+	<display:MyTextInput x="161.5" y="91" restrict="0-9" id="cols" maxValue="500"/>
+	<s:Button x="125" y="213" label="确定" click="createMap(event)"/>
+	<s:Button x="249" y="213" label="关闭" click="onClose()"/>
+	<s:Label x="88.5" y="125" text="ID："/>
+	<s:TextInput x="161" y="123" id="mapid"/>
+	<s:Label x="90" y="164" text="类型："/>
+	<s:ComboBox x="161" y="161" dataProvider="{mapTypeSrc}" selectedIndex="0" id="maptype"></s:ComboBox>
+	
+</s:TitleWindow>

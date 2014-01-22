@@ -1,0 +1,42 @@
+/* CSS file */
+
+Button.eyeOpen
+{
+	upSkin: Embed(source="assets/eye_open.gif");
+	overSkin: Embed(source="assets/eye_open.gif");
+/*	downSkin: Embed(source="assets/eye_open.gif");*/
+	disabledSkin: Embed(source="assets/eye_open.gif");
+	selectedDownSkin: Embed(source="assets/eye_open.gif");
+	selectedUpSkin: Embed(source="assets/eye_open.gif");
+	selectedOverSkin: Embed(source="assets/eye_open.gif");
+}
+
+Button.eyeClose
+{
+	upSkin: Embed(source="assets/eye_close.gif");
+	overSkin: Embed(source="assets/eye_close.gif");
+/*	downSkin: Embed(source="assets/eye_close.gif");*/
+	disabledSkin: Embed(source="assets/eye_close.gif");
+}
+Button.delete
+{
+	upSkin: Embed(source="assets/delete.gif");
+	overSkin: Embed(source="assets/delete.gif");
+	/*	downSkin: Embed(source="assets/eye_close.gif");*/
+	disabledSkin: Embed(source="assets/delete.gif");
+}
+Button.new
+{
+	upSkin: Embed(source="assets/new.gif");
+	overSkin: Embed(source="assets/new.gif");
+	/*	downSkin: Embed(source="assets/eye_close.gif");*/
+	disabledSkin: Embed(source="assets/new.gif");
+}
+Alert
+{
+	
+}
+ToolTip
+{
+	fontSize:12;
+}

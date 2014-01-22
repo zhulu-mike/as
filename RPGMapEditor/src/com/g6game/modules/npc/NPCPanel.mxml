@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="314" height="388"
+		 mouseDown="onMouseDown(event)" isPopUp="true">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.g6game.managers.EditorManager;
+			
+			import mx.controls.Alert;
+			
+			import spark.components.Group;
+			
+			private var file:File = new File();
+			[Bindable]
+			private var npcXML:XMLList;
+			
+			private static var instance:NPCPanel;
+			
+			public static function getInstance():NPCPanel
+			{
+				if (!instance)
+				{
+					instance = new NPCPanel();
+					instance.x = 20;
+					instance.y = 300;
+				}
+				return instance;
+			}
+			
+			public function onClose():void
+			{
+				if (instance.parent)
+				{
+					(instance.parent as Group).removeElement(instance);
+				}
+			}
+			
+			//			/**导入怪物列表*/
+			//			private function importNpcXML():void
+			//			{
+			//				file.browse([new FileFilter(".xml", "*.xml")]);
+			//				file.addEventListener(Event.SELECT, selectXML);
+			//			}
+			
+			//			private function selectXML(e:Event):void
+			//			{
+			//				file.removeEventListener(Event.SELECT, selectXML);
+			//				file.load();
+			//				file.addEventListener(Event.COMPLETE, loadXMLCom);
+			//			}
+			//			
+			//			private function loadXMLCom(e:Event):void
+			//			{
+			//				file.removeEventListener(Event.COMPLETE, loadXMLCom);
+			//				var fs:FileStream = new FileStream();
+			//				fs.endian = Endian.LITTLE_ENDIAN;
+			//				fs.open(file, FileMode.READ);
+			//				npcXML = XML(fs.readUTFBytes(fs.bytesAvailable)).child("p");
+			//				fs.close();
+			//			}
+			
+			private function onMouseDown(e:MouseEvent):void
+			{
+				if (e.target != instance)
+					return;
+				instance.startDrag();
+				addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+				addEventListener(MouseEvent.MOUSE_OUT, onMouseUp);
+			}
+			
+			private function onMouseUp(e:MouseEvent):void
+			{
+				removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+				removeEventListener(MouseEvent.MOUSE_OUT, onMouseUp);
+				instance.stopDrag();
+			}
+			
+			//			/**添加*/
+			//			private function addNpcArea():void
+			//			{
+			//				if (llist.selectedItem == null)
+			//				{
+			//					Alert.show("先选择一个图片，有木有？");
+			//					return;
+			//				}
+			//				EditorManager.getInstance().addNpcProperty(llist.selectedItem as XML);
+			//			}
+			
+			public function showCurrNpc(id:String, name:String, dir:int):void
+			{
+				npcid.text = id;
+				npcname.text = name;
+				npcdir.text = dir.toString();
+			}
+			
+			/***/
+			public function savaProperty():void
+			{
+				if (npcid.text == "")
+				{
+					Alert.show("请输入NPC名");
+					return;
+				}
+				if (npcname.text == "")
+				{
+					Alert.show("请输入NPC名");
+					return;
+				}
+				if (npcdir.text == "")
+				{
+					Alert.show("请输入NPC方向,0-7");
+					return;
+				}
+				EditorManager.getInstance().setNpcProperty(npcid.text, npcname.text, int(npcdir.text));
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Label x="80" y="10" width="134" color="#000000" text="NPC出生点设置" textAlign="center"/>
+	<s:Label x="21" y="47" text="NPCID："/>
+	<s:TextInput x="67" y="75" id="npcid"/>
+	<s:Label x="21" y="128" text="NPC名："/>
+	<s:TextInput x="67" y="156" id="npcname"/>
+	<s:Label x="21" y="209" text="NPC方向："/>
+	<s:TextInput x="67" y="237" restrict="0-7" maxChars="1" id="npcdir"/>
+	<s:Button x="37" y="303" label="设置" click="savaProperty()"/>
+	<s:Button x="188" y="303" label="关闭" click="onClose()"/>
+</s:TitleWindow>

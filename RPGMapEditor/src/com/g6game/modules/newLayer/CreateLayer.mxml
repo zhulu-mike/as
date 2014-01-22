@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300"
+		 title="新建图层" textAlign="center"  >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.g6game.managers.EditorManager;
+			
+			private static var instance:CreateLayer;
+			
+			public static function getInstance():CreateLayer
+			{
+				if (!instance)
+					instance = new CreateLayer();
+				return instance;
+			}
+			
+			public function onClose():void
+			{
+				if (instance.parent)
+				{
+					instance.parent.removeChild(instance);
+				}
+			}
+			
+			private function createLayer():void
+			{
+				EditorManager.getInstance().addLayer(lname.text);
+				
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Label x="79.5" y="71" text="图层名："/>
+	<s:TextInput x="140.5" y="69" id="lname"/>
+	<s:Label x="140.5" y="101" text="可不填"/>
+	<s:Button x="112" y="200" label="确定" click="createLayer()"/>
+	<s:Button x="207" y="200" label="关闭" click="onClose()"/>
+</s:Panel>

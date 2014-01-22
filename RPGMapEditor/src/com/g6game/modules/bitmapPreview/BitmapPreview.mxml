@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="314" height="388"
+		 xmlns:display="com.g6game.display.*"
+		 mouseDown="onMouseDown(event)"	 isPopUp="true">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.g6game.display.BitmapClip;
+			import com.g6game.factory.BitmapClipFactory;
+			
+			import spark.components.SkinnableContainer;
+			
+			
+			private static var instance:BitmapPreview;
+			
+			public static function getInstance():BitmapPreview
+			{
+				if (!instance)
+				{
+					instance = new BitmapPreview();
+					instance.x = 20;
+					instance.y = 300;
+				}
+				return instance;
+			}
+			
+			public function onClose():void
+			{
+				if (instance.parent)
+				{
+					(instance.parent as Group).removeElement(instance);
+				}
+			}
+			
+			public function onShow(s:BitmapClip):void
+			{
+				if (llist.numChildren > 0)
+					BitmapClipFactory.getInstance().recycle(llist.removeChildAt(0) as BitmapClip);
+				llist.addChild(s);
+				if (s.width<274)
+					s.x = (274 - s.width)*0.5;
+				if (s.height<289)
+					s.y = (289 - s.height)*0.5;
+			}
+			
+			private function onMouseDown(e:MouseEvent):void
+			{
+				if (e.target != instance)
+					return;
+				instance.startDrag();
+				addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+				addEventListener(MouseEvent.MOUSE_OUT, onMouseUp);
+			}
+			
+			private function onMouseUp(e:MouseEvent):void
+			{
+				removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+				removeEventListener(MouseEvent.MOUSE_OUT, onMouseUp);
+				instance.stopDrag();
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Group x="10" y="38" width="274" height="289">
+		<display:MyUIComponent
+			id="llist" mouseChildren="false">
+		</display:MyUIComponent>
+	</s:Group>
+	
+	<s:Button x="121" y="335" label="关闭" click="onClose()"/>
+	<s:Label id="dragui" y="0" horizontalCenter="0" mouseChildren="false" mouseEnabled="false"
+			  text="图片预览" textAlign="center"/>
+</s:TitleWindow>

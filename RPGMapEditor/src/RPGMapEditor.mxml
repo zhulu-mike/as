@@ -1,0 +1,1748 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--RPG项目地图编辑器-->
+<!--@author solo-->
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   	xmlns:s="library://ns.adobe.com/flex/spark" 
+			  	xmlns:mx="library://ns.adobe.com/flex/mx" 
+			   	minWidth="1600" minHeight="800"
+			   	xmlns:display="com.g6game.display.*"
+			   	xmlns:Layers="com.g6game.modules.Layers.*"
+				addedToStage="windowedapplication1_addedToStageHandler(event)" 
+				resize="windowedapplication1_resizeHandler(event)"
+				fontSize="12" >
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<s:RadioButtonGroup id="radiogroup" change="radiogroup_changeHandler(event)"/>
+		<s:RadioButtonGroup id="radiogroup2" change="radiogroup2_changeHandler(event)"/>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.g6game.display.BackGround;
+			import com.g6game.display.BaseGround;
+			import com.g6game.display.BitmapClip;
+			import com.g6game.display.BornSprite;
+			import com.g6game.display.BuildGround;
+			import com.g6game.display.Grid;
+			import com.g6game.display.HinderGround;
+			import com.g6game.display.InteractiveGround;
+			import com.g6game.display.MonsterCircleSprite;
+			import com.g6game.display.MonsterGround;
+			import com.g6game.display.TransportGround;
+			import com.g6game.display.UserBornGround;
+			import com.g6game.factory.BitmapClipFactory;
+			import com.g6game.managers.EditorConfig;
+			import com.g6game.managers.EditorManager;
+			import com.g6game.modules.Layers.LayerList;
+			import com.g6game.modules.bitmapPreview.BitmapPreview;
+			import com.g6game.modules.collect.CollectPanel;
+			import com.g6game.modules.monsters.MonsterAreaSet;
+			import com.g6game.modules.newLayer.CreateLayer;
+			import com.g6game.modules.newMAP.CreateMap;
+			import com.g6game.modules.npc.NPCPanel;
+			import com.g6game.modules.transport.TranspointView;
+			
+			import flash.utils.getTimer;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.events.ResizeEvent;
+			import mx.utils.XMLUtil;
+			
+			import spark.filters.GlowFilter;
+			
+			import utils.GetSwfAllClass;
+			import utils.GridUtils;
+			
+			import vo.BornPointVO;
+			import vo.CellVO;
+			import vo.HinderPointVO;
+			import vo.LayerVO;
+			import vo.SwfVo;
+			import vo.TransPointVO;
+			private var gridLayer:Grid;//网格层
+			private var backImageLayer:BackGround;//背景层
+			private var interativeLayer:InteractiveGround;//交互层
+			private var hinderLayer:HinderGround;//阻挡层
+			private var monsterLayer:MonsterGround;//出生点层
+			private var userBornLayer:UserBornGround;//出生点层
+			private var transLayer:TransportGround;//传送点层
+			private var buildLayer:BuildGround;//建筑层
+			private var monsterCircleLayer:MonsterCircleSprite;//怪物圈
+			private var file:File = new File();
+			private var curreState:int = 0;//1表示阻挡点，2表示设置阴影点, 3表示设置传送点
+			private var layers:Array = [];//图层数组
+			private var filter:Array = [new GlowFilter(0xFF0000,1,3,3,10,1)];
+			
+			public var selectBitmap:BitmapClip;//选中的场景元素
+			
+			private var swfAry:Array = new Array();//元件库
+			private var loadIndex:int;
+			private var cName:String = "";
+			
+			private var loader:Loader = new Loader();
+			private var classReference:Class;
+			
+			private var mapXML:XML;
+			private var clientXML:XML;
+			private var serverXML:XML;
+			private var npcXML:XML;
+			private var collectXML:XML;
+			
+			private static const TOPLAYER:int = 5;//建筑层上面的层数
+			
+			private var mapTypeSrc:ArrayCollection = new ArrayCollection(["公共地图","个人地图","组队地图","公会地图","个人PK地图","组队PK地图", "公会PK地图", "野外地图(允许个人和组队和公会的PVP、PVE地图)","奇门遁甲"]);
+			private var scaleSceneBitmap:Bitmap = new Bitmap();
+			private var saveType:int = 1;//保存类型
+			//自动保存定时器
+			private var saveTimer:Timer = new Timer(1000*60*5,10000000);
+			
+			
+			
+			/**弹出新建地图面板*/
+			private function showCreateMap():void
+			{
+				if (CreateMap.getInstance().parent)
+				{
+					CreateMap.getInstance().onClose();
+					return;
+				}
+				addElement(CreateMap.getInstance());
+				CreateMap.getInstance().x = (this.width - CreateMap.getInstance().width)*0.5;
+				CreateMap.getInstance().y = (this.height - CreateMap.getInstance().height)*0.5;
+			}
+			
+			/**弹出图层面板*/
+			private function showLayerPanel():void
+			{
+				if (hinderSet.visible)
+				{
+					closeHinderSet();
+				}
+				if (!interativeLayer)
+				{
+					Alert.show("请先创建一个地图");
+					return;
+				}
+				if (LayerList.getInstance().parent)
+				{
+					LayerList.getInstance().onClose();
+					return;
+				}
+				addElement(LayerList.getInstance());
+				sortLayers();
+			}
+			
+			/**弹出创建图层面板*/
+			public function showCreateLayerPanel():void
+			{
+				if (CreateLayer.getInstance().parent)
+				{
+					CreateLayer.getInstance().onClose();
+					return;
+				}
+				addElement(CreateLayer.getInstance());
+				CreateLayer.getInstance().x = (this.width - CreateLayer.getInstance().width)*0.5;
+				CreateLayer.getInstance().y = (this.height - CreateLayer.getInstance().height)*0.5;
+			}
+			
+			/**弹出出生点设置面板,已经无效*/
+			public function showBornPanel():void
+			{
+				if (hinderSet.visible)
+				{
+					closeHinderSet();
+				}
+				if (MonsterAreaSet.getInstance().parent)
+				{
+					MonsterAreaSet.getInstance().onClose();
+					return;
+				}
+				addElement(MonsterAreaSet.getInstance());
+				var mc:BornSprite = monsterLayer.selectSprite;
+				if (mc)
+				{
+					MonsterAreaSet.getInstance().showCurrMonster(mc.voo.mid,mc.voo.mname,mc.voo.dir, 0);
+				}
+			}
+			/**弹出NPC设置面板*/
+			public function showNpcPanel():void
+			{
+				if (hinderSet.visible)
+				{
+					closeHinderSet();
+				}
+				if (NPCPanel.getInstance().parent)
+				{
+					NPCPanel.getInstance().onClose();
+					return;
+				}
+				addElement(NPCPanel.getInstance());
+			}
+			
+			/**弹出传送点设置面板*/
+			public function showSelectTrans(voo:TransPointVO):void
+			{
+				if (!TranspointView.getInstance().parent)
+				{
+					addElement(TranspointView.getInstance());
+				}
+				TranspointView.getInstance().showProperty(voo.type, voo.mid, voo.p);
+			}
+			
+			/**弹出图片预览面板*/
+			public function showPicPreviewPanel(s:BitmapClip):void
+			{
+				/* if (BitmapPreview.getInstance().parent)
+				{
+					BitmapPreview.getInstance().onClose();
+					return;
+				} */
+				addElement(BitmapPreview.getInstance());
+				BitmapPreview.getInstance().onShow(s);
+			}
+			
+			
+			
+			/**创建新地图*/
+			public function createNewMap():void
+			{
+				//先删除用户自己建的图层
+				deleteCustomLayer();
+				initInterativeLayer();
+				initBackImage();
+				initBuildLayer();
+				initMonsterLayer();
+				initUserBornLayer();
+				initTransLayer();
+				initGridLayer();
+				initHinderLayer();
+				if (saveTimer.running == false)
+				{
+					saveTimer.start();
+				}
+				spriteContainer.invalidateSize();
+				if (monsterCircleLayer == null)
+				{
+					monsterCircleLayer = new MonsterCircleSprite();
+					spriteContainer.addChild(monsterCircleLayer);
+					monsterCircleLayer.x = monsterCircleLayer.width >> 1;
+					monsterCircleLayer.y = monsterCircleLayer.height >> 1;
+				}else{
+					spriteContainer.addChild(monsterCircleLayer);
+				}
+				
+			}
+			
+			//删除用户自己建的图层
+			private function deleteCustomLayer():void
+			{
+				var len:int = layers.length-TOPLAYER-1, i:int = 2;
+				for (;len>i;len--)
+				{
+					(layers[len].layer as BuildGround).init();
+					layers[len].layer.parent.removeChild(layers[len].layer);
+				}
+				if (layers.length > 8)
+					layers.splice(3, layers.length - 8);//同layers.length有关
+			}
+			
+			/**初始化阻挡层*/
+			private function initHinderLayer():void
+			{
+				if (!hinderLayer)
+				{
+					hinderLayer = new HinderGround();
+					layers.push(new LayerVO(hinderLayer, "阻挡层"));
+					spriteContainer.addChildAt(hinderLayer, spriteContainer.numChildren);
+				}
+				hinderLayer.init();
+
+			}
+			
+			/**重绘网格层*/
+			private function initGridLayer():void
+			{
+				if (!gridLayer)
+				{
+					gridLayer = new Grid();
+					layers.push(new LayerVO(gridLayer, "网格层"));
+					spriteContainer.addChildAt(gridLayer, spriteContainer.numChildren);
+				}
+				gridLayer.drawGrid(EditorConfig.getInstance().mapVO.rows, EditorConfig.getInstance().mapVO.cols);
+//				spriteContainer.invalidateSize();
+			}
+			
+			/**重绘传送层*/
+			private function initTransLayer():void
+			{
+				if (!transLayer)
+				{
+					transLayer = new TransportGround();
+					layers.push(new LayerVO(transLayer, "传送层", true));
+					spriteContainer.addChildAt(transLayer, spriteContainer.numChildren);
+				}
+				transLayer.init();
+			}
+			
+			/**重绘人物出生层*/
+			private function initUserBornLayer():void
+			{
+				if (!userBornLayer)
+				{
+					userBornLayer = new UserBornGround();
+					layers.push(new LayerVO(userBornLayer, "人物出生层", true));
+					spriteContainer.addChildAt(userBornLayer, spriteContainer.numChildren);
+				}
+				userBornLayer.init();
+			}
+			
+			/**重绘出生点层*/
+			private function initMonsterLayer():void
+			{
+				if (!monsterLayer)
+				{
+					monsterLayer = new MonsterGround();
+					layers.push(new LayerVO(monsterLayer, "出生点层", true));
+					spriteContainer.addChildAt(monsterLayer, spriteContainer.numChildren);
+				}
+				monsterLayer.init();
+				
+			}
+			
+			protected function windowedapplication1_addedToStageHandler(event:Event):void
+			{
+				// TODO Auto-generated method stub
+				EditorConfig.getInstance().app = this;
+				EditorManager.getInstance().app = this;
+				stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+				scaleScene.addChild(scaleSceneBitmap);
+				saveTimer.stop();
+				saveTimer.addEventListener(TimerEvent.TIMER, autoSave);
+			}
+			
+			/**删除某个图片*/
+			private function onKeyUp(e:KeyboardEvent):void
+			{
+				if (e.keyCode == Keyboard.DELETE)
+				{
+					if (selectBitmap)
+					{
+						BuildGround(selectBitmap.parent).removeChild(selectBitmap);
+						BitmapClipFactory.getInstance().recycle(selectBitmap);
+						selectBitmap = null;
+					}
+				}
+			}
+			
+			/**控制网格层的显示*/
+			private function controlGridLayerVisible():void
+			{
+				if (!gridLayer)
+					return;
+				gridLayer.visible = !gridLayer.visible;
+			}
+			
+			/**初始化建筑层*/
+			private function initBuildLayer():void
+			{
+				if (!buildLayer) 
+				{
+					buildLayer = new BuildGround();
+					layers.push(new LayerVO(buildLayer, "建筑层"));
+					spriteContainer.addChildAt(buildLayer, 2);
+				}
+				buildLayer.init();
+
+			}
+			
+			/**初始化背景层*/
+			private function initBackImage(bitmap:Bitmap=null):void
+			{
+				if (!backImageLayer) 
+				{
+					backImageLayer = new BackGround();
+					layers.push(new LayerVO(backImageLayer, "背景层"));
+					spriteContainer.addChildAt(backImageLayer, 1);
+				}
+				backImageLayer.init();
+		
+			}
+			
+			/**初始化交互层*/
+			private function initInterativeLayer():void
+			{
+				if (!interativeLayer)
+				{
+					interativeLayer = new InteractiveGround();
+					layers.push(new LayerVO(interativeLayer, "交互层", false, false));
+					spriteContainer.addChildAt(interativeLayer, 0);
+					interativeLayer.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+				}
+				interativeLayer.fillBackground(EditorConfig.getInstance().mapVO.rows, EditorConfig.getInstance().mapVO.cols);
+			}
+
+			private function onMouseMove(event:MouseEvent):void
+			{
+				
+				currentPos.text = GridUtils.getMpos(event.localX, event.localY) + "," + GridUtils.getNpos(event.localX, event.localY);
+			}
+			
+			/**加载背景图片*/
+			private function loadBackImage():void
+			{
+				if (!backImageLayer)
+				{
+					Alert.show("请先创建一个地图");
+					return;
+				}
+				file.browse([new FileFilter(".jpg", "*.jpg"), new FileFilter(".png","*.png")]);
+				file.addEventListener(Event.SELECT, selectImage);
+			}
+			/**选择要加载的背景图片*/
+			private function selectImage(e:Event):void
+			{
+				file.removeEventListener(Event.SELECT, selectImage);
+				var f:File = e.target as File;
+				var loader:Loader = new Loader();
+				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadImageCom);
+				loader.load(new URLRequest(f.url));
+			}
+			/**加载背景图片完成*/
+			private function loadImageCom(e:Event):void
+			{
+				var f:LoaderInfo = e.target as LoaderInfo;
+				backImageLayer.setBackImage(f.content as Bitmap);
+			}
+			
+			/**添加阻挡点*/
+			private function hinderAdd():void
+			{
+				if (curreState == 1)
+				{
+					curreState = 0;
+					Mouse.cursor = MouseCursor.AUTO;
+					resumeAllLayerMouseEnabled();
+					interativeLayer.removeMouseDownListener();
+				}
+				else
+				{
+					curreState = 1;
+					Mouse.cursor = MouseCursor.BUTTON;
+					if (gridLayer)
+						gridLayer.visible = true;
+					setAllLayerMouseEnabled(false);
+//					interativeLayer.addMouseDownListener();
+					
+				}
+			}
+			
+			/**添加阴影点*/
+			private function maskAdd():void
+			{
+				if (curreState == 2)
+				{
+					curreState = 0;
+					Mouse.cursor = MouseCursor.AUTO;
+					resumeAllLayerMouseEnabled();
+				}
+				else
+				{
+					curreState = 2;
+					Mouse.cursor = MouseCursor.BUTTON;
+					if (gridLayer)//强制开启网格
+						gridLayer.visible = true;
+					setAllLayerMouseEnabled(false);
+//					interativeLayer.removeMouseDownListener();
+				}
+			}
+			
+			/**添加传送点*/
+			private function setTransportPoint():void
+			{
+				if (hinderSet.visible)
+				{
+					closeHinderSet();
+				}
+				if (curreState == 3)
+				{
+					curreState = 0;
+					Mouse.cursor = MouseCursor.AUTO;
+					resumeAllLayerMouseEnabled();
+				}
+				else
+				{
+					curreState = 3;
+					Mouse.cursor = MouseCursor.BUTTON;
+					if (gridLayer)//强制开启网格
+						gridLayer.visible = true;
+					setAllLayerMouseEnabled(false);
+					interativeLayer.removeMouseDownListener();
+				}
+			}
+			
+			/**添加NPC点*/
+			private function setNPCPoint():void
+			{
+				if (hinderSet.visible)
+				{
+					closeHinderSet();
+				}
+				if (curreState == 5)
+				{
+					curreState = 0;
+					Mouse.cursor = MouseCursor.AUTO;
+					resumeAllLayerMouseEnabled();
+				}
+				else
+				{
+					curreState = 5;
+					Mouse.cursor = MouseCursor.BUTTON;
+					if (gridLayer)//强制开启网格
+						gridLayer.visible = true;
+					setAllLayerMouseEnabled(false);
+				}
+			}
+			
+			/**添加怪物点*/
+			private function setMonsterPoint():void
+			{
+				if (hinderSet.visible)
+				{
+					closeHinderSet();
+				}
+				if (curreState == 6)
+				{
+					curreState = 0;
+					Mouse.cursor = MouseCursor.AUTO;
+					resumeAllLayerMouseEnabled();
+				}
+				else
+				{
+					curreState = 6;
+					Mouse.cursor = MouseCursor.BUTTON;
+					if (gridLayer)//强制开启网格
+						gridLayer.visible = true;
+					setAllLayerMouseEnabled(false);
+				}
+			}
+			
+			/**添加采集点*/
+			private function setCollectPoint():void
+			{
+				if (hinderSet.visible)
+				{
+					closeHinderSet();
+				}
+				if (curreState == 7)
+				{
+					curreState = 0;
+					Mouse.cursor = MouseCursor.AUTO;
+					resumeAllLayerMouseEnabled();
+				}
+				else
+				{
+					curreState = 7;
+					Mouse.cursor = MouseCursor.BUTTON;
+					if (gridLayer)//强制开启网格
+						gridLayer.visible = true;
+					setAllLayerMouseEnabled(false);
+				}
+			}
+			
+			/**在设置阻挡点时，屏蔽下面所有层*/
+			private function setAllLayerMouseEnabled($data:Boolean):void
+			{
+				var len:int = layers.length-3, i:int = 2;
+				for (;len>=i;len--)
+				{
+					BaseGround(layers[len].layer).setMouseEnable($data);
+				}
+				monsterCircleLayer.mouseChildren = monsterCircleLayer.mouseEnabled = false;
+			}
+			
+			/**恢复下面所有层*/
+			private function resumeAllLayerMouseEnabled():void
+			{
+				var len:int = layers.length-3, i:int = 2;
+				for (;len>=i;len--)
+				{
+					if (layers[len].layer.filters.length <= 0)
+						BaseGround(layers[len].layer).setMouseEnable(true);
+					else
+						BaseGround(layers[len].layer).setMouseEnable(false);
+				}
+				monsterCircleLayer.mouseChildren = monsterCircleLayer.mouseEnabled = true;
+			}
+			
+			/**删除所有阻挡点和阴影点*/
+			private function deleteAllPoint():void
+			{
+				/* Alert.yesLabel = "确定";
+				Alert.cancelLabel = "取消";
+				Alert.show("是否删除全部阻挡点和阴影点", "", Alert.YES|Alert.CANCEL, this, deleteNow); */
+				if (hinderSet.visible)
+				{
+					closeHinderSet();
+				}
+				if (curreState == 4)
+				{
+					curreState = 0;
+					Mouse.cursor = MouseCursor.AUTO;
+					resumeAllLayerMouseEnabled();
+					interativeLayer.removeMouseDownListener();
+				}
+				else
+				{
+					curreState = 4;
+					Mouse.cursor = MouseCursor.HAND;
+					if (gridLayer)
+						gridLayer.visible = true;
+					setAllLayerMouseEnabled(false);
+					interativeLayer.addMouseDownListener();
+					
+				}
+			}
+			
+			private function deleteNow(e:CloseEvent):void
+			{
+				if (e.detail == Alert.CANCEL)
+					return;
+				hinderLayer.deleteAllHinders();
+			}
+			
+			public function get currState():int
+			{
+				return curreState;
+			}
+			
+			public function get hinder():HinderGround
+			{
+				return hinderLayer;
+			}
+			
+			public function get transport():TransportGround
+			{
+				return transLayer;
+			}
+			
+			public function get monsterUI():MonsterGround
+			{
+				return monsterLayer;
+			}
+			
+			/**删除图层*/
+			public function deleteLayer(value:Object):void
+			{
+				var i:int = 0, len:int = layers.length;
+				for (i;i<len;i++)
+				{
+					if (layers[i] == value)
+					{
+						layers.splice(i, 1);
+						Sprite(value.layer).parent.removeChild(value.layer);
+						sortLayers();
+						return;
+					}
+				}
+			}
+			
+
+			/**增加图层*/
+			public function addLayer(n:String):BuildGround
+			{
+				var sp:BuildGround = new BuildGround();
+				if (n == "")
+					n = "图层" + (spriteContainer.numChildren-TOPLAYER);
+				
+				layers.splice(spriteContainer.numChildren-TOPLAYER,0,new LayerVO(sp, n, true, true, true));
+				spriteContainer.addChildAt(sp, spriteContainer.numChildren-TOPLAYER);
+				sortLayers();
+				CreateLayer.getInstance().onClose();
+				return sp;
+			}
+			
+			public function sortLayers():void
+			{
+				var len:int = layers.length, i:int = 0;
+				var temp:Array = [];
+				for (i;i<len;i++)
+				{
+					temp[i] = layers[len-1-i];
+				}
+				LayerList.getInstance().onShow(temp);
+			}
+			
+			
+			/**增加怪物出生点*/
+			public function addMonster(src:XML):void
+			{
+				if (!monsterLayer)
+					return;
+//				monsterLayer.addMonster();
+			}
+			
+			/**显示当前选中怪物出生点信息*/
+			public function showSelectMonster(id:String,name:String,dir:int, group:int=0):void
+			{
+				if (!MonsterAreaSet.getInstance().parent)
+				{
+					addElement(MonsterAreaSet.getInstance());
+				}
+				MonsterAreaSet.getInstance().showCurrMonster(id,name,dir,group);
+			}
+			/**显示当前选中采集出生点信息*/
+			public function showSelectCollect(id:String,name:String):void
+			{
+				if (!CollectPanel.getInstance().parent)
+				{
+					addElement(CollectPanel.getInstance());
+				}
+				CollectPanel.getInstance().showCurrCollect(id,name);
+			}
+			
+			/**设置NPC属性*/
+			public function setNpcProperty(nid:String, nname:String):void
+			{
+				/* if (!selectBitmap)
+					Alert.show("请先选中一个地图资源"); */
+//				this.monsterLayer.addNPC(nid, nname);
+				if (NPCPanel.getInstance().parent)
+				{
+//					NPCPanel.getInstance().showCurrNpc(nname + "-" + nid);
+				}
+				Alert.show("设置成功");
+			}
+			
+			public function showSelectNPC(id:String,name:String,dir:int) : void
+			{
+				if (!NPCPanel.getInstance().parent)
+				{
+					addElement(NPCPanel.getInstance());
+				}
+				NPCPanel.getInstance().showCurrNpc(id,name,dir);
+				return;
+			}// end function
+			/**设置采集品属性*/
+			public function setCollectProperty(cid:String, cname:String):void
+			{
+				if (CollectPanel.getInstance().parent)
+				{
+//					NPCPanel.getInstance().showCurrNpc(nname + "-" + nid);
+				}
+				Alert.show("设置成功");
+			}
+			
+			/**选中图片时，加滤镜*/
+			public function setBitmapClipFilter(s:BitmapClip):void
+			{
+				if (selectBitmap)
+					selectBitmap.filters = [];
+				if (selectBitmap == s)
+				{
+					selectBitmap = null;
+				}
+				else
+				{
+					s.filters = filter;
+					selectBitmap = s;
+				}
+			}
+			
+			
+			private function browserHandler():void
+			{
+				file.browseForDirectory("请选择存储文件夹");
+				file.addEventListener(Event.SELECT,fileSelectHd);
+			}
+			
+			private function fileSelectHd(event:Event):void
+			{
+				file.removeEventListener(Event.SELECT, fileSelectHd);
+				loadSwfFile();
+			}
+			
+			/**队列加载选择目录下面的所有swf文件*/
+			public function loadSwfFile():void
+			{
+				swfAry = [];//清空前一次的
+				var fileAry:Array = file.getDirectoryListing();
+				if(fileAry!=null && fileAry.length>0)
+				{
+					for(var i:int=0;i<fileAry.length;i++)
+					{
+						var file:File = fileAry[i];
+						if(file.exists && file.extension == "swf")
+						{
+							var swfVo:SwfVo = new SwfVo();
+							swfVo.path = file.url;
+							swfVo.name = file.name;
+							swfVo.classAry = [];
+							swfAry.push(swfVo);
+						}
+					}
+				}
+				if(swfAry.length>0)
+				{
+					queueLoad(loadIndex);
+				}
+			}
+			
+			private function queueLoad(index:int):void
+			{
+				var swfVo:SwfVo = swfAry[index];
+				loader = new Loader();
+				loader.load(new URLRequest(swfVo.path));
+				loader.contentLoaderInfo.addEventListener(Event.COMPLETE,loadCompleteHandler);
+			}
+			
+			private function loadCompleteHandler(event:Event):void
+			{
+				loader.contentLoaderInfo.removeEventListener(Event.COMPLETE,loadCompleteHandler);
+				var loaderInfo:LoaderInfo=event.currentTarget as LoaderInfo;
+				var swfVo:SwfVo = swfAry[loadIndex];
+				swfVo.loaderInfo = loaderInfo;
+				swfVo.classAry = GetSwfAllClass.getSWFClassName(loaderInfo.bytes);
+				loadIndex++;
+				//loader.unload();
+				//loader = null;
+				if(loadIndex==swfAry.length)
+				{
+					//全部加载完成]
+					loadIndex = 0;
+					setData(swfAry);
+				}else
+				{
+					queueLoad(loadIndex);
+				}
+			}
+			
+			private function setData(ary:Array):void
+			{
+				var xml:XML = new XML("<root></root>");
+				for(var i:int = 0;i<ary.length;i++)
+				{
+					var swfVo:SwfVo = ary[i];
+					var headXml:XML = new XML("<head></head>");
+					headXml.@label = swfVo.name;
+					headXml.@type = "head";
+					for(var j:int = 0;j<swfVo.classAry.length;j++)
+					{
+						var nodeXml:XML = new XML("<node></node>");
+						nodeXml.@label = swfVo.classAry[j];
+						nodeXml.@swfIndex = i;
+						headXml.@type = "node";
+						headXml.appendChild(nodeXml);
+					}
+					xml.appendChild(headXml);
+				}
+				tree.dataProvider = xml;
+				trace(xml);
+			}
+			
+			private function selectChange(evt:Event):void
+			{
+				var selectedNode:XML = Tree(evt.target).selectedItem as XML;
+				cName = selectedNode.@label;
+				var type:String = selectedNode.@type;
+				if(cName.indexOf(".swf")>=0)
+				{
+					return;
+				}
+				var loaderInfo:LoaderInfo = (swfAry[selectedNode.@swfIndex] as SwfVo).loaderInfo;
+				
+				classReference = loaderInfo.applicationDomain.getDefinition(cName) as Class;
+				var mc:* =new classReference();
+				var s:BitmapClip = BitmapClipFactory.getInstance().getBitmapClip();
+				if(mc is BitmapData)
+				{
+					var bmp:Bitmap = new Bitmap(mc);
+					s.addChild(bmp);
+				}else
+				{
+					s.addChild(mc);
+					mc.x = mc.width/2;
+					mc.y = mc.height/2;
+				}
+				showPicPreviewPanel(s);
+			}
+			
+			private function addBuild():void
+			{
+				if (classReference)
+				{
+					var len:int = layers.length - TOPLAYER - 1, i:int = 2;
+					for (;len>= i;len--)
+					{
+						//如果最上面的buildGround没有被锁定，则往里面加资源
+						if (!layers[len].lock)
+						{
+							addBitmapClipToBuildGround(layers[len].layer);
+							return;
+						}
+					}
+				}
+				else
+				{
+					Alert.show("请先导入资源库，并且选择一种资源");
+				}
+			}
+			
+			/**往建筑图层上加元件*/
+			private function addBitmapClipToBuildGround(l:BuildGround):BitmapClip
+			{
+				var mc:* =new classReference();
+				var s:BitmapClip = BitmapClipFactory.getInstance().getBitmapClip();
+				if(mc is BitmapData)
+				{
+					var bmp:Bitmap = new Bitmap(mc);
+					s.addChild(bmp);
+				}else
+				{
+					s.addChild(mc);
+					mc.x = mc.width/2;
+					mc.y = mc.height/2;
+				}
+				s.className = cName;
+				l.addChild(s);
+				return s;
+			}
+			
+			/**保存地图文件*/
+			private function saveFile(type:int):void
+			{
+				if (!backImageLayer)
+				{
+					Alert.show("你创建了地图文件吗？在哪儿呢？");
+					return;
+				}
+				saveType = type;
+				mapXML = new XML("<data/>");
+				serverXML = new XML("<map/>");
+				clientXML = new XML("<scene/>");
+				npcXML = new XML("<data/>");
+				collectXML = new XML("<data/>");
+				
+				createMapInfo();
+				createHinderInfo();
+				createBornInfo();
+				createBuildInfo();
+				createTransInfo();
+				var byte:ByteArray = new ByteArray();
+				byte.writeUTFBytes(mapXML.toXMLString());
+				if (type == 1)
+				{
+					file = File.desktopDirectory;
+					file = file.resolvePath("maps");
+					file = file.resolvePath(EditorConfig.getInstance().mapVO.name);
+					file = file.resolvePath(EditorConfig.getInstance().mapVO.name+"_editor.xml");
+					var fs:FileStream = new FileStream();
+					fs.open(file,FileMode.WRITE);
+					fs.writeBytes(byte);
+					fs.close();
+					byte = new ByteArray();
+					byte.writeUTFBytes(serverXML.toXMLString());
+					file = File.desktopDirectory;
+					file = file.resolvePath("maps");
+					file = file.resolvePath(EditorConfig.getInstance().mapVO.name);
+					file = file.resolvePath(EditorConfig.getInstance().mapVO.name+"_server.xml");
+					fs.open(file,FileMode.WRITE);
+					fs.writeBytes(byte);
+					fs.close();
+					
+					byte = new ByteArray();
+					byte.writeUTFBytes(clientXML.toXMLString());
+					file = File.desktopDirectory;
+					file = file.resolvePath("maps");
+					file = file.resolvePath(EditorConfig.getInstance().mapVO.name);
+					file = file.resolvePath(EditorConfig.getInstance().mapVO.name+"_client.xml");
+					fs.open(file,FileMode.WRITE);
+					fs.writeBytes(byte);
+					fs.close();
+					
+					byte = new ByteArray();
+					byte.writeUTFBytes(npcXML.toXMLString());
+					file = File.desktopDirectory;
+					file = file.resolvePath("maps");
+					file = file.resolvePath(EditorConfig.getInstance().mapVO.name);
+					file = file.resolvePath(EditorConfig.getInstance().mapVO.name+"_npc.xml");
+					fs.open(file,FileMode.WRITE);
+					fs.writeBytes(byte);
+					fs.close();
+					
+					byte = new ByteArray();
+					byte.writeUTFBytes(collectXML.toXMLString());
+					file = File.desktopDirectory;
+					file = file.resolvePath("maps");
+					file = file.resolvePath(EditorConfig.getInstance().mapVO.name);
+					file = file.resolvePath(EditorConfig.getInstance().mapVO.name+"_collection.xml");
+					fs.open(file,FileMode.WRITE);
+					fs.writeBytes(byte);
+					fs.close();
+				}else{
+					file.addEventListener(Event.COMPLETE,saveComplete);
+					file.save(byte,EditorConfig.getInstance().mapVO.name+"_editor.xml");
+				}
+			}
+			
+			private function saveComplete(evt:Event):void
+			{
+				file.removeEventListener(Event.COMPLETE,saveComplete);
+				var byte:ByteArray = new ByteArray();
+				byte.writeUTFBytes(serverXML.toXMLString());
+				file.addEventListener(Event.COMPLETE,saveServerComplete);
+				file.save(byte,EditorConfig.getInstance().mapVO.name+"_server.xml");
+			}
+			
+			private function saveServerComplete(evt:Event):void
+			{
+				file.removeEventListener(Event.COMPLETE,saveServerComplete);
+				var byte:ByteArray = new ByteArray();
+				byte.writeUTFBytes(clientXML.toXMLString());
+				file.addEventListener(Event.COMPLETE,saveClientComplete);
+				file.save(byte,EditorConfig.getInstance().mapVO.name+"_client.xml");
+			}
+
+			private function saveClientComplete(evt:Event):void
+			{
+				file.removeEventListener(Event.COMPLETE,saveClientComplete);
+				var byte:ByteArray = new ByteArray();
+				byte.writeUTFBytes(npcXML.toXMLString());
+				file.addEventListener(Event.COMPLETE,saveNpcComplete);
+				file.save(byte,EditorConfig.getInstance().mapVO.name+"_npc.xml");
+			}
+			
+			private function saveNpcComplete(evt:Event):void
+			{
+				file.removeEventListener(Event.COMPLETE,saveNpcComplete);
+				var byte:ByteArray = new ByteArray();
+				byte.writeUTFBytes(collectXML.toXMLString());
+				file.addEventListener(Event.COMPLETE,saveCollectionComplete);
+				file.save(byte,EditorConfig.getInstance().mapVO.name+"_collection.xml");
+			}
+			
+			private function saveCollectionComplete(evt:Event):void
+			{
+				file.removeEventListener(Event.COMPLETE,saveCollectionComplete);
+			}
+
+			private function createMapInfo():void
+			{
+				var xml:XML = new XML("<main/>");
+				var sxml:XML = new XML("<main/>");
+				var cxml:XML = new XML("<head/>");
+				var cHxml:XML = new XML("<grids/>");
+				cHxml.@gridW = CellVO.CELL_WIDTH;
+				cHxml.@gridH = CellVO.CELL_HEIGHT;
+				cHxml.@grid_h = sxml.@row = xml.@row = EditorConfig.getInstance().mapVO.rows;
+				cHxml.@grid_v = sxml.@col = xml.@col = EditorConfig.getInstance().mapVO.cols;
+				sxml.@name = xml.@name = EditorConfig.getInstance().mapVO.name;
+				sxml.@born = xml.@born = EditorConfig.getInstance().mapVO.born ? 1 : 0;
+				sxml.@type = xml.@type = EditorConfig.getInstance().mapVO.type;
+				sxml.@id = xml.@mapid = EditorConfig.getInstance().mapVO.id;
+				if (EditorConfig.getInstance().mapVO.born)
+				{
+					var p:Point = userBornLayer.getBornPoint();
+					sxml.@bornX = xml.@bornX = GridUtils.getMpos(p.x, p.y);//出生点需要格子坐标
+					sxml.@bornY = xml.@bornY = GridUtils.getNpos(p.x, p.y);
+				}
+				else
+				{
+					sxml.@bornX = xml.@bornX = 0;
+					sxml.@bornY = xml.@bornY = 0;
+				}
+				cxml.appendChild(cHxml);
+				serverXML.appendChild(sxml);
+				mapXML.appendChild(xml);
+				clientXML.appendChild(cxml);
+			}
+			
+			/**生成阻挡点和阴影点信息*/
+			private function createHinderInfo():void
+			{
+				//var xml:XML = new XML("<hinders/>");
+				//var sxml:XML = new XML("<hinders/>");
+				//var cxml:XML = new XML("<tiles/>");
+				//此处用字符串连接，可以大大减少xml内存占用
+				trace(getTimer());
+				var hinderStr:String = "<hinders>\n";
+				var shinderStr:String = "<hinders>\n";
+				var chinderStr:String = "<tiles>\n";
+				var src:Dictionary = hinderLayer.hinders;
+				var j:int = 0, i:int = 0, child:XML, tempVO:HinderPointVO, sChild:XML, cChild:XML, r:int = EditorConfig.getInstance().mapVO.rows, c:int = EditorConfig.getInstance().mapVO.cols;
+				var mapid:String = EditorConfig.getInstance().mapVO.id, tempStr:String;
+				for (;i<r;i++)
+				{
+					for (j=0;j<c;j++)
+					{
+						tempStr = i+"_"+j;
+						if (!src.hasOwnProperty(tempStr))
+							continue;
+						tempVO = src[tempStr];
+						child = new XML("<hinder/>");
+						cChild = new XML("<tile/>");
+						if (tempVO.type == 0)
+						{
+							sChild = new XML("<hinder/>"); 
+							sChild.@mapid = mapid;
+							sChild.@x = tempVO.p.x;
+							sChild.@y = tempVO.p.y;
+							sChild.@type = tempVO.type;
+							shinderStr = shinderStr + sChild.toXMLString() + "\n";
+							//sxml.appendChild(sChild);
+							System.disposeXML(sChild);
+						}
+						cChild.@x = child.@x = tempVO.p.x;
+						cChild.@y = child.@y = tempVO.p.y;
+						cChild.@s = tempVO.type == 0 ? 1 : 0;
+						cChild.@m = tempVO.type == 1 ? 1 : 0;
+						child.@type = tempVO.type;
+						hinderStr = hinderStr + child.toXMLString() + "\n";
+						chinderStr = chinderStr + cChild.toXMLString() + "\n";
+						System.disposeXML(child);
+						System.disposeXML(cChild);
+						//xml.appendChild(child);
+						//cxml.appendChild(cChild);
+					}
+				}
+				hinderStr = hinderStr + "</hinders>";
+				shinderStr = shinderStr + "</hinders>";
+				chinderStr = chinderStr + "</tiles>";
+				mapXML.appendChild(XML(hinderStr));
+				serverXML.appendChild(XML(shinderStr));
+				clientXML.appendChild(XML(chinderStr));
+				trace(getTimer());
+			}
+			
+			/**生成出生点层信息*/
+			private function createBornInfo():void
+			{
+				var xml:XML = new XML("<borns/>");
+				var sxml:XML = new XML("<monsters/>");
+				var src:Vector.<BornPointVO> = monsterLayer.monsterArr;
+				var len:int = src.length, i:int = 0, child:XML, tempVO:BornPointVO, sChild:XML, nChild:XML, cChild:XML;
+				var mapid:String = EditorConfig.getInstance().mapVO.id;
+				for (;i<len;i++)
+				{
+					tempVO = src[i];
+					child = new XML("<born/>");
+					child.@x = tempVO.p.x;
+					child.@y = tempVO.p.y;
+					child.@mid = tempVO.mid;
+					child.@mname = tempVO.mname;
+					child.@direction = tempVO.dir;
+					child.@type = tempVO.type;
+					child.@group = tempVO.group;
+					child.@name = tempVO.mname;
+					child.@model = tempVO.model;
+					xml.appendChild(child);
+					if (tempVO.type == 2)
+					{
+						nChild = new XML("<npc/>");
+						nChild.@id = tempVO.mid;
+						nChild.@sceneid = mapid;
+						nChild.@npcmodel = tempVO.mname;
+						nChild.@x = tempVO.p.x;
+						nChild.@y = tempVO.p.y;
+						nChild.@direction = tempVO.dir;
+						this.npcXML.appendChild(nChild);
+					}
+					else if (tempVO.type == 1)
+					{
+						sChild = new XML("<mborn/>");
+						sChild.@mapid = mapid;
+						sChild.@x = tempVO.p.x;
+						sChild.@y = tempVO.p.y;
+						sChild.@srcid = tempVO.mid;
+						sChild.@dir = tempVO.dir;
+						sChild.@group = tempVO.group;
+						sxml.appendChild(sChild);
+					}else
+					{
+						cChild = new XML("<collection/>");
+						cChild.@sceneid = mapid;
+						cChild.@x = tempVO.p.x;
+						cChild.@y = tempVO.p.y;
+						cChild.@id = tempVO.mid;
+						cChild.@name = tempVO.mname;
+						cChild.@model = tempVO.model;
+						cChild.@targetGoods = tempVO.goods;
+						collectXML.appendChild(cChild);
+					}
+				}
+				mapXML.appendChild(xml);
+				serverXML.appendChild(sxml);
+			}
+			
+			/**生成所有建筑层信息,有多少建筑层，就生成多少个builds节点*/
+			private function createBuildInfo():void
+			{
+				var xml:XML;
+				var llen:int = layers.length - 7, j:int = 0, tempLayer:BuildGround;//同layers.length有关
+				var len:int = 0, i:int = 0, child:XML, tempBS:BitmapClip;
+				var cxml:XML = new XML("<movies/>"), cChild:XML, nChild:XML;
+				for (;j<llen;j++)
+				{
+					xml = new XML("<builds/>");
+					xml.@name = layers[2+j].layerName;
+					tempLayer = layers[2+j].layer as BuildGround;
+					len = tempLayer.numChildren;
+					i = 0;
+					for (;i<len;i++)
+					{
+						tempBS = tempLayer.getChildAt(i) as BitmapClip;
+						child = new XML("<build/>");
+						cChild = new XML("<movie/>");
+//						nChild = new XML("<npc/>");
+						cChild.@x = child.@x = tempBS.x;
+						cChild.@y = child.@y = tempBS.y;
+						cChild.@id = child.@cid = tempBS.className;
+						child.@npc = 0;
+						child.@nid = "";
+						child.@nname = "";
+//						if (tempBS.info)
+//						{
+//							nChild.@id = tempBS.info.nid;
+//							nChild.@sceneid = EditorConfig.getInstance().mapVO.id;
+//							nChild.@npcmodel = tempBS.info.name;
+//							nChild.@x = GridUtils.getMpos(tempBS.x, tempBS.y);
+//							nChild.@y = GridUtils.getNpos(tempBS.x, tempBS.y);
+//							npcXML.appendChild(nChild);
+//						}
+						xml.appendChild(child);
+						cxml.appendChild(cChild);
+					}
+					mapXML.appendChild(xml);
+				}
+				clientXML.appendChild(cxml);
+			}
+			
+			/**传送层*/
+			private function createTransInfo():void
+			{
+				var xml:XML = new XML("<tranpoints/>");
+				var sxml:XML = new XML("<tranpoints/>");
+				var src:Vector.<TransPointVO> = transLayer.trans;
+				var len:int = src.length, i:int = 0, child:XML, tempVO:TransPointVO, sChild:XML;
+				var mapid:String = EditorConfig.getInstance().mapVO.id;
+				for (;i<len;i++)
+				{
+					tempVO = src[i];
+					child = new XML("<point/>");
+					sChild = new XML("<trans/>");
+					sChild.@mapid = child.@mapid = mapid;
+					sChild.@x = child.@x = tempVO.p.x;
+					sChild.@y = child.@y = tempVO.p.y;
+					sChild.@targetx = child.@targetx = tempVO.targetP.x;
+					sChild.@targety = child.@targety = tempVO.targetP.y;
+					child.@mid = tempVO.mid;
+					sChild.@targetmapid = tempVO.mid;
+					sChild.@type = child.@type = tempVO.type;
+					xml.appendChild(child);
+					sxml.appendChild(sChild);
+				}
+				mapXML.appendChild(xml);
+				serverXML.appendChild(sxml);
+			}
+			
+			private function importMapXmlFile():void
+			{
+				Alert.yesLabel = "确定";
+				Alert.cancelLabel = "取消";
+				Alert.show("请确认是否已导入资源文件", "", Alert.YES|Alert.CANCEL, this, importNow);
+			}
+			
+			private function importNow(e:CloseEvent):void
+			{
+				if (e.detail == Alert.YES)
+				{
+//					if (swfAry.length <= 0)
+//					{
+////						Alert.show("资源文件还未导入，你眼睛长后脑勺上了么？");
+//					}
+//					else
+//					{
+						file.browse([new FileFilter(".xml", "*.xml")]);
+						file.addEventListener(Event.SELECT, selectMapXML);
+//					}
+				}
+			}
+			
+			private function selectMapXML(e:Event):void
+			{
+				file.removeEventListener(Event.SELECT, selectMapXML);
+				file.load();
+				file.addEventListener(Event.COMPLETE, loadXMLCom);
+			}
+			
+			/**加载导入的地图XML文件后，开始解析文件,生成地图*/
+			private function loadXMLCom(e:Event):void
+			{
+				file.removeEventListener(Event.COMPLETE, loadXMLCom);
+				var fs:FileStream = new FileStream();
+				fs.endian = Endian.LITTLE_ENDIAN;
+				fs.open(file, FileMode.READ);
+				mapXML = XML(fs.readUTFBytes(fs.bytesAvailable));
+				fs.close();
+				analysisMapXML();
+			}
+			
+			/**解析导入的地图文件*/
+			private function analysisMapXML():void
+			{
+				analysisMainXML();
+				analysisHinderXML();
+				analysisBornXML();
+				analysisBuildsXML();
+				analysisTransXML();
+			}
+			
+			/**解析导入的地图文件头部*/
+			private function analysisMainXML():void
+			{
+				var xml:XML = mapXML.child("main")[0];
+				EditorConfig.getInstance().mapVO.cols = int(xml.@col);
+				EditorConfig.getInstance().mapVO.rows = int(xml.@row);
+				EditorConfig.getInstance().mapVO.name = xml.@name;
+				EditorConfig.getInstance().mapVO.id = xml.@mapid;
+				EditorConfig.getInstance().mapVO.type = xml.@type;
+				EditorConfig.getInstance().mapVO.born = xml.@born == 1 ? true : false;
+				createNewMap();
+				EditorConfig.getInstance().mapVO.bornX = xml.@born == 1 ? xml.@bornX : 0;
+				EditorConfig.getInstance().mapVO.bornY = xml.@born == 1 ? xml.@bornY : 0;
+				if (EditorConfig.getInstance().mapVO.born)
+				{
+					userBornLayer.addMainMC();
+					userBornLayer.setMCpos(EditorConfig.getInstance().mapVO.bornX, EditorConfig.getInstance().mapVO.bornY);
+				}
+			}
+			
+			/**解析导入的地图文件阻挡层*/
+			private function analysisHinderXML():void
+			{
+				var xml:XML = mapXML.child("hinders")[0];
+				var	hinders:XMLList = xml.child("hinder");
+				var len:int = hinders.length(), i:int = 0, temp:XML;
+				for (;i<len;i++)
+				{
+					temp = hinders[i];
+					if (temp.@type == 0)
+					{
+						hinderLayer.drawRedCircle(temp.@x, temp.@y);
+					}
+					else
+					{
+						hinderLayer.drawGreenCircle(temp.@x, temp.@y);
+					}
+				}
+			}
+			
+			/**解析导入的地图文件出生点层*/
+			private function analysisBornXML():void
+			{
+				var xml:XML = mapXML.child("borns")[0];
+				var	borns:XMLList = xml.child("born");
+				var len:int = borns.length(), i:int = 0, temp:XML;
+				var voo:BornPointVO;
+				for (;i<len;i++)
+				{
+					temp = borns[i];
+					if (temp.@type == null || temp.@type == 1)
+					{
+						voo = this.monsterLayer.addMonster(temp.@x, temp.@y, temp.@mid, temp.@mname, temp.@direction ? temp.@direction : 0, temp.@group ? temp.@group : 0);
+					}
+					else if (temp.@type == 2)
+					{
+						voo = this.monsterLayer.addNPC(temp.@x, temp.@y, temp.@mid, temp.@mname, temp.@direction ? temp.@direction : 0);
+					}
+					else
+					{
+						voo = this.monsterLayer.addCollect(temp.@x, temp.@y, temp.@mid, temp.@mname, temp.@model, temp.@targetGoods);
+					}
+//					voo.monster.x = GridUtils.getXPos(temp.@x, temp.@y);
+//					voo.monster.y = GridUtils.getYPos(temp.@x, temp.@y);
+				}
+			}
+			
+			/**解析导入的地图文件建筑层*/
+			private function analysisBuildsXML():void
+			{
+				var builds:XMLList = mapXML.child("builds");
+				//先解析系统建筑层
+				if (builds.length() >0 )
+				{
+					var blen:int = builds.length(), j:int = 0, sp:BuildGround;
+					var build:XML;
+					for (;j<blen;j++)//图层循环
+					{
+						build = builds[j];
+						sp = buildLayer;
+						if (j != 0)
+							sp = addLayer(build.@name);//如果不是系统建筑层，则增加一图层
+						var	srcs:XMLList = build.child("build");
+						var len:int = srcs.length(), i:int = 0, temp:XML, tempInstance:BitmapClip;
+						for (;i<len;i++)//单体循环
+						{
+							temp = srcs[i];
+							classReference = searchSourceClass(temp.@cid);
+							if (!classReference)
+								continue;
+							tempInstance = addBitmapClipToBuildGround(sp);
+							tempInstance.x = temp.@x;
+							tempInstance.y = temp.@y;
+							if (temp.@npc == 1)
+								tempInstance.setNpc(temp.@nid, temp.@nname);
+							tempInstance.trans = temp.@t == 1 ? true : false; 
+						}
+					}
+				}
+			}
+			
+			/**解析传送层*/
+			private function analysisTransXML():void
+			{
+				var xml:XML = mapXML.child("tranpoints")[0];
+				var	borns:XMLList = xml.child("point");
+				var len:int = borns.length(), i:int = 0, temp:XML;
+				var voo:TransPointVO;
+				for (;i<len;i++)
+				{
+					temp = borns[i];
+					voo = transLayer.drawTranspoint(temp.@x, temp.@y);
+					voo.type = temp.@type;
+					voo.mid = temp.@mid;
+					if (temp.hasOwnProperty("targetx"))
+						voo.targetP.x = temp.@targetx;
+					if (temp.hasOwnProperty("targety"))
+						voo.targetP.y = temp.@targety;
+				}
+			}
+			
+			/**
+			 * 搜索需要的资源文件类 
+			 * @param classname:String
+			 * @return Class
+			 */
+			private function searchSourceClass(cName:String):Class
+			{
+				var len:int = swfAry.length,i:int=0,tempClass:Class,tempSwfVO:SwfVo,j:int=0,len2:int=0;
+				for (i;i<len;i++)
+				{
+					tempSwfVO = swfAry[i];
+					len2 = tempSwfVO.classAry.length;
+					for (j=0;j<len2;j++)
+					{
+						if (cName == tempSwfVO.classAry[j])
+						{
+							tempClass = tempSwfVO.loaderInfo.applicationDomain.getDefinition(cName) as Class;
+							return tempClass;
+						}
+					}
+				}
+				return null;
+			}
+			
+			/**设置人物出生点*/
+			private function setUserBornPos():void
+			{
+				if (hinderSet.visible)
+				{
+					closeHinderSet();
+				}
+				if (!interativeLayer)
+				{
+					Alert.show("请先创建一个地图");
+					return;
+				}
+				if (EditorConfig.getInstance().mapVO.born)
+				{
+					Alert.show("当前地图已经设置了出生点，请拖曳以改变位置");
+					return;
+				}
+				userBornLayer.addMainMC();
+				EditorConfig.getInstance().mapVO.born = true;
+			}
+			
+			/**删除人物出生点*/
+			private function deleteUserBornPoint():void
+			{
+				if (hinderSet.visible)
+				{
+					closeHinderSet();
+				}
+				if (!interativeLayer)
+				{
+					Alert.show("请先创建一个地图");
+					return;
+				}
+				if (!EditorConfig.getInstance().mapVO.born)
+				{
+					Alert.show("当前地图还没有设置人物出生点");
+					return;
+				}
+				userBornLayer.deleteMainMC();
+				EditorConfig.getInstance().mapVO.born = false;
+			}
+			
+			/**修改传送点属性*/
+			public function changeTransProperty(id:int, t:String, p:Point=null):void
+			{
+				if (transLayer)
+				{
+					transLayer.changeProperty(id, t,p);
+				}
+			}
+			
+			/**隐藏传送点属性面板*/
+			public function hideSelectTrans():void
+			{
+				TranspointView.getInstance().onClose();
+			}
+			
+			/**隐藏怪物出生点面板*/
+			public function hideMonsterPanel():void
+			{
+				MonsterAreaSet.getInstance().onClose();
+			}
+			/**隐藏采集出生点面板*/
+			public function hideCollectPanel():void
+			{
+				CollectPanel.getInstance().onClose();
+			}
+			
+			/**隐藏NPC出生点面板*/
+			public function hideNPCPanel():void
+			{
+				NPCPanel.getInstance().onClose();
+			}
+			
+			/**修改地图类型*/
+			public function changeMapType():void
+			{
+				if (maptype.selectedIndex != EditorConfig.getInstance().mapVO.type)
+				{
+					EditorConfig.getInstance().mapVO.type = maptype.selectedIndex;
+				}
+			}
+			
+			/** */
+			private function controlHinderSet(evt:MouseEvent):void
+			{
+				if (interativeLayer == null)
+					return;
+				if (evt.target.label == "开")
+				{
+					openHinderSet();
+				}else{
+					closeHinderSet();
+				}
+			}
+			/** */
+			private function openHinderSet():void
+			{
+				controlHinderBtn.label = "关";
+				hinderAdd();
+				hinderSet.visible = true;
+				rgbtn1.selected = true;
+				rg2btn1.selected = true;
+				interativeLayer.addMouseDownListener();
+			}
+			
+			/** */
+			private function closeHinderSet():void
+			{
+				controlHinderBtn.label = "开";
+				hinderSet.visible = false;
+				curreState = 0;
+				Mouse.cursor = MouseCursor.AUTO;
+				resumeAllLayerMouseEnabled();
+				interativeLayer.removeMouseDownListener();
+			}
+			
+			protected function radiogroup_changeHandler(event:Event):void
+			{
+				// TODO Auto-generated method stub
+				if (hinderSet.visible == false)
+					return;
+				if ((event.target as RadioButtonGroup).selectedValue == "阻挡")
+				{
+					hinderAdd();
+				}else{
+					maskAdd();
+				}
+			}
+			
+			protected function radiogroup2_changeHandler(event:Event):void
+			{
+				// TODO Auto-generated method stub
+				if (hinderSet.visible == false)
+					return;
+				interativeLayer.removeMouseDownListener();
+				if ((event.target as RadioButtonGroup).selectedValue == "刷子")
+				{
+					interativeLayer.addMouseDownListener();
+				}else{
+					interativeLayer.addMouseDownListener2();
+				}
+			}
+			
+			private function clickScaleScene():void
+			{
+				var show:Boolean = !scaleScene.visible;
+				showScaleScene(show);
+			}
+			
+			/**
+			 * 显示或者隐藏地图缩略图
+			 * 
+			 */
+			private function showScaleScene(show:Boolean):void
+			{
+				if (!interativeLayer)
+					return;
+				scaleScene.visible = show;
+				if (!show)
+					return;
+				if (scaleSceneBitmap.bitmapData == null)
+				{
+					scaleSceneBitmap.bitmapData = new BitmapData(this.width,suoLueBtn.y,true,0x000000);
+				}
+				scaleSceneBitmap.bitmapData.fillRect(scaleSceneBitmap.bitmapData.rect,0x000000);
+				var matix:Matrix = new Matrix(this.width/(EditorConfig.getInstance().mapVO.rows*CellVO.CELL_WIDTH),
+					0,0,suoLueBtn.y/(EditorConfig.getInstance().mapVO.cols*CellVO.CELL_HEIGHT));
+				scaleSceneBitmap.bitmapData.draw(spriteContainer,matix);
+			}
+			
+			
+			/**
+			 *自动保存地图,2分钟保存一次 
+			 * 
+			 */			
+			private function autoSave(e:TimerEvent):void
+			{
+				return;
+				if (interativeLayer)
+				{
+					saveFile(1);
+				}
+			}
+			
+			
+			protected function windowedapplication1_resizeHandler(event:ResizeEvent):void
+			{
+				// TODO Auto-generated method stub
+				if (stage == null)
+					return;
+				var disx:Number = stage.stageWidth - 1600;
+				var disy:Number = stage.stageHeight - 800;
+				if (disx >= 0)
+				{
+					top_containerparent.width = 1293 + disx;
+					top_container.width = 1293 + disx;
+				}
+				if (disy >= 0)
+				{
+					top_containerparent.height = 671+disy;
+					top_container.height = 671 + disy;
+					suoLueBtn.y = 749 + disy;
+				}
+				if (scaleScene.visible && scaleSceneBitmap.bitmapData)
+				{
+					scaleSceneBitmap.bitmapData.dispose();
+					scaleSceneBitmap.bitmapData = null;
+					showScaleScene(true);
+				}else if (!scaleScene.visible && scaleSceneBitmap.bitmapData){
+					scaleSceneBitmap.bitmapData.dispose();
+					scaleSceneBitmap.bitmapData = null;
+				}
+			}
+			
+			private function reDraw():void
+			{
+				var r:int = int (mcR.text);
+				if (r > 0)
+				{
+					monsterCircleLayer.draw(r);
+				}
+			}
+			
+			protected function checkbox1_changeHandler(event:Event):void
+			{
+				// TODO Auto-generated method stub
+				if (monsterCircleLayer == null)
+					return;
+				monsterCircleLayer.visible = event.target.selected;
+			}
+			
+		]]>
+	</fx:Script>
+	<s:HGroup x="10" y="10" width="410" height="40"  verticalAlign="middle">
+		<s:Button width="60" height="30" label="新建" click="showCreateMap()"/>
+		<s:Button width="60" height="30" label="打开" click="importMapXmlFile()"/>
+		<s:Button width="60" height="30" label="保存"/>
+		<s:Button width="80" height="30" label="另存为" click="saveFile(2)"/>
+	</s:HGroup>
+	<s:BorderContainer x="8" y="70" width="248" height="277">
+		<s:Button x="19" y="7" width="92" label="网格开关" click="controlGridLayerVisible()"/>
+		<s:Button x="134" y="7" width="92" label="导入背景" click="loadBackImage()"/>
+		<s:Button x="19" y="39" width="92" label="图层栏" click="showLayerPanel()"/>
+		<s:Button x="144" y="232" width="92" label="橡皮擦" click="deleteAllPoint()"/>
+		<s:Button x="19" y="159" width="92" label="NPC设置" click="setNPCPoint()"/>
+		<s:Button x="134" y="159" width="92" label="怪物出生点" click="setMonsterPoint()"/>
+		<s:Button x="19" y="183" width="92" label="传送点设置" click="setTransportPoint()"/>
+		<s:Button x="134" y="183" label="人物出生点" click="setUserBornPos()"/>
+		<s:Button x="19" y="232" label="删除人物出生点" click="deleteUserBornPoint()"/>
+		<s:Button x="134" y="39" label="开" click="controlHinderSet(event)" id="controlHinderBtn"/>
+		<s:BorderContainer id="hinderSet" x="10" y="71" width="228" height="80" visible="false">
+			<s:RadioButton x="53" y="3" label="阻挡" groupName="radiogroup" id="rgbtn1" selected="true"/>
+			<s:RadioButton x="126.5" y="3" label="阴影"  groupName="radiogroup" id="rgbtn2"/>
+			<s:Label x="6" y="25" text="操作方式："/>
+			<s:RadioButton x="53" y="46" label="刷子" groupName="radiogroup2" id="rg2btn1" selected="true"/>
+			<s:RadioButton x="126.5" y="46" label="框选" groupName="radiogroup2"  id="rg2btn2"/>
+		</s:BorderContainer>
+		<s:Button x="19" y="207" label="采集品设置" click="setCollectPoint()"/>
+	</s:BorderContainer>
+	<s:BorderContainer x="10" y="355" width="246" height="60">
+		<s:Label x="94" y="3" fontSize="16" fontWeight="bold" text="材质库" visible="false"/>
+		<s:CheckBox x="10" y="0" label="怪物圈是否显示" change="checkbox1_changeHandler(event)" selected="true"/>
+		<s:Label x="10" y="30" text="半径："/>
+		<display:MyTextInput x="50" y="25" restrict="0-9" id="mcR" text="10"/>
+		<s:Button x="180" y="25" label="重画" click="reDraw()" width="60"/>
+	</s:BorderContainer>
+	<s:Button x="204" y="387" label="导入" click="browserHandler()" visible="false"/>
+	<s:BorderContainer x="10" y="416" width="246" height="325" visible="false">
+		<mx:Tree x="21" y="9" width="226" height="309" id="tree" labelField="@label" showRoot="false"
+				 change="selectChange(event)">
+		</mx:Tree>
+	</s:BorderContainer>
+	<s:BorderContainer x="282" y="70" width="1293" height="671" id="top_containerparent">
+		<s:Group id="top_container" width="1293" height="671">
+			<display:MyUIComponent id="spriteContainer"/>
+		</s:Group>
+		<s:HScrollBar id="hr" viewport="{top_container}" width="{top_container.width}" left="{top_container.x}" top="{top_container.y+top_container.height}"/>
+		<s:VScrollBar id="vr" viewport="{top_container}" height="{top_container.height}" left="{top_container.x+top_container.width+2}" top="{top_container.y}"/>
+		<!--<s:Group width="{top_containerparent.width}" height="{top_containerparent.height}">
+			<display:MyUIComponent id="monsterCircle">
+			</display:MyUIComponent>
+		</s:Group>-->
+	</s:BorderContainer>
+	<s:Label x="449" y="21" text="地图名称："/>
+	<display:MyTextInput x="522" y="19" text="{EditorConfig.getInstance().mapVO.name}"/>
+	<s:Button x="79" y="749" label="添加" click="addBuild()"/>
+	<s:Button x="200" y="749" label="缩略图" click="clickScaleScene()" id="suoLueBtn"/>
+	<s:Label x="822" y="21" text="行数："/>
+	<s:Label x="861" y="21" text="{EditorConfig.getInstance().mapVO.rows}"/>
+	<s:Label x="959" y="21" text="列数："/>
+	<s:Label x="1008" y="21" text="{EditorConfig.getInstance().mapVO.cols}"/>
+	<s:Label x="1069" y="21" text="地图ID："/>
+	<s:Label x="1123" y="21" text="{EditorConfig.getInstance().mapVO.id}"/>
+	<s:Label x="1174" y="21" text="地图类型："/>
+	<display:MyComboBox x="1247" y="18" dataProvider="{mapTypeSrc}" selectedIndex="{EditorConfig.getInstance().mapVO.type}" click="changeMapType()"
+				 id="maptype"></display:MyComboBox>
+	<s:Label x="822" y="42" text="当前坐标："/>
+	<s:Label id="currentPos" x="891" y="42" width="70"/>
+	<mx:UIComponent id="scaleScene" visible="false"/>
+</s:WindowedApplication>

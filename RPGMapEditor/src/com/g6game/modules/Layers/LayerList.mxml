@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="266" height="326"
+		 mouseDown="onMouseDown(event)">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.g6game.managers.EditorManager;
+			
+			import mx.collections.ArrayCollection;
+			private static var instance:LayerList;
+			
+			public static function getInstance():LayerList
+			{
+				if (!instance)
+				{
+					instance = new LayerList();
+					instance.x = 0;
+					instance.y = 345;
+				}
+				return instance;
+			}
+			
+			[Bindable]
+			public var layers:ArrayCollection = new ArrayCollection();
+			
+			public function onShow(l:Array):void
+			{
+				layers.source = l;
+				layers.refresh();
+			}
+			
+			public function onClose():void
+			{
+				if (instance.parent)
+				{
+					instance.parent.removeChild(instance);
+				}
+			}
+			
+			/**新建图层*/
+			private function createLayer():void
+			{
+				EditorManager.getInstance().createLayer();
+			}
+			
+			private function onMouseDown(e:MouseEvent):void
+			{
+				if (e.target != instance)
+					return;
+				instance.startDrag();
+				addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+				addEventListener(MouseEvent.MOUSE_OUT, onMouseUp);
+			}
+			
+			private function onMouseUp(e:MouseEvent):void
+			{
+				removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+				removeEventListener(MouseEvent.MOUSE_OUT, onMouseUp);
+				instance.stopDrag();
+			}
+		]]>
+	</fx:Script>
+	
+	<s:List x="10" y="27" width="228" height="236" itemRenderer="com.g6game.modules.Layers.LayerRender"
+			dataProvider="{layers}">
+	</s:List>
+	<s:Label id="dragui" y="4" fontWeight="bold" horizontalCenter="0" mouseChildren="false"
+			 mouseEnabled="false" text="图层" textAlign="center"/>
+	<s:Button x="133" y="271" label="关闭" click="onClose()"/>
+	<s:Button x="61" y="271" label="新建" click="createLayer()"/>
+	
+</s:Group>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="314" height="200"
+		 mouseDown="onMouseDown(event)">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.g6game.managers.EditorManager;
+			
+			import mx.controls.Alert;
+			
+			import spark.components.Group;
+			
+			
+			private static var instance:TranspointView;
+			private var point:Point;
+			
+			public static function getInstance():TranspointView
+			{
+				if (!instance)
+				{
+					instance = new TranspointView();
+					instance.x = 20;
+					instance.y = 300;
+				}
+				return instance;
+			}
+			
+			public function onClose():void
+			{
+				if (instance.parent)
+				{
+					(instance.parent as Group).removeElement(instance);
+				}
+			}
+			
+			private function onMouseDown(e:MouseEvent):void
+			{
+				if (e.target != instance)
+					return;
+				instance.startDrag();
+				addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+				addEventListener(MouseEvent.MOUSE_OUT, onMouseUp);
+			}
+			
+			private function onMouseUp(e:MouseEvent):void
+			{
+				removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+				removeEventListener(MouseEvent.MOUSE_OUT, onMouseUp);
+				instance.stopDrag();
+			}
+			
+			
+			public function changeProperty():void
+			{
+				if (int(transType.text) < 1 || int(transType.text) > 2)
+				{
+					Alert.show("传送类型必须是1或者2");
+					return;
+				}
+				if (transTarget.text == "")
+				{
+					Alert.show("传送目标地图ID未填写");
+					return;
+				}
+				
+				EditorManager.getInstance().changeProperty(int(transType.text), transTarget.text, new Point(int(transTargetPosX.text), int(transTargetPosY.text)));
+			}
+			
+			public function showProperty(id:int, t:String, p:Point):void
+			{
+				transType.text = id.toString();
+				transTarget.text = t;
+				point = p;
+			}
+			/***/
+			public function deletePoint():void
+			{
+				EditorManager.getInstance().deteleteTranspoint(point);
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Label x="25" y="34" text="类型："/>
+	<s:Label x="27" y="62" text="目标地图ID："/>
+	<s:Button x="32" y="120" label="确定" click="changeProperty()"/>
+	<s:Button x="190" y="120" label="关闭" click="onClose()"/>
+	<s:Label id="dragui" y="0" horizontalCenter="0" mouseChildren="false" mouseEnabled="false"
+			  text="传送点属性" textAlign="center"/>
+	<s:TextInput x="114" y="60" id="transTarget"/>
+	<s:TextInput id="transTargetPosX" x="114" y="88" width="38" restrict="0-9" text="0"/>
+	<s:TextInput id="transTargetPosY" x="200" y="88" width="38" restrict="0-9" text="0"/>
+	<s:TextInput x="74" y="32" width="78" maxChars="1" restrict="1-2" id="transType"/>
+	<s:Label x="160" y="34" text="1表示地图，2表示关卡"/>
+	<s:Button x="113" y="120" width="60" label="删除" click="deletePoint()"/>
+	<s:Label x="27" y="90" text="目的坐标："/>
+	<s:Label x="92" y="90" text="X:"/>
+	<s:Label x="174" y="90" text="Y:"/>
+</s:TitleWindow>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="true">
+	<fx:Script>
+		<![CDATA[
+			import com.g6game.display.BuildGround;
+			import com.g6game.managers.EditorManager;
+			
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			
+			import spark.filters.GlowFilter;
+			protected function ChangeLayerVisible(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				if (!data.editFlag)
+					return;
+				data.layer.visible = !data.layer.visible;
+				if (data.layer.visible)
+					btn.styleName = "eyeOpen";
+				else
+					btn.styleName = "eyeClose";
+			}
+			
+			protected function deleteLayer():void
+			{
+				if (!data.deleteFlag)
+					return;
+				Alert.yesLabel = "确定";
+				Alert.cancelLabel = "取消";
+				Alert.show("确定删除本图层吗？一旦删除，将无法恢复！", "", Alert.YES|Alert.CANCEL, EditorManager.getInstance().app, sureDelete);
+				
+			}
+			
+			private function sureDelete(e:CloseEvent):void
+			{
+				if (e.detail == Alert.CANCEL)
+					return;
+				(data.layer as BuildGround).init();
+				EditorManager.getInstance().deleteLayer(data);
+			}
+			
+			private function ChangeName():void
+			{
+				data.layerName = lname.text;
+			}
+			
+			private function lockLayer():void
+			{
+				if (data.canLock)
+				{
+					if (lock.selected)
+					{
+						data.layer.filters = [new GlowFilter(0x666666, 0.8, 50, 50, 10, 3, true)];
+						data.layer.setMouseEnable(false);
+						data.lock = true;
+					}
+					else
+					{
+						data.layer.filters = [];
+						data.layer.setMouseEnable(true);
+						data.lock = false;
+					}
+				}
+			}
+		]]>
+	</fx:Script>
+	
+	<s:HGroup>
+		<s:Button label="" styleName="eyeOpen" click="ChangeLayerVisible(event)" id="btn" enabled="{data.editFlag}"/>
+		<s:TextInput id="lname" width="115" change="ChangeName()" text="{data.layerName}"/>
+		<s:Button label="" styleName="delete" enabled="{data.deleteFlag}" click="deleteLayer()" visible="{data.deleteFlag}"/>
+		<s:CheckBox toolTip="选中表示锁定该图层" change="lockLayer()" enabled="{data.canLock}" selected="{data.lock}" id="lock"/>
+	</s:HGroup>
+	
+</s:ItemRenderer>
