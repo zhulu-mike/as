@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<application xmlns="http://ns.adobe.com/air/application/3.1">
+<id>xmlEncode</id>
+	<filename>xmlEncode</filename>
+	<supportedProfiles>extendedDesktop desktop</supportedProfiles>
+	<name>xmlEncode</name>
+	
+	<versionNumber>0.0.0</versionNumber>
+	<initialWindow>
+		<content>[This value will be overwritten by Flash Builder in the output app.xml]</content>
+		
+		<transparent>false</transparent>
+	<autoOrients>false</autoOrients>
+        <fullScreen>false</fullScreen>
+        <visible>false</visible>
+    </initialWindow>
+
+</application>

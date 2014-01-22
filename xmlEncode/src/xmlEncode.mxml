@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   width="506" height="240" applicationComplete="init()">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import br.com.stimuli.loading.BulkLoader;
+			import br.com.stimuli.loading.loadingtypes.LoadingItem;
+			
+			import com.common.GameConfig;
+			import com.manager.ResPathManager;
+			import com.manager.load.LoadData;
+			import com.manager.load.LoaderManager;
+			import com.thinkido.framework.*;
+			import com.thinkido.framework.air.FileUtils;
+			import com.thinkido.framework.data.LocalSO;
+			
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			
+			private var configUrl:String = '';
+			[Bindable]
+			private var path:String = "E:\newGame\code\client\NewGame\resService\program\config" ;
+			
+			private var objData:Object = {};
+			
+			private var localSo:LocalSO ;
+			private function init():void
+			{
+				localSo = new LocalSO("xmlEncode");
+				path = localSo.getAt("path") as String;
+			}
+			
+
+			private function encodeFile():void
+			{
+				var temp:String = pathInput.text ;
+				if( temp.length == 0 ){
+					return ;
+				}
+				objData = {} ;
+				path =  temp.replace("\\","/");
+				localSo.setAt("path",path);
+				configUrl = path + "/config.xml" ;
+				
+				
+				var by:ByteArray = FileUtils.getContentByFileName(configUrl) as ByteArray ;
+				if(by == null){
+					Alert.show("找不到文件：" + configUrl);
+					return ;
+				}
+				var str:String = by.readUTFBytes(by.length);
+				
+				var xmlData:XML = XML(str);
+				var xmls:XMLList = XML(xmlData.xmls).children();
+				
+				var arr:Array = [];
+				var itemPath:String = "";
+				var content:String = "" ;
+				for each (var _loc_4:XML in xmls)
+				{
+					itemPath = path + String(_loc_4.@url).replace("$program/config","") ;
+					itemPath =  itemPath.replace(/\?.+/g,"");
+					content = FileUtils.getStringByFile(new File(itemPath)) ;
+					objData[_loc_4.@key] = content ;
+				}
+				var byte:ByteArray = new ByteArray();
+				byte.writeObject(this.objData);
+				byte.compress();
+				FileUtils.save( path + "/xmlData.byt",byte );
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Panel x="10" y="10" width="485" height="194">
+		<s:Label x="60" y="71" width="310" fontSize="14" text="打包目录下config文件夹所有xml并保持在目录中"/>
+		<s:TextInput id="pathInput" x="57" y="10" width="419" enter="encodeFile()" text="{path}"/>
+		<s:Label x="17" y="15" fontSize="14" text="目录："/>
+		<s:Button x="57" y="42" label="打包" click="encodeFile()"/>
+	</s:Panel>
+</s:WindowedApplication>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			
+			import nochump.util.zip.Deflater;
+			import nochump.util.zip.Inflater;
+			
+			private function importfolder():void
+			{
+				var fl:File;
+				if(importUrl_lab.text != '')
+				{
+					fl = new File();
+					fl = fl.resolvePath(importUrl_lab.text);
+					dirUrl = fl.parent.url;
+					this.readXML(fl);
+				}
+				else
+				{
+					fl = File.desktopDirectory;
+					try{
+						fl.browseForDirectory('请选择目录');
+						fl.addEventListener(Event.SELECT,selectComplete);
+					}catch(error:Error){
+						trace('failed : ',error.message);
+					}
+				}
+				Alert.show('导出成功');
+			}
+			
+			private var dirUrl:String;
+			
+			private function selectComplete(event:Event):void
+			{
+				var directory:File = event.target as File;
+				dirUrl = directory.parent.url;
+				readXML(directory);
+			}
+			
+			private function readXML(file:File):void
+			{
+				if(file.isDirectory == true)
+				{
+					var folder:Array = file.getDirectoryListing();
+					var num:int = folder.length;
+					for(var i:int =0 ; i < num; i++)
+					{
+						readXML(folder[i]);
+					}
+				}
+				else
+				{
+					if(file.extension == 'xml')
+					{
+						deflate(file);
+					}
+				}
+			}
+			
+			private function deflate(file:File):void
+			{
+				if(file.isDirectory == true || file.extension != 'xml')
+				{
+					return;
+				}
+			
+				var inputByte:ByteArray = readfileByByte(file);
+
+				var deflater:Deflater = new Deflater();
+				deflater.setInput(inputByte);
+				
+				var outputByte:ByteArray = new ByteArray();
+				deflater.deflate(outputByte);
+				
+				saveFiles(outputByte,file.url);
+			}
+			
+			private function readfileByByte(file:File):ByteArray
+			{
+				var stream:FileStream = new FileStream();
+				stream.open(file, FileMode.READ);
+				var str:String = stream.readUTFBytes(stream.bytesAvailable);
+				stream.close();
+				
+				var inputByte:ByteArray = new ByteArray();
+				inputByte.writeUTFBytes(str);
+				inputByte.position = 0;
+				return inputByte;
+			}
+			
+			private function saveFiles(bytes:ByteArray, url:String):void
+			{
+				var targetUrl:String = outportUrl_lab.text == '' ? url : outportUrl_lab.text;
+				if(outportUrl_lab.text == '')
+				{
+					targetUrl = url.replace('.xml', '.thi');
+				}
+				else
+				{
+					var tempUrl:String = url.replace(this.dirUrl, '');
+					targetUrl = outportUrl_lab.text + tempUrl;
+					targetUrl = targetUrl.replace('.xml', '.thi');
+				}
+				
+				var file:File = new File;
+				file = file.resolvePath(targetUrl);
+				
+//				var tempUrl:String = url.replace(this.dirUrl, '');
+//				tempUrl = tempUrl.replace('.xml', '.lm');
+//				var file:File = File.desktopDirectory.resolvePath(File.desktopDirectory.url +  tempUrl);
+				
+				var stream:FileStream = new FileStream();
+				stream.open(file, FileMode.WRITE);
+				stream.writeBytes(bytes);
+				stream.close();
+			}
+		]]>
+	</fx:Script>
+	<s:Button label="导入文件夹" x="100" y="120" click="importfolder()"/>
+<!--	<s:Label x="100" text="生成的文件夹在桌面上，目录与远文件夹保持一致" fontSize="14"/>-->
+	<s:Label text="输入路径" y="40"/>
+	<s:TextInput id="importUrl_lab" width="400" height="30" x="70" y="30"/>
+	<s:Label text="输出路径" y="80"/>
+	<s:TextInput id="outportUrl_lab" width="400" height="30" x="70" y="70"/>
+</s:WindowedApplication>
