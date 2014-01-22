@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx" addedToStage="windowedapplication1_creationCompleteHandler(event)">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.events.ResizeEvent;
+			import mx.graphics.codec.JPEGEncoder;
+			import mx.graphics.codec.PNGEncoder;
+			
+			private var _file:File;
+			private var _currImage:File;
+			private var _waitFiles:Array = [];
+			private var count:int = 0;
+			private var _currBitmap:BitmapData;
+			private var namePsw:String;
+			private var nameArr:Array;
+			private var currPics:Array = [];
+			private var fileStream:FileStream = new FileStream();
+			private var currMapRow:int;
+			private var currMapCol:int;
+			private var currMapPicFile:Object;
+			private var currMapCellW:Number = 0;
+			private var currMapCellH:Number = 0;
+			private var currMapBitmapData:BitmapData;
+			private var jpg:JPEGEncoder = new JPEGEncoder(80);
+			private var picCount:int = 0;
+			
+			private function onResize(event:Event):void
+			{
+				maskShape.graphics.clear();
+				maskShape.graphics.beginFill(0x000000,0.5);
+				maskShape.graphics.drawRect(0,0,stage.stageWidth,stage.stageHeight);
+				maskShape.graphics.endFill();
+				
+				noticeTip.width = maskShape.width;
+				noticeTip.y = (maskShape.height - noticeTip.height) * 0.5;
+			}
+			
+			/** */
+			private function browse():void
+			{
+				_waitFiles.length = 0;
+				_file = new File();
+				_file.browseForDirectory("请选择一个文件目录");
+				_file.addEventListener(Event.SELECT, onFileSelect);
+			}
+
+			private function onFileSelect(event:Event):void
+			{
+				_file.removeEventListener(Event.SELECT, onFileSelect);
+			}
+			
+			/** */
+			private function begin():void
+			{
+				if (_file == null)
+				{
+					Alert.show("请先选择要操作的文件目录");
+					return;
+				}
+				if (psw.text.length <= 0)
+				{
+					Alert.show("请输入命名模板");
+					return;
+				}
+				namePsw = psw.text;
+				nameArr = namePsw.split("'");
+				var len:int = nameArr.length;
+				for (var j:int=0;j<len;j++)
+				{
+					if (nameArr[j] == "")
+					{
+						nameArr.splice(j,1);
+						len = nameArr.length;
+						j--;
+					}
+				}
+				count = 0;
+				var arr:Array = _file.getDirectoryListing();
+				for each (var obj:File in arr)
+				{
+					if (obj.isDirectory)
+						_waitFiles.push(obj);
+				}
+				if (_waitFiles.length <= 0)
+				{
+					Alert.show("该目录下面没有需要处理的地图");
+					return;
+				}
+				_currImage = _waitFiles.shift();
+				maskShape.visible = true;
+				noticeTip.text = "开始处理第"+(count+1)+"个文件";
+				handleFile();
+			}
+			
+			
+			protected function windowedapplication1_creationCompleteHandler(event:Event):void
+			{
+				// TODO Auto-generated method stub
+				stage.addEventListener(Event.RESIZE, onResize);
+				onResize(null);
+			}
+			
+			/** */
+			private function handleFile():void
+			{
+				picCount = 0;
+				currPics.length = 0;
+				currMapCellW = currMapCellH = 0;
+				var images:Array = _currImage.getDirectoryListing();
+				var fname:String = "", xp:int, yp:int, row:int, col:int;
+				var index:int = 0, temp:Object;
+				for each (var f:File in images)
+				{
+					if (f.isDirectory)
+						continue;
+					
+					fname = f.name;
+					index = fname.lastIndexOf(".");
+					fname = fname.substring(0, index);
+					if (nameArr.length > 0)
+					{
+						temp = {file:f};
+						
+						if (nameArr[0] != "x")
+						{
+							if (nameArr[0] != "y")
+							{
+								fname = fname.substring(nameArr[0].length, fname.length);//去掉前面部分,第一个即不是x也不是y.那么第二个必然是x或者y
+								if (nameArr.length > 1)
+								{
+									if (nameArr[1] == "x")//第二个是x
+									{
+										if (nameArr.length > 2)//如果有第3个则继续下去,同样因为第二个是x，所以第3个不能是y
+										{
+											currPics.push(temp);
+											xp = int(fname.substring(0, fname.indexOf(nameArr[2])));
+											fname = fname.substring(fname.indexOf(nameArr[2])+nameArr[2].length, fname.length);//去掉x和第3部分
+											if (nameArr.length > 4)//如果y后面还有
+											{
+												yp = int(fname.substring(0, fname.indexOf(nameArr[4])));
+											}else{
+												yp = int(fname);
+											}
+											temp.x = xp;
+											temp.y = yp;
+											row = xp > row ? xp : row;
+											col = yp > col ? yp : col;
+										}
+									}else{//第二个是y
+										if (nameArr.length > 2)//如果有第3个则继续下去,同样因为第二个是y，所以第3个不能是x
+										{
+											currPics.push(temp);
+											yp = int(fname.substring(0, fname.indexOf(nameArr[2])));
+											fname = fname.substring(fname.indexOf(nameArr[2])+nameArr[2].length, fname.length);//去掉y和第3部分
+											if (nameArr.length > 4)//如果y后面还有
+											{
+												xp = int(fname.substring(0, fname.indexOf(nameArr[4])));
+											}else{
+												xp = int(fname);
+											}
+											temp.x = xp;
+											temp.y = yp;
+											row = xp > row ? xp : row;
+											col = yp > col ? yp : col;
+										}
+									}
+									
+								}
+								
+							}else{//第一个是y,第二个肯定不能为y，否则无法区分.因为x和y不能连在一起,所以这里假设每个命名的x和y都不会再一起
+								if (nameArr.length > 1)
+								{
+									currPics.push(temp);
+									yp = int(fname.substring(0,fname.indexOf(nameArr[1])));//取y坐标
+									fname = fname.substring(fname.indexOf(nameArr[1])+nameArr[1].length, fname.length);//取出剩余部分
+									if (nameArr.length > 3)//如果x后面还有名字
+									{
+										xp = int(fname.substring(0, fname.indexOf(nameArr[2])));
+									}else{
+										xp = int(fname);
+									}
+									temp.x = xp;
+									temp.y = yp;
+									row = xp > row ? xp : row;
+									col = yp > col ? yp : col;
+								}
+							}
+						}else{
+							//如果第一个为x，第二个肯定不能为y，否则无法区分.因为x和y不能连在一起,所以这里假设每个命名的x和y都不会再一起
+							if (nameArr.length > 1)
+							{
+								currPics.push(temp);
+								xp = int(fname.substring(0,fname.indexOf(nameArr[1])));//取x坐标
+								fname = fname.substring(fname.indexOf(nameArr[1])+nameArr[1].length, fname.length);//取出剩余部分
+								if (nameArr.length > 3)//如果y后面还有名字
+								{
+									yp = int(fname.substring(0, fname.indexOf(nameArr[2])));
+								}else{
+									yp = int(fname);
+								}
+								temp.x = xp;
+								temp.y = yp;
+								row = xp > row ? xp : row;
+								col = yp > col ? yp : col;
+							}else{
+								//只有x没有y,无法合成
+							}
+						}
+					}
+						
+				}
+				if (currPics.length > 0)
+				{
+					row++;//真正的行数和列数
+					col++;
+					currMapCol = col;
+					currMapRow = row;
+					currMapPicFile = currPics.shift();
+					noticeTip.text = "开始处理第"+(count+1)+"个文件,正在处理该地图的第"+(picCount+1) + "个块图";
+					readPicture();
+				}
+			}
+			
+			/** */
+			private function readPicture():void
+			{
+				var f:File = currMapPicFile.file;
+				var imgByte:ByteArray = new ByteArray();
+				imgByte.endian = Endian.LITTLE_ENDIAN;
+				fileStream.open(f, FileMode.READ);
+				fileStream.readBytes(imgByte);
+				fileStream.close();
+				var loader:Loader = new Loader();
+				loader.loadBytes(imgByte);
+				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoadCom);
+			}
+
+			private function onLoadCom(event:Event):void
+			{
+				event.target.removeEventListener(Event.COMPLETE, onLoadCom);
+				var bitmap:BitmapData = event.target.content.bitmapData;
+				if (currMapCellW == 0){
+					currMapCellW = bitmap.width;
+					currMapCellH = bitmap.height;
+				}
+				if (currMapBitmapData == null)
+				{
+					currMapBitmapData = new BitmapData(currMapCellW*currMapRow, currMapCellH*currMapCol,true,0x000000);
+				}
+				currMapBitmapData.copyPixels(bitmap, bitmap.rect, new Point(currMapPicFile.x * currMapCellW, currMapPicFile.y * currMapCellH));
+				
+				if (currPics.length > 0)
+				{
+					currMapPicFile = currPics.shift();
+					noticeTip.text = "开始处理第"+(count+1)+"个文件,正在处理该地图的第"+(picCount+1) + "个块图";
+					picCount++;
+					callLater(readPicture);
+				}else{
+					var outFile:File = _file;
+					outFile = outFile.resolvePath("合成地图");
+					outFile = outFile.resolvePath(_currImage.name);
+					outFile = outFile.resolvePath(_currImage.name+".jpg");
+					outFile = new File(outFile.url);
+					fileStream.open(outFile, FileMode.WRITE);
+					fileStream.writeBytes(jpg.encode(currMapBitmapData));
+					fileStream.close();
+					currMapBitmapData.dispose();
+					currMapBitmapData = null;
+					if (_waitFiles.length > 0)
+					{
+						count++;
+						_currImage = _waitFiles.shift();
+						noticeTip.text = "开始处理第"+(count+1)+"个文件";
+						callLater(handleFile);
+					}else{
+						maskShape.visible = false;
+						Alert.show("处理完毕");
+					}
+							
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<s:TitleWindow x="42" y="31" width="294" height="307" textAlign="center" title="地图合成器">
+		<s:Label x="10" y="28" text="请输入命名：比如：map'x'_'y'"/>
+		<s:TextInput x="47" y="48" width="205" id="psw"/>
+		<s:Button x="138" y="77" label="浏览" click="browse()"/>
+		<s:Label x="10" y="81" text="请选择地图目录："/>
+		<s:Button x="10" y="120" label="开始" click="begin()" id="beginBtn"/>
+	</s:TitleWindow>
+	<s:Group width="100%" height="100%" id="maskShape" visible="false">
+		<s:Label id="noticeTip" textAlign="center" color="0xffffff" height="22"/>
+	</s:Group>
+</s:WindowedApplication>
