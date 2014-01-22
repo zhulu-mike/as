@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			private  var count:int;
+			private  var index:int = 0;
+			private  var list:XMLList;
+			private  var com:Boolean = false;
+			private  var newXml:XML;
+			private  var file:File = new File();
+			private  var fileSream:FileStream = new FileStream();
+			private static var FILEFILTERS:Array = [new FileFilter("xml","*.xml")];
+			
+			/** */
+			private function browse():void
+			{
+				file.browse(FILEFILTERS);
+				file.addEventListener(Event.SELECT, onSelect);
+			}
+
+			private function onSelect(event:Event):void
+			{
+				fileSream.open(file, FileMode.READ);
+				var byte:XML;
+				var str:String = fileSream.readUTFBytes(fileSream.bytesAvailable);
+				fileSream.close();
+				byte = new XML(str);
+				transformXML(byte);
+			}
+			
+			/***/
+			public function transformXML(xml:XML):void
+			{
+				count = 0;
+				index = 0;
+				com = false;
+				newXml = new XML("<data></data>");
+				var temp:XMLList = xml.child("target");
+				if (temp.length() > 0)
+				{
+					list = temp[0].child("entry");
+					if (list.length() > 0)
+					{
+						count = list.length();
+						parse();
+						return;
+					}
+				}
+				complete();
+			}
+			
+			private  function parse():void
+			{
+				var time:int = getTimer();
+				var res:XML, tar:XML, wc:XML, path:String = "", pointIndex:int, ext:String;
+				var str:String;
+				for (;index<count;index++)
+				{
+					if (getTimer() - time >= 30)
+					{
+						callLater(parse);
+						return;
+					}else{
+						res = list[index];
+						wc = res.child("wc-status")[0];
+						if (wc.@props == "normal")
+						{
+							path = res.@path;
+							pointIndex = path.lastIndexOf(".");
+							if (pointIndex >= 0)
+							{
+								ext = path.substring(pointIndex+1);
+								if (ext == "jpg" || ext == "png" || ext == "gif" || ext == "db" || ext == "fla")
+								{
+									continue;
+								}
+							}
+							tar = new XML("<p></p>");
+							str = res.@path;
+							while(str.search("\\\\") > 0)
+							{
+//								trace(str.search("\\\\"));
+								str = str.replace('\\', '/');
+							}
+							tar.appendChild(str);
+							tar.@version = wc.child("commit")[0].@revision;
+							newXml.appendChild(tar);
+						}
+					}
+				}
+				complete();
+			}
+			
+			private function complete():void
+			{
+				com = true;
+				Alert.show("生成完毕");
+				var name:String = "new_"+file.name;
+				file = file.parent;
+				file = file.resolvePath(name);
+				fileSream.open(file, FileMode.WRITE);
+				fileSream.writeUTFBytes(newXml.toString());
+				fileSream.close();
+			}
+		]]>
+	</fx:Script>
+	<s:Button x="27" y="19" label="浏览" click="browse()"/>
+</s:WindowedApplication>
