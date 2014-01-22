@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx">
+	
+	<fx:Script>
+		<![CDATA[
+			
+			private var _file:File = new File();
+			private var _loader:Loader = new Loader();
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				_file.browse();
+				_file.addEventListener(Event.SELECT, onSelect);
+			}
+
+			private function onSelect(event:Event):void
+			{
+				_file.removeEventListener(Event.SELECT, onSelect);
+				_file.load();
+				_file.addEventListener(Event.COMPLETE, onComplete);
+			}
+
+			private function onComplete(event:Event):void
+			{
+				_file.removeEventListener(Event.COMPLETE, onComplete);
+				_loader.loadBytes(_file.data);
+				_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoadBinaryDataComplete);
+			}
+
+			private function onLoadBinaryDataComplete(event:Event):void
+			{
+				_loader.contentLoaderInfo.removeEventListener(Event.COMPLETE, onLoadBinaryDataComplete);
+				var content:DisplayObject = _loader.content;
+				box.addChild(content);
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:Button x="56" y="46" label="浏览" click="button1_clickHandler(event)"/>
+	<s:Group x="223" y="195" width="200" height="200">
+		<s:SpriteVisualElement id="box"/>
+	</s:Group>
+</s:WindowedApplication>
