@@ -5,6 +5,7 @@
 *.pydevproject
 .metadata
 bin/
+bin-debug/
 tmp/
 *.tmp
 *.bak

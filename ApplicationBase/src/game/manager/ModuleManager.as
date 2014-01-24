@@ -8,6 +8,7 @@ package game.manager
 	import com.thinkido.framework.manager.RslLoaderManager;
 	import com.thinkido.framework.manager.loader.LoaderManager;
 	import com.thinkido.framework.manager.loader.vo.LoadData;
+	import com.thinkido.framework.utils.Callback;
 	
 	import flash.events.Event;
 	import flash.utils.Dictionary;
@@ -19,12 +20,15 @@ package game.manager
 
 	public class ModuleManager
 	{
-		private static var loadingDic:Dictionary = new Dictionary();
+		private static var loadedDic:Dictionary = new Dictionary();
 		private static var privateHome:PrivateHome = new PrivateHome();
 		public function ModuleManager()
 		{
 		}
-		public static function load($name:String,$callBack = null):void{
+		public static function load($name:String,$callBack:Object = null):void{
+			if (loadedDic[$name])
+				return;
+			
 			var temp:String = $name.substring($name.lastIndexOf(".")+1,$name.indexOf("_")) ;
 			
 			var swfName:String = temp + "Module.swf";
@@ -55,6 +59,7 @@ package game.manager
 			}
 			loadData = new LoadData(path, loadComplete, loadUpdate, loadError, "", $name, 0, GlobalConfig.decode,  {order:i+1, data:$callBack, max:len+1}) ;
 			loadQueenRsl.push(loadData);
+			loadedDic[$name] = true;
 			if (loadQueen.length > 0)
 			{
 				var loadComplete_xml:Function;
@@ -138,7 +143,6 @@ package game.manager
 		 */		
 		private static function loadComplete($ld:LoadData, evt:Event) : void
 		{
-			loadingDic[$ld.url] = false ;
 //			LoadingBar.hide();
 			PipeManager.sendMsg($ld.key, $ld.data.data);
 			if ($ld.data.data && $ld.data.data.hasOwnProperty("panelKey"))

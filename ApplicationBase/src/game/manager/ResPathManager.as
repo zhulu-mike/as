@@ -18,7 +18,7 @@ package game.manager
 		public static var MAP_SMALL_IMAGE:String = "res/smallMap/$.jpg";
 		
 		/**
-		 * 地图切换后的图片路径
+		 * 地图切换后的小图片路径
 		 */		
 		public static const MAP_ZONE_DIR:String = "res/data/map1/$/";
 		
