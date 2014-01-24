@@ -404,7 +404,6 @@
             }
             for each (ap in this.avatarParts)
             {
-                
                 ap.playTo($status, $angle, $rotation, this.playCondition.clone());
             }
             this.sortAvatarParts();
@@ -441,7 +440,7 @@
             }
 			var offMountX:int = 0;
 			var offMountY:int = 0;
-			if (this.sceneCharacter.isOnMount)
+			if (this.sceneCharacter.isOnMount || this.sceneCharacter.getAvatarPartsByType(AvatarPartType.MOUNT).length > 0)
 			{
 				var bodys:Array = this.getAvatarPartsByType(AvatarPartType.BODY);
 				if (bodys.length > 0)

@@ -99,6 +99,9 @@
         private static const MOUSE_ON_GLOWFILTER:GlowFilter = new GlowFilter(0xffffff, 0.7, 7, 7, 4, 1);
 		private var cacheObject:Object = {};
 		private var _enableShadow:Boolean = true;
+		/**人物头顶位置是否需要更新*/
+		private var _bodyPositionUpdate:Boolean = true;
+		private var _bodyPositionY:Number = 0;
 		
 		
         public function AvatarPart(apd:AvatarParamData, apsl:AvatarPartStatusList)
@@ -251,6 +254,7 @@
             this._playCondition.showEnd = this._playCondition.showEnd && _avatarShowEndCondi.indexOf(this.type) != -1 && _statusShowEndCondi.indexOf(this._currentStatus) != -1 ? (true) : (false);
             if (_tempStatus != this._currentStatus)
             {
+				this._bodyPositionUpdate = true;
                 if (this._avatarPartStatusList != null)
                 {
                     this._currentAvatarPartStatus = this._avatarPartStatusList.getAvatarPardStatus(this._currentStatus);
@@ -304,7 +308,7 @@
                     {
                         _tempClassName = this._classNamePrefix + this._currentStatus;
                         this._avatarImgData = SceneCache.installAvatarImg(this._currentAvatarPartStatus, _tempClassName, this._only1LogicAngel);
-                    }
+					}
                     else
                     {
                         this._avatarImgData = null;
@@ -638,17 +642,17 @@
                 this._oldData.oldCutRect.width = this.cutRect.width;
                 this._oldData.oldCutRect.height = this.cutRect.height;
 				if( this.avatarParamData.type == AvatarPartType.BODY ){
+					apd = this._currentAvatarPartStatus.getAvatarPartData(this._currentLogicAngel, this._currentFrame);
+					if (apd != null && this._bodyPositionUpdate)
+						_bodyPositionY = apd.ty;
 					if (!this.avatar.sceneCharacter.visible)
 					{
 						targetPoint = this.getTargetPosition();
 						this._sceneCharacterPosition.x = targetPoint.x;
 						this._sceneCharacterPosition.y = targetPoint.y;
-						apd = this._currentAvatarPartStatus.getAvatarPartData(this._currentLogicAngel, this._currentFrame);
-						if (apd != null)
-							this.avatar.sceneCharacter.bodyPosition = this._sceneCharacterPosition.y - apd.ty;
-					}else{
-						this.avatar.sceneCharacter.bodyPosition = cutRect.y ; 
 					}
+					this.avatar.sceneCharacter.bodyPosition = this._sceneCharacterPosition.y - _bodyPositionY;
+					this._bodyPositionUpdate = false;
 				}
             }
             else if (this.avatar.sceneCharacter.scene)
