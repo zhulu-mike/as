@@ -1,9 +1,11 @@
 ﻿package com.thinkido.framework.engine.utils
 {
+	import com.thinkido.framework.engine.config.MapConfig;
 	import com.thinkido.framework.engine.utils.astars.AStarGrid;
 	import com.thinkido.framework.engine.utils.astars.AStarNode;
 	import com.thinkido.framework.engine.utils.astars.BinaryHeap;
 	
+	import flash.utils.ByteArray;
 	import flash.utils.getTimer;
 	
 	import org.osflash.thunderbolt.Logger;
@@ -64,7 +66,7 @@
 		 * @return 
 		 * 
 		 */
-		public static function search($mapSolid:Object, $sx:int, $sy:int, $ex:int, $ey:int, param6:int = -1) : Array
+		public static function search($mapSolid:ByteArray, $sx:int, $sy:int, $ex:int, $ey:int, mapconfig:MapConfig, param6:int = -1) : Array
 		{
 			var delObj:Object = null;
 			var node:Object = null;
@@ -74,7 +76,9 @@
 			var _loc_20:int = 0;
 			var _loc_21:Object = null;
 			var _loc_22:int = 0;
-			if (!$mapSolid)
+			if ($mapSolid)
+				$mapSolid.position = 0;
+			if (!$mapSolid || $mapSolid.bytesAvailable <= 0)
 			{
 				Logger.warn("$mapSolid为空");
 				return null;
@@ -84,14 +88,19 @@
 				Logger.warn("目标点与起始点相同");
 				return null;
 			}
-			if ($mapSolid[$sx + "_" + $sy] != 0)
+			var index:int = 0;
+			$mapSolid.position = $sx * mapconfig.mapGridY + $sy;
+			var value:int = $mapSolid.readByte();
+			if (value != 0)
 			{
-				Logger.warn("起始点是阻挡点"+$mapSolid[$sx + "_" + $sy]+$sx+"."+$sy);
+				Logger.warn("起始点是阻挡点"+value+$sx+"."+$sy);
 				return null;
 			}
-			if ($mapSolid[$ex + "_" + $ey] != 0)
+			$mapSolid.position = $ex * mapconfig.mapGridY + $ey;
+			value = $mapSolid.readByte();
+			if (value != 0)
 			{
-				Logger.warn("目标点是阻挡点"+$mapSolid[$ex + "_" + $ey]+$sx+"."+$sy);
+				Logger.warn("目标点是阻挡点"+value+$sx+"."+$sy);
 				return null;
 			}
 			_open.dispose();
@@ -139,7 +148,7 @@
 				}
 				node = _open.pop() as AStarNode;
 			}
-//			Logger.warn("寻路花费："+(getTimer()-time));
+			Logger.warn("寻路花费："+(getTimer()-time));
 			return buildPath();
 			
 		}

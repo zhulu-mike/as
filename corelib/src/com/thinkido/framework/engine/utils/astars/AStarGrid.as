@@ -8,7 +8,7 @@ package com.thinkido.framework.engine.utils.astars
 	{
 		private var _startNode:AStarNode;
 		private var _endNode:AStarNode;
-		private var _nodes:Array = [];
+		private var _nodes:Object = {};
 		private var _numCols:int;
 		private var _numRows:int;
 		
@@ -26,13 +26,13 @@ package com.thinkido.framework.engine.utils.astars
 			dispose();
 			_numCols = numCols;
 			_numRows = numRows;
-			_nodes = [];
-			for (var i:int = 0; i < _numCols; i++){
-				_nodes[i] = [];
-				for (var j:int = 0; j < _numRows; j++){
-					_nodes[i][j] = new AStarNode(i, j);
-				}
-			}
+			_nodes = {};
+//			for (var i:int = 0; i < _numCols; i++){
+//				_nodes[i] = [];
+//				for (var j:int = 0; j < _numRows; j++){
+//					_nodes[i][j] = new AStarNode(i, j);
+//				}
+//			}
 		}
 		
 		/**
@@ -40,13 +40,13 @@ package com.thinkido.framework.engine.utils.astars
 		 * @param    type    0八方向 1四方向 2跳棋
 		 */
 		public function calculateLinks(type:int = 0):void {
-			this.type = type;
-			for (var i:int = 0; i < _numCols; i++){
-				for (var j:int = 0; j < _numRows; j++){
-					if (_nodes[i][j].walkable)
-						initNodeLink(_nodes[i][j], type);
-				}
-			}
+//			this.type = type;
+//			for (var i:int = 0; i < _numCols; i++){
+//				for (var j:int = 0; j < _numRows; j++){
+//					if (_nodes[i][j].walkable)
+//						initNodeLink(_nodes[i][j], type);
+//				}
+//			}
 		}
 		
 		public function getType():int {
@@ -67,16 +67,16 @@ package com.thinkido.framework.engine.utils.astars
 			for (var i:int = startX; i <= endX; i++){
 				for (var j:int = startY; j <= endY; j++){
 					var test:AStarNode = getNode(i, j);
-					if (test == node || !test.walkable){
+					if (test == null || test == node || !test.walkable){
 						continue;
 					}
 					if (type != 2 && i != node.x && j != node.y){
 						var test2:AStarNode = getNode(node.x, j);
-						if (!test2.walkable){
+						if (test2 == null || !test2.walkable){
 							continue;
 						}
 						test2 = getNode(i, node.y);
-						if (!test2.walkable){
+						if (test2 == null || !test2.walkable){
 							continue;
 						}
 					}
@@ -100,19 +100,23 @@ package com.thinkido.framework.engine.utils.astars
 		}
 		
 		public function getNode(x:int, y:int):AStarNode {
-			return _nodes[x][y];
+			if (_nodes[x+"_"+y] == undefined)
+				return null;
+			return _nodes[x+"_"+y];
 		}
 		
 		public function setEndNode(x:int, y:int):void {
-			_endNode = _nodes[x][y];
+			_endNode = _nodes[x+"_"+y];
 		}
 		
 		public function setStartNode(x:int, y:int):void {
-			_startNode = _nodes[x][y];
+			_startNode = _nodes[x+"_"+y];
 		}
 		
 		public function setWalkable(x:int, y:int, value:Boolean):void {
-			_nodes[x][y].walkable = value;
+			if (_nodes[x+"_"+y] == undefined)
+				_nodes[x+"_"+y] = new AStarNode(x,y);
+			_nodes[x+"_"+y].walkable = value;
 		}
 		
 		public function get endNode():AStarNode {
@@ -136,11 +140,10 @@ package com.thinkido.framework.engine.utils.astars
 			_startNode = null;
 			_endNode = null;
 			var len:int = _nodes.length, i:int = 0, j:int = 0, len2:int = 0;
-			for (i;i<len;i++)
+			var temp:AStarNode
+			for each (temp in _nodes)
 			{
-				len2 = _nodes[i].length;
-				for (j=0;j<len2;j++)
-					_nodes[i][j].dispose();
+				temp.dispose();
 			}
 			_nodes = null;
 			_numCols = 0;

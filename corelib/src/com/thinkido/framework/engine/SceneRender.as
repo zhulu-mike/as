@@ -57,7 +57,7 @@
         private function render(evt:Event = null) : void
         {
             var chara:SceneCharacter = null;
-//			trace("上帧时间："+(getTimer()-nowTime));
+			trace("上帧时间："+(getTimer()-nowTime));
             nowTime = getTimer();
             var charaArr:Array = _scene.sceneCharacters;
 			var t:int = nowTime;
@@ -80,7 +80,7 @@
 //			trace("头顶时间："+(getTimer()-t));
 //			t = getTimer();
             SceneCache.checkUninstall();
-//			trace("总共时间："+(getTimer()-t));
+			trace("总共时间："+(getTimer()-t));
         }
 
     }

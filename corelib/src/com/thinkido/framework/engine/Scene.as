@@ -24,6 +24,7 @@
     import flash.display.Sprite;
     import flash.events.Event;
     import flash.geom.Point;
+    import flash.utils.ByteArray;
     import flash.utils.getTimer;
     
     import org.osflash.thunderbolt.Logger;
@@ -389,13 +390,13 @@
             var $mapConfigUrl:String = mapCongUrl;
             var $onComplete:Function = compFun;
             var $onUpdate:Function = updateFun;
-            newOnComplete = function ($mapConfig:MapConfig, $mapTile:Object, $mapSolid:Object) : void
+            newOnComplete = function ($mapConfig:MapConfig, $mapTile:Object, $mapSolid:ByteArray) : void
             {
                 var slipcover:Object = null;
                 var sc:SceneCharacter = null;
                 mapConfig = $mapConfig;
                 SceneCache.mapTiles = $mapTile;
-                SceneCache.mapSolids = $mapSolid;
+                SceneCache.mapSolidsByte = $mapSolid;
                 if (mapConfig.slipcovers != null && mapConfig.slipcovers.length > 0)
                 {
                     for each (slipcover in mapConfig.slipcovers)
@@ -698,7 +699,8 @@
             SceneCache.mapImgCache.dispose();
             SceneCache.currentMapZones = {};
             SceneCache.mapTiles = {};
-            SceneCache.mapSolids = {};
+//            SceneCache.mapSolids = {};
+            SceneCache.mapSolidsByte.clear();
             SceneCache.mapZones = {};
             SceneCache.removeWaitingAvatar(null, null, null, [this.mainChar, this._mouseChar]);
             this.mapConfig = null;
@@ -936,5 +938,53 @@
 			DrawUtil.drawGrid(mapGrid,mapConfig.mapGridX,mapConfig.mapGridY,SceneConfig.TILE_WIDTH,SceneConfig.TILE_HEIGHT,new Point(),new StyleData(2,0) );
 		}
 
+		/**
+		 *根据格子的XY获得1维坐标 
+		 * @return 
+		 * 
+		 */		
+		public function getIndexByXY(x:int, y:int):int
+		{
+			return x * mapConfig.mapGridY + y;
+		}
+		
+		/**
+		 * 搜索指定点周围可用的点
+		 * @param p
+		 * @return 
+		 * 
+		 */		
+		public function searchAroundPoint(p:Point):Point
+		{
+			var i:int = 0, j:int = 0, offset:int = 0;
+			var deep:int = 1, index:int = 0, gridx:int = mapConfig.mapGridX, gridy:int = mapConfig.mapGridY;
+			var tar:ByteArray = SceneCache.mapSolidsByte;
+			var newX:int = 0, newY:int = 0;
+			while((p.x + deep < gridx || p.x - deep >= 0 || p.y + deep < gridy || p.y - deep >= 0))
+			{
+				for (i = -1;i < 2;i++)
+				{
+					newX = p.x+i;
+					if (newX < 0 || newX > gridx-1)
+						continue;
+					for (j = -1; j < 2;j++)
+					{
+						newY = p.y + j;
+						if (newY < 0 || newY > gridy-1)
+							continue;
+						index = getIndexByXY(newX, newY);
+						tar.position = index;
+						if (tar.readByte() == 0)
+						{
+							p.x = newX;
+							p.y = newY;
+							return p;
+						}
+					}
+				}
+				deep++;
+			}
+			return null;
+		}
     }
 }

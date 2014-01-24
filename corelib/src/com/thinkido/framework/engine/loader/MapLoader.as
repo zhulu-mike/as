@@ -14,6 +14,7 @@
     import com.thinkido.framework.engine.tools.SceneCache;
     import com.thinkido.framework.engine.tools.SceneLoader;
     import com.thinkido.framework.engine.utils.Astar;
+    import com.thinkido.framework.engine.utils.astars.AStarGrid;
     import com.thinkido.framework.engine.vo.map.MapTile;
     import com.thinkido.framework.manager.loader.LoaderManager;
     import com.thinkido.framework.utils.SystemUtil;
@@ -116,24 +117,27 @@
 	                var trans:Object = SceneCache.transports;
 	                var tempMapId:int = mapConfig.mapID;
 	                var mapTypeDic:Object = {};
-	                var mapDic:Object = {};
+					var astarGrid:AStarGrid = Astar.starGrid;
 	                for each (item in data.tiles.tile)
 	                {
 	                    mapTipX = item.@x;
 	                    mapTipY = item.@y;
 	                    mapTypeDic[mapTipX + "_" + mapTipY] = new MapTile(mapTipX, mapTipY, item.@s == "1", item.@s == "2", item.@m == "1", trans[tempMapId + "_" + mapTipX + "_" + mapTipY] != undefined);
-	                    mapDic[mapTipX + "_" + mapTipY] = item.@s == "1" ? (1) : (0);
-						Astar.starGrid.setWalkable(mapTipX, mapTipY, item.@s == "1" ? false : true);
+						if (item.@s != "1")
+							astarGrid.setWalkable(mapTipX, mapTipY, true);//只保存可用的点
 	                }
 					System.disposeXML(data);
+					var gridByte:ByteArray = new ByteArray();
 					for (var i:int = 0; i < mapConfig.mapGridX; i++) 
 					{
 						for (var j:int = 0; j < mapConfig.mapGridY ; j++) 
 						{
-							if( mapDic[i + "_" + j] == undefined ){
+							if( mapTypeDic[i + "_" + j] == undefined ){
 								mapTypeDic[i + "_" + j] = new MapTile(i, j,false,false,false, trans[tempMapId + "_" + i + "_" + j] != undefined);
-								mapDic[i + "_" + j] = 0 ;
-								Astar.starGrid.setWalkable(i, j, true);
+								astarGrid.setWalkable(i, j, true);
+								gridByte.writeByte(0);
+							}else{
+								gridByte.writeByte(astarGrid.getNode(i,j)!=null?0:1);
 							}
 						}
 					}
@@ -151,7 +155,7 @@
 					}
 					if (onComplete != null)
 	                {
-	                    onComplete(mapConfig, mapTypeDic, mapDic);
+	                    onComplete(mapConfig, mapTypeDic, gridByte);
 	                }
 					SceneLoader.smallMapImgLoader.removeEventListener(BulkLoader.COMPLETE, newOnComplete);
 					SceneLoader.smallMapImgLoader.removeEventListener(BulkLoader.PROGRESS, onUpdate);

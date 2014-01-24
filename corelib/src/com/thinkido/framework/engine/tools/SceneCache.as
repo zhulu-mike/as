@@ -2,8 +2,11 @@
 {
     import com.thinkido.framework.common.cache.Cache;
     import com.thinkido.framework.common.handler.HandlerThread;
+    import com.thinkido.framework.engine.Engine;
+    import com.thinkido.framework.engine.Scene;
     import com.thinkido.framework.engine.SceneCharacter;
     import com.thinkido.framework.engine.SceneRender;
+    import com.thinkido.framework.engine.config.GlobalConfig;
     import com.thinkido.framework.engine.graphics.avatar.AvatarPart;
     import com.thinkido.framework.engine.staticdata.AvatarPartID;
     import com.thinkido.framework.engine.staticdata.AvatarPartType;
@@ -16,6 +19,7 @@
     import com.thinkido.framework.manager.RslLoaderManager;
     
     import flash.geom.Point;
+    import flash.utils.ByteArray;
 
 	/**
 	 * 场景缓存
@@ -35,7 +39,8 @@
         public static var mapImgCache:Cache = CacheManager.creatNewCache("mapImgCache");
         public static var mapTiles:Object = {};
         public static var tempMapTiles:Object = {};
-        public static var mapSolids:Object = {}; 
+        public static var mapSolidsByte:ByteArray = new ByteArray(); 
+		
         private static var waitingLoadAvatarHT:HandlerThread = new HandlerThread();
         private static var waitingLoadAvatarFun:Object = new Object();
         private static var waitingLoadAvatars:Object = new Object();
@@ -366,47 +371,8 @@
             }
             return aid;
         }
-
-		/**
-		 * 搜索指定点周围可用的点
-		 * @param p
-		 * @return 
-		 * 
-		 */		
-		public static function searchAroundPoint(p:Point, dis:int=1):Point
-		{
-			
-			if (mapSolids[(p.x-dis) + "_" + p.y] == 0)
-			{
-				p.x = p.x - dis;
-			}else if (mapSolids[(p.x+dis) + "_" + p.y] == 0)
-			{
-				p.x = p.x + dis;
-			}else if (mapSolids[p.x + "_" + (p.y-dis)] == 0)
-			{
-				p.y= p.y - dis;
-			}else if (mapSolids[p.x + "_" + (p.y+dis)] == 0)
-			{
-				p.y = p.y + dis;
-			}else if (mapSolids[(p.x-dis) + "_" + (p.y-dis)] == 0)
-			{
-				p.x = p.x - dis;
-				p.y = p.y - dis;
-			}else if (mapSolids[(p.x-dis) + "_" + (p.y+dis)] == 0)
-			{
-				p.x = p.x - dis;
-				p.y = p.y + dis;
-			}else if (mapSolids[(p.x+dis) + "_" + (p.y-dis)] == 0)
-			{
-				p.x = p.x + dis;
-				p.y = p.y - dis;
-			}else if (mapSolids[(p.x+dis) + "_" + (p.y+dis)] == 0)
-			{
-				p.x = p.x + dis;
-				p.y = p.y + dis;
-			}
-			return p;
-		}
+		
+		
 		
     }
 }
