@@ -19,7 +19,7 @@ package game.config
 		/**
 		 * 是否是调试模式
 		 */		
-		public static var isDebug:Boolean = false;
+		public static var isDebug:Boolean = true;
 		
 		/**
 		 * 解码接口

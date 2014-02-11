@@ -1,5 +1,6 @@
 package
 {
+	import com.thinkido.framework.engine.config.SceneConfig;
 	import com.thinkido.framework.manager.SharedObjectManager;
 	
 	import flash.display.Sprite;
@@ -9,18 +10,24 @@ package
 	import flash.system.Security;
 	
 	import game.config.GameConfig;
+	import game.config.GameInstance;
 	import game.events.PipeEvent;
 	import game.manager.FacadeManager;
 	import game.manager.ImportManager;
 	import game.manager.LayerManager;
+	import game.manager.NetWorkManager;
+	import game.manager.ResizeManager;
 	import game.manager.SkinStyleManager;
 	import game.utils.PreventAccelerateUtil;
 	
 	import lm.mui.display.toolTip.Tooltip;
+	import lm.mui.interfaces.IResize;
 	import lm.mui.manager.DragManager;
 	import lm.mui.manager.ToolTipsManager;
 	
-	public class ApplicationBase extends Sprite
+	import org.osflash.thunderbolt.Logger;
+	
+	public class ApplicationBase extends Sprite implements IResize
 	{
 		public function ApplicationBase()
 		{
@@ -33,7 +40,17 @@ package
 		private function onAddedToStage(event:Event):void
 		{
 			initApp();
+			startup();
 			FacadeManager.startupFacade(PipeEvent.STARTUP_ENGINE);
+		}
+		
+		public function resize(w:Number, h:Number):void
+		{
+			// TODO Auto-generated method stub
+			if (GameInstance.scene)
+			{
+				GameInstance.scene.reSize(stage.stageWidth, stage.stageHeight);
+			}
 		}
 		
 		/**
@@ -48,6 +65,7 @@ package
 			stage.tabChildren = false;
 			stage.stageFocusRect = false;			
 			stage.frameRate = GameConfig.frameRate;
+			GameInstance.stage = stage;
 			
 			LayerManager.init(stage);
 			PreventAccelerateUtil.init(stage);
@@ -56,13 +74,17 @@ package
 			ToolTipsManager.defaultRenderClass = Tooltip;
 			DragManager.init(LayerManager.dragLayer);
 			ImportManager.init() ;
+			ResizeManager.init(stage);
+			ResizeManager.registerResize(this);
+			NetWorkManager.init(stage);
+			Logger.isOpen = false;
 		}
 		
 		private function startup():void
 		{
 			var obj:Object = stage.loaderInfo.parameters;
 			var param:Object = {};
-			param.baseDir = obj.baseDir;
+			GameConfig.baseFileUrl = param.baseDir = obj.baseDir;
 			SharedObjectManager.baseHttpUrl = obj.baseDir;
 			param.mainServerIP = obj.mainServerIP;
 			param.mainServerPort = obj.mainServerPort;

@@ -59,6 +59,11 @@ package org.osflash.thunderbolt
 		// public vars
 		public static var includeTime: Boolean = true;
 		public static var showCaller: Boolean = true;
+		
+		/**
+		 * 是否开放
+		 */		
+		public static var isOpen:Boolean = true;
 			
 		/**
 		 * Information about the current version of ThunderBoltAS3
@@ -169,7 +174,8 @@ package org.osflash.thunderbolt
 		 */			 
 		public static function log (level: String, msg: String = "", logObjects: Array = null): void
 		{
-//			return;
+			if (!isOpen)
+				return;
 			if(!_hide)
 			{
 				// at first run check

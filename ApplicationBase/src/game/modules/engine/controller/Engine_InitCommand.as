@@ -2,11 +2,13 @@ package game.modules.engine.controller
 {
 	import com.thinkido.framework.engine.Engine;
 	import com.thinkido.framework.engine.Scene;
+	import com.thinkido.framework.engine.vo.avatar.AvatarParamData;
 	
 	import game.config.GameConfig;
 	import game.config.GameInstance;
 	import game.manager.LayerManager;
 	import game.manager.ResPathManager;
+	import game.utils.ResourceUtil;
 	
 	import org.puremvc.as3.multicore.interfaces.INotification;
 	import org.puremvc.as3.multicore.patterns.command.SimpleCommand;
@@ -34,8 +36,11 @@ package game.modules.engine.controller
 			//创建主场景
 			GameInstance.scene = new Scene(GameConfig.sceneWidth,GameConfig.sceneHeight);
 			LayerManager.sceneLayer.addChildAt(GameInstance.scene, 0);
-			
-			
+			GameInstance.scene.switchScene(1001,"taiyixianjing");
+			var apd:AvatarParamData = new AvatarParamData(ResourceUtil.getAvatarPath(2));
+			GameInstance.scene.mainChar.loadAvatarPart(apd);
+			GameInstance.scene.mainChar.setTileXY(100,100);
+			GameInstance.scene.reSize(GameInstance.stage.stageWidth, GameInstance.stage.stageHeight);
 			return;
 		}
 	}

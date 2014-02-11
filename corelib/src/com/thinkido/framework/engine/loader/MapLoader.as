@@ -1,6 +1,7 @@
 ﻿package com.thinkido.framework.engine.loader
 {
     import br.com.stimuli.loading.BulkLoader;
+    import br.com.stimuli.loading.BulkProgressEvent;
     import br.com.stimuli.loading.loadingtypes.LoadingItem;
     
     import com.thinkido.framework.common.codemix.ZZip;
@@ -21,6 +22,7 @@
     
     import flash.display.Bitmap;
     import flash.events.Event;
+    import flash.events.ProgressEvent;
     import flash.system.System;
     import flash.utils.ByteArray;
     import flash.utils.getTimer;
@@ -47,11 +49,17 @@
         public static function loadMapConfig($mapID:int, $mapConfigName:String, $secen:Scene, $onComplete:Function = null, $onUpdate:Function = null) : void
         {
             var newOnComplete:Function;
+            var newOnUpdate:Function;
             var mapID:int = $mapID;
             var mapConfigName:String = $mapConfigName;
             var scene:Scene = $secen;
             var onComplete:Function = $onComplete;
             var onUpdate:Function = $onUpdate;
+			newOnUpdate = function(event:BulkProgressEvent):void
+			{
+				if ($onUpdate != null)
+					$onUpdate(event);
+			};
             newOnComplete = function (event:Event) : void
 	            {
 	                var temp:* = undefined;
@@ -158,7 +166,7 @@
 	                    onComplete(mapConfig, mapTypeDic, gridByte);
 	                }
 					SceneLoader.smallMapImgLoader.removeEventListener(BulkLoader.COMPLETE, newOnComplete);
-					SceneLoader.smallMapImgLoader.removeEventListener(BulkLoader.PROGRESS, onUpdate);
+					SceneLoader.smallMapImgLoader.removeEventListener(BulkLoader.PROGRESS, newOnUpdate);
 					return;
 	            };
 //			加载地图配置文件.xml
@@ -170,7 +178,7 @@
 			var mapImg:String = GlobalConfig.getSmallMapPath(mapConfigName) ;
 			SceneLoader.smallMapImgLoader.add(mapImg);
 			SceneLoader.smallMapImgLoader.addEventListener(BulkLoader.COMPLETE, newOnComplete);
-			SceneLoader.smallMapImgLoader.addEventListener(BulkLoader.PROGRESS, onUpdate);
+			SceneLoader.smallMapImgLoader.addEventListener(BulkLoader.PROGRESS, newOnUpdate);
 			SceneLoader.smallMapImgLoader.start();
             return;
         }
