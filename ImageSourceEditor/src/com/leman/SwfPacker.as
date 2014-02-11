@@ -1,9 +1,7 @@
 package com.leman
 {
-	import br.com.stimuli.loading.BulkLoader;
-	import br.com.stimuli.loading.loadingtypes.ImageItem;
-	
 	import com.leman.data.ImageInfo;
+	import com.leman.data.SingleDirectionImage;
 	import com.leman.load.LoadData;
 	import com.leman.load.LoaderManager;
 	import com.leman.view.ControlPanel;
@@ -20,6 +18,9 @@ package com.leman
 	import flash.utils.ByteArray;
 	
 	import mx.graphics.codec.PNGEncoder;
+	
+	import br.com.stimuli.loading.BulkLoader;
+	import br.com.stimuli.loading.loadingtypes.ImageItem;
 
 	/**
 	 *	sc处理器，每调用一次createSWF，即生成一个sc的一个 swf文件
@@ -59,6 +60,8 @@ package com.leman
 		
 		private var info:Object;		//时间设置 
 		
+		private var swfData:String;
+		
 		public function createSWF($dir:File, $info:Object):void
 		{
 			this.info = $info;
@@ -68,7 +71,7 @@ package com.leman
 			this.scName = _dir.name;
 			this.actionFolders = $dir.getDirectoryListing();
 			
-//			xmlStr = "package\n{\n\timport flash.display.MovieClip;\n\timport flash.system.Security;\n\n\tpublic class " + this._dir.name + " extends MovieClip\n\t{\n\t\tpublic static const X_M_L:XML = <r>";
+			swfData = "package\n{\n\timport flash.display.MovieClip;\n\timport flash.system.Security;\n\n\tpublic class " + this._dir.name + " extends MovieClip\n\t{\n\t\tpublic static const STATUS_LIST:Array = [";
 			xmlStr = "" ;
 			
 			loadactionfolder(this.actionFolders[loadIndex++]);
@@ -132,7 +135,10 @@ package com.leman
 		private function createSingleImageInfo():void
 		{
 			createImage();
-			xmlStr += createXmlStr(this.currFolder.name);
+			xmlStr = createXmlStr(this.currFolder.name);
+			//保存有哪些动作
+			swfData = swfData + this.currFolder.name + ",";
+			
 			createBmdClass(this.currFolder.name);
 		}
 		
@@ -240,6 +246,7 @@ package com.leman
 			createSingleImageInfo();
 			if(loadIndex >= this.actionFolders.length)
 			{
+				swfData = swfData.substr(0, swfData.length-1);
 				finishedLoaded();
 			}
 			else
@@ -298,9 +305,9 @@ package com.leman
 		 */		
 		private function finishedLoaded():void
 		{
-			/*
+			
 			// 生成 mid3.as 文件
-			xmlStr += "</r>;\n\t\tpublic function " + this._dir.name + "()\n\t\t{\n\t\t\taddFrameScript(0, frame1);\n\t\t\treturn;\n\t\t}\n\n\t\tfunction frame1()\n\t\t{\n\t\t\ttry\n\t\t\t{\n\t\t\t\tSecurity.allowDomain('*');\n\t\t\t}\n\t\t\tcatch (e:Error)\n\t\t\t{\n\t\t\t}\n\t\t\treturn;\n\t\t}\n\t}\n}" ;
+			swfData += "];\n\t\tpublic function " + this._dir.name + "()\n\t\t{\n\t\t\taddFrameScript(0, frame1);\n\t\t\treturn;\n\t\t}\n\n\t\tfunction frame1()\n\t\t{\n\t\t\ttry\n\t\t\t{\n\t\t\t\tSecurity.allowDomain('*');\n\t\t\t}\n\t\t\tcatch (e:Error)\n\t\t\t{\n\t\t\t}\n\t\t\treturn;\n\t\t}\n\t}\n}" ;
 		
 			var ws:FileStream = new FileStream();
 			var file1:File ;	
@@ -308,7 +315,7 @@ package com.leman
 			file1= new File(fileName);
 			ws.open(file1,FileMode.WRITE);
 			ws.writeUTFBytes(xmlStr);
-			ws.close();*/
+			ws.close();
 			
 			this.dispatchEvent(new Event(CREATE_SWF_COMPLETE));
 		}
@@ -402,19 +409,20 @@ package com.leman
 			sortByRFrame();
 			
 //			var bmd:BitmapData;
-			var len:int = actionImages.length;
-			var info:ImageInfo;
-			
+			var len:int = actionImages.length,i:int = 0, j:int = 0;
+			var info:ImageInfo, directArr:Array = [], tempInfo:SingleDirectionImage;
 			var tempBmd:BitmapData;
+			//每个方向单独生成一张图片
 			if(row == 1 && len > 10)		//如果只有一个方向，并且图片的数量超过10
 			{
-				
 				var tempCol:int = Math.ceil(len / 2);
 				tempBmd = new BitmapData(maxRect.w * tempCol, maxRect.h * 2,true,0x00ff0000);
+				tempInfo = new SingleDirectionImage(actionBmd);
+				directArr.push(tempInfo);
 				var count:int = 0;
 				var currIndex:int = 0;
 				var widthTotal:int = 0;
-				for(var i:int = 0; i < len; i++)
+				for(i; i < len; i++)
 				{
 					info = i % 2 == 0 ? actionImages[int(i / 2)] : actionImages[len - 1 - int(i / 2)];
 					if(i % tempCol == 0)
@@ -438,40 +446,26 @@ package com.leman
 			}
 			else
 			{
-				actionBmd = new BitmapData(maxRect.w * col, maxRect.h * row,true,0x00ff0000);
-				for(var j:int = 0; j < len; j++)
+				var beginIndex:int = 0;
+				for (;i<row;i++)
 				{
-					info = this.actionImages[j];
-					info.sx = j % col * maxRect.w;
-					info.sy = int(j / col) * maxRect.h;
-					actionBmd.copyPixels(info.bmd,new Rectangle(0,0,info.bmd.width, info.bmd.height), new Point(info.sx,info.sy));
-//					copyImg(bmd,info,i);
+					beginIndex = i * col;
+					actionBmd = new BitmapData(maxRect.w * col, maxRect.h * 1,true,0x00ff0000);
+					tempInfo = new SingleDirectionImage(actionBmd);
+					directArr.push(tempInfo);
+					tempInfo.direct = i == 0 ? 0 : (i + 3);
+					//复制某方向的所有帧图片
+					for(j = 0; j < col; j++)
+					{
+						info = this.actionImages[beginIndex+j];
+						info.sx = j % col * maxRect.w;
+						info.sy = 0;
+						actionBmd.copyPixels(info.bmd,new Rectangle(0,0,info.bmd.width, info.bmd.height), new Point(info.sx,info.sy));
+					}
 				}
 			}
 			
 			
-			var pngenc:PNGEncoder = new PNGEncoder();
-			var imgByteArray:ByteArray = pngenc.encode(actionBmd);
-			//				imgByteArray.compress('deflate');
-			//				var pngenc2:JPEGEncoder = new JPEGEncoder(80);
-			//				var imgByteArray:ByteArray = pngenc2.encode(bmd);
-			//				imgByteArray2.compress();
-			//				voo.bitmapByte = imgByteArray2;//org.libspark.swfassist.image.MyPNGEncoder.getIDATData(bmd);
-			//				i=0;
-			//				var j:int = 0, w:int = bmd.width, h:int = bmd.height, co:uint, al:uint;
-			//				for (;i<h;i++)
-			//				{
-			//					for (j=0;j<w;j++)
-			//					{
-			//						co = bmd.getPixel32(j,i);
-			//						al = co >> 24;
-			//						voo.bitAlphaByte.writeByte(al & 0xff);
-			//					}
-			//				}
-			//				voo.bitAlphaByte.compress();
-			
-			//				voo.height = maxRect.h * row;
-			//				voo.width = maxRect.w * col;
 			if (this.actionImages.length > 0)
 			{
 				var ws:FileStream = new FileStream();
@@ -484,12 +478,19 @@ package com.leman
 				}else{
 					path = this._dir.url ;
 				}
-				var fileName:String = path  + '/outcome/' + this._dir.name + '/' +this.currFolder.name + ".png";
-				file1= new File(fileName);
-				ws.open(file1,FileMode.WRITE);
-//				ws.openAsync(file1,FileMode.WRITE);
-				ws.writeBytes(imgByteArray,0,imgByteArray.bytesAvailable);
-				ws.close();
+				var pngenc:PNGEncoder = new PNGEncoder();
+				var imgByteArray:ByteArray;
+				var fileName:String, baseName:String = path  + '/outcome/' + this._dir.name + '/' +this.currFolder.name + "$.png" ;
+				i = 0, j = directArr.length;
+				for (;i<j;i++)
+				{
+					fileName = baseName.replace("$",directArr[i].direct);
+					file1= new File(fileName);
+					ws.open(file1,FileMode.WRITE);
+					imgByteArray = pngenc.encode(directArr[i].bitmapdata);
+					ws.writeBytes(imgByteArray,0,imgByteArray.bytesAvailable);
+					ws.close();
+				}
 				file1 = null;
 			}
 		}
