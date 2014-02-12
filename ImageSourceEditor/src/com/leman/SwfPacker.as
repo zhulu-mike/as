@@ -196,7 +196,7 @@ package com.leman
 			}else{
 				path = this._dir.url ;
 			}
-			var fileName:String = path  + '/outcome/' + this._dir.name + '/' + fileName + ".as";
+			var fileName:String = path  + '/outcome/' + this._dir.name + '/' + fileName +'/' + fileName+ ".as";
 			file1= new File(fileName);
 			ws.open(file1,FileMode.WRITE);
 			ws.writeUTFBytes(str);
@@ -271,29 +271,31 @@ package com.leman
 			}
 			
 			var tempStr:String = "<s k='" + node + "' a='8' t='" + intervalTime +"' f='" + col + "'>";
-			var len:int = this.actionImages.length;
+			var len:int = this.actionImages.length, j:int = 0, frame:int = 0, dirArr:Array;
 			
 			var a:int;
 			var sy:int;
 			var tempTx:Number = 0;
 			var tempTy:Number = 0;
+			if (registerPoint==1)
+			{
+				//中心点的时候，直接取新图片的中心坐标
+				localX = maxRect.w >> 1;
+				localY = maxRect.h >> 1;
+			}
 			for(var i:int = 0; i < len; i++)
 			{
-				if (registerPoint==1)
+				frame = actionImages[i].length;
+				dirArr = actionImages[i];
+				for (j=0;j<frame;j++)
 				{
-					//中心点的时候，直接取新图片的中心坐标
-					localX = maxRect.w / 2;
-					localY = maxRect.h / 2;
+					if (registerPoint == 2)
+					{
+						tempTx = dirArr[j]['tx'];
+						tempTy = dirArr[j]['ty'];
+					}
+					tempStr += "\t<p a='" + dirArr[j]['r'] + "' f='" + dirArr[j]['frame'] + "' sx='" + dirArr[j].sx + "' sy='" + dirArr[j].sy + "' w='" + dirArr[j]['min_w'] + "' h='" + dirArr[j]['min_h'] + "' tx='" + (localX-tempTx) + "' ty='" + (localY-tempTy) + "' ox='0' oy='0'/>";
 				}
-				if (registerPoint == 2)
-				{
-					tempTx = this.actionImages[i]['tx'];
-					tempTy = actionImages[i]['ty'];
-				}else{
-					tempTx = tempTy = 0;
-				}
-				
-				tempStr += "\t<p a='" + actionImages[i]['r'] + "' f='" + actionImages[i]['frame'] + "' sx='" + actionImages[i].sx + "' sy='" + actionImages[i].sy + "' w='" + actionImages[i]['min_w'] + "' h='" + actionImages[i]['min_h'] + "' tx='" + (localX-tempTx) + "' ty='" + (localY-tempTy) + "' ox='0' oy='0'/>";
 			}
 			tempStr += '</s>';
 			return tempStr;
@@ -314,7 +316,7 @@ package com.leman
 			var fileName:String = this._dir.parent.url  + '/outcome/' + this._dir.name + ".as";//
 			file1= new File(fileName);
 			ws.open(file1,FileMode.WRITE);
-			ws.writeUTFBytes(xmlStr);
+			ws.writeUTFBytes(swfData);
 			ws.close();
 			
 			this.dispatchEvent(new Event(CREATE_SWF_COMPLETE));
@@ -401,30 +403,52 @@ package com.leman
 				}
 		}
 		
+		private function divideGroupImage():void
+		{
+			var arr:Array = [];
+			var i:int = 0, len:int = actionImages.length, last:int = -1, begin:int = 0;
+			for (;i<len;i++)
+			{
+				if (last == -1){
+					last = actionImages[i].r;
+				}else if (actionImages[i].r != last || i == len - 1)
+				{
+					arr.push(actionImages.slice(begin,i == len - 1 ? len : i));
+					last = actionImages[i].r;
+					begin = i;
+				}
+			}
+			actionImages = arr;
+		}
+		
 		private function createImage():void
 		{
 //			reSetAllParam();
 			getRowCol();
 			getMaxWH();
 			sortByRFrame();
+			divideGroupImage();
 			
 //			var bmd:BitmapData;
 			var len:int = actionImages.length,i:int = 0, j:int = 0;
 			var info:ImageInfo, directArr:Array = [], tempInfo:SingleDirectionImage;
-			var tempBmd:BitmapData;
+			var tempBmd:BitmapData, dirArr:Array;
 			//每个方向单独生成一张图片
-			if(row == 1 && len > 10)		//如果只有一个方向，并且图片的数量超过10
+			if(row == 1 && actionImages[0].length > 10)		//如果只有一个方向，并且图片的数量超过10
 			{
-				var tempCol:int = Math.ceil(len / 2);
-				tempBmd = new BitmapData(maxRect.w * tempCol, maxRect.h * 2,true,0x00ff0000);
+				dirArr = actionImages[0];
+				len = dirArr.length;
+				var tempCol:int = Math.ceil(len >> 1);
+				tempBmd = new BitmapData(maxRect.w * tempCol, maxRect.h << 1,true,0x00ff0000);
 				tempInfo = new SingleDirectionImage(actionBmd);
 				directArr.push(tempInfo);
 				var count:int = 0;
 				var currIndex:int = 0;
 				var widthTotal:int = 0;
+				
 				for(i; i < len; i++)
 				{
-					info = i % 2 == 0 ? actionImages[int(i / 2)] : actionImages[len - 1 - int(i / 2)];
+					info = i % 2 == 0 ? dirArr[int(i >> 1)] : dirArr[len - 1 - int(i >> 1)];
 					if(i % tempCol == 0)
 					{
 						info.sx = 0;
@@ -446,19 +470,19 @@ package com.leman
 			}
 			else
 			{
-				var beginIndex:int = 0;
 				for (;i<row;i++)
 				{
-					beginIndex = i * col;
-					actionBmd = new BitmapData(maxRect.w * col, maxRect.h * 1,true,0x00ff0000);
+					dirArr = actionImages[i];
+					len = dirArr.length;
+					actionBmd = new BitmapData(maxRect.w * len, maxRect.h,true,0x00ff0000);
 					tempInfo = new SingleDirectionImage(actionBmd);
 					directArr.push(tempInfo);
 					tempInfo.direct = i == 0 ? 0 : (i + 3);
 					//复制某方向的所有帧图片
-					for(j = 0; j < col; j++)
+					for(j = 0; j < len; j++)
 					{
-						info = this.actionImages[beginIndex+j];
-						info.sx = j % col * maxRect.w;
+						info = dirArr[j];
+						info.sx = j * maxRect.w;
 						info.sy = 0;
 						actionBmd.copyPixels(info.bmd,new Rectangle(0,0,info.bmd.width, info.bmd.height), new Point(info.sx,info.sy));
 					}
@@ -480,7 +504,7 @@ package com.leman
 				}
 				var pngenc:PNGEncoder = new PNGEncoder();
 				var imgByteArray:ByteArray;
-				var fileName:String, baseName:String = path  + '/outcome/' + this._dir.name + '/' +this.currFolder.name + "$.png" ;
+				var fileName:String, baseName:String = path  + '/outcome/' + this._dir.name + '/' +this.currFolder.name +'/'+this.currFolder.name+ "$.png" ;
 				i = 0, j = directArr.length;
 				for (;i<j;i++)
 				{
