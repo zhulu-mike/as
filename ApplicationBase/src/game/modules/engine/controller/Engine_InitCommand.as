@@ -2,11 +2,8 @@ package game.modules.engine.controller
 {
 	import com.thinkido.framework.engine.Engine;
 	import com.thinkido.framework.engine.Scene;
-	import com.thinkido.framework.engine.staticdata.AvatarPartType;
 	import com.thinkido.framework.engine.staticdata.CharStatusType;
-	import com.thinkido.framework.engine.staticdata.SceneCharacterType;
 	import com.thinkido.framework.engine.vo.avatar.AvatarParamData;
-	import com.thinkido.framework.engine.vo.avatar.AvatarPartStatus;
 	
 	import game.config.GameConfig;
 	import game.config.GameInstance;
@@ -45,6 +42,8 @@ package game.modules.engine.controller
 			GameInstance.scene.mainChar.loadAvatarPart(apd);
 			GameInstance.scene.mainChar.setTileXY(100,110);
 			GameInstance.scene.mainChar.playTo(CharStatusType.STAND);
+			GameInstance.scene.mainChar.setHeadFaceNickName("郑怡");
+			GameInstance.scene.mainChar.setHeadFaceBar(100,100);;
 			GameInstance.scene.reSize(GameInstance.stage.stageWidth, GameInstance.stage.stageHeight);
 			return;
 		}

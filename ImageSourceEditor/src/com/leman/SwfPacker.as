@@ -103,6 +103,8 @@ package com.leman
 					trace("可能错误了");
 				}
 				this.loadExecute(folder);
+			}else{
+				loadactionfolder(this.actionFolders[loadIndex++]);
 			}
 		}
 		
@@ -204,7 +206,7 @@ package com.leman
 			}else{
 				path = this._dir.url ;
 			}
-			var fileName:String = path  + '/outcome/' + this._dir.name + '/' + fileName +'/' + fileName+ ".as";
+			var fileName:String = path  + '/outcome/' + this._dir.name +'/' + fileName+ ".as";
 			file1= new File(fileName);
 			ws.open(file1,FileMode.WRITE);
 			ws.writeUTFBytes(str);
@@ -340,9 +342,12 @@ package com.leman
 		}
 		
 		private var maxRect:Object = {w: 0, h : 0};
-		private function  getMaxWH():void
+		private function  getMaxWH(index:int):void
 		{
-			for each(var item:Object in this.actionImages)
+			var tar:Array = actionImages[index];
+			maxRect.w = 0;
+			maxRect.h = 0;
+			for each(var item:Object in tar)
 			{
 				if(item['min_w'] > maxRect['w']){
 					maxRect['w'] = item['min_w'];
@@ -433,7 +438,6 @@ package com.leman
 		{
 //			reSetAllParam();
 			getRowCol();
-			getMaxWH();
 			sortByRFrame();
 			divideGroupImage();
 			
@@ -444,6 +448,7 @@ package com.leman
 			//每个方向单独生成一张图片
 			if(row == 1 && actionImages[0].length > 10)		//如果只有一个方向，并且图片的数量超过10
 			{
+				getMaxWH(0);
 				dirArr = actionImages[0];
 				len = dirArr.length;
 				var tempCol:int = Math.ceil(len >> 1);
@@ -478,21 +483,26 @@ package com.leman
 			}
 			else
 			{
+				var totalWidth:int = 0, sx:int = 0;
 				for (;i<row;i++)
 				{
+					getMaxWH(i);
 					dirArr = actionImages[i];
 					len = dirArr.length;
-					actionBmd = new BitmapData(maxRect.w * len, maxRect.h,true,0x00ff0000);
+					totalWidth = getDirecTotalWidth(dirArr);
+					actionBmd = new BitmapData(totalWidth, maxRect.h,true,0x00ff0000);
 					tempInfo = new SingleDirectionImage(actionBmd);
 					directArr.push(tempInfo);
 					tempInfo.direct = i == 0 ? 0 : (i + 3);
+					sx = 0;
 					//复制某方向的所有帧图片
 					for(j = 0; j < len; j++)
 					{
 						info = dirArr[j];
-						info.sx = j * maxRect.w;
+						info.sx = sx;
 						info.sy = 0;
 						actionBmd.copyPixels(info.bmd,new Rectangle(0,0,info.bmd.width, info.bmd.height), new Point(info.sx,info.sy));
+						sx += info.min_w;
 					}
 				}
 			}
@@ -525,6 +535,21 @@ package com.leman
 				}
 				file1 = null;
 			}
+		}
+		
+		/**
+		 * 获取某个方向上的总的宽度
+		 * @param tar
+		 * 
+		 */		
+		private function getDirecTotalWidth(tar:Array):int
+		{
+			var i:int = 0, len:int = tar.length, total:int = 0;
+			for (;i<len;i++)
+			{
+				total += tar[i].min_w;
+			}
+			return total;
 		}
 	}
 }

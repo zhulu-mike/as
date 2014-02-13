@@ -1,4 +1,4 @@
-﻿﻿package game.manager
+﻿package game.manager
 {
 	import com.thinkido.framework.common.observer.Notification;
 	import com.thinkido.framework.common.observer.Observer;
