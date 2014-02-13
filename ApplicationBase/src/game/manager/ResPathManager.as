@@ -27,7 +27,7 @@ package game.manager
 		 */		
 		public static const AVATAR_MAP_SLIPCOVER:String = "res/data/avatar/effect/eid$.";
 		
-		public static const AVATAR_SC_PATH:String = "res/data/avatar/clothes/mid$.";
+		public static const AVATAR_SC_PATH:String = "res/data/avatar/clothes/mid$/#.";
 		
 		
 		

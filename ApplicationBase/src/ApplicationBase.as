@@ -1,12 +1,13 @@
 package
 {
-	import com.thinkido.framework.engine.config.SceneConfig;
+	import com.thinkido.framework.engine.staticdata.CharStatusType;
 	import com.thinkido.framework.manager.SharedObjectManager;
 	
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.system.Security;
 	
 	import game.config.GameConfig;
@@ -25,8 +26,6 @@ package
 	import lm.mui.manager.DragManager;
 	import lm.mui.manager.ToolTipsManager;
 	
-	import org.osflash.thunderbolt.Logger;
-	
 	public class ApplicationBase extends Sprite implements IResize
 	{
 		public function ApplicationBase()
@@ -42,6 +41,17 @@ package
 			initApp();
 			startup();
 			FacadeManager.startupFacade(PipeEvent.STARTUP_ENGINE);
+			
+			stage.addEventListener(MouseEvent.CLICK, onClick);
+		}
+		
+		protected function onClick(event:MouseEvent):void
+		{
+			// TODO Auto-generated method stub
+			var arr:Array = ["stand","attack","walk","injured"];
+			var i:int = Math.random()*3;
+			
+			GameInstance.scene.mainChar.playTo("walk");
 		}
 		
 		public function resize(w:Number, h:Number):void
@@ -77,7 +87,7 @@ package
 			ResizeManager.init(stage);
 			ResizeManager.registerResize(this);
 			NetWorkManager.init(stage);
-			Logger.isOpen = false;
+//			Logger.isOpen = false;
 		}
 		
 		private function startup():void

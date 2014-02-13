@@ -29,11 +29,11 @@
             var item:XML = null;
             var aps:AvatarPartStatus = null;
             this._apds_dict = new Dictionary();
-            for each (item in classXml.children())
-            {
-                aps = new AvatarPartStatus($className, item);
-                this._apds_dict[aps.type] = aps;
-            }
+//            for each (item in classXml.children())
+//            {
+//                aps = new AvatarPartStatus($className, item);
+//                this._apds_dict[aps.type] = aps;
+//            }
             return;
         }
 

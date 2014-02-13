@@ -15,7 +15,6 @@
     import com.thinkido.framework.engine.helper.MoveHelper;
     import com.thinkido.framework.engine.helper.TaggerHelper;
     import com.thinkido.framework.engine.move.WalkStep;
-    import com.thinkido.framework.engine.staticdata.AvatarPartType;
     import com.thinkido.framework.engine.staticdata.RestType;
     import com.thinkido.framework.engine.tools.SceneCache;
     import com.thinkido.framework.engine.tools.ScenePool;
@@ -26,7 +25,6 @@
     import com.thinkido.framework.engine.vo.map.MapTile;
     import com.thinkido.framework.engine.vo.move.MoveCallBack;
     import com.thinkido.framework.engine.vo.move.MoveData;
-    import com.thinkido.framework.manager.RslLoaderManager;
     
     import flash.display.DisplayObject;
     import flash.display.IBitmapDrawable;
@@ -300,14 +298,14 @@
             return this.avatar.hasIDAvatarPart(value1);
         }
 
-        public function hasSameAvatarPart(value1:AvatarParamData) : Boolean
+        public function hasSameAvatarPart(apd:AvatarParamData) : Boolean
         {
-            return this.avatar.hasSameAvatarPart(value1);
+            return this.avatar.hasSameAvatarPart(apd);
         }
 
         public function loadAvatarPart(apd:AvatarParamData = null) : void
         {
-            this.avatar.loadAvatarPart(apd);
+			this.avatar.addAvatarPartByApd(apd);
             return;
         }
 
@@ -357,21 +355,25 @@
             return;
         }
 
+        public function addAvatarPartByApd(apd:AvatarParamData) : AvatarPart
+        {
+            return this.avatar.addAvatarPartByApd(apd);
+        }
         public function addAvatarPart(ap:AvatarPart, isOverride:Boolean = false) : void
         {
             this.avatar.addAvatarPart(ap, isOverride);
             return;
         }
 
-        public function removeAvatarPart(value1:AvatarPart, value2:Boolean = false, value3:Boolean = true) : void
+        public function removeAvatarPart(value1:AvatarPart, value2:Boolean = false) : void
         {
-            this.avatar.removeAvatarPart(value1, value2, value3);
+            this.avatar.removeAvatarPart(value1, value2);
             return;
         }
 
         public function removeAllAvatarParts(value1:Boolean = true) : void
         {
-            this.avatar.removeAllAvatarParts(value1);
+            this.avatar.removeAllAvatarParts();
             return;
         }
 

@@ -25,7 +25,6 @@
     import flash.events.Event;
     import flash.geom.Point;
     import flash.utils.ByteArray;
-    import flash.utils.getTimer;
     
     import org.osflash.thunderbolt.Logger;
 
@@ -396,7 +395,7 @@
                 var sc:SceneCharacter = null;
                 mapConfig = $mapConfig;
                 SceneCache.mapTiles = $mapTile;
-                SceneCache.mapSolidsByte = $mapSolid;
+				SceneCache.mapSolidsByte = $mapSolid;
                 if (mapConfig.slipcovers != null && mapConfig.slipcovers.length > 0)
                 {
                     for each (slipcover in mapConfig.slipcovers)
@@ -434,7 +433,6 @@
                 return;
             }
             ;
-			trace("进入场景，dispose前："+getTimer());
             this.disableInteractiveHandle();
             this.sceneRender.stopRender();
             this.dispose();
@@ -699,10 +697,8 @@
             SceneCache.mapImgCache.dispose();
             SceneCache.currentMapZones = {};
             SceneCache.mapTiles = {};
-//            SceneCache.mapSolids = {};
-            SceneCache.mapSolidsByte.clear();
+			SceneCache.mapSolidsByte.clear();
             SceneCache.mapZones = {};
-            SceneCache.removeWaitingAvatar(null, null, null, [this.mainChar, this._mouseChar]);
             this.mapConfig = null;
             this.sceneSmallMapLayer.dispose();
             this.sceneMapLayer.dispose();
@@ -938,6 +934,7 @@
 			DrawUtil.drawGrid(mapGrid,mapConfig.mapGridX,mapConfig.mapGridY,SceneConfig.TILE_WIDTH,SceneConfig.TILE_HEIGHT,new Point(),new StyleData(2,0) );
 		}
 
+		
 		/**
 		 *根据格子的XY获得1维坐标 
 		 * @return 

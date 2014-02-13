@@ -42,75 +42,77 @@
 
         public function addBounds(bound:Bounds, useBegin:Boolean = false) : void
         {
-            var lBound:Bounds = null;
-            var _interBounds:Bounds = null;
-            var _unionBounds:Bounds = null;
-            var lNode:LNode = this.first || (useBegin ? (this.beginLN) : (this.first));
-            if (lNode != null)
-            {
-                while (lNode != null)
-                {
-                    
-                    lBound = lNode.data as Bounds;
-                    if (lBound.bottom <= bound.top)
-                    {
-                        lNode = lNode.next;
-                        continue;
-                    }
-                    if (lBound.top >= bound.bottom)
-                    {
-//                        this.add(new LNode(bound), lNode.pre);
-                        this.add( nodePool.createObj(LNode,bound) as LNode, lNode.pre);
-                        return;
-                    }
-                    if (lBound.intersects(bound))
-                    {
-                        _interBounds = lBound.intersection(bound);
-                        if (_interBounds.equals(bound))
-                        {
-                        }
-                        else if (_interBounds.equals(lBound))
-                        {
-                            this.remove(lNode);
-                            if (this.beginLN != null)
-                            {
-                                this.addBounds(bound);
-                            }
-                            else
-                            {
-                                this.add(new LNode(bound), this.last);
-                            }
-                        }
-                        else
-                        {
-                            _unionBounds = lBound.union(bound);
-                            this.remove(lNode);
-                            this.beginLN = this.first;
-                            if (this.beginLN != null)
-                            {
-                                this.addBounds(_unionBounds);
-                            }
-                            else
-                            {
-                                this.add(new LNode(_unionBounds), this.last);
-                            }
-                        }
-                        return;
-                        continue;
-                    }
-                    lNode = lNode.next;
-                    continue;
-                }
-                if (lNode == null)
-                {
-                    this.add(new LNode(bound), this.last);
-                }
-            }
-            else
-            {
-                this.add(new LNode(bound), null);
-            }
-            return;
+			var lBound:Bounds = null;
+			var _interBounds:Bounds = null;
+			var _unionBounds:Bounds = null;
+			var lNode:LNode = this.first || (useBegin ? (this.beginLN) : (this.first));
+			if (lNode != null)
+			{
+				while (lNode != null)
+				{
+					
+					lBound = lNode.data as Bounds;
+					if (lBound.bottom <= bound.top)
+					{
+						lNode = lNode.next;
+						continue;
+					}
+					if (lBound.top >= bound.bottom)
+					{
+						//                        this.add(new LNode(bound), lNode.pre);
+						this.add( nodePool.createObj(LNode,bound) as LNode, lNode.pre);
+						return;
+					}
+					if (lBound.intersects(bound))
+					{
+						_interBounds = lBound.intersection(bound);
+						if (_interBounds.equals(bound))
+						{
+							Bounds.deleteBounds(bound);
+						}
+						else if (_interBounds.equals(lBound))
+						{
+							this.remove(lNode);
+							if (this.beginLN != null)
+							{
+								this.addBounds(bound);
+							}
+							else
+							{
+								this.add(new LNode(bound), this.last);
+							}
+						}
+						else
+						{
+							_unionBounds = lBound.union(bound);
+							this.remove(lNode);
+							this.beginLN = this.first;
+							Bounds.deleteBounds(bound);
+							if (this.beginLN != null)
+							{
+								this.addBounds(_unionBounds);
+							}
+							else
+							{
+								this.add(new LNode(_unionBounds), this.last);
+							}
+						}
+						Bounds.deleteBounds(_interBounds);
+						return;
+					}
+					lNode = lNode.next;
+					continue;
+				}
+				if (lNode == null)
+				{
+					this.add(new LNode(bound), this.last);
+				}
+			}
+			else
+			{
+				this.add(new LNode(bound), null);
+			}
+			return;
         }
 
         private function cutTwoIntersectedBounds($b1:Bounds, $b2:Bounds) : Array

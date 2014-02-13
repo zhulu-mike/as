@@ -2,8 +2,6 @@
 {
 	import com.thinkido.framework.common.Global;
 	
-
-	
 	import flash.display.Stage;
 	import flash.events.EventDispatcher;
 	import flash.events.FocusEvent;

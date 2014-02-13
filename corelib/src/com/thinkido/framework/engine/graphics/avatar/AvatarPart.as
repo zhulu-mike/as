@@ -7,6 +7,7 @@
     import com.thinkido.framework.engine.SceneCharacter;
     import com.thinkido.framework.engine.SceneRender;
     import com.thinkido.framework.engine.graphics.layers.SceneAvatarLayer;
+    import com.thinkido.framework.engine.loader.AvatarPartLoader;
     import com.thinkido.framework.engine.staticdata.AvatarPartID;
     import com.thinkido.framework.engine.staticdata.AvatarPartType;
     import com.thinkido.framework.engine.staticdata.CharStatusType;
@@ -19,10 +20,10 @@
     import com.thinkido.framework.engine.vo.avatar.AvatarParamData;
     import com.thinkido.framework.engine.vo.avatar.AvatarPartData;
     import com.thinkido.framework.engine.vo.avatar.AvatarPartStatus;
-    import com.thinkido.framework.engine.vo.avatar.AvatarPartStatusList;
     import com.thinkido.framework.engine.vo.avatar.AvatarPlayCallBack;
     import com.thinkido.framework.engine.vo.avatar.AvatarPlayCondition;
     import com.thinkido.framework.engine.vo.avatar.DynamicPosition.IDynamicPosition;
+    import com.thinkido.framework.engine.vo.avatar.XmlImgData;
     import com.thinkido.framework.manager.TimerManager;
     
     import flash.display.BitmapData;
@@ -40,6 +41,13 @@
 	 */
     public class AvatarPart extends Object implements IPoolClass
     {
+		public var sceneCharacter:SceneCharacter;
+		public var sceneAvatarLayer:SceneAvatarLayer;
+		private var _resReady:Boolean = false;
+		private var _uniqueID:Number = 0;
+		private static var UNIQUE_ID:Number = 0;
+
+
         public var usable:Boolean = false;
         private var _enablePlay:Boolean = false;
         public var visible:Boolean = true;
@@ -47,7 +55,6 @@
         private var _oldData:Object = null;
         public var avatar:Avatar;
         private var _avatarParamData:AvatarParamData;
-        private var _avatarPartStatusList:AvatarPartStatusList;
 		/**
 		 * 场景中的位置 
 		 */		
@@ -59,7 +66,7 @@
         public var type:String;
         private var _classNamePrefix:String;
         private var _repeat:int = 0;
-        public var depth:int = 0;
+        public var _depth:int = 0;
         private var _offsetX:int = 0;
         private var _offsetY:int = 0;
         private var _offsetOnMountX:int = 0;
@@ -77,8 +84,9 @@
         private var _rotationDrawSourceBitmapData:BitmapData;
         private var _inMaskDrawSourceBitmapData:BitmapData;
         private var _currentStatus:String = "";
-        private var _currentAvatarPartStatus:AvatarPartStatus;
-        private var _currentFrame:int = -1;
+		private var _currentFullSourchPath:String = null;
+		private var _currentAvatarPartStatus:AvatarPartStatus;
+        private var _currentFrame:int = 0;
         private var _currentLogicAngel:int = 0;
         private var _currentRotation:Number = 0;
         private var _playCondition:AvatarPlayCondition;
@@ -99,17 +107,40 @@
         private static const MOUSE_ON_GLOWFILTER:GlowFilter = new GlowFilter(0xffffff, 0.7, 7, 7, 4, 1);
 		private var cacheObject:Object = {};
 		private var _enableShadow:Boolean = true;
+		
+		
+		private var _bitmapFilters:Array;
+		/**
+		 * 播放速度,百分比 
+		 */		
+		public var speed:Number = 1;
+		
 		/**人物头顶位置是否需要更新*/
 		private var _bodyPositionUpdate:Boolean = true;
 		private var _bodyPositionY:Number = 0;
 		
 		
-        public function AvatarPart(apd:AvatarParamData, apsl:AvatarPartStatusList)
+        public function AvatarPart(ap:Avatar,apd:AvatarParamData)
         {
-            this.reSet([apd, apsl]);
+			this.cutRect = new Rectangle();
+			this._sourcePoint = new Point();
+			this.renderRectArr = [];
+			this._bitmapFilters = [];
+            this.reSet([ap,apd]);
             return;
         }
 
+		public function get uniqueID() : Number
+		{
+			return this._uniqueID;
+		}
+		
+		private function changeUniqueID() : void
+		{
+			this._uniqueID = UNIQUE_ID + 1;
+			return;
+		}
+		
         public function get avatarParamData() : AvatarParamData
         {
             return this._avatarParamData;
@@ -133,7 +164,93 @@
         {
             return this._currentAvatarPartStatus != null ? (this._currentAvatarPartStatus.frame) : (1);
         }
+		
+		public function setAvatarPartStatus(aps:AvatarPartStatus) : void
+		{
+			if (aps.fullSourchPath != this._currentFullSourchPath)
+			{
+				return;
+			}
+			this._currentAvatarPartStatus = aps;
+			this._avatarImgData = (SceneCache.avatarCountShare.installShareData(this._currentAvatarPartStatus.fullSourchPath,this) as XmlImgData).aid;
+			this._resReady = true;
+			updateNow = true;
+			this.onAdd();
+			return;
+		}
 
+		public function getStatus() : String
+		{
+			return this._currentStatus;
+		}
+		/**
+		 * 设置动作状态 
+		 * @param $status 动作
+		 * 
+		 */		
+		public function setStatus($status:String) : void
+		{
+			var _apcb:AvatarPlayCallBack = null;
+			if (!this.avatar || !this.sceneCharacter)
+			{
+				return;
+			}
+			if (this._currentStatus == $status)
+			{
+				return;
+			}
+			this._currentStatus = $status;
+			if (this._currentFullSourchPath != null)
+			{
+				if (this._currentAvatarPartStatus == null)
+				{
+					SceneCache.removeWaitingAvatar(this.sceneCharacter, id, type, this._currentFullSourchPath, false);
+				}
+				else
+				{
+					SceneCache.avatarCountShare.uninstallShareData(this._currentFullSourchPath);
+				}
+			}
+			this._currentFullSourchPath = null;
+			this._currentAvatarPartStatus = null;
+			this._avatarImgData = null;
+			this._resReady = false;
+			this._currentFrame = 0;
+			this._playCount = 0;
+			this._lastTime = 0;
+			this._lastPlayCompleteTime = 0;
+			this._playBeforeStart = true;
+			this._playStart = true;
+			this._playComplete = false;
+			this.clearMe();
+			updateNow = true;
+			if (this.avatarParamData.hasStatus(this._currentStatus))
+			{
+				this._currentFullSourchPath = this.avatarParamData.getFullSourcePath(this._currentStatus);
+				_apcb = this.avatarParamData.playCallBack;
+				if (_apcb != null)
+				{
+					this._onPlayBeforeStart = _apcb.onBeforeStart;
+					this._onPlayStart = _apcb.onStart;
+					this._onPlayUpdate = _apcb.onUpdate;
+					this._onPlayComplete = _apcb.onComplete;
+					this._onAdd = _apcb.onAdd;
+					this._onRemove = _apcb.onRemove;
+				}
+				else
+				{
+					this._onPlayBeforeStart = null;
+					this._onPlayStart = null;
+					this._onPlayUpdate = null;
+					this._onPlayComplete = null;
+					this._onAdd = null;
+					this._onRemove = null;
+				}
+				AvatarPartLoader.loadAvatarPart(this, this._currentStatus);
+			}
+			return;
+		}
+		
         public function playTo($status:String = null, $angle:int = -1, $rotation:int = -1, $apc:AvatarPlayCondition = null) : void
         {
             var _tempClassName:String = null;
@@ -162,7 +279,11 @@
             this._only1Repeat = false;
             if ($status != null && $status != this._currentStatus)
             {
-                this._currentStatus = $status;
+                if( type == AvatarPartType.MOUNT || type == AvatarPartType.BODY || type == AvatarPartType.WEAPON  ){
+					this.setStatus( $status );
+				}else if( _currentStatus != CharStatusType.STAND ){
+					setStatus( CharStatusType.STAND );
+				}
             }
             if ($angle != -1 && $angle != this._currentLogicAngel)
             {
@@ -214,10 +335,6 @@
                     this._currentStatus = CharStatusType.STAND;
                 }
             }
-			if (this.type == AvatarPartType.WING && this._currentStatus != CharStatusType.DEATH)
-			{
-				this._currentStatus = CharStatusType.STAND;
-			}
             if (this._currentStatus == CharStatusType.DEATH)
             {
 //                this._currentLogicAngel = 0;
@@ -255,18 +372,6 @@
             if (_tempStatus != this._currentStatus)
             {
 				this._bodyPositionUpdate = true;
-                if (this._avatarPartStatusList != null)
-                {
-                    this._currentAvatarPartStatus = this._avatarPartStatusList.getAvatarPardStatus(this._currentStatus);
-                    if (this._currentAvatarPartStatus != null)
-                    {
-                        this._classNamePrefix = this._currentAvatarPartStatus.classNamePrefix;
-                    }
-                }
-                else
-                {
-                    this._currentAvatarPartStatus = null;
-                }
                 _changed = true;
             }
             if (_tempLogicAngel != this._currentLogicAngel)
@@ -277,12 +382,12 @@
             {
                 _changed = true;
             }
-//			if (_tempInView != this.avatar.sceneCharacter.inViewDistance())
-//			{
+			if (_tempInView != this.avatar.sceneCharacter.inViewDistance())
+			{
 				//可见状态发生变化时，也要更新
-//				_changed = true;
-//				_tempViewChanged = true;
-//			}
+				_changed = true;
+				_tempViewChanged = true;
+			}
             if (_changed)
             {
 				//此处如果加入_tempViewChanged视野的改变优化。当切换场景时，服务端的数据在加载场景完毕之前，由于重设主角
@@ -293,28 +398,10 @@
 				//2.在if (_tempInView != this.avatar.sceneCharacter.inViewDistance())逻辑中对oldData.inView也赋值，但是此办法
 				//依然会导致进入场景后如果人物不动时无法看到形象
 				//3.如果场景被dispose后，不进入uninstallAvatarImg逻辑
-//				if (_tempStatus != this._currentStatus || _tempViewChanged)
-                if (_tempStatus != this._currentStatus)
+				if (_tempStatus != this._currentStatus || _tempViewChanged)
+//                if (_tempStatus != this._currentStatus)
                 {
-//					if (_tempStatus != null && _tempStatus != "" && this._avatarImgData)
-                    if (_tempStatus != null && _tempStatus != "")
-                    {
-                        _tempClassName = _tempNamePrefix + _tempStatus;
-                        this._avatarImgData = null;
-                        SceneCache.uninstallAvatarImg(_tempClassName);
-                    }
-//                    if (this._currentStatus != null && this._currentStatus != "" && this._currentAvatarPartStatus != null && this.avatar.sceneCharacter.inViewDistance())
-                    if (this._currentStatus != null && this._currentStatus != "" && this._currentAvatarPartStatus != null)
-                    {
-                        _tempClassName = this._classNamePrefix + this._currentStatus;
-                        this._avatarImgData = SceneCache.installAvatarImg(this._currentAvatarPartStatus, _tempClassName, this._only1LogicAngel);
-					}
-                    else
-                    {
-                        this._avatarImgData = null;
-                    }
                     this._lastTime = 0;
-                    this._currentFrame = -1;
                     this._playCount = 0;
                     this._playBeforeStart = true;
                     this._playStart = true;
@@ -327,7 +414,6 @@
             {
                 this.updateNow = true;
                 this._lastTime = 0;
-                this._currentFrame = -1;
                 this._playCount = 0;
                 this._playBeforeStart = true;
                 this._playStart = true;
@@ -404,15 +490,15 @@
                 this._oldData.visible = this.visible;
                 this.updateNow = true;
             }
-//			if (this._oldData.inView != this.avatar.sceneCharacter.inViewDistance())
-//			{
+			if (this._oldData.inView != this.avatar.sceneCharacter.inViewDistance())
+			{
 //				//当SC可见时，渲染，不可见时，不安装avatarImg，就可以少点内存。
 				//擦本来打算做优化，优化后发现跟原来差不多，暂时还不知道原因。
 			//测试发现，不可见的SC的avatarImg也存在时，跟不存在时的内存居然差不多。太奇怪了。
-//				this.playTo(this._currentStatus,this._currentLogicAngel,this._currentRotation,this._playCondition);
-//				this._oldData.inView = this.avatar.sceneCharacter.inViewDistance();
-//				this.updateNow = true;
-//			}
+				this.playTo(this._currentStatus,this._currentLogicAngel,this._currentRotation,this._playCondition);
+				this._oldData.inView = this.avatar.sceneCharacter.inViewDistance();
+				this.updateNow = true;
+			}
             if (this._oldData.inSleep != inSleep)
             {
                 this._oldData.inSleep = inSleep;
@@ -448,7 +534,7 @@
                     else
                     {
                         pastTime = nowTime - this._lastTime;
-                        if (pastTime >= this._currentAvatarPartStatus.time)
+                        if (pastTime >= this._currentAvatarPartStatus.time/speed)
                         {
                             this._lastTime = nowTime;
 							_currentFrame += 1 ;
@@ -641,7 +727,7 @@
                 this._oldData.oldCutRect.y = this.cutRect.y;
                 this._oldData.oldCutRect.width = this.cutRect.width;
                 this._oldData.oldCutRect.height = this.cutRect.height;
-				if( this.avatarParamData.type == AvatarPartType.BODY ){
+				if( this.avatarParamData.type == AvatarPartType.BODY && this._currentAvatarPartStatus){
 					apd = this._currentAvatarPartStatus.getAvatarPartData(this._currentLogicAngel, this._currentFrame);
 					if (apd != null && this._bodyPositionUpdate)
 						_bodyPositionY = apd.ty;
@@ -714,7 +800,6 @@
                 {
                     for each (rec in this.renderRectArr)
                     {
-                        
                         if (!rec.isEmpty())
                         {
                             this.copyToAvatarBD(ibmdable, bmd, this._sourcePoint.x + (rec.x - this.cutRect.x), this._sourcePoint.y + (rec.y - this.cutRect.y), rec.width, rec.height, rec.x, rec.y);
@@ -928,14 +1013,9 @@
 
         public function dispose() : void
         {
-            var _loc_1:String = null;
             this.usable = false;
             this.clearMe();
-            if (this._currentStatus != null && this._currentStatus != "")
-            {
-                _loc_1 = this._classNamePrefix + this._currentStatus;
-                SceneCache.uninstallAvatarImg(_loc_1);
-            }
+			this.speed = 1;
 			this.cacheObject = {} ;
             this._enablePlay = false;
             this.visible = true;
@@ -943,7 +1023,6 @@
             this._oldData = null;
             this.avatar = null;
             this._avatarParamData = null;
-            this._avatarPartStatusList = null;
             this._sceneCharacterPosition = null;
             this.cutRect = null;
             this._sourcePoint = null;
@@ -977,7 +1056,7 @@
             }
             this._currentStatus = "";
             this._currentAvatarPartStatus = null;
-            this._currentFrame = -1;
+            this._currentFrame = 0;
             this._currentLogicAngel = 0;
             this._currentRotation = 0;
             this._playCondition = null;
@@ -1000,8 +1079,11 @@
 
         public function reSet(value1:Array) : void
         {
-            this._avatarParamData = value1[0];
-            this._avatarPartStatusList = value1[1];
+			this.avatar = value1[0];
+			this._avatarParamData = value1[1];
+			this.sceneCharacter = this.avatar.sceneCharacter;
+//			mouseEnabled = this._avatarParamData.mouseEnabled;
+			
             this.id = this._avatarParamData.id;
             this.type = this._avatarParamData.type || AvatarPartType.BODY;
             this._repeat = this._avatarParamData.repeat;
@@ -1018,10 +1100,10 @@
             {
                 this._onAdd = apcb.onAdd;
                 this._onRemove = apcb.onRemove;
-                this._onPlayBeforeStart = apcb.onPlayBeforeStart;
-                this._onPlayStart = apcb.onPlayStart;
-                this._onPlayUpdate = apcb.onPlayUpdate;
-                this._onPlayComplete = apcb.onPlayComplete;
+                this._onPlayBeforeStart = apcb.onBeforeStart;
+                this._onPlayStart = apcb.onStart;
+                this._onPlayUpdate = apcb.onUpdate;
+                this._onPlayComplete = apcb.onComplete;
             }
             this.updateNow = true;
             this._oldData = {inView:false, visible:true, oldCutRect:new Rectangle(), oldDrawRotation:-1, oldOffsetX:0, oldOffsetY:0, inSleep:false, hasAvatarImg:false};
@@ -1033,9 +1115,9 @@
             return;
         }
 
-        public static function createAvatarPart(apd:AvatarParamData, apsl:AvatarPartStatusList) : AvatarPart
+        public static function createAvatarPart(ap:Avatar,apd:AvatarParamData) : AvatarPart
         {
-            return ScenePool.avatarPartPool.createObj(AvatarPart, apd, apsl) as AvatarPart;
+            return ScenePool.avatarPartPool.createObj(AvatarPart, ap, apd) as AvatarPart;
         }
 
         public static function recycleAvatarPart(ap:AvatarPart) : void
@@ -1069,6 +1151,20 @@
 			return _enableShadow;
 		}
 
+		public function set depth($depth:int) : void
+		{
+			_depth = $depth;
+			if (this.avatar != null)
+			{
+				this.avatar.needSort = true;
+			}
+			return;
+		}
+		
+		public function get depth():int{
+			return _depth;
+		}
+		
 		/**
 		 * 是否使用阴影
 		 * @param value

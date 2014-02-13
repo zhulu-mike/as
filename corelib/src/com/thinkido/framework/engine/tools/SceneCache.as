@@ -2,23 +2,14 @@
 {
     import com.thinkido.framework.common.cache.Cache;
     import com.thinkido.framework.common.handler.HandlerThread;
-    import com.thinkido.framework.engine.Engine;
-    import com.thinkido.framework.engine.Scene;
+    import com.thinkido.framework.common.share.CountShare;
     import com.thinkido.framework.engine.SceneCharacter;
-    import com.thinkido.framework.engine.SceneRender;
-    import com.thinkido.framework.engine.config.GlobalConfig;
     import com.thinkido.framework.engine.graphics.avatar.AvatarPart;
-    import com.thinkido.framework.engine.staticdata.AvatarPartID;
-    import com.thinkido.framework.engine.staticdata.AvatarPartType;
-    import com.thinkido.framework.engine.vo.avatar.AvatarImgData;
     import com.thinkido.framework.engine.vo.avatar.AvatarParamData;
     import com.thinkido.framework.engine.vo.avatar.AvatarPartStatus;
-    import com.thinkido.framework.engine.vo.avatar.AvatarPartStatusList;
-    import com.thinkido.framework.engine.vo.avatar.AvatarPlayCondition;
     import com.thinkido.framework.manager.CacheManager;
     import com.thinkido.framework.manager.RslLoaderManager;
     
-    import flash.geom.Point;
     import flash.utils.ByteArray;
 
 	/**
@@ -39,7 +30,7 @@
         public static var mapImgCache:Cache = CacheManager.creatNewCache("mapImgCache");
         public static var mapTiles:Object = {};
         public static var tempMapTiles:Object = {};
-        public static var mapSolidsByte:ByteArray = new ByteArray(); 
+		public static var mapSolidsByte:ByteArray = new ByteArray(); 
 		
         private static var waitingLoadAvatarHT:HandlerThread = new HandlerThread();
         private static var waitingLoadAvatarFun:Object = new Object();
@@ -47,9 +38,9 @@
         private static var waitingAddAvatarHT:HandlerThread = new HandlerThread();
         private static var waitingAddAvatars:Array = [];
         public static var avatarXmlCache:Cache = CacheManager.creatNewCache("avatarXmlCache");
-        public static var avatarImgCache:Cache = CacheManager.creatNewCache("avatarImgCache");
         public static var waitingRemoveAvatarImgs:Object = {};
         private static var count:int = 0;
+		public static var avatarCountShare:CountShare = new CountShare(12000);
 
         public function SceneCache()
         {
@@ -62,317 +53,216 @@
 		 * @param loadSourceFun
 		 * 
 		 */
-		public static function addWaitingLoadAvatar($sc:SceneCharacter, $apd:AvatarParamData, loadSourceFun:Function = null) : void
+		public static function addWaitingLoadAvatar($ap:AvatarPart, $status:String, $fullSourchPath:String, $loadFun:Function = null) : void
 		{
-			var _isExist:Boolean = false;
-			var item:Array = null;
-			if (loadSourceFun != null)
+			var exist:Boolean;
+			var arr:Array;
+			var ap:AvatarPart;
+			var fullSourchPath:String;
+			var priority:Boolean;
+			var new_loadFun:Function;
+			if (!$ap.usable || !$ap.avatar.usable)
 			{
-				waitingLoadAvatarFun[$apd.sourcePath] = loadSourceFun;
-				waitingLoadAvatarHT.push(loadSourceFun, null, LOAD_AVATAR_DELAY, true, true, $sc.isMainChar());
+				return;
 			}
-			var items:Array = waitingLoadAvatars[$apd.sourcePath];
-			if (items == null)
+			var watingArr:Array = waitingLoadAvatars[$fullSourchPath];
+			if (watingArr == null)
 			{
-				waitingLoadAvatars[$apd.sourcePath] = [[$sc, $apd]];
+				waitingLoadAvatars[$fullSourchPath] = [[$ap, $status, $fullSourchPath]];
 			}
 			else
 			{
-				for each (item in items)
+				var watingLen:uint = watingArr.length ;
+				for (var _index:int = 0 ; _index < watingLen ; _index++)
 				{
-					
-					if ($sc == item[0] && $sc.id == item[0].id && $apd.sourcePath == item[1].sourcePath)
+					arr = watingArr[_index];
+					ap = arr[0];
+					fullSourchPath = arr[2];
+					if ($ap == ap && $fullSourchPath == fullSourchPath)
 					{
-						_isExist = true;
+						exist;
 						break;
 					}
 				}
-				if (!_isExist)
+				if (!exist)
 				{
-					waitingLoadAvatars[$apd.sourcePath].push([$sc, $apd]);
+					waitingLoadAvatars[$fullSourchPath].push([$ap, $status, $fullSourchPath]);
 				}
+			}
+			if ($loadFun != null)
+			{
+				new_loadFun = function () : void
+				{
+					if (waitingLoadAvatarFun[$fullSourchPath] == new_loadFun)
+					{
+						waitingLoadAvatarFun[$fullSourchPath] = null;
+						delete waitingLoadAvatarFun[$fullSourchPath];
+						$loadFun();
+					}
+					return;
+				};
+				waitingLoadAvatarFun[$fullSourchPath] = new_loadFun;
+				priority = $ap.sceneCharacter.isMainChar();
+				waitingLoadAvatarHT.push(new_loadFun, null, LOAD_AVATAR_DELAY, true, true, priority);
 			}
 			return;
 		}
 
-        public static function addWaitingAddAvatar($sc:SceneCharacter, apd:AvatarParamData, apsl:AvatarPartStatusList) : void
+        public static function addWaitingAddAvatar($ap:AvatarPart, $aps:AvatarPartStatus) : void
         {
-            var arr:Array;
+			var uniqueID:Number;
+			var arr:Array;
             var ht_addAvatarPart:Function;
-            var $in_sc:SceneCharacter = $sc;
-            var $in_apd:AvatarParamData = apd;
-            var $in_apsList:AvatarPartStatusList = apsl;
-            ht_addAvatarPart = function () : void
+			ht_addAvatarPart = function () : void
             {
                 var index:int = waitingAddAvatars.indexOf(arr);
                 if (index != -1)
                 {
                     waitingAddAvatars.splice(index, 1);
+					if ($ap.usable && $ap.uniqueID == uniqueID)
+					{
+						$ap.setAvatarPartStatus($aps);
+					}
                 }
-                addAvatarPart($in_sc, $in_apd, $in_apsList);
                 return;
             };
-            arr = [$in_sc, $in_apd, ht_addAvatarPart];
-            waitingAddAvatars.push(arr);
-            waitingAddAvatarHT.push(ht_addAvatarPart, null, ADD_AVATAR_DELAY, true, true, $in_sc.isMainChar());
+			if (!$ap.usable || !$ap.avatar.usable)
+			{
+				return;
+			}
+			uniqueID = $ap.uniqueID;
+			arr = [$ap, $aps, ht_addAvatarPart];
+			var priority:Boolean = $ap.sceneCharacter.isMainChar();
+			waitingAddAvatars.push(arr);
+            waitingAddAvatarHT.push(ht_addAvatarPart, null, ADD_AVATAR_DELAY, true, true, priority);
             return;
         }
 
-		public static function removeWaitingAvatar($in_sc:SceneCharacter = null, $in_avatarPartID:String = null, $in_avatarPartType:String = null, $except_char_arr:Array = null) : void
+		public static function removeWaitingAvatar($in_sc:SceneCharacter = null, $in_avatarPartID:String = null, $in_avatarPartType:String = null, $in_fullSourchPath:String = null, $stopLoad:Boolean = true) : void
 		{
 			var watingArrKey:String;
 			var watingArr:Array;
 			var loadFun:Function;
 			var arr1:Array;
-			var len:int;
 			var index:int;
 			var newWatingArr:Array;
 			var arr:Array;
+			var ap:AvatarPart;
 			var sc:SceneCharacter;
 			var apd:AvatarParamData;
+			var status:String;
+			var ap1:AvatarPart;
 			var sc1:SceneCharacter;
 			var apd1:AvatarParamData;
+			var aps1:AvatarPartStatus;
 			var addFun:Function;
 			var removeWaitLoadFun:Function = function (param1:String) : void
 			{
-				var _fun:Function = waitingLoadAvatarFun[apd.sourcePath];
-				if (_fun != null)
+				var _loc_2:Function = waitingLoadAvatarFun[param1];
+				if (_loc_2 != null)
 				{
-					waitingLoadAvatarHT.removeHandler(_fun);
+					waitingLoadAvatarHT.removeHandler(_loc_2);
+					waitingLoadAvatarFun[param1] = null;
+					delete waitingLoadAvatarFun[param1];
 				}
 				return;
-			}
-				;
+			};
+			
+			var _watingArrLen:int ;
 			for (watingArrKey in waitingLoadAvatars)
 			{
 				watingArr = waitingLoadAvatars[watingArrKey];
-				if (watingArr != null && watingArr.length > 0)
+				newWatingArr = [];
+				_watingArrLen = watingArr.length ;
+				for (var _index1:int = 0; _index1 < _watingArrLen ; _index1 ++)
 				{
-					newWatingArr =[];
-					for each (arr in watingArr)
+					arr = watingArr[_index1];
+					ap = arr[0];
+					if (ap.usable && ap.avatar.usable)
 					{
-						sc = arr[0] as SceneCharacter;
-						apd = arr[1] as AvatarParamData;
-						if (AvatarPartID.isDefaultKey(apd.id) || $except_char_arr != null && $except_char_arr.indexOf(sc) != -1 || !(($in_sc == null || sc == $in_sc && sc.id == $in_sc.id) && ($in_avatarPartID == null || apd.id == $in_avatarPartID) && ($in_avatarPartType == null || apd.type == $in_avatarPartType)))
+						sc = ap.sceneCharacter;
+						apd = ap.avatarParamData;
+						status = arr[1];
+						if (!(($in_sc == null || sc == $in_sc) && ($in_avatarPartID == null || apd.id == $in_avatarPartID) && ($in_avatarPartType == null || apd.type == $in_avatarPartType) && ($in_fullSourchPath == null || watingArrKey == $in_fullSourchPath)))
 						{
 							newWatingArr.push(arr);
-							continue;
 						}
-						apd.executeCallBack($in_sc);
 					}
-					if (newWatingArr.length > 0)
-					{
-						waitingLoadAvatars[watingArrKey] = newWatingArr;
-					}
-					else
-					{
-						delete waitingLoadAvatars[watingArrKey];
-						removeWaitLoadFun(watingArrKey);
-//						RslLoaderManager.cancelLoadByUrl(watingArrKey);			//sc 死亡后，死亡效果容易取消下载 导致看不到死亡特效
-					}
+				}
+				if (newWatingArr.length > 0)
+				{
+					waitingLoadAvatars[watingArrKey] = newWatingArr;
 					continue;
 				}
+				waitingLoadAvatars[watingArrKey] = null;
 				delete waitingLoadAvatars[watingArrKey];
 				removeWaitLoadFun(watingArrKey);
-//				RslLoaderManager.cancelLoadByUrl(watingArrKey);
+				if ($stopLoad)
+				{
+					RslLoaderManager.cancelLoadByUrl(watingArrKey);
+				}
+				avatarCountShare.removeShareData(watingArrKey);
 			}
-			len = waitingAddAvatars.length;
-			index = len - 1;
-			while (index >= 0){                
+			index = waitingAddAvatars.length - 1;
+			while (index >= 0){
 				arr1 = waitingAddAvatars[index];
-				sc1 = arr1[0];
-				apd1 = arr1[1];
+				ap1 = arr1[0];
+				sc1 = ap1.sceneCharacter;
+				apd1 = ap1.avatarParamData;
+				aps1 = arr1[1];
 				addFun = arr1[2];
-				if ($except_char_arr != null && $except_char_arr.indexOf(sc1) != -1 || !(($in_sc == null || sc1 == $in_sc && sc1.id == $in_sc.id) && ($in_avatarPartID == null || apd1.id == $in_avatarPartID) && ($in_avatarPartType == null || apd1.type == $in_avatarPartType)))
+				if (ap1.usable && !(($in_sc == null || sc1 == $in_sc) && ($in_avatarPartID == null || apd1.id == $in_avatarPartID) && ($in_avatarPartType == null || apd1.type == $in_avatarPartType) && ($in_fullSourchPath == null || aps1.fullSourchPath == $in_fullSourchPath)))
 				{
 				}
 				else
 				{
 					waitingAddAvatars.splice(index, 1);
 					waitingAddAvatarHT.removeHandler(addFun);
+					avatarCountShare.removeShareData(aps1.fullSourchPath);
 				}
-				index = (index - 1);
+				index--;
 			}
 			return;
 		}
 
-        public static function dowithWaiting(key:String, apsl:AvatarPartStatusList = null) : void
+        public static function dowithWaiting(key:String, aps:AvatarPartStatus = null) : void
         {
-            var items:Array = null;
-            var sc:SceneCharacter = null;
-            var apd:AvatarParamData = null;
-            var item:Array = null;
-//            if (apsl != null)
-//            {
-            items = waitingLoadAvatars[key];
-            if (items != null && items.length > 0)
-            {
-                for each (item in items)
-                {
-                    
-                    sc = item[0];
-                    apd = item[1];
-					if (apsl != null)
+			var _itemArr:Array = null;
+			var _ap:AvatarPart = null;
+			var _status:String = null;
+			var items:Array = waitingLoadAvatars[key];
+			waitingLoadAvatars[key] = null;
+			delete waitingLoadAvatars[key];
+			if (items == null || items.length == 0)
+			{
+				return;
+			}
+			if (aps != null)
+			{
+				for each (_itemArr in items)
+				{
+					_ap = _itemArr[0];
+					addWaitingAddAvatar(_ap, aps);
+				}
+			}
+			else
+			{
+				for each (_itemArr in items)
+				{
+					
+					_ap = _itemArr[0];
+					if (_ap.usable && _ap.avatarParamData)
 					{
-						addWaitingAddAvatar(sc, apd, apsl);
-					}else{
-						apd.executeCallBack(sc);
+						_status = _itemArr[1];
+						_ap.avatarParamData.executeCallBack(_ap.sceneCharacter, _ap, _status, true, true, true, true, true, true, 0, 0, 0, 0, 0, 0);
+						if (_ap && _ap.usable && _ap.avatar && _ap.avatarParamData.playCompleteAutoRecycle)
+						{
+							_ap.avatar.removeAvatarPart(_ap);
+						}
 					}
-                }
-            }
-//            }
-            delete waitingLoadAvatars[key];
+				}
+			}
             return;
         }
-
-        private static function addAvatarPart(sc:SceneCharacter, apd:AvatarParamData, apsl:AvatarPartStatusList) : void
-        {
-            if (sc == null || !sc.usable)
-            {
-                apd.executeCallBack(sc);
-                return;
-            }
-            if (!sc.isOnMount)
-            {
-                if (apd.useType == 2)
-                {
-                    apd.executeCallBack(sc);
-                    return;
-                }
-                if (apd.type == AvatarPartType.BODY)
-                {
-                    if (apd.id == AvatarPartID.BLANK)
-                    {
-                        if (sc.hasTypeAvatarParts(AvatarPartType.BODY))
-                        {
-                            apd.executeCallBack(sc);
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        sc.removeAvatarPartByID(AvatarPartID.BLANK, false);
-                    }
-                }
-            }
-            else
-            {
-                if (apd.useType == 1)
-                {
-                    apd.executeCallBack(sc);
-                    return;
-                }
-                if (apd.type == AvatarPartType.BODY)
-                {
-                    if (apd.id == AvatarPartID.BLANK)
-                    {
-                        if (sc.hasTypeAvatarParts(AvatarPartType.BODY))
-                        {
-                            apd.executeCallBack(sc);
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        sc.removeAvatarPartByID(AvatarPartID.BLANK, false);
-                    }
-                }
-            }
-            var ap:AvatarPart = AvatarPart.createAvatarPart(apd.clone(), apsl);
-            var apc:AvatarPlayCondition = sc.avatar.playCondition;
-            if (sc.avatar.playCondition != null)
-            {
-                apc = apc.clone();
-            }
-            sc.addAvatarPart(ap, apd.clearSameType);
-            if (sc.usable)
-            {
-                ap.playTo(sc.avatar.status, sc.avatar.logicAngle, apd.rotation, apc);
-            }
-            return;
-        }
-
-        public static function checkUninstall() : void
-        {
-            var key:String = null;
-            if (++count < 1000)
-            {
-                return;
-            }
-            count = count % 1000;
-            var nowTime:int = SceneRender.nowTime;
-            for (key in waitingRemoveAvatarImgs)
-            {
-                
-                if (nowTime - waitingRemoveAvatarImgs[key] > UNINSTALL_DELAY_TIME)
-                {
-                    doUninstallAvatarImg(key);
-                    waitingRemoveAvatarImgs[key] = null;
-                    delete waitingRemoveAvatarImgs[key];
-                }
-            }
-            return;
-        }
-
-        public static function uninstallAvatarImg(key:String) : void
-        {
-            var _loc_2:AvatarImgData = null;
-            if (avatarImgCache.has(key))
-            {
-                _loc_2 = avatarImgCache.get(key) as AvatarImgData;
-				_loc_2.useNum = _loc_2.useNum - 1;
-                if (_loc_2.useNum <= 0)
-                {
-                    if (!waitingRemoveAvatarImgs.hasOwnProperty(key))
-                    {
-                        waitingRemoveAvatarImgs[key] = SceneRender.nowTime;
-                    }
-                }
-            }
-            return;
-        }
-
-        private static function doUninstallAvatarImg(key:String) : void
-        {
-            var aid:AvatarImgData = null;
-            if (avatarImgCache.has(key))
-            {
-                aid = avatarImgCache.get(key) as AvatarImgData;
-                if (aid.useNum <= 0)
-                {
-                    aid.dispose();
-                    avatarImgCache.remove(key);
-                }
-            }
-            return;
-        }
-
-        public static function installAvatarImg(aps:AvatarPartStatus, param2:String, param3:Boolean) : AvatarImgData
-        {
-            var aid:AvatarImgData = null;
-            if (aps == null)
-            {
-                return null;
-            }
-            if (!avatarImgCache.has(param2))
-            {
-                aid = new AvatarImgData(aps, param2, param3);
-                avatarImgCache.push(aid, param2);
-            }
-            else
-            {
-                aid = avatarImgCache.get(param2) as AvatarImgData;
-                (avatarImgCache.get(param2) as AvatarImgData).useNum = aid.useNum + 1;
-            }
-            if (waitingRemoveAvatarImgs.hasOwnProperty(param2))
-            {
-                waitingRemoveAvatarImgs[param2] = null;
-                delete waitingRemoveAvatarImgs[param2];
-            }
-            return aid;
-        }
-		
-		
-		
     }
 }

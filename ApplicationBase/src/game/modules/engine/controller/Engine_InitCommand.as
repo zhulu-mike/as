@@ -2,7 +2,11 @@ package game.modules.engine.controller
 {
 	import com.thinkido.framework.engine.Engine;
 	import com.thinkido.framework.engine.Scene;
+	import com.thinkido.framework.engine.staticdata.AvatarPartType;
+	import com.thinkido.framework.engine.staticdata.CharStatusType;
+	import com.thinkido.framework.engine.staticdata.SceneCharacterType;
 	import com.thinkido.framework.engine.vo.avatar.AvatarParamData;
+	import com.thinkido.framework.engine.vo.avatar.AvatarPartStatus;
 	
 	import game.config.GameConfig;
 	import game.config.GameInstance;
@@ -37,9 +41,10 @@ package game.modules.engine.controller
 			GameInstance.scene = new Scene(GameConfig.sceneWidth,GameConfig.sceneHeight);
 			LayerManager.sceneLayer.addChildAt(GameInstance.scene, 0);
 			GameInstance.scene.switchScene(1001,"taiyixianjing");
-			var apd:AvatarParamData = new AvatarParamData(ResourceUtil.getAvatarPath(2));
+			var apd:AvatarParamData = new AvatarParamData(ResourceUtil.getAvatarPath(569));
 			GameInstance.scene.mainChar.loadAvatarPart(apd);
-			GameInstance.scene.mainChar.setTileXY(100,100);
+			GameInstance.scene.mainChar.setTileXY(100,110);
+			GameInstance.scene.mainChar.playTo(CharStatusType.STAND);
 			GameInstance.scene.reSize(GameInstance.stage.stageWidth, GameInstance.stage.stageHeight);
 			return;
 		}

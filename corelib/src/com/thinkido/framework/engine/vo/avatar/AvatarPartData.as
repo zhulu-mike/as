@@ -13,8 +13,8 @@
         public var sy:int;	//原单帧图片在整图中的y
         public var width:int;	//单帧图片中的w
         public var height:int;	//单帧图片中的h
-        public var tx:int;	//某整个动作的图片在整张图片中的x
-        public var ty:int;	//某整个动作的图片在整张图片中的y
+        public var tx:int;	//某整个动作的图片中在整张图片中的x
+        public var ty:int;	//某整个动作的图片中在整张图片中的y
 //		ox 坐骑偏移量 x 
 //		oy 坐骑偏移量 y 现在查看ox,oy 在坐骑里面都为0
 		/**

@@ -19,6 +19,10 @@ package game.modules.engine
 		public static const SHOW_MAINUI:String = "SHOW_MAINUI";
 		public static const CLOSE_MAINUI:String = "CLOSE_MAINUI";
 		public static const INIT_ENGINE:String = "INIT_ENGINE";
+		/**
+		 * 场景交互事件
+		 */		
+		public static const SCENE_INTERACTIVE_EVENT:String = "SCENE_INTERACTIVE_EVENT";
 
 		public function Engine_ApplicationFacade(param1:String)
 		{

@@ -4,7 +4,6 @@ package com.thinkido.framework.net
 	
 	import flash.utils.ByteArray;
 	
-	
 	public class SProtocol extends TProtocol
 	{
 		/**
@@ -65,7 +64,7 @@ package com.thinkido.framework.net
 		public override function set data(value:*):void
 		{
 			if( typeof(value) is Object){
-				value = JSON.encode(value);
+				value = com.adobe.serialization.json.JSON.encode(value);
 				content = value ;
 			}
 			_data = value;
@@ -77,7 +76,7 @@ package com.thinkido.framework.net
 			//TODO Auto-generated method stub
 			_data = value.readMultiByte(value.length,"utf-8");
 			content = _data;
-			_data = JSON.decode(_data);
+			_data = com.adobe.serialization.json.JSON.decode(_data);
 			super.body = value;
 		}
 

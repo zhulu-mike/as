@@ -37,10 +37,35 @@
         <script type="text/javascript" src="swfobject.js"></script>
         <script type="text/javascript">
             // For version detection, set to min. required Flash Player version, or 0 (or 0.0.0), for no version detection. 
-            var swfVersionStr = "10.2.0";
+            var swfVersionStr = "11.1.0";
             // To use express install, set to playerProductInstall.swf, otherwise the empty string. 
             var xiSwfUrlStr = "playerProductInstall.swf";
-            var flashvars = {};
+            var flashvars = {
+							baseDir : "http://192.168.1.10/newGame/" ,
+							mainServerIP : "192.168.1.70",		//程
+							mainServerPort : 8201 ,
+							mainServerIP : "192.168.1.5",		//刘
+							mainServerPort : 8202 ,				//测试
+							mainServerPort : 8201 ,				//开发
+							mainServerIP : "192.168.1.200",		//服务器
+							mainServerPort : 8201 ,
+							mainServerIP : "192.168.1.200",    //赵
+							mainServerPort : 8201 ,
+							
+							mainServerPort : 9201 ,
+							
+			           	 	platuid : 0 ,//玩家在平台上的ID
+			            	plat : 0 ,//平台的ID,
+			            	ukey:"ukey",
+			            	config : "http://192.168.1.10/newGame/program/config/config.xml",
+							program: "program",
+							tileWidth: 200 ,
+							tileHeight: 100,
+							debug:"true",
+							tryDir:"127.0.0.1/",
+							file:"thinkidoDLL.swf",
+							isLoadXML:"false"
+						};
             var params = {};
             params.quality = "high";
             params.bgcolor = "#ffffff";
@@ -67,7 +92,7 @@
         <div id="flashContent">
             <p>
                 To view this page ensure that Adobe Flash Player version 
-                10.2.0 or greater is installed. 
+                11.1.0 or greater is installed. 
             </p>
             <script type="text/javascript"> 
                 var pageHost = ((document.location.protocol == "https:") ? "https://" : "http://"); 
@@ -93,7 +118,7 @@
                 <!--[if gte IE 6]>-->
                     <p> 
                         Either scripts and active content are not permitted to run or Adobe Flash Player version
-                        10.2.0 or greater is not installed.
+                        11.1.0 or greater is not installed.
                     </p>
                 <!--<![endif]-->
                     <a href="http://www.adobe.com/go/getflashplayer">

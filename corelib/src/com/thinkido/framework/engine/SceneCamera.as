@@ -108,10 +108,6 @@
 			}
             var _cp:Point = new Point(this._followCharacter.pixel_x, this._followCharacter.pixel_y);
             _cp = this._scene.localToGlobal(_cp);
-			if (this._scene.mapConfig == null)
-				throw new Error("mapconfig cannot find");
-			if (this._scene.sceneConfig == null)
-				throw new Error("sceneConfig cannot find");
             if (this._scene.mapConfig.width > this._scene.sceneConfig.width)
             {
                 _centerX = this._scene.sceneConfig.width * 0.5;

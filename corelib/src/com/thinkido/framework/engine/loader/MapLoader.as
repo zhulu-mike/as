@@ -1,9 +1,5 @@
 ﻿package com.thinkido.framework.engine.loader
 {
-    import br.com.stimuli.loading.BulkLoader;
-    import br.com.stimuli.loading.BulkProgressEvent;
-    import br.com.stimuli.loading.loadingtypes.LoadingItem;
-    
     import com.thinkido.framework.common.codemix.ZZip;
     import com.thinkido.framework.common.events.EventDispatchCenter;
     import com.thinkido.framework.engine.Scene;
@@ -22,10 +18,12 @@
     
     import flash.display.Bitmap;
     import flash.events.Event;
-    import flash.events.ProgressEvent;
     import flash.system.System;
     import flash.utils.ByteArray;
-    import flash.utils.getTimer;
+    
+    import br.com.stimuli.loading.BulkLoader;
+    import br.com.stimuli.loading.BulkProgressEvent;
+    import br.com.stimuli.loading.loadingtypes.LoadingItem;
 
 	/**
 	 * 地图加载器,用于加载地图xml 和 缩略图 
@@ -54,12 +52,13 @@
             var mapConfigName:String = $mapConfigName;
             var scene:Scene = $secen;
             var onComplete:Function = $onComplete;
-            var onUpdate:Function = $onUpdate;
-			newOnUpdate = function(event:BulkProgressEvent):void
+			newOnUpdate = function (e:BulkProgressEvent):void
 			{
 				if ($onUpdate != null)
-					$onUpdate(event);
-			};
+				{
+					$onUpdate(e);
+				}
+			}
             newOnComplete = function (event:Event) : void
 	            {
 	                var temp:* = undefined;
@@ -99,9 +98,7 @@
 	                mapConfig.mapGridX = data.head.grids.@grid_h;
 	                mapConfig.mapGridY = data.head.grids.@grid_v;
 					Astar.init();
-					trace("init前"+getTimer());
 					Astar.starGrid.init(mapConfig.mapGridX, mapConfig.mapGridY);
-					trace("init后"+getTimer());
 	                mapConfig.width = mapConfig.mapGridX * SceneConfig.TILE_WIDTH;
 	                mapConfig.height = mapConfig.mapGridY * SceneConfig.TILE_HEIGHT;
 	                mapConfig.zoneMapDir = GlobalConfig.getZoneMapFolder(mapConfigName);
@@ -149,6 +146,7 @@
 							}
 						}
 					}
+					
 					//记载玩马晒客地图胡进入场景
 					var bm:Bitmap = SceneLoader.smallMapImgLoader.getBitmap(mapImg);
 					if (bm)

@@ -367,23 +367,31 @@
             this.removeBoundsArr.length = 0;
             for each (bounds in this.clearBoundsArr)
             {
-                if (!bounds.isEmpty())
-                {
-                    this._dirtyBoundsMaker.addBounds(bounds);
-                }
+				if (!bounds.isEmpty())
+				{
+					this._dirtyBoundsMaker.addBounds(bounds);
+				}else{
+					Bounds.deleteBounds(bounds);
+				}
             }
             tempArr = this._dirtyBoundsMaker.getBoundsArr();
+			var secBound:Bounds;
             for each (ap in this.restingAvatarPartArr)
             {
                 for each (bounds in tempArr)
                 {
-                    apBound = Bounds.fromRectangle(ap.cutRect);
-                    if (apBound.intersects(bounds))
-                    {
-                        rec = Bounds.toRectangle(apBound.intersection(bounds));
-                        ap.updateNow = true;
-                        ap.renderRectArr.push(rec);
-                    }
+					apBound = Bounds.fromRectangle(ap.cutRect);
+					if (apBound.intersects(bounds))
+					{
+						secBound = apBound.intersection(bounds);
+						rec = Bounds.toRectangle(secBound);
+						ap.updateNow = true;
+						ap.renderRectArr.push(rec);
+						Bounds.deleteBounds(secBound);
+						secBound = null;
+					}
+					Bounds.deleteBounds(apBound);
+					apBound = null;
                 }
             }
 			/**TRACEDISABLE:trace("op bounds时间："+(getTimer()-t)); TRACEDISABLE*/

@@ -108,7 +108,7 @@ package game.manager
 		{
 			$socket = $socket|| mainSocket ;
 			$socket.send($protocol);			
-			Logger.warn("socket 发送" + $protocol.type + JSON.encode($protocol.body));
+			Logger.warn("socket 发送" + $protocol.type + com.adobe.serialization.json.JSON.encode($protocol.body));
 			return;
 		}
 		
@@ -151,7 +151,7 @@ package game.manager
 		{
 			var temp:String ; 
 			try{
-				temp = JSON.encode(protocol.body) ;
+				temp = com.adobe.serialization.json.JSON.encode(protocol.body) ;
 			}catch(e:JSONParseError){
 				Logger.warn("socket 以收到" + protocol.type + "有json错误  location:" + e.location );
 			}

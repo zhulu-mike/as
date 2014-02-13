@@ -20,7 +20,8 @@
 
     public class MagicHelper extends Object
     {
-
+		public static var MAGIC_STATUS:String = "stand";
+		
         public function MagicHelper()
         {
             return;
@@ -982,7 +983,7 @@
 			}
             scene = $fromSc.scene;
             $passApd = $passApd || new AvatarParamData();
-            $passApd.extendCallBack(new_onPlayBeforeStart);
+            $passApd.extendCallBack(MAGIC_STATUS,new_onPlayBeforeStart);
             passSc = scene.createSceneCharacter(SceneCharacterType.DUMMY);
             passSc.setXY($fromSc.pixel_x + $passApd.offsetDandaoStartX, $fromSc.pixel_y + $passApd.offsetDandaoStartY);
             var p0:Point = new Point(passSc.pixel_x, passSc.pixel_y);
@@ -1053,7 +1054,7 @@
             {
                 if (apd != null)
                 {
-                    apd.executeCallBack($toSc);
+                    apd.executeCallBack($toSc,null,MAGIC_STATUS);
                 }
             }
             else

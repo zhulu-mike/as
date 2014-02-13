@@ -40,7 +40,32 @@
             var swfVersionStr = "${version_major}.${version_minor}.${version_revision}";
             // To use express install, set to playerProductInstall.swf, otherwise the empty string. 
             var xiSwfUrlStr = "${expressInstallSwf}";
-            var flashvars = {};
+            var flashvars = {
+							baseDir : "http://192.168.1.10/newGame/" ,
+							mainServerIP : "192.168.1.70",		//程
+							mainServerPort : 8201 ,
+							mainServerIP : "192.168.1.5",		//刘
+							mainServerPort : 8202 ,				//测试
+							mainServerPort : 8201 ,				//开发
+							mainServerIP : "192.168.1.200",		//服务器
+							mainServerPort : 8201 ,
+							mainServerIP : "192.168.1.200",    //赵
+							mainServerPort : 8201 ,
+							
+							mainServerPort : 9201 ,
+							
+			           	 	platuid : 0 ,//玩家在平台上的ID
+			            	plat : 0 ,//平台的ID,
+			            	ukey:"ukey",
+			            	config : "http://192.168.1.10/newGame/program/config/config.xml",
+							program: "program",
+							tileWidth: 200 ,
+							tileHeight: 100,
+							debug:"true",
+							tryDir:"127.0.0.1/",
+							file:"thinkidoDLL.swf",
+							isLoadXML:"false"
+						};
             var params = {};
             params.quality = "high";
             params.bgcolor = "${bgcolor}";

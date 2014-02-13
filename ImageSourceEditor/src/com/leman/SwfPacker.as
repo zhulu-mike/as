@@ -61,6 +61,8 @@ package com.leman
 		private var info:Object;		//时间设置 
 		
 		private var swfData:String;
+		//动作字符串
+		private var actionStr:String = "";
 		
 		public function createSWF($dir:File, $info:Object):void
 		{
@@ -70,8 +72,18 @@ package com.leman
 			this._dir = $dir;
 			this.scName = _dir.name;
 			this.actionFolders = $dir.getDirectoryListing();
-			
-			swfData = "package\n{\n\timport flash.display.MovieClip;\n\timport flash.system.Security;\n\n\tpublic class " + this._dir.name + " extends MovieClip\n\t{\n\t\tpublic static const STATUS_LIST:Array = [";
+			var i:int = 0, len:int = this.actionFolders.length, tFile:File;
+			for (;i<len;i++)
+			{
+				tFile = actionFolders[i];
+				if (tFile.isDirectory && actionTypeArr.indexOf(tFile.name) != -1)
+				{
+					actionStr += (tFile.name)+",";
+				}
+			}
+			if (actionStr.length > 0)
+				actionStr = actionStr.substr(0,actionStr.length-1);
+//			swfData = "package\n{\n\timport flash.display.MovieClip;\n\timport flash.system.Security;\n\n\tpublic class " + this._dir.name + " extends MovieClip\n\t{\n\t\tpublic static const STATUS_LIST:Array = [";
 			xmlStr = "" ;
 			
 			loadactionfolder(this.actionFolders[loadIndex++]);
@@ -137,7 +149,7 @@ package com.leman
 			createImage();
 			xmlStr = createXmlStr(this.currFolder.name);
 			//保存有哪些动作
-			swfData = swfData + this.currFolder.name + ",";
+//			swfData = swfData + this.currFolder.name + ",";
 			
 			createBmdClass(this.currFolder.name);
 		}
@@ -156,12 +168,12 @@ package com.leman
 			var str:String = '﻿package ' + this._dir.name +
 '\n{'+
 '\n    import flash.display.MovieClip;'+
-'\n    import flash.display.Sprite;'+
 '\n    import flash.system.Security;'+
-'\n    import flash.text.TextField;'+
 '\n'+
-'\n    dynamic public class '+ fileName +' extends MovieClip'+
+'\n    public class '+ fileName +' extends MovieClip'+
 '\n    {'+
+'\n        public static const STATUS_LIST:Array = ['+actionStr+'];'+
+'\n        public static const X_M_L:XML = '+xmlStr+';'+
 '\n        public function '+ fileName +'()'+
 '\n        {'+
 '\n            addFrameScript(0, frame1);'+
@@ -177,10 +189,6 @@ package com.leman
 '\n            catch (e:Error)'+
 '\n            {'+
 '\n            }'+
-'\n			var info:TextField ;'+
-'\n			info = new TextField();'+
-'\n			info.text = "'+ xmlStr +'" ;'+
-'\n			addChild(info);'+
 '\n            return;'+
 '\n        }'+
 '\n    }'+
@@ -246,7 +254,7 @@ package com.leman
 			createSingleImageInfo();
 			if(loadIndex >= this.actionFolders.length)
 			{
-				swfData = swfData.substr(0, swfData.length-1);
+//				swfData = swfData.substr(0, swfData.length-1);
 				finishedLoaded();
 			}
 			else
@@ -309,15 +317,15 @@ package com.leman
 		{
 			
 			// 生成 mid3.as 文件
-			swfData += "];\n\t\tpublic function " + this._dir.name + "()\n\t\t{\n\t\t\taddFrameScript(0, frame1);\n\t\t\treturn;\n\t\t}\n\n\t\tfunction frame1()\n\t\t{\n\t\t\ttry\n\t\t\t{\n\t\t\t\tSecurity.allowDomain('*');\n\t\t\t}\n\t\t\tcatch (e:Error)\n\t\t\t{\n\t\t\t}\n\t\t\treturn;\n\t\t}\n\t}\n}" ;
+//			swfData += "];\n\t\tpublic function " + this._dir.name + "()\n\t\t{\n\t\t\taddFrameScript(0, frame1);\n\t\t\treturn;\n\t\t}\n\n\t\tfunction frame1()\n\t\t{\n\t\t\ttry\n\t\t\t{\n\t\t\t\tSecurity.allowDomain('*');\n\t\t\t}\n\t\t\tcatch (e:Error)\n\t\t\t{\n\t\t\t}\n\t\t\treturn;\n\t\t}\n\t}\n}" ;
 		
-			var ws:FileStream = new FileStream();
-			var file1:File ;	
-			var fileName:String = this._dir.parent.url  + '/outcome/' + this._dir.name + ".as";//
-			file1= new File(fileName);
-			ws.open(file1,FileMode.WRITE);
-			ws.writeUTFBytes(swfData);
-			ws.close();
+//			var ws:FileStream = new FileStream();
+//			var file1:File ;	
+//			var fileName:String = this._dir.parent.url  + '/outcome/' + this._dir.name + ".as";//
+//			file1= new File(fileName);
+//			ws.open(file1,FileMode.WRITE);
+//			ws.writeUTFBytes(swfData);
+//			ws.close();
 			
 			this.dispatchEvent(new Event(CREATE_SWF_COMPLETE));
 		}

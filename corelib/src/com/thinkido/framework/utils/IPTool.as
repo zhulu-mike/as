@@ -168,7 +168,7 @@ package com.thinkido.framework.utils
 			translateBy.position = 0; 
 			var temp:String = translateBy.readMultiByte(translateBy.length,"gb2312");
 			temp = temp.substr(21, temp.length - 22);
-			var obj:Object = JSON.decode(temp);
+			var obj:Object = com.adobe.serialization.json.JSON.decode(temp);
 			if( result != null ){
 				result.call(null,obj);
 				result = null ;

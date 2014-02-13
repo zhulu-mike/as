@@ -64,6 +64,23 @@
             }
             return true;
         }
+		public static function getIsShowWeapon(status:String) : Boolean
+		{
+			if (status == SIT )
+			{
+				return false;
+			}
+			return true;
+		}
+		
+		public static function getIsFight(status:String) : Boolean
+		{
+			if (status == ATTACK || status == SKILL || status == SKILL1 )
+			{
+				return true;
+			}
+			return false;
+		}
 
     }
 }

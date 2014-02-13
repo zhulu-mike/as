@@ -2,10 +2,13 @@
 {
 	import com.thinkido.framework.common.handler.HandlerThread;
 	import com.thinkido.framework.engine.SceneCharacter;
+	import com.thinkido.framework.engine.config.GlobalConfig;
 	import com.thinkido.framework.engine.graphics.avatar.AvatarPart;
 	import com.thinkido.framework.engine.staticdata.AvatarPartID;
 	import com.thinkido.framework.engine.staticdata.AvatarPartType;
 	import com.thinkido.framework.engine.vo.avatar.DynamicPosition.IDynamicPosition;
+	
+	import flash.utils.Dictionary;
 	
 	public class AvatarParamData extends Object
 	{
@@ -24,11 +27,13 @@
 		public var offsetDandaoStartY:int = 0;
 		public var dynamicPosition:IDynamicPosition = null;
 		public var sleepTime:int = 0;
+		public var playCompleteAutoRecycle:Boolean = false;
 		public var status:String = "stand";
 		public var angle:int = -1;
 		public var rotation:int = -1;
 		public var clearSameType:Boolean = false;
 		public var playCallBack:AvatarPlayCallBack = null;
+		public var isBitmap:Boolean = false;
 		
 		public var useDelay:Boolean = false ;   //添加字段，直接控制使用技能延迟 ，和 useType 字段有部分功能一样
 		public var beforeDelay:int = 0 ;
@@ -39,6 +44,10 @@
 		public var removeDelay:int = 0 ;
 		public var hasExecutedCallback:Boolean = false ;
 		
+		public var statusList:Array;
+		public var logicAngleList:Array;
+		private var _playCallBackDict:Dictionary;
+		private var _baseClassName:String;
 		
 		/**
 		 *  
@@ -54,10 +63,39 @@
 		 */
 		public function AvatarParamData($sourcePath:String = "", $type:String = "body")
 		{
+			_playCallBackDict = new Dictionary() ;
 			this.sourcePath = $sourcePath;
+			if (this.sourcePath != null && this.sourcePath != "")
+			{
+				//格式为xxxxxxx/mid1/stand.swf
+				var prev:String = this.sourcePath.substring(0,sourcePath.lastIndexOf("/"));
+				_baseClassName = prev.substring(prev.lastIndexOf("/") + 1,prev.length) + ".";
+			}
 			this.type = $type;
 			this.repeat = AvatarPartType.getDefaultRepeat(this.type);
 			return;
+		}
+		public function getFullSourcePath($status:String) : String
+		{
+			if (this.sourcePath == null || this.sourcePath == "")
+			{
+				return null;
+			}
+			var _str:String = this.isBitmap ? (this.sourcePath) : (this.sourcePath.replace("#", $status));
+			if (GlobalConfig.version != null)
+			{
+				_str = GlobalConfig.version(_str);
+			}
+			return _str;
+		}
+		
+		public function hasStatus($status:String) : Boolean
+		{
+			if (this.statusList == null)
+			{
+				return true;
+			}
+			return this.statusList.indexOf($status) != -1;
 		}
 		
 		public function get id() : String
@@ -81,20 +119,17 @@
 			return;
 		}
 		
-		/**
-		 *  
-		 * @return 类名
-		 * 可优化、苹果系统可能会有问题 "/"
-		 */		
-		public function get className() : String
+		public function hasLogicAngle($angle:int) : Boolean
 		{
-			if (this.sourcePath != null && this.sourcePath != "")
+			if (this.logicAngleList == null)
 			{
-				var temp:String = this.sourcePath.substring(sourcePath.lastIndexOf("/") + 1,sourcePath.lastIndexOf(".")) ;
-				return temp;
+				return true;
 			}
-			return "";
+			return this.logicAngleList.indexOf($angle) != -1;
 		}
+		
+		
+		
 		/**
 		 * 扩展回调方法， 
 		 * @param BeforeFun
@@ -106,8 +141,21 @@
 		 * @param isClearOld 如果为真，则 方法覆盖老数据， false: 责 新旧数据添加到一起 并执行
 		 * 
 		 */
-		public function extendCallBack(BeforeFun:Function = null, startFun:Function = null, updateFun:Function = null, completeFun:Function = null, addFun:Function = null, removeFun:Function = null, isClearOld:Boolean = false) : void
+		public function extendCallBack( $status:String, BeforeFun:Function = null, startFun:Function = null, updateFun:Function = null, completeFun:Function = null, addFun:Function = null, removeFun:Function = null, isClearOld:Boolean = false) : void
 		{
+			if (!this.hasStatus($status))
+			{
+				return;
+			}
+			var _loc_9:AvatarPlayCallBack = this._playCallBackDict[$status];
+			if (this._playCallBackDict[$status] == null)
+			{
+				_loc_9 = new AvatarPlayCallBack();
+				this._playCallBackDict[$status] = _loc_9;
+			}
+			_loc_9.extendCallBack(BeforeFun, startFun, updateFun, completeFun, addFun, removeFun, isClearOld);
+			return ;
+			
 			var onPlayBeforeStart_old:Function;
 			var onPlayStart_old:Function;
 			var onPlayUpdate_old:Function;
@@ -124,10 +172,10 @@
 			this.playCallBack = this.playCallBack || new AvatarPlayCallBack();
 			if ($clearOld)
 			{
-				this.playCallBack.onPlayBeforeStart = $new_onPlayBeforeStart;
-				this.playCallBack.onPlayStart = $new_onPlayStart;
-				this.playCallBack.onPlayUpdate = $new_onPlayUpdate;
-				this.playCallBack.onPlayComplete = $new_onPlayComplete;
+				this.playCallBack.onBeforeStart = $new_onPlayBeforeStart;
+				this.playCallBack.onStart = $new_onPlayStart;
+				this.playCallBack.onUpdate = $new_onPlayUpdate;
+				this.playCallBack.onComplete = $new_onPlayComplete;
 				this.playCallBack.onAdd = $new_onAdd;
 				this.playCallBack.onRemove = $new_onRemove;
 			}
@@ -135,14 +183,14 @@
 			{
 				if ($new_onPlayBeforeStart != null)
 				{
-					if (this.playCallBack.onPlayBeforeStart == null)
+					if (this.playCallBack.onBeforeStart == null)
 					{
-						this.playCallBack.onPlayBeforeStart = $new_onPlayBeforeStart;
+						this.playCallBack.onBeforeStart = $new_onPlayBeforeStart;
 					}
 					else
 					{
-						onPlayBeforeStart_old = this.playCallBack.onPlayBeforeStart;
-						this.playCallBack.onPlayBeforeStart = function (param1:SceneCharacter = null, param2:AvatarPart = null) : void
+						onPlayBeforeStart_old = this.playCallBack.onBeforeStart;
+						this.playCallBack.onBeforeStart = function (param1:SceneCharacter = null, param2:AvatarPart = null) : void
 						{
 							onPlayBeforeStart_old(param1, param2);
 							$new_onPlayBeforeStart(param1, param2);
@@ -152,14 +200,14 @@
 				}
 				if ($new_onPlayStart != null)
 				{
-					if (this.playCallBack.onPlayStart == null)
+					if (this.playCallBack.onStart == null)
 					{
-						this.playCallBack.onPlayStart = $new_onPlayStart;
+						this.playCallBack.onStart = $new_onPlayStart;
 					}
 					else
 					{
-						onPlayStart_old = this.playCallBack.onPlayStart;
-						this.playCallBack.onPlayStart = function (param1:SceneCharacter = null, param2:AvatarPart = null) : void
+						onPlayStart_old = this.playCallBack.onStart;
+						this.playCallBack.onStart = function (param1:SceneCharacter = null, param2:AvatarPart = null) : void
 						{
 							onPlayStart_old(param1, param2);
 							$new_onPlayStart(param1, param2);
@@ -169,14 +217,14 @@
 				}
 				if ($new_onPlayUpdate != null)
 				{
-					if (this.playCallBack.onPlayUpdate == null)
+					if (this.playCallBack.onUpdate == null)
 					{
-						this.playCallBack.onPlayUpdate = $new_onPlayUpdate;
+						this.playCallBack.onUpdate = $new_onPlayUpdate;
 					}
 					else
 					{
-						onPlayUpdate_old = this.playCallBack.onPlayUpdate;
-						this.playCallBack.onPlayUpdate = function (param1:SceneCharacter = null, param2:AvatarPart = null) : void
+						onPlayUpdate_old = this.playCallBack.onUpdate;
+						this.playCallBack.onUpdate = function (param1:SceneCharacter = null, param2:AvatarPart = null) : void
 						{
 							onPlayUpdate_old(param1, param2);
 							$new_onPlayUpdate(param1, param2);
@@ -186,14 +234,14 @@
 				}
 				if ($new_onPlayComplete != null)
 				{
-					if (this.playCallBack.onPlayComplete == null)
+					if (this.playCallBack.onComplete == null)
 					{
-						this.playCallBack.onPlayComplete = $new_onPlayComplete;
+						this.playCallBack.onComplete = $new_onPlayComplete;
 					}
 					else
 					{
-						onPlayComplete_old = this.playCallBack.onPlayComplete;
-						this.playCallBack.onPlayComplete = function (param1:SceneCharacter = null, param2:AvatarPart = null) : void
+						onPlayComplete_old = this.playCallBack.onComplete;
+						this.playCallBack.onComplete = function (param1:SceneCharacter = null, param2:AvatarPart = null) : void
 						{
 							onPlayComplete_old(param1, param2);
 							$new_onPlayComplete(param1, param2);
@@ -238,6 +286,8 @@
 			}
 			return;
 		}
+		
+		
 		/**
 		 * 
 		 * @param sc 回调方法参数数组0
@@ -256,8 +306,65 @@
 		 * @param removeDelay
 		 * 
 		 */
-		public function executeCallBack(sc:SceneCharacter = null, ap:AvatarPart = null, useBefore:Boolean = true, useStart:Boolean = true, useUpdate:Boolean = true, useComplete:Boolean = true, useAdd:Boolean = true, useRemove:Boolean = true, $beforeDelay:int = 0, $startDelay:int = 0, $updateDelay:int = 0, $completeDelay:int = 0, $addDelay:int = 0, $removeDelay:int = 0) : void
+		public function getPlayCallBack(status:String) : AvatarPlayCallBack
 		{
+			return this._playCallBackDict[status];
+		}// end function
+		/**
+		 *  
+		 * @param status 状态
+		 * @param apcb 赋值的
+		 * @return 返回被赋值前的apcb
+		 * 
+		 */		
+		public function setPlayCallBack(status:String, apcb:AvatarPlayCallBack) : AvatarPlayCallBack
+		{
+			var _loc_3:AvatarPlayCallBack = this._playCallBackDict[status];
+			this._playCallBackDict[status] = apcb;
+			return _loc_3;
+		}
+		
+		public function clearCallBack($status:String = null) : void
+		{
+			var _loc_2:AvatarPlayCallBack = null;
+			var _loc_3:String = null;
+			if ($status == null)
+			{
+				for (_loc_3 in this._playCallBackDict)
+				{
+					
+					_loc_2 = this._playCallBackDict[_loc_3];
+					_loc_2.clearCallBack();
+					delete this._playCallBackDict[_loc_3];
+				}
+			}
+			else
+			{
+				_loc_2 = this._playCallBackDict[$status];
+				if (_loc_2 != null)
+				{
+					_loc_2.clearCallBack();
+					delete this._playCallBackDict[$status];
+				}
+			}
+			return;
+		}
+		
+		public function executeCallBack(sc:SceneCharacter = null, ap:AvatarPart = null, status:String = "", useBefore:Boolean = true, useStart:Boolean = true, useUpdate:Boolean = true, useComplete:Boolean = true, useAdd:Boolean = true, useRemove:Boolean = true, $beforeDelay:int = 0, $startDelay:int = 0, $updateDelay:int = 0, $completeDelay:int = 0, $addDelay:int = 0, $removeDelay:int = 0) : void
+		{
+			if (!this.hasStatus(status))
+			{
+				return;
+			}
+			var _apcb:AvatarPlayCallBack = this._playCallBackDict[status];
+			if (this._playCallBackDict[status] == null)
+			{
+				return;
+			}
+			_apcb.executeCallBack(sc, ap,useBefore, useStart, useUpdate, useComplete, useAdd, useRemove,$beforeDelay, $startDelay, $updateDelay, $completeDelay, $addDelay,$removeDelay);
+			return;
+			
+			
 			beforeDelay = $beforeDelay||beforeDelay ;
 			startDelay = $startDelay||startDelay ;
 			updateDelay = $updateDelay||updateDelay ;
@@ -270,21 +377,21 @@
 			}
 			hasExecutedCallback = true ;
 			var ht:HandlerThread = new HandlerThread();
-			if (useBefore && this.playCallBack.onPlayBeforeStart != null)
+			if (useBefore && this.playCallBack.onBeforeStart != null)
 			{
-				ht.push(this.playCallBack.onPlayBeforeStart, [sc, ap], beforeDelay);
+				ht.push(this.playCallBack.onBeforeStart, [sc, ap], beforeDelay);
 			}
-			if (useStart && this.playCallBack.onPlayStart != null)
+			if (useStart && this.playCallBack.onStart != null)
 			{
-				ht.push(this.playCallBack.onPlayStart, [sc, ap], startDelay);
+				ht.push(this.playCallBack.onStart, [sc, ap], startDelay);
 			}
-			if (useUpdate && this.playCallBack.onPlayUpdate != null)
+			if (useUpdate && this.playCallBack.onUpdate != null)
 			{
-				ht.push(this.playCallBack.onPlayUpdate, [sc, ap], updateDelay);
+				ht.push(this.playCallBack.onUpdate, [sc, ap], updateDelay);
 			}
-			if (useComplete && this.playCallBack.onPlayComplete != null)
+			if (useComplete && this.playCallBack.onComplete != null)
 			{
-				ht.push(this.playCallBack.onPlayComplete, [sc, ap], completeDelay);
+				ht.push(this.playCallBack.onComplete, [sc, ap], completeDelay);
 			}
 			if (useAdd && this.playCallBack.onAdd != null)
 			{
@@ -304,6 +411,8 @@
 		public function clone() : AvatarParamData
 		{
 			var temp:AvatarParamData = new AvatarParamData(this.sourcePath, this.type);
+			var _status:String = null;
+			var _apcb:AvatarPlayCallBack = null;
 			temp.id_noCheckValid = this.id;
 			temp.repeat = this.repeat;
 			temp.depth = this.depth;
@@ -314,6 +423,18 @@
 			temp.offsetOnMountY = this.offsetOnMountY;
 			temp.offsetDandaoStartX = this.offsetDandaoStartX;
 			temp.offsetDandaoStartY = this.offsetDandaoStartY;
+			
+			for (_status in this._playCallBackDict)
+			{
+				_apcb = this._playCallBackDict[_status];
+				temp.setPlayCallBack(_status, _apcb.clone());
+			}
+			
+			
+			if (this.statusList != null)
+			{
+				temp.statusList = this.statusList.concat();
+			}
 			if (this.dynamicPosition != null)
 			{
 				temp.dynamicPosition = this.dynamicPosition.clone();
@@ -348,6 +469,12 @@
 		{
 			return apd.hasExecutedCallback = this.hasExecutedCallback && this.sourcePath == apd.sourcePath && this.type == apd.type && this.id == apd.id && this.repeat == apd.repeat && this.depth == apd.depth && this.useType == apd.useType && this.offsetX == apd.offsetX && this.offsetY == apd.offsetY && this.offsetOnMountX == apd.offsetOnMountX && this.offsetOnMountY == apd.offsetOnMountY && this.offsetDandaoStartX == apd.offsetDandaoStartX && this.offsetDandaoStartY == apd.offsetDandaoStartY && (this.dynamicPosition == null && apd.dynamicPosition == null || this.dynamicPosition.equals(apd.dynamicPosition)) && this.sleepTime == apd.sleepTime && this.useSpecilizeXY == apd.useSpecilizeXY && this.status == apd.status && this.angle == apd.angle && this.rotation == apd.rotation && this.clearSameType == apd.clearSameType && useDelay == apd.useDelay;
 		}
+
+		public function get baseClassName():String
+		{
+			return _baseClassName;
+		}
+
 		
 	}
 }

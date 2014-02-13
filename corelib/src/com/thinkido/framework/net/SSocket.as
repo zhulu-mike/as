@@ -190,7 +190,7 @@ package com.thinkido.framework.net
 				var jsonStr:String = _buffer.readUTFBytes(_buffer.bytesAvailable);
 				//Logger.warn(jsonStr);
 				try{
-					_protocol.body = JSON.decode(jsonStr);
+					_protocol.body = com.adobe.serialization.json.JSON.decode(jsonStr);
 					serverMsgArr.push(_protocol);
 				}catch(e:JSONParseError){
 					Logger.warn("socket 以收到" + _protocol.type , {location:e.location , errorID:e.errorID , message:e.message ,name:e.name , text: e.text });
@@ -204,7 +204,7 @@ package com.thinkido.framework.net
 			if (!protocol)
 				return;
 			
-			var dataStr:String = JSON.encode(protocol.body);
+			var dataStr:String = com.adobe.serialization.json.JSON.encode(protocol.body);
 			
 			var sendBytes:ByteArray = new ByteArray();
 			sendBytes.endian = Endian.LITTLE_ENDIAN ;

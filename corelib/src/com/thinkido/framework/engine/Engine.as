@@ -34,8 +34,8 @@
             GlobalConfig.map_small_tem = $map_small_tem;
             GlobalConfig.map_zone_tem = $map_zone_tem;
             GlobalConfig.map_slipcover_tem = $map_slipcover_tem;
-            GlobalConfig.frameRate = $frameRate;
-            GlobalConfig.setpTime = 1000 / $frameRate;
+            GlobalConfig.FRAME_RATE = $frameRate;
+            GlobalConfig.SETP_TIME = 1000 / $frameRate;
             GlobalConfig.decode = $decode;
 			GlobalConfig.useSo = useSo;
             engineReady = true;

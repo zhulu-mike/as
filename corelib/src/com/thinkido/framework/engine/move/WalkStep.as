@@ -63,7 +63,7 @@
                 }
                 return;
             }
-            var stepSpeed:Number = moveData.walk_speed / GlobalConfig.frameRate;
+            var stepSpeed:Number = moveData.walk_speed / GlobalConfig.FRAME_RATE;
             var nowTime:int = SceneRender.nowTime;
             if (moveData.walk_lastTime != nowTime)
             {
@@ -71,7 +71,7 @@
                 moveData.walk_lastTime = nowTime;
                 if (lastTime != 0)
                 {
-                    stepNum = (nowTime - lastTime) / GlobalConfig.setpTime;
+                    stepNum = (nowTime - lastTime) / GlobalConfig.SETP_TIME;
                     stepSpeed = stepSpeed * stepNum;
                 }
             }

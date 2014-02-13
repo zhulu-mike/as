@@ -7,8 +7,8 @@
         public static var map_small_tem:String = "";
         public static var map_zone_tem:String = "";
         public static var map_slipcover_tem:String = "";
-        public static var frameRate:int = 24;
-        public static var setpTime:int = 1000 / frameRate;
+        public static var FRAME_RATE:int = 24;
+        public static var SETP_TIME:int = 1000 / FRAME_RATE;
         public static var decode:Function;
 		/**解析自我加密或者压缩的文件,此方法必须要有返回*/
 		public static var customDecode:Function;
@@ -30,11 +30,20 @@
 		 */		
 		public static var shadowAngle:int = 45;
 
+		public static var version:Function;
+		
         public function GlobalConfig()
         {
             return;
         }
-
+		public static function setGlobalConfig(framerate:int, $decode:Function, $version:Function = null) : void
+		{
+			FRAME_RATE = framerate;
+			SETP_TIME = 1000 / framerate;
+			decode = $decode;
+			version = $version;
+			return;
+		}
         public static function getMapConfigPath(repl:* = "", p:String = "$") : String
         {
             var temp:String = null;

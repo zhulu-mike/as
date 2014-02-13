@@ -1,6 +1,13 @@
 package game.modules.engine.view
 {
+	import com.thinkido.framework.common.events.EventDispatchCenter;
+	import com.thinkido.framework.engine.events.SceneEvent;
+	
+	import flash.events.Event;
+	
+	import game.modules.engine.Engine_ApplicationFacade;
 	import game.modules.engine.model.Engine_MsgSendProxy;
+	
 	import org.puremvc.as3.multicore.interfaces.INotification;
 	import org.puremvc.as3.multicore.patterns.mediator.Mediator;
 
@@ -13,8 +20,15 @@ package game.modules.engine.view
 		public function Engine_EngineMediator(viewComponent:Object)
 		{
 			super(NAME, viewComponent);
+			EventDispatchCenter.getInstance().addEventListener(SceneEvent.INTERACTIVE, onSceneInteractive);
 		}
-
+		
+		protected function onSceneInteractive(event:SceneEvent):void
+		{
+			// TODO Auto-generated method stub
+			sendNotification(Engine_ApplicationFacade.SCENE_INTERACTIVE_EVENT, event);
+		}
+		
 		protected function get mainUI() : Object
 		{
 			return viewComponent as Object;

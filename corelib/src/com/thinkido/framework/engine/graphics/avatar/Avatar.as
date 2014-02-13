@@ -6,7 +6,6 @@
     import com.thinkido.framework.engine.SceneCharacter;
     import com.thinkido.framework.engine.events.SceneEvent;
     import com.thinkido.framework.engine.events.SceneEventAction_status;
-    import com.thinkido.framework.engine.loader.AvatarPartLoader;
     import com.thinkido.framework.engine.staticdata.AvatarPartID;
     import com.thinkido.framework.engine.staticdata.AvatarPartType;
     import com.thinkido.framework.engine.staticdata.CharStatusType;
@@ -39,6 +38,8 @@
         private var _hideAvatarPartTypes:Array;
         private var _hideAvatarPartIds:Array;
         private var avatarParts:Array;
+		public var needSort:Boolean = false;
+
 
         public function Avatar(sc:SceneCharacter)
         {
@@ -75,7 +76,7 @@
                     {
                         if (this.sceneCharacter.type != SceneCharacterType.DUMMY && this.sceneCharacter.type != SceneCharacterType.BAG)
                         {
-                            this.sceneCharacter.loadAvatarPart(this.sceneCharacter.scene.blankAvatarParamData);
+//                            this.sceneCharacter.loadAvatarPart(this.sceneCharacter.scene.blankAvatarParamData);
                         }
                     }
                 }
@@ -124,7 +125,12 @@
 
         public function loadAvatarPart(apd:AvatarParamData = null) : void
         {
-            AvatarPartLoader.loadAvatarPart(this.sceneCharacter, apd);
+//            AvatarPartLoader.loadAvatarPart(this.sceneCharacter, apd);
+			if( apd == null ){
+				return ;
+			}
+			var ap:AvatarPart = AvatarPart.createAvatarPart(this, apd );
+			addAvatarPart(ap);
             return;
         }
 
@@ -215,6 +221,25 @@
             return;
         }
 
+        public function addAvatarPartByApd(apd:AvatarParamData) : AvatarPart
+        {
+			if(apd ==null){
+				return null;
+			}
+			apd = apd.clone();
+			if (apd.clearSameType)
+			{
+				this.removeAvatarPartsByType(apd.type);
+			}
+			this.removeAvatarPartByID(apd.id);
+			var ap:AvatarPart = AvatarPart.createAvatarPart(this, apd);
+			ap.visible = this._hideAvatarPartTypes.indexOf(ap.type) == -1 && this._hideAvatarPartIds.indexOf(ap.id) == -1;
+			ap.updateNow = true;
+			ap.type = apd.type ? apd.type :"" ;
+			this.avatarParts.push(ap);
+			this.needSort = true;
+			return ap ;
+		}
         public function addAvatarPart(ap:AvatarPart, isOverride:Boolean = false) : void
         {
             var tempAp:AvatarPart = null;
@@ -231,7 +256,7 @@
                 tempAp = this.getAvatarPartByID(ap.id);
                 if (tempAp != null)
                 {
-                    this.removeAvatarPart(tempAp, false, false);
+                    this.removeAvatarPart(tempAp, false);
                 }
             }
             ap.visible = this._hideAvatarPartTypes.indexOf(ap.type) == -1;
@@ -250,31 +275,6 @@
         public function sortAvatarParts() : void
         {
             this.avatarParts.sortOn("depth", Array.NUMERIC);
-            return;
-        }
-
-        public function removeAvatarPart(value1:AvatarPart, value2:Boolean = false, value3:Boolean = true) : void
-        {
-            var _loc_4:int = 0;
-            if (value2)
-            {
-                this.removeAvatarPartsByType(value1.type);
-            }
-            else
-            {
-                _loc_4 = this.avatarParts.indexOf(value1);
-                if (_loc_4 == -1)
-                {
-                    return;
-                }
-                value1.onRemove();
-                this.avatarParts.splice(_loc_4, 1);
-                AvatarPart.recycleAvatarPart(value1);
-            }
-            if (value3)
-            {
-                this.updateDefaultAvatar();
-            }
             return;
         }
 
@@ -324,7 +324,32 @@
             return;
         }
 
-        public function removeAllAvatarParts(immediately:Boolean = true) : void
+		public function removeAvatarPart(ap:AvatarPart, clearType:Boolean = false) : void
+		{
+			var _index:int = 0;
+			if (clearType)
+			{
+				this.removeAvatarPartsByType(ap.type);
+			}
+			else
+			{
+				if (ap.id != null && ap.id != "")
+				{
+					SceneCache.removeWaitingAvatar(this.sceneCharacter, ap.id);
+				}
+				_index = avatarParts.indexOf(ap);
+				if (_index == -1)
+				{
+					return;
+				}
+				this.avatarParts.splice(_index, 1);
+				ap.onRemove();
+				AvatarPart.recycleAvatarPart(ap);
+			}
+			return;
+		}
+		
+        public function removeAllAvatarParts() : void
         {
             var ap:AvatarPart = null;
             SceneCache.removeWaitingAvatar(this.sceneCharacter);
@@ -335,10 +360,6 @@
                 AvatarPart.recycleAvatarPart(ap);
             }
             this.avatarParts.length = 0;
-            if (immediately)
-            {
-                this.updateDefaultAvatar();
-            }
             return;
         }
 
@@ -440,7 +461,7 @@
             }
 			var offMountX:int = 0;
 			var offMountY:int = 0;
-			if (this.sceneCharacter.isOnMount || this.sceneCharacter.getAvatarPartsByType(AvatarPartType.MOUNT).length > 0)
+			if (this.sceneCharacter.isOnMount)
 			{
 				var bodys:Array = this.getAvatarPartsByType(AvatarPartType.BODY);
 				if (bodys.length > 0)
@@ -452,7 +473,7 @@
 			}
             for each (ap in this.avatarParts)
             {
-				if (ap.type == AvatarPartType.WEAPON || ap.type == AvatarPartType.WING || ap.type == AvatarPartType.MAGIC || ap.type == AvatarPartType.MAGIC_PASS || (ap.type == AvatarPartType.MAGIC_RING && ap.avatarParamData.id != AvatarPartID.SHADOW)){
+				if (ap.type == AvatarPartType.MAGIC || ap.type == AvatarPartType.MAGIC_PASS || (ap.type == AvatarPartType.MAGIC_RING && ap.avatarParamData.id != AvatarPartID.SHADOW)){
 					ap.offsetOnMountX = offMountX;
 					ap.offsetOnMountY = offMountY;
 				}
@@ -469,7 +490,12 @@
 		public function draw(ibd:IBitmapDrawable) : void
         {
             var ap:AvatarPart = null;
-            for each (ap in this.avatarParts)
+			if (this.needSort)
+			{
+				this.needSort = false;
+				this.avatarParts.sortOn("depth", Array.NUMERIC);
+			}
+			for each (ap in this.avatarParts)
             {
                 ap.draw(ibd);
             }
@@ -547,7 +573,7 @@
         public function dispose() : void
         {
             this.usable = false;
-            this.removeAllAvatarParts(false);
+            this.removeAllAvatarParts();
             this.visible = true;
             this.updateNow = false;
             this._oldData = null;
@@ -558,7 +584,8 @@
             this._isOnMount = false;
             this._hideAvatarPartTypes.length = 0;
             this._hideAvatarPartIds.length = 0;
-            this.avatarParts.length = 0;
+			this.needSort = false;
+			 this.avatarParts.length = 0;
             return;
         }
 

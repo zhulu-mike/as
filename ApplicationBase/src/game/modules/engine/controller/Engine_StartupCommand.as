@@ -1,5 +1,6 @@
 package game.modules.engine.controller
 {
+	import game.config.GameInstance;
 	import game.modules.engine.Engine_ApplicationFacade;
 	import game.modules.engine.model.Engine_MsgReceivedProxy;
 	import game.modules.engine.model.Engine_MsgSendProxy;
@@ -20,7 +21,9 @@ package game.modules.engine.controller
         {
             facade.registerProxy(new Engine_MsgSendProxy());
             facade.registerProxy(new Engine_MsgReceivedProxy());
+			facade.registerMediator(new Engine_EngineMediator(GameInstance.scene));
 			facade.registerCommand(Engine_ApplicationFacade.INIT_ENGINE, Engine_InitCommand);
+			facade.registerCommand(Engine_ApplicationFacade.SCENE_INTERACTIVE_EVENT, Engine_sceneInteractiveCommand);
 			
 			facade.sendNotification(Engine_ApplicationFacade.INIT_ENGINE);
             return;
