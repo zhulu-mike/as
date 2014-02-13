@@ -70,6 +70,7 @@
 				{
 					_angle = 5;
 				}
+				key = className + _angle;
 				_apd = this._aps.getAvatarPartData(_angle, frame);
 				if (_apd != null)
 				{
@@ -79,6 +80,10 @@
 					_matrix.scale(-1, 1);
 					_matrix.translate(_apd.sx + _w, -_apd.sy);
 					_bitmapdata = new BitmapData(_w, _h, true, 0);
+					if (this._dir07654[key] == null)
+					{
+						_dir07654[key] = RslLoaderManager.getInstance(key,0,0) as BitmapData;
+					}
 					_bitmapdata.draw(this._dir07654[key], _matrix, null, null, new Rectangle(0, 0, _w, _h));
 					this._dir123Dict[_key] = _bitmapdata;
 					return this._dir123Dict[_key] as BitmapData;
