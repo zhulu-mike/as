@@ -1,6 +1,5 @@
 package
 {
-	import com.thinkido.framework.engine.staticdata.CharStatusType;
 	import com.thinkido.framework.manager.SharedObjectManager;
 	
 	import flash.display.Sprite;
@@ -25,6 +24,8 @@ package
 	import lm.mui.interfaces.IResize;
 	import lm.mui.manager.DragManager;
 	import lm.mui.manager.ToolTipsManager;
+	
+	import org.osflash.thunderbolt.Logger;
 	
 	public class ApplicationBase extends Sprite implements IResize
 	{
@@ -87,7 +88,7 @@ package
 			ResizeManager.init(stage);
 			ResizeManager.registerResize(this);
 			NetWorkManager.init(stage);
-//			Logger.isOpen = false;
+			Logger.isOpen = false;
 		}
 		
 		private function startup():void
