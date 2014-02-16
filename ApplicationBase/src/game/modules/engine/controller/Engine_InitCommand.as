@@ -33,7 +33,7 @@ package game.modules.engine.controller
 				GameConfig.baseFileUrl+ResPathManager.MAP_SMALL_IMAGE,
 				GameConfig.baseFileUrl+ResPathManager.MAP_ZONE_DIR,
 				GameConfig.baseFileUrl+ResPathManager.AVATAR_MAP_SLIPCOVER+ResPathManager.eName_SWF,
-				GameConfig.frameRate,GameConfig.decode,GameConfig.isDebug);
+				GameConfig.frameRate,GameConfig.decode,!GameConfig.isDebug);
 			//创建主场景
 			GameInstance.scene = new Scene(GameConfig.sceneWidth,GameConfig.sceneHeight);
 			LayerManager.sceneLayer.addChildAt(GameInstance.scene, 0);
@@ -45,6 +45,8 @@ package game.modules.engine.controller
 			GameInstance.scene.mainChar.setHeadFaceNickName("郑怡");
 			GameInstance.scene.mainChar.setHeadFaceBar(100,100);;
 			GameInstance.scene.reSize(GameInstance.stage.stageWidth, GameInstance.stage.stageHeight);
+			
+			
 			return;
 		}
 	}

@@ -14,6 +14,7 @@ package com.thinkido.framework.engine.vo.avatar
 		
 		override public function destroy() : void
 		{
+			trace('dispose');
 			if (this.aid != null)
 			{
 				this.aid.dispose();

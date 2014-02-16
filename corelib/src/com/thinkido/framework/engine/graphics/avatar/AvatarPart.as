@@ -22,8 +22,8 @@
     import com.thinkido.framework.engine.vo.avatar.AvatarPartStatus;
     import com.thinkido.framework.engine.vo.avatar.AvatarPlayCallBack;
     import com.thinkido.framework.engine.vo.avatar.AvatarPlayCondition;
-    import com.thinkido.framework.engine.vo.avatar.DynamicPosition.IDynamicPosition;
     import com.thinkido.framework.engine.vo.avatar.XmlImgData;
+    import com.thinkido.framework.engine.vo.avatar.DynamicPosition.IDynamicPosition;
     import com.thinkido.framework.manager.TimerManager;
     
     import flash.display.BitmapData;
@@ -280,7 +280,10 @@
             if ($status != null && $status != this._currentStatus)
             {
                 if( type == AvatarPartType.MOUNT || type == AvatarPartType.BODY || type == AvatarPartType.WEAPON  ){
-					this.setStatus( $status );
+					if ($status != CharStatusType.JUMP)
+						this.setStatus( $status );
+					else
+						this.setStatus(CharStatusType.STAND);
 				}else if( _currentStatus != CharStatusType.STAND ){
 					setStatus( CharStatusType.STAND );
 				}

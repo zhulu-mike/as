@@ -14,6 +14,7 @@ package
 	import game.config.GameInstance;
 	import game.events.PipeEvent;
 	import game.manager.FacadeManager;
+	import game.manager.GameManager;
 	import game.manager.ImportManager;
 	import game.manager.LayerManager;
 	import game.manager.NetWorkManager;
@@ -87,6 +88,7 @@ package
 			ResizeManager.init(stage);
 			ResizeManager.registerResize(this);
 			NetWorkManager.init(stage);
+			GameManager.init();
 //			Logger.isOpen = false;
 		}
 		

@@ -26,7 +26,7 @@
 		 * @param $map_slipcover_tem
 		 * @param $frameRate
 		 * @param $decode 解码方法
-		 * 
+		 * @param useSo 是否使用so管理文件
 		 */		
         public static function initEngine($map_config_tem:String = "", $map_small_tem:String = "", $map_zone_tem:String = "", $map_slipcover_tem:String = "", $frameRate:int = 24, $decode:Function = null, useSo:Boolean=false) : void
         {

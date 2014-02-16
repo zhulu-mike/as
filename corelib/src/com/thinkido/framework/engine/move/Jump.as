@@ -42,7 +42,7 @@
             var mapTile:MapTile;
             var evt:SceneEvent;
             var p1:Point;
-            var jumpHight:Number;
+            var jumpHight:Number = 0;
             var jumpSpeed:Number;
             var tm:TweenMax;
             var hasSolid:Boolean;
@@ -149,7 +149,7 @@
                 p0 = new Point($sc.specilize_x, $sc.specilize_y);
                 angle = ZMath.getTowPointsAngle(p0, p1);
                 jumpSpeed = $speed * 1.5;
-                jumpHight;
+                jumpHight = 300;
             }
             else
             {
@@ -161,7 +161,7 @@
                 $sc.moveData.isJumping = true;
                 $sc.moveData.on2Jumping = false;
                 jumpSpeed = $speed;
-                jumpHight;
+                jumpHight = 300;
             }
             angle = ZMath.getNearAngel(angle - 90);
             $sc.playTo(CharStatusType.JUMP, CharAngleType["ANGEL_" + angle], -1, new AvatarPlayCondition(true, true));

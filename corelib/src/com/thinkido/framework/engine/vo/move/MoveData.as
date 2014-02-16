@@ -17,7 +17,7 @@
         public var walk_lastTime:int = 0;
         public var walk_pathCutter:PathCutter;
         public var walk_MoveCallBack:MoveCallBack = null;
-        public var jump_maxDis:Number = 625;
+        public var jump_maxDis:Number = 200;
 		/*** 自动寻路 ,false:用于显示鼠标,true:自动寻路不显示 */		
 		public var walk_auto:Boolean = false ;
         public var jump_targetP:Point;

@@ -1,9 +1,6 @@
 ﻿package com.thinkido.framework.engine.graphics.layers
 {
     
-    import br.com.stimuli.loading.BulkLoader;
-    import br.com.stimuli.loading.loadingtypes.LoadingItem;
-    
     import com.thinkido.framework.common.handler.HandlerThread;
     import com.thinkido.framework.common.timer.vo.TimerData;
     import com.thinkido.framework.common.utils.ZMath;
@@ -16,7 +13,6 @@
     import com.thinkido.framework.engine.vo.map.MapZone;
     import com.thinkido.framework.manager.SharedObjectManager;
     import com.thinkido.framework.manager.TimerManager;
-    import com.thinkido.framework.manager.loader.LoaderManager;
     import com.thinkido.framework.manager.loader.vo.LoadData;
     import com.thinkido.framework.utils.SystemUtil;
     
@@ -25,13 +21,13 @@
     import flash.display.Loader;
     import flash.display.LoaderInfo;
     import flash.display.Sprite;
-    import flash.events.ErrorEvent;
     import flash.events.Event;
     import flash.geom.Point;
     import flash.net.URLLoader;
     import flash.utils.ByteArray;
     
-    import org.osflash.thunderbolt.Logger;
+    import br.com.stimuli.loading.BulkLoader;
+    import br.com.stimuli.loading.loadingtypes.LoadingItem;
 
     public class SceneMapLayer extends Sprite
     {

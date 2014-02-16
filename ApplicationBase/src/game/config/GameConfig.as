@@ -9,7 +9,7 @@ package game.config
 		/**
 		 * 帧频
 		 */		
-		public static var frameRate:int = 30;
+		public static var frameRate:int = 60;
 		
 		/**
 		 * 基本资源路径

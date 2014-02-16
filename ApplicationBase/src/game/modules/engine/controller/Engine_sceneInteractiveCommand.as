@@ -26,7 +26,8 @@ package game.modules.engine.controller
 			switch (action)
 			{
 				case SceneEventAction_interactive.MOUSE_DOWN:
-					GameInstance.scene.mainChar.walk(new Point((data[2] as MapTile).tile_x,(data[2] as MapTile).tile_y));
+					GameInstance.scene.mainChar.walk(new Point((data[2] as MapTile).tile_x,(data[2] as MapTile).tile_y),300);
+//					
 					break;
 			}
 		}
