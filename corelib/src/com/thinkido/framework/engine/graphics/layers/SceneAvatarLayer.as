@@ -203,11 +203,11 @@
         private function clear(boundsArr:Array) : void
         {
             var bound:Bounds = null;
-            var rec:Rectangle = null;
+//            var rec:Rectangle = null;
             for each (bound in boundsArr)
             {
-                rec = Bounds.toRectangle(bound);
-                this.copyImage(null, 0, 0, rec.width, rec.height, rec.x, rec.y);
+//                rec = Bounds.toRectangle(bound);
+                this.copyImage(null, 0, 0, bound.right-bound.left, bound.bottom-bound.top, bound.left, bound.top);
             }
             return;
         }
@@ -226,6 +226,8 @@
             var yp:int = 0;
             var tempBmd:BitmapData = null;
             var color:uint = 0;
+			var rect:Rectangle = new Rectangle();
+			var point:Point = new Point();
             if (_px < 0)//如果图像的场景X<0
             {
                 if (-_px > _width)//如果x+图像宽度还<0则不处理，在视野外了
@@ -272,11 +274,11 @@
             var cut_y_h:int = floor((_py + _height) / MAX_AVATARBD_HEIGHT);
             if (left_X_W == 0)//图像刚好全部处于图像块中时，最大占用坐标减1
             {
-                cut_x_w = cut_x_w - 1;
+                cut_x_w--;
             }
             if (left_Y_H == 0)
             {
-                cut_y_h = cut_y_h - 1;
+                cut_y_h--;
             }
             _loc_20 = 0;
             tempY = cut_y;
@@ -300,7 +302,7 @@
                 {
                     rh = MAX_AVATARBD_HEIGHT;//否则取整个图像块的高度
                 }
-                _loc_20 = _loc_20 + rh;//记录下已经使用的高度
+                _loc_20 += rh;//记录下已经使用的高度
                 yp = tempY == cut_y ? (left_Y) : (0);//如果是第一个图像块，y坐标直接取lefty,其他的取0
                 _loc_19 = 0;
                 _loc_17 = cut_x;
@@ -324,16 +326,19 @@
                     {
                         rw = MAX_AVATARBD_WIDTH;
                     }
-                    _loc_19 = _loc_19 + rw;
+                    _loc_19 +=  rw;
                     xp = _loc_17 == cut_x ? (left_X) : (0);
                     tempBmd = this.getAndCreatAvatarBD(_loc_17, tempY);//取图像块
                     if (bmd != null)
                     {
-                        tempBmd.copyPixels(bmd, new Rectangle(rx, ry, rw, rh), new Point(xp, yp), null, null, true);
+						point.x = xp, point.y = yp;
+						rect.x = rx, rect.y = ry, rect.width = rw, rect.height = rh;
+                        tempBmd.copyPixels(bmd, rect, point, null, null, true);
                     }
                     else
                     {
-                        tempBmd.fillRect(new Rectangle(xp, yp, rw, rh), color);
+						rect.x = xp, rect.y = yp, rect.width = rw, rect.height = rh;
+                        tempBmd.fillRect(rect, color);
                     }
                     _loc_17++;
                 }
