@@ -78,7 +78,7 @@ package com.leman
 				tFile = actionFolders[i];
 				if (tFile.isDirectory && actionTypeArr.indexOf(tFile.name) != -1)
 				{
-					actionStr += (tFile.name)+",";
+					actionStr += ("'"+tFile.name+"'"+",");
 				}
 			}
 			if (actionStr.length > 0)
