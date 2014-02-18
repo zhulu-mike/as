@@ -42,7 +42,7 @@
             var mapTile:MapTile;
             var evt:SceneEvent;
             var p1:Point;
-            var jumpHight:Number = 0;
+                var jumpHight:Number = 0;
             var jumpSpeed:Number;
             var tm:TweenMax;
             var hasSolid:Boolean;
@@ -74,6 +74,10 @@
             p1 = new Point(mapTile.pixel_x, mapTile.pixel_y);
             var angle:int = ZMath.getTowPointsAngle(p0, p1);
             var distance:int = Point.distance(p0, p1);
+			if ($maxDis == -1)
+			{
+				$maxDis = $sc.moveData.jump_maxDis;
+			}
             if ($sc.isMainChar())
             {
                 mapTile = SceneUtil.getLineMapTile(fromTile, mapTile, $maxDis);
@@ -91,6 +95,10 @@
                 evt = new SceneEvent(SceneEvent.WALK, SceneEventAction_walk.SEND_JUMP_PATH, [$sc, fromTile, mapTile]);
                 EventDispatchCenter.getInstance().dispatchEvent(evt);
             }
+			if ($sc.isJumping())
+			{
+				TweenMax.killTweensOf($sc);
+			}
             $sc.moveData.clear();
             if ($is2Jump)
             {
@@ -100,10 +108,6 @@
             if ($speed == -1)
             {
                 $speed = $sc.moveData.jump_speed;
-            }
-            if ($maxDis == -1)
-            {
-                $maxDis = $sc.moveData.jump_maxDis;
             }
             $sc.moveData.jump_targetP = $tileP;
             $sc.moveData.jump_MoveCallBack = $jump_MoveCallBack;
@@ -165,13 +169,9 @@
             }
             angle = ZMath.getNearAngel(angle - 90);
             $sc.playTo(CharStatusType.JUMP, CharAngleType["ANGEL_" + angle], -1, new AvatarPlayCondition(true, true));
-            var middleX:* = (p0.x + p1.x) * 0.5;
-            var middleY:* = (p0.y + p1.y) * 0.5 - jumpHight;
-            var time:* = Math.max(distance / jumpSpeed, 0.5);
-            if ($sc.isJumping())
-            {
-                TweenMax.killTweensOf($sc);
-            }
+            var middleX:Number = (p0.x + p1.x) >> 1;
+            var middleY:Number = ((p0.y + p1.y) >> 1) - jumpHight;
+            var time:Number = Math.max(distance / jumpSpeed, 0.5);
             tm = TweenMax.to($sc, time, {pixel_x:p1.x, pixel_y:p1.y, bezier:[{specilize_x:middleX, specilize_y:middleY}, {specilize_x:p1.x, specilize_y:p1.y}], ease:Linear.easeIn, onUpdate:function () : void
             {
                 if ($sc.usable == false)

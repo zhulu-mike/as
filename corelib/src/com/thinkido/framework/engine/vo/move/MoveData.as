@@ -17,14 +17,14 @@
         public var walk_lastTime:int = 0;
         public var walk_pathCutter:PathCutter;
         public var walk_MoveCallBack:MoveCallBack = null;
-        public var jump_maxDis:Number = 200;
+        public var jump_maxDis:Number = 300;
 		/*** 自动寻路 ,false:用于显示鼠标,true:自动寻路不显示 */		
 		public var walk_auto:Boolean = false ;
         public var jump_targetP:Point;
         public var jump_MoveCallBack:MoveCallBack = null;
         public var isJumping:Boolean;
         public var on2Jumping:Boolean;
-        private static const J:Number = 450;
+        private static const J:Number = 600;
         private static const crossX:Number = 320;
         private static const crossY:Number = 350;
         private static const K:Number = -41142.9;

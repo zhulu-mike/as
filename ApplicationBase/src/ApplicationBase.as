@@ -1,6 +1,8 @@
 package
 {
+	import com.thinkido.framework.common.Global;
 	import com.thinkido.framework.manager.SharedObjectManager;
+	import com.thinkido.framework.manager.keyBoard.KeyBoardManager;
 	
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
@@ -89,12 +91,11 @@ package
 			ResizeManager.init(stage);
 			ResizeManager.registerResize(this);
 			NetWorkManager.init(stage);
-<<<<<<< HEAD
+			Global.instance.initStage(stage);
+			KeyBoardManager.instance.start();
 			GameManager.init();
 //			Logger.isOpen = false;
-=======
 			Logger.isOpen = false;
->>>>>>> 14e09aaa6082961360fade11cea9638efd32014c
 		}
 		
 		private function startup():void

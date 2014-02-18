@@ -29,8 +29,8 @@ package game.manager
 				case Keyboard.SPACE:
 					var mousex:Number = GameInstance.scene.mouseX;
 					var mousey:Number = GameInstance.scene.mouseY;
-					var p:Point = new Point(mousex/SceneConfig.TILE_WIDTH, mousey/SceneConfig.TILE_HEIGHT);
-					GameInstance.scene.mainChar.jump(p);
+					var p:Point = new Point(int(mousex/SceneConfig.TILE_WIDTH), int(mousey/SceneConfig.TILE_HEIGHT));
+					GameInstance.scene.mainChar.jump(p,-1,-1,null,true);
 					break;
 			}
 		}
