@@ -2,7 +2,7 @@
 <s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
 					   xmlns:s="library://ns.adobe.com/flex/spark"
 					   xmlns:mx="library://ns.adobe.com/flex/mx"
-					   width="654" height="700" creationComplete="windowedapplication1_creationCompleteHandler(event)">
+					   width="654" height="700" addedToStage="windowedapplication1_creationCompleteHandler(event)">
 	
 	<fx:Script>
 		<![CDATA[
@@ -22,55 +22,192 @@
 			private var png:PNGEncoder = new PNGEncoder();
 			private var fileStream:FileStream = new FileStream();
 			private var _baseUrl:String = "";
+			private var swfs:Array = [];
+			private var currentVO:FileVO;
 			
 			protected function browseFile(event:MouseEvent):void
 			{
 				// TODO Auto-generated method stub
-				_file.browse(_fileFilter);
+//				_file.browse(_fileFilter);
+				_file.browseForDirectory("选择一个目录");
 				_file.addEventListener(Event.SELECT, onSelect);
 			}
 			
 			private function onSelect(event:Event):void
 			{
+				_index = 0;
+				swfs.length = 0;
 				_file.removeEventListener(Event.SELECT, onSelect);
-				_file.load();
-				_file.addEventListener(Event.COMPLETE, onComplete);
+				createFiles(_file);
+//				_file.load();
+//				_file.addEventListener(Event.COMPLETE, onComplete);
+				if (swfs.length < 1)
+				{
+					Alert.show("目录下面没有swf文件");
+					return;
+				}
+				maskShape.visible = true;
+				tips.text = "正在处理第"+(_index+1)+"/"+swfs.length+"个文件："+swfs[_index].f.name;
+				callLater(makeNewSwf);
+			}
+			
+			private function createFiles(file:File):void
+			{
+				var files:Array = file.getDirectoryListing();
+				var f:File, vo:FileVO;
+				for each (f in files)
+				{
+					if (f.isDirectory)
+					{
+						createFiles(f);
+					}else if (f.extension.toLocaleLowerCase() == "swf")
+					{
+						vo = new FileVO();
+						vo.f = f;
+						swfs.push(vo);
+					}
+				}
+			}
+			
+			private function makeNewSwf():void
+			{
+				if (swfs.length <= _index)
+				{
+					Alert.show("操作完毕");
+					maskShape.visible = false;
+					return;
+				}
+				currentVO = swfs[_index];
+				currentVO.f.addEventListener(Event.COMPLETE, onComplete);
+				currentVO.f.load();
 			}
 			
 			private function onComplete(event:Event):void
 			{
-				_file.removeEventListener(Event.COMPLETE, onComplete);
+				event.currentTarget.removeEventListener(Event.COMPLETE, onComplete);
 				var byte:ByteArray = new ByteArray();
-				_file.data.readBytes(byte);
-				_classDic = GetSwfAllPicture.getSWFImages(byte);
-//				_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadSwfComplete);
-//				_loaderContext = new LoaderContext();
-//				_loaderContext.allowCodeImport = true;
-//				_loader.loadBytes(_file.data, _loaderContext);
-				loadSwfComplete(null);
+				currentVO.f.data.readBytes(byte);
+//				currentVO.classes = SWFClassHelper.getSWFClasses(byte);
+				_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadSwfComplete);
+				_loaderContext = new LoaderContext();
+				_loaderContext.allowCodeImport = true;
+				_loader.loadBytes(currentVO.f.data, _loaderContext);
 			}
 			
 			private function loadSwfComplete(event:Event):void
 			{
-//				_loader.contentLoaderInfo.removeEventListener(Event.COMPLETE, loadSwfComplete);
-				_listData.length = 0;
-				var len:int = _classDic.length, i:int = 0, tempBitmap:BitmapData, tempIns:*;
-				var trans:Boolean;
-				for (;i<len;i++)
+				_index++;
+				_loader.contentLoaderInfo.removeEventListener(Event.COMPLETE, loadSwfComplete);
+				var mainName:String = currentVO.f.name;
+				currentVO.name = mainName = mainName.substring(0,mainName.lastIndexOf("."));
+				var cl:Class = _loader.contentLoaderInfo.applicationDomain.getDefinition(mainName) as Class;
+				if (cl)
 				{
-					if (_classDic[i].type == 36)
-						trans = true;
-					else
-						trans = false;
-					tempBitmap = new BitmapData(_classDic[i].width, _classDic[i].height, trans, 0x000000);
-					setColor(tempBitmap, _classDic[i].data, _classDic[i].width, _classDic[i].height, _classDic[i].type);
-					if (tempBitmap != null)
+					currentVO.xml = cl.X_M_L as XML;
+					var ss:XMLList = currentVO.xml.s;
+					var action:XML, avo:ActionVO;
+					for each (action in ss)
 					{
-						_listData.push(new ItemVO(tempBitmap, true, _classDic[i].type));
+						avo = new ActionVO();
+						avo.name = action.@k;
+						avo.xml = action;
+						avo.directions = getDirections(action);
+						currentVO.actions.push(avo);
+						currentVO.actionStr += ("'"+avo.name+"'"+",");
+					}
+					if (currentVO.actionStr.length > 0)
+						currentVO.actionStr = currentVO.actionStr.substr(0,currentVO.actionStr.length-1);
+				}
+				if (currentVO.actions.length > 0){
+					callLater(createActionsFile);
+				}else{
+					if (swfs.length > _index)
+						tips.text = "正在处理第"+(_index+1)+"/"+swfs.length+"个文件："+swfs[_index].f.name;
+					callLater(makeNewSwf);
+				}
+			}
+			
+			private function createActionsFile():void
+			{
+				var avo:ActionVO = currentVO.actions.shift();
+				var saveF:File = File.desktopDirectory;
+				saveF = saveF.resolvePath("outcome2");
+				var bmd:BitmapData, dvo:DirectionVO;
+				var i:int = 0, len:int, h:Number, dbmd:BitmapData;
+				var actName:String = currentVO.name + "." + avo.name;;
+				var cl:Class = _loader.contentLoaderInfo.applicationDomain.getDefinition(actName) as Class;
+				if (cl)
+				{
+					bmd = new cl() as BitmapData;
+					len = avo.directions.length;
+					h = bmd.height / len;
+					for (i=0;i<len;i++)
+					{
+						dbmd = new BitmapData(bmd.width, h,true,0);
+						dbmd.copyPixels(bmd,new Rectangle(0,h*i,bmd.width,h),new Point());
+						dvo = new DirectionVO();
+						dvo.dir = avo.directions[i];
+						dvo.bmd = dbmd;
+						avo.bitmapDatas.push(dvo);
+						fileStream.open(new File(saveF.url+"/"+currentVO.name+"/"+avo.name+"/"+avo.name+dvo.dir+".png"),FileMode.WRITE);
+						fileStream.writeBytes(png.encode(dbmd));
+						fileStream.close();
+					}
+					var str:String = '﻿package ' + this.currentVO.name +
+						'\n{'+
+						'\n    import flash.display.MovieClip;'+
+						'\n    import flash.system.Security;'+
+						'\n'+
+						'\n    public class '+ avo.name +' extends MovieClip'+
+						'\n    {'+
+						'\n        public static const STATUS_LIST:Array = ['+currentVO.actionStr+'];'+
+						'\n        public static const X_M_L:XML = '+avo.xml+';'+
+						'\n        public function '+ avo.name +'()'+
+						'\n        {'+
+						'\n            addFrameScript(0, frame1);'+
+						'\n            return;'+
+						'\n        }'+
+						'\n'+
+						'\n        function frame1()'+
+						'\n        {'+
+						'\n            try'+
+						'\n            {'+
+						'\n                Security.allowDomain("*");'+
+						'\n            }'+
+						'\n            catch (e:Error)'+
+						'\n            {'+
+						'\n            }'+
+						'\n            return;'+
+						'\n        }'+
+						'\n    }'+
+						'\n}' ;
+					fileStream.open(new File(saveF.url+"/"+currentVO.name+"/"+avo.name+".as"),FileMode.WRITE);
+					fileStream.writeUTFBytes(str);
+					fileStream.close();
+				}
+				if (currentVO.actions.length > 0){
+					callLater(createActionsFile);
+				}else{
+					if (swfs.length > _index)
+						tips.text = "正在处理第"+(_index+1)+"/"+swfs.length+"个文件："+swfs[_index].f.name;
+					callLater(makeNewSwf);
+				}
+			}
+			
+			private function getDirections(xml:XML):Array
+			{
+				var ps:XMLList = xml.p, p:XML;
+				var dirs:Array = [];
+				for each (p in ps)
+				{
+					if (dirs.indexOf(int(p.@a)) < 0)
+					{
+						dirs.push(int(p.@a));
 					}
 				}
-				list.dataProvider = new ArrayCollection(_listData);
+				return dirs;
 			}
+			
 			
 			/** */
 			private function setColor(bitmap:BitmapData, data:ByteArray, w:int, h:int, type:int):void
@@ -166,7 +303,7 @@
 				tips.y = (stage.stageHeight - tips.height) * 0.5;
 			}
 			
-			protected function windowedapplication1_creationCompleteHandler(event:FlexEvent):void
+			protected function windowedapplication1_creationCompleteHandler(event:Event):void
 			{
 				// TODO Auto-generated method stub
 				maskShape_resizeHandler(null);
@@ -178,7 +315,7 @@
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
-	<s:Button x="21" y="20" label="浏览" toolTip="打开一个swf文件" click="browseFile(event)"/>
+	<s:Button x="21" y="20" label="浏览" toolTip="打开swf文件目录" click="browseFile(event)"/>
 	<s:Group x="21" y="85" width="611" height="525">
 		<mx:TileList x="10" y="10" width="579" height="505" itemRenderer="PictureItem" id="list" selectable="false" columnWidth="110" rowHeight="128">
 		</mx:TileList>
@@ -187,6 +324,6 @@
 	<s:Button x="98" y="59" label="全取消" click="selectAll(false)"/>
 	<s:Button x="220" y="59" label="导出" click="export(event)"/>
 	<s:Group width="100%" height="100%" id="maskShape" visible="false" resize="maskShape_resizeHandler(event)">
-		<s:Label text="保存中......" id="tips" width="60"/>
+		<s:Label text="保存中......" id="tips" width="120"/>
 	</s:Group>
 </s:WindowedApplication>

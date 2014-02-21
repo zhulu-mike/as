@@ -1,43 +1,32 @@
-﻿package 
+package
 {
 	import flash.utils.ByteArray;
-	import flash.utils.Dictionary;
 	import flash.utils.Endian;
 
-	/**
-	* swf信息工具类
-	*/ 
-	public class GetSwfAllPicture
+	public class SWFClassHelper
 	{
 		private static var bytes:ByteArray;
-		private static var imagesArr:Array ;
-		private static var classNames:Dictionary = new Dictionary();
+		private static var classNames:Array = [];
 		private static var tagNum:int ;
 		
 		/**
-		* 获取一个swf中的类
-		* @param swfBytes
-		* @return 
-		* 
-		*/  
-		public static function getSWFImages(swfBytes:ByteArray):Array
+		 * 获取一个swf中的类
+		 * @param swfBytes
+		 * @return 
+		 * 
+		 */  
+		public static function getSWFClasses(swfBytes:ByteArray):Array
 		{
-			var k:String;
-			for (k in classNames)
-			{
-				classNames[k] = null;
-				delete classNames[k];
-			}
 			tagNum = 0 ;
-			imagesArr = [];
+			classNames = [];
 			
 			bytes = new ByteArray();
 			bytes.writeBytes(swfBytes);
 			bytes.position = 0;
 			bytes.endian = Endian.LITTLE_ENDIAN ;
-
+			
 			var compressModal:String ;
-
+			
 			compressModal = bytes.readUTFBytes(3);
 			if (compressModal != "FWS" && compressModal != "CWS") {
 				throw new Error("不能识别的SWF文件格式");
@@ -46,29 +35,21 @@
 			bytes.readUnsignedInt();
 			bytes.readBytes(bytes);
 			bytes.length = bytes.length - 8;
-
+			
 			if (compressModal == "CWS") {
 				bytes.uncompress();
 			}
 			bytes.position=13;
-
+			
 			var tag:int;
 			var tagFlag:int;
 			var tagLength:int;
-
+			
 			var tagBytes:ByteArray ;
 			while (bytes.bytesAvailable) {
 				readSWFTag(bytes);
 			}
-			var arr:Array = imagesArr.splice(0,imagesArr.length), temp:Object;
-			for each (temp in arr)
-			{
-				if (classNames[temp.id])
-				{
-					temp.className = classNames[temp.id];
-				}
-			}
-			return classNames;
+			return classNames.splice(0,classNames.length);
 		}
 		
 		private static function readSWFTag(tagBytes:ByteArray):void 
@@ -81,30 +62,7 @@
 				tagLength = tagBytes.readInt();
 			}
 			var tagContent:ByteArray;
-			if (tagFlag == 36) {//TAG_DEFINE_BITS_LOSSLESS2
-				tagContent =new ByteArray () ;
-				tagContent.endian = Endian.LITTLE_ENDIAN;
-				if (tagLength != 0) {
-					tagBytes.readBytes(tagContent,0,tagLength);
-				}
-				readDefineBitsLossless2(tagLength, tagContent);
-			} else if (tagFlag == 20) {//TAG_DEFINE_BITS_LOSSLESS
-				tagContent = new ByteArray () ;
-				tagContent.endian = Endian.LITTLE_ENDIAN;
-				if (tagLength != 0) {
-					tagBytes.readBytes(tagContent,0,tagLength);
-				}
-				
-				readDefineBitsLossless(tagLength, tagContent);
-			}else if (tagFlag == 35) {//TAG_DEFINE_BITS_LOSSLESS
-				tagContent = new ByteArray () ;
-				tagContent.endian = Endian.LITTLE_ENDIAN;
-				if (tagLength != 0) {
-					tagBytes.readBytes(tagContent,0,tagLength);
-				}
-				
-				readDefineBitsJPEG3(tagLength, tagContent);
-			} else if (tagFlag == 76)//类名
+			if (tagFlag == 76)//类名
 			{
 				tagContent = new ByteArray () ;
 				tagContent.endian = Endian.LITTLE_ENDIAN;
@@ -121,10 +79,10 @@
 		public static function readDefineBitsLossless2(length:int, input:ByteArray):ByteArray
 		{
 			
-//			var tag:int=input.readUnsignedShort();
-//			input.position -= 2;
-//			
-//			var length:uint = input;
+			//			var tag:int=input.readUnsignedShort();
+			//			input.position -= 2;
+			//			
+			//			var length:uint = input;
 			trace(input.position);
 			var characterId:uint = input.readUnsignedShort();
 			var bitmapFormat:uint = input.readUnsignedByte();
@@ -134,39 +92,38 @@
 			var vo:Object = {width:bitmapWidth, height:bitmapHeight, type:36,id:characterId};
 			if (bitmapFormat == 3) {
 				var colorTableSize:uint = input.readUnsignedByte();
-//				if (context.needsBitmapData) {
-					var bytes:ByteArray = new ByteArray();
-					if ((length - 8) > 0) {
-						input.readBytes(bytes, length - 8);
-						bytes.uncompress();
-					}
-					var table:Array = [];
-					if (table.length != colorTableSize) {
-						table.length = colorTableSize;
-					}
-					for (var i:uint = 0; i < colorTableSize; ++i) {
-//						table[i] = readRGBA(bytes);
-					}
-					bytes.readBytes(ret);
-					bytes.length = 0;
-//				}
-//				else {
-//					input.skip(length - 8);
-//				}
+				//				if (context.needsBitmapData) {
+				var bytes:ByteArray = new ByteArray();
+				if ((length - 8) > 0) {
+					input.readBytes(bytes, length - 8);
+					bytes.uncompress();
+				}
+				var table:Array = [];
+				if (table.length != colorTableSize) {
+					table.length = colorTableSize;
+				}
+				for (var i:uint = 0; i < colorTableSize; ++i) {
+					//						table[i] = readRGBA(bytes);
+				}
+				bytes.readBytes(ret);
+				bytes.length = 0;
+				//				}
+				//				else {
+				//					input.skip(length - 8);
+				//				}
 			}
 			else {
-//				if (context.needsBitmapData) {
-					if ((length - 7) > 0) {
-						input.readBytes(ret, 0, length - 7);
-						ret.uncompress();
-					}
-//				}
-//				else {
-//					input.skip(length - 7);
-//				}
+				//				if (context.needsBitmapData) {
+				if ((length - 7) > 0) {
+					input.readBytes(ret, 0, length - 7);
+					ret.uncompress();
+				}
+				//				}
+				//				else {
+				//					input.skip(length - 7);
+				//				}
 			}
 			vo.data = ret;
-			imagesArr.push(vo);
 			return ret;
 		}
 		
@@ -201,7 +158,6 @@
 					input.readBytes(ret, 0, length - 7);
 					ret.uncompress();
 					vo.data = ret;
-					imagesArr.push(vo);
 				}
 			}
 			return ret;
@@ -215,17 +171,13 @@
 			var alphaOffset:uint = input.readUnsignedInt();
 			var jpegData:ByteArray = new ByteArray();
 			var bitmapAlphaData:ByteArray = new ByteArray();
-				if (alphaOffset > 0) {
-					input.readBytes(jpegData, 0, alphaOffset);
-					var len:int = jpegData.bytesAvailable / 8, i:int = 0;
-					for (;i<len;i++)
-					{
-						trace(jpegData.readUnsignedByte());
-					}
-				}
-				if (((length - 6) - alphaOffset) > 0) {
-					input.readBytes(bitmapAlphaData, 0, (length - 6) - alphaOffset);
-				}
+			if (alphaOffset > 0) {
+				input.readBytes(jpegData, 0, alphaOffset);
+				var len:int = jpegData.bytesAvailable / 8, i:int = 0;
+			}
+			if (((length - 6) - alphaOffset) > 0) {
+				input.readBytes(bitmapAlphaData, 0, (length - 6) - alphaOffset);
+			}
 			return null;
 		}
 		
@@ -237,8 +189,8 @@
 			while (count < readLength) {    
 				objID = readUI16(tagBytes);    
 				name = readSwfString(tagBytes); 
-
-				classNames[objID] = name;
+				
+				classNames.push(name);
 				count++;
 				tagNum++
 				if(tagNum>400){
@@ -246,7 +198,7 @@
 				}
 			}
 		}
-
+		
 		private static function readSwfString(tagBytes:ByteArray):String {
 			var nameBytes:ByteArray;
 			var length:int = 1;
