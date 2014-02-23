@@ -238,6 +238,7 @@
 			ap.type = apd.type ? apd.type :"" ;
 			this.avatarParts.push(ap);
 			this.needSort = true;
+			ap.playTo(this.status);
 			return ap ;
 		}
         public function addAvatarPart(ap:AvatarPart, isOverride:Boolean = false) : void
@@ -473,7 +474,7 @@
 			}
             for each (ap in this.avatarParts)
             {
-				if (ap.type == AvatarPartType.MAGIC || ap.type == AvatarPartType.MAGIC_PASS || (ap.type == AvatarPartType.MAGIC_RING && ap.avatarParamData.id != AvatarPartID.SHADOW)){
+				if (ap.type == AvatarPartType.MAGIC || ap.type == AvatarPartType.WING || ap.type == AvatarPartType.MAGIC_PASS || (ap.type == AvatarPartType.MAGIC_RING && ap.avatarParamData.id != AvatarPartID.SHADOW)){
 					ap.offsetOnMountX = offMountX;
 					ap.offsetOnMountY = offMountY;
 				}

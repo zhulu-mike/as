@@ -13,14 +13,15 @@
 			import com.leman.SwfPacker;
 			import com.leman.data.ActionType;
 			
-			import helper.SingleScFolderHelper;
-			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 			import mx.controls.Image;
 			import mx.managers.DragManager;
 			
 			import spark.events.TextOperationEvent;
+			
+			import helper.ConfigHelper;
+			import helper.SingleScFolderHelper;
 			
 			import vo.DirectoryVO;
 			
@@ -59,6 +60,22 @@
 				
 				initEvent();
 				
+				loadConfig();
+			}
+			
+			/**加载配置XML*/
+			private function loadConfig():void
+			{
+				var file:File = File.applicationDirectory;
+				file = file.resolvePath("imagesourceeditor");
+				file = file.resolvePath("config.xml");
+				var fs:FileStream = new FileStream();
+				fs.open(file, FileMode.READ);
+				var byte:ByteArray = new ByteArray();
+				fs.readBytes(byte);
+				fs.close();
+				var config:XML = XML(byte.readUTFBytes(byte.length));
+				ConfigHelper.parseXML(config);
 			}
 			
 			private var playerFigure:BitmapData;
@@ -313,7 +330,8 @@
 						img.name = (files[i]['name'] as String).split('.')[0];
 						img.data = dir.name;
 						img.source = files[i].url;
-						sta.addElement(img);
+						if (sta.numChildren < 1)
+							sta.addElement(img);
 						tempArr.push(img);
 					}
 				}

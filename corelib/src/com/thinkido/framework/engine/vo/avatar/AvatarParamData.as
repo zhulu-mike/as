@@ -147,14 +147,14 @@
 			{
 				return;
 			}
-			var _loc_9:AvatarPlayCallBack = this._playCallBackDict[$status];
+			var apc:AvatarPlayCallBack = this._playCallBackDict[$status];
 			if (this._playCallBackDict[$status] == null)
 			{
-				_loc_9 = new AvatarPlayCallBack();
-				this._playCallBackDict[$status] = _loc_9;
+				apc = new AvatarPlayCallBack();
+				this._playCallBackDict[$status] = apc;
 			}
-			_loc_9.extendCallBack(BeforeFun, startFun, updateFun, completeFun, addFun, removeFun, isClearOld);
-			return ;
+			apc.extendCallBack(BeforeFun, startFun, updateFun, completeFun, addFun, removeFun, isClearOld);
+			return;
 			
 			var onPlayBeforeStart_old:Function;
 			var onPlayStart_old:Function;

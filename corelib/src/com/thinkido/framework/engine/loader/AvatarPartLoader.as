@@ -1,22 +1,17 @@
 ﻿package com.thinkido.framework.engine.loader
 {
-    import com.thinkido.framework.common.dispose.DisposeHelper;
-    import com.thinkido.framework.common.utils.Fun;
     import com.thinkido.framework.engine.SceneCharacter;
     import com.thinkido.framework.engine.config.GlobalConfig;
     import com.thinkido.framework.engine.graphics.avatar.AvatarPart;
+    import com.thinkido.framework.engine.staticdata.SceneCharacterType;
     import com.thinkido.framework.engine.tools.SceneCache;
-    import com.thinkido.framework.engine.vo.avatar.AvatarImgData;
     import com.thinkido.framework.engine.vo.avatar.AvatarParamData;
     import com.thinkido.framework.engine.vo.avatar.AvatarPartStatus;
-    import com.thinkido.framework.engine.vo.avatar.XmlImgData;
     import com.thinkido.framework.manager.RslLoaderManager;
-    import com.thinkido.framework.manager.loader.RslLoader;
     import com.thinkido.framework.manager.loader.vo.LoadData;
     
     import flash.display.Bitmap;
     import flash.display.BitmapData;
-    import flash.display.DisplayObject;
     import flash.display.MovieClip;
     import flash.display.Shape;
     import flash.events.Event;
@@ -56,12 +51,23 @@
 			if (sc != null && sc.usable && $ap.usable && apd.sourcePath != null && apd.sourcePath != "" && $status != null && $status != "")
 			{
 				fullSourchPath = apd.getFullSourcePath($status);
+//				if (!SceneCache.avatarXmlCache.has(fullSourchPath) && RslLoaderManager.getClass(apd.baseClassName+$status))
+//				{
+//					var cl:Class = RslLoaderManager.getClass(apd.baseClassName+$status) as Class;
+//					if (apd.statusList == null)
+//					{
+//						apd.statusList = cl.STATUS_LIST as Array;
+//					}
+//					var x_m_l:XML = cl.X_M_L as XML;
+//					var taps:AvatarPartStatus = new AvatarPartStatus(fullSourchPath, x_m_l);
+//					SceneCache.avatarXmlCache.push({data:taps}, fullSourchPath);
+//				}
 				if (!SceneCache.avatarXmlCache.has(fullSourchPath))
 				{
 					var loadSource:Function = function () : void
 					{
 						var loadData:LoadData = new LoadData(fullSourchPath, loadSourceComplete, null, loadError, "", "", 0, GlobalConfig.decode);
-						RslLoaderManager.load([loadData]);
+						RslLoaderManager.load([loadData],null,priority);
 						return;
 					};
 					loadSourceComplete = function ($ld:LoadData, evt:Event) : void
@@ -127,6 +133,7 @@
 						return;
 					};
 					var tryLoadCount:int = 0;
+					priority = SceneCharacterType.getDefaultLoadPriority($sc.type);
 					SceneCache.avatarXmlCache.push({data:null}, fullSourchPath);
 					SceneCache.addWaitingLoadAvatar($ap, $status, fullSourchPath, loadSource);
 				}else{
@@ -139,6 +146,11 @@
 					{
 						SceneCache.addWaitingAddAvatar($ap, avatarData.data as AvatarPartStatus);
 					}
+				}
+				var $class:Class = RslLoaderManager.getClass($apd.baseClassName+$status);
+				if ($class == null)
+				{
+					$apd.executeCallBack(sc);
 				}
             }
             else

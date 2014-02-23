@@ -64,6 +64,7 @@
 		/**是否需要更新实时影子*/
 		private var _needUpdateShadow:Boolean = false;
 		public var alpha:Number = 1 ;
+		public var isInView:Boolean = false;
 
         public function SceneCharacter($type:int, $scene:Scene, $tile_x:int = 0, $tile_y:int = 0, $showIndex:int = 0)
         {
@@ -698,9 +699,15 @@
 				return true;
 			_lastInView = _currInView ;
 			_currInView = this.scene.sceneCamera.canSee(this);
+			isInView = _currInView;
 			if( _lastInView == false && _currInView ){
 				//				2013-11-22 添加一个功能，接受非同屏数据时不加载。进入屏幕时在加载。
 				var sEvt:SceneEvent = new SceneEvent(SceneEvent.STATUS, SceneEventAction_status.INVIEW_CHECKANDLOAD,[this,true]);
+				EventDispatchCenter.getInstance().dispatchEvent(sEvt);
+			}else if (_lastInView && !_currInView)
+			{
+				//离开视野范围内时，移除avatar
+				var sEvt:SceneEvent = new SceneEvent(SceneEvent.STATUS, SceneEventAction_status.INVIEW_CHECKANDLOAD,[this,false]);
 				EventDispatchCenter.getInstance().dispatchEvent(sEvt);
 			}
 			return _currInView;
@@ -744,6 +751,7 @@
             this.usable = false;
 			_lastInView = false ;
 			_currInView = false ;
+			isInView = false;
             SceneCache.removeWaitingAvatar(this);
 			ShadowShape.recycleShadowShape(this.shadowShape);
             Avatar.recycleAvatar(this.avatar);

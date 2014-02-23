@@ -65,7 +65,7 @@
 						sc.headFace.swapShine(true);
 					}
 				}
-				if (sc.headFace != null && sc.headFace.updateNow&&sc.inViewDistance())
+				if (sc.headFace != null && sc.headFace.updateNow&&sc.isInView)
 				{
 					sc.headFace.drawMain();
 				}

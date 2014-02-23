@@ -265,13 +265,13 @@
                     {
                         loadInfo.loadList.splice(_loc_7, 1);
                     }
-                    _loc_7 = _loc_7 - 1;
+                    _loc_7--;
                 }
                 if (loadInfo.loadList.length == 0)
                 {
                     waitLoadList.splice(index, 1);
                 }
-                index = index - 1;
+                index --;
             }
             for each (_rslLoader in loaderList)
             {
@@ -285,14 +285,16 @@
                         _loaddata = _loadInfo.loadList[_loadlistIndex];
                         if (_loaddata.url == $url)
                         {
+							trace("被删除:"+$url);
                             _loadInfo.loadList.splice(_loadlistIndex, 1);
                         }
-                        _loadlistIndex = _loadlistIndex - 1;
+                        _loadlistIndex--;
                     }
                     if (_rslLoader.isLoading)
                     {
                         if (_rslLoader.rslLoadData.url == $url)
                         {
+							trace("被停止:"+$url);
                             _rslLoader.stop();
                             loadNext(_rslLoader);
                         }
@@ -489,6 +491,7 @@
             if (loaderList.length < MAX_THREAD)
             {
                 _rslLoader = new RslLoader();
+				_rslLoader.index = loaderList.length;
                 loaderList.push(_rslLoader);
                 return _rslLoader;
             }
@@ -571,7 +574,7 @@
                     {
                         rslLoader.isLocked = true;
                         ld.onComplete(ld, event);
-                        rslLoader.isLocked = false;
+                        rslLoader.isLocked = false;//-include-libraries
                     }
                     loadNext(rslLoader);
                     break;

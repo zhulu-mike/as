@@ -197,11 +197,12 @@
 				waitingLoadAvatars[watingArrKey] = null;
 				delete waitingLoadAvatars[watingArrKey];
 				removeWaitLoadFun(watingArrKey);
+				
 				if ($stopLoad)
 				{
 					RslLoaderManager.cancelLoadByUrl(watingArrKey);
+					avatarXmlCache.remove(watingArrKey);
 				}
-				avatarCountShare.removeShareData(watingArrKey);
 			}
 			index = waitingAddAvatars.length - 1;
 			while (index >= 0){
@@ -218,7 +219,6 @@
 				{
 					waitingAddAvatars.splice(index, 1);
 					waitingAddAvatarHT.removeHandler(addFun);
-					avatarCountShare.removeShareData(aps1.fullSourchPath);
 				}
 				index--;
 			}

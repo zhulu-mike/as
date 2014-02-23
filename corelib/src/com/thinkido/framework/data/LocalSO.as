@@ -6,6 +6,7 @@
 	import flash.net.SharedObjectFlushStatus;
 	import flash.system.Security;
 	import flash.system.SecurityPanel;
+	
 
 	/**
 	 * 本地共享对象类
@@ -15,15 +16,18 @@
 	 */
 	public class LocalSO {
 		private var _shareObject : SharedObject;
-
+		public static var allow:Boolean = true;
 		private function netStatusHandler(event : NetStatusEvent) : void {
 			_shareObject.removeEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 			switch(event.info.code) {
 				case SharedObjectFlushStatus.FLUSHED:
 					break;
 				case SharedObjectFlushStatus.PENDING:
+					if (allow)
+						this.flush(1024*1024*20);
 					break;
 				case "SharedObject.Flush.Failed":
+					allow = false;
 					break;
 			}
 		}

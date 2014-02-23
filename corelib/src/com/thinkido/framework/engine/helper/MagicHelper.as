@@ -106,7 +106,7 @@
                 var toSc:* = scene.createSceneCharacter(SceneCharacterType.DUMMY);
                 toSc.setXY($toP.x, $toP.y);
                 $toApd = $toApd || new AvatarParamData();
-                $toApd.extendCallBack(null, null, null, new_onPlayComplete);
+                $toApd.extendCallBack(MAGIC_STATUS, null,null, null, new_onPlayComplete);
                 showMagic($from, [toSc], $fromApd, $toApd, $passApd);
                 return;
             };
@@ -240,7 +240,7 @@
                     i = i + $showSpace;
                 }
                 $toApd = $toApd || new AvatarParamData();
-                $toApd.extendCallBack(null, null, null, new_onPlayComplete);
+                $toApd.extendCallBack(MAGIC_STATUS,null, null, null, new_onPlayComplete);
                 if ($passApd != null)
                 {
                     var new_onPlayStart_for_to:* = function (value1:SceneCharacter = null, value2:AvatarPart = null) : void
@@ -258,7 +258,7 @@
                 }
                 ;
                     tempToApd = new AvatarParamData();
-                    tempToApd.extendCallBack(null, new_onPlayStart_for_to);
+                    tempToApd.extendCallBack(MAGIC_STATUS,null, new_onPlayStart_for_to);
                     showMagic($from, [centerSc], $fromApd, tempToApd, $passApd);
                 }
                 else
@@ -408,7 +408,7 @@
                     i = i + $showSpace;
                 }
                 $toApd = $toApd || new AvatarParamData();
-                $toApd.extendCallBack(null, null, null, new_onPlayComplete);
+                $toApd.extendCallBack(MAGIC_STATUS,null, null, null, new_onPlayComplete);
                 showMagic($from, toArr, $fromApd, $toApd, $passApd);
                 return;
             }
@@ -505,7 +505,7 @@
                     r = r + $showSpace;
                 }
                 $toApd = $toApd || new AvatarParamData();
-                $toApd.extendCallBack(null, null, null, new_onPlayComplete);
+                $toApd.extendCallBack(MAGIC_STATUS,null, null, null, new_onPlayComplete);
                 if ($passApd != null)
                 {
                     var new_onPlayStart_for_to:* = function (value1:SceneCharacter = null, value2:AvatarPart = null) : void
@@ -523,7 +523,7 @@
                 }
                 ;
                     tempToApd = new AvatarParamData();
-                    tempToApd.extendCallBack(null, new_onPlayStart_for_to);
+                    tempToApd.extendCallBack(MAGIC_STATUS,null, new_onPlayStart_for_to);
                     showMagic($from, [centerSc], $fromApd, tempToApd, $passApd);
                 }
                 else
@@ -634,7 +634,7 @@
                     r = r + $showSpace;
                 }
                 $toApd = $toApd || new AvatarParamData();
-                $toApd.extendCallBack(null, null, null, new_onPlayComplete);
+                $toApd.extendCallBack(MAGIC_STATUS,null, null, null, new_onPlayComplete);
                 showMagic($from, toArr, $fromApd, $toApd, $passApd);
                 return;
             }
@@ -768,7 +768,7 @@
                     r = r + $showSpace;
                 }
                 $toApd = $toApd || new AvatarParamData();
-                $toApd.extendCallBack(null, null, null, new_onPlayComplete);
+                $toApd.extendCallBack(MAGIC_STATUS,null, null, null, new_onPlayComplete);
                 return;
             }
             ;
@@ -872,7 +872,7 @@
                 }
                 toArr.sortOn(["data"], Array.DESCENDING | Array.NUMERIC);
                 $toApd = $toApd || new AvatarParamData();
-                $toApd.extendCallBack(null, null, null, new_onPlayComplete);
+                $toApd.extendCallBack(MAGIC_STATUS,null, null, null, new_onPlayComplete);
                 showMagic($from, toArr, $fromApd, $toApd, $passApd);
                 return;
             }
@@ -954,7 +954,7 @@
             }
             ;
             $fromApd = $fromApd ? ($fromApd.clone()) : (new AvatarParamData());
-            $fromApd.extendCallBack(null, passAndHit, null, null);
+            $fromApd.extendCallBack(MAGIC_STATUS,null, passAndHit, null, null);
             $from.loadAvatarPart($fromApd);
             return;
         }

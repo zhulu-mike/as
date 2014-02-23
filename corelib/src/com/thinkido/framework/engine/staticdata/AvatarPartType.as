@@ -15,6 +15,11 @@
 		 */		
         public static var WEAPON:String = "weapon";
 		
+		/**
+		 * 翅膀
+		 */		
+		public static var WING:String = "wing";
+		
         public static var BOW:String = "bow";
 		/**
 		 * 坐骑 
@@ -37,15 +42,15 @@
 		 * 0：无限次，
 		 * 1：一次 
 		 */		
-        private static const defautRepeatArr:Array = [[MOUNT, 0], [BODY, 0], [WEAPON, 0], [BOW, 0], [MAGIC_RING, 0], [MAGIC_PASS, 0], [MAGIC, 1]];
+        private static const defautRepeatArr:Array = [[MOUNT, 0], [BODY, 0], [WEAPON, 0], [BOW, 0], [MAGIC_RING, 0], [MAGIC_PASS, 0], [MAGIC, 1], [WING,0]];
 		/**
 		 * 方向01267 深度排序
 		 */       
-		private static const depth01267Arr:Array = [[MOUNT, -100], [BOW, -21], [BODY, 0], [WEAPON, 22], [MAGIC_RING, 29], [MAGIC_PASS, 30], [MAGIC, 31]];
+		private static const depth01267Arr:Array = [[MOUNT, -100], [WING,-40], [BOW, -21], [BODY, 0], [WEAPON, 22], [MAGIC_RING, 29], [MAGIC_PASS, 30], [MAGIC, 31]];
 		/**
 		 * 方向345 深度排序
 		 */        
-		private static const depth345Arr:Array = [[MOUNT, -100], [BODY, 0], [BOW, 21], [WEAPON, 22], [MAGIC_RING, 29], [MAGIC_PASS, 30], [MAGIC, 31]];
+		private static const depth345Arr:Array = [[MOUNT, -100], [BODY, 0], [BOW, 21], [WEAPON, 22],[WING,24], [MAGIC_RING, 29], [MAGIC_PASS, 30], [MAGIC, 31]];
 
         public function AvatarPartType()
         {

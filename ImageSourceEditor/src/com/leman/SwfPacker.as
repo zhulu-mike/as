@@ -67,7 +67,7 @@ package com.leman
 		public function createSWF($dir:File, $info:Object):void
 		{
 			this.info = $info;
-			
+			actionStr = "";
 			this.loadIndex = 0;
 			this._dir = $dir;
 			this.scName = _dir.name;
@@ -453,7 +453,7 @@ package com.leman
 				len = dirArr.length;
 				var tempCol:int = Math.ceil(len >> 1);
 				tempBmd = new BitmapData(maxRect.w * tempCol, maxRect.h << 1,true,0x00ff0000);
-				tempInfo = new SingleDirectionImage(actionBmd);
+				tempInfo = new SingleDirectionImage(tempBmd);
 				directArr.push(tempInfo);
 				var count:int = 0;
 				var currIndex:int = 0;

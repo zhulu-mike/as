@@ -227,7 +227,7 @@
 			if (this.avatarParamData.hasStatus(this._currentStatus))
 			{
 				this._currentFullSourchPath = this.avatarParamData.getFullSourcePath(this._currentStatus);
-				_apcb = this.avatarParamData.playCallBack;
+				_apcb = this.avatarParamData.getPlayCallBack(this._currentStatus);
 				if (_apcb != null)
 				{
 					this._onPlayBeforeStart = _apcb.onBeforeStart;
@@ -284,6 +284,12 @@
 						this.setStatus( $status );
 					else
 						this.setStatus(CharStatusType.STAND);
+				}else if (type == AvatarPartType.WING)
+				{
+					if ( _currentStatus != CharStatusType.DEATH)
+						setStatus( CharStatusType.STAND );
+					else
+						setStatus( $status);
 				}else if( _currentStatus != CharStatusType.STAND ){
 					setStatus( CharStatusType.STAND );
 				}
@@ -355,7 +361,7 @@
             {
                 this._autoRecycle = true;
             }
-            if (this.type == AvatarPartType.MAGIC_RING || this.type == AvatarPartType.MAGIC_PASS || this.type == AvatarPartType.MAGIC)
+            if (this.type == AvatarPartType.MAGIC_RING || this.type == AvatarPartType.MAGIC_PASS || this.type == AvatarPartType.MAGIC || this.type == AvatarPartType.WING)
             {
                 this._drawMouseOn = false;
             }
@@ -385,12 +391,12 @@
             {
                 _changed = true;
             }
-			if (_tempInView != this.avatar.sceneCharacter.inViewDistance())
-			{
-				//可见状态发生变化时，也要更新
-				_changed = true;
-				_tempViewChanged = true;
-			}
+//			if (_tempInView != this.avatar.sceneCharacter.inViewDistance())
+//			{
+//				//可见状态发生变化时，也要更新
+//				_changed = true;
+//				_tempViewChanged = true;
+//			}
             if (_changed)
             {
 				//此处如果加入_tempViewChanged视野的改变优化。当切换场景时，服务端的数据在加载场景完毕之前，由于重设主角
@@ -401,8 +407,8 @@
 				//2.在if (_tempInView != this.avatar.sceneCharacter.inViewDistance())逻辑中对oldData.inView也赋值，但是此办法
 				//依然会导致进入场景后如果人物不动时无法看到形象
 				//3.如果场景被dispose后，不进入uninstallAvatarImg逻辑
-				if (_tempStatus != this._currentStatus || _tempViewChanged)
-//                if (_tempStatus != this._currentStatus)
+//				if (_tempStatus != this._currentStatus || _tempViewChanged)
+                if (_tempStatus != this._currentStatus)
                 {
                     this._lastTime = 0;
                     this._playCount = 0;
@@ -493,15 +499,15 @@
                 this._oldData.visible = this.visible;
                 this.updateNow = true;
             }
-			if (this._oldData.inView != this.avatar.sceneCharacter.inViewDistance())
-			{
+//			if (this._oldData.inView != this.avatar.sceneCharacter.inViewDistance())
+//			{
 //				//当SC可见时，渲染，不可见时，不安装avatarImg，就可以少点内存。
 				//擦本来打算做优化，优化后发现跟原来差不多，暂时还不知道原因。
 			//测试发现，不可见的SC的avatarImg也存在时，跟不存在时的内存居然差不多。太奇怪了。
-				this.playTo(this._currentStatus,this._currentLogicAngel,this._currentRotation,this._playCondition);
-				this._oldData.inView = this.avatar.sceneCharacter.inViewDistance();
-				this.updateNow = true;
-			}
+//				this.playTo(this._currentStatus,this._currentLogicAngel,this._currentRotation,this._playCondition);
+//				this._oldData.inView = this.avatar.sceneCharacter.inViewDistance();
+//				this.updateNow = true;
+//			}
             if (this._oldData.inSleep != inSleep)
             {
                 this._oldData.inSleep = inSleep;
@@ -589,7 +595,7 @@
                 {
                     this._currentFrame = 0;
                 }
-                if (this.visible && this.avatar.visible && this.avatar.sceneCharacter.visible && this.avatar.sceneCharacter.inViewDistance() && this.avatarImg != null && !inSleep && this._currentAvatarPartStatus != null)
+                if (this.visible && this.avatar.visible && this.avatar.sceneCharacter.visible && this.avatar.sceneCharacter.isInView && this.avatarImg != null && !inSleep && this._currentAvatarPartStatus != null)
                 {
                     targetPoint = this.getTargetPosition();
                     if (this._dynamicPosition != null)
@@ -748,7 +754,7 @@
             {
                 this.avatar.sceneCharacter.scene.sceneAvatarLayer.restingAvatarPartArr.push(this);
             }
-            if (this._drawMouseOn && !this.cutRect.isEmpty())
+            if (this._drawMouseOn && !this.cutRect.isEmpty() && this.type != AvatarPartType.WING)
             {
                 if (this.avatar.sceneCharacter.mouseRect != null)
                 {
@@ -796,7 +802,7 @@
             {
                 return;
             }
-            if (this.visible && this.avatar.visible && this.avatar.sceneCharacter.visible && this.avatar.sceneCharacter.inViewDistance() && this.avatarImg)
+            if (this.visible && this.avatar.visible && this.avatar.sceneCharacter.isInView && this.avatar.sceneCharacter.visible && this.avatarImg)
             {
                 bmd = this._inMaskDrawSourceBitmapData || this._drawSourceBitmapData;
                 if (bmd != null)
@@ -866,7 +872,7 @@
 		{
 			var bmd:BitmapData = null;
 			var rec:Rectangle = null;
-			if (this.visible && this.avatar.visible && this.avatar.sceneCharacter.visible && this.avatar.sceneCharacter.inViewDistance() && this.avatarImg)
+			if (this.visible && this.avatar.visible && this.avatar.sceneCharacter.visible && this.avatarImg)
 			{
 				bmd = this._inMaskDrawSourceBitmapData || this._drawSourceBitmapData;
 				if (bmd != null)
@@ -1018,6 +1024,11 @@
         {
             this.usable = false;
             this.clearMe();
+			if (this._currentStatus != null && this._currentStatus != "")
+			{
+				var cname:String = this.avatarParamData.getFullSourcePath(this._currentStatus);
+				SceneCache.avatarCountShare.uninstallShareData(cname);
+			}
 			this.speed = 1;
 			this.cacheObject = {} ;
             this._enablePlay = false;
@@ -1077,6 +1088,11 @@
             this._useSpecilizeXY = true;
             this._drawMouseOn = true;
             this._callBackAttack = false;
+			this._currentFullSourchPath = null;
+			this._bodyPositionUpdate = true;
+			this._bodyPositionY = 0;
+			this._enableShadow = true;
+			this.sceneCharacter = null;
             return;
         }
 

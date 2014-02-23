@@ -134,7 +134,7 @@
 		<s:Button id="big" x="91" y="10" label="放大" />
 		<s:Button id="newOne" label="新建"/>
 		<s:Button id="outPNG" label="保存图片"/>
-		<s:Button id="outXML" label="清理"/>
+		<s:Button id="outXML" label="清理" />
 		
 		<s:CheckBox id="checkBox" label="显示人物参考模型"/>
 		<s:Label color="#FFFFFF"/>

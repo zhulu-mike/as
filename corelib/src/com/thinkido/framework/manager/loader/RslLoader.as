@@ -33,7 +33,8 @@
         public var isLoading:Boolean;
         public var rslLoadData:LoadData;
         public var rslLoadingInfo:RslLoadingInfo;
-
+		public var index:int = 0;
+		
         public function RslLoader()
         {
             this._context = new LoaderContext();
@@ -88,15 +89,18 @@
             }
             catch (e:Error)
             {
-                try
-                {	
-					this._loader.contentLoaderInfo.removeEventListener(Event.COMPLETE, this.onComplete);
-					this._loader.close();
-                }catch (e:Error)
-				{
-				}            
             }
-            
+			try
+			{	
+				this._loader.contentLoaderInfo.removeEventListener(Event.COMPLETE, this.onComplete);
+				this._loader.close();
+			}catch (e:Error)
+			{
+			}  
+			if (this._urlLoader.data && this._urlLoader.data is ByteArray)
+			{
+				(this._urlLoader.data as ByteArray).clear();
+			}
             this.isLoading = false;
             return;
         }

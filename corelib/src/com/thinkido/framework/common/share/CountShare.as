@@ -6,6 +6,7 @@
 	import com.thinkido.framework.engine.vo.avatar.AvatarImgData;
 	import com.thinkido.framework.engine.vo.avatar.XmlImgData;
 	
+	import flash.sampler.getSize;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 
