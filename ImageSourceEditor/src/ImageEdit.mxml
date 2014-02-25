@@ -306,6 +306,10 @@
 				for (var i:int = 0; i<len; i++)
 				{
 					readDirectory(allDirectory[i]);
+					if (i == 0)
+					{
+						ctrlPanel.intervalTime_textInput.text = ConfigHelper.getConfig(allDirectory[i].fileName) ? ConfigHelper.getConfig(allDirectory[i].fileName).time : "67";
+					}
 				}
 			}
 			

@@ -277,6 +277,14 @@
             this._callBackAttack = false;
             this._only1LogicAngel = false;
             this._only1Repeat = false;
+			if ($status != null && this.id == AvatarPartID.BLANK)
+				$status = CharStatusType.STAND;
+			else if ($status != null && this.avatar.sceneCharacter.type == SceneCharacterType.TRANSPORT)
+				$status = CharStatusType.STAND;
+			else if ($status != null && this.type == AvatarPartType.MOUNT && $status != CharStatusType.DEATH && $status != CharStatusType.SIT)
+			{
+				$status = CharStatusType.STAND;
+			}
             if ($status != null && $status != this._currentStatus)
             {
                 if( type == AvatarPartType.MOUNT || type == AvatarPartType.BODY || type == AvatarPartType.WEAPON  ){
@@ -310,12 +318,13 @@
             {
                 this._playCondition = new AvatarPlayCondition();
             }
-            if (this.id == AvatarPartID.BLANK)
-            {
-                this._currentStatus = CharStatusType.STAND;
-                this._currentLogicAngel = 0;
-                this._only1LogicAngel = true;
-            }
+            
+			if (this.id == AvatarPartID.BLANK)
+			{
+				this._currentStatus = CharStatusType.STAND;
+				this._currentLogicAngel = 0;
+				this._only1LogicAngel = true;
+			}
             if (this.avatar.sceneCharacter.type == SceneCharacterType.TRANSPORT)
             {
                 this._currentStatus = CharStatusType.STAND;
@@ -338,7 +347,7 @@
                 {
                     this._currentStatus = CharStatusType.WALK;
                 }
-                else if (this._currentStatus == CharStatusType.ATTACK || this._currentStatus == CharStatusType.SKILL || this._currentStatus == CharStatusType.SKILL1 || this._currentStatus == CharStatusType.INJURED )
+                else if (this._currentStatus != CharStatusType.STAND && this._currentStatus != CharStatusType.DEATH && $status != CharStatusType.SIT)
                 {
 //                    this._currentStatus = CharStatusType.MOUNT_ATTACK;     //御剑修改
                     this._currentStatus = CharStatusType.STAND;

@@ -473,7 +473,7 @@
                     return;
                 }
             }
-            if (SceneRender.nowTime - this._lastShineTime > 200)
+            if (SceneRender.nowTime - this._lastShineTime > 200|| this.updateNow)
             {
                 this._lastShineTime = SceneRender.nowTime;
                 this._isLight = !this._isLight;

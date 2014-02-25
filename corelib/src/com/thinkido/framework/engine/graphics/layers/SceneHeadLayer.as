@@ -41,7 +41,7 @@
 			for each (sc in scs)
 			{
 				
-				if (sc.headFace != null && !sc.headFace.specialPostion )
+				if (sc.headFace != null && !sc.headFace.specialPostion && sc.isInView)
 				{
 					rec = sc.mouseRect || sc.oldMouseRect;
 					yy = rec != null ? (sc.bodyPosition - sc.pixel_y - HeadFace.HEADFACE_SPACE) : (HeadFace.DEFAULT_HEADFACE_Y);

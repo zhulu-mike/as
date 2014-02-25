@@ -467,14 +467,21 @@
 				var bodys:Array = this.getAvatarPartsByType(AvatarPartType.BODY);
 				if (bodys.length > 0)
 				{
-					var body:AvatarPart = bodys[0];
-					offMountX = body.offsetOnMountX;
-					offMountY = body.offsetOnMountY;
+					var body:AvatarPart , i:int = 0, len:int = bodys.length;
+					for (;i<len;i++)
+					{
+						body = bodys[i];
+						if (body.id != AvatarPartID.BLANK){
+							offMountX = body.offsetOnMountX;
+							offMountY = body.offsetOnMountY;
+							break;
+						}
+					}
 				}
 			}
             for each (ap in this.avatarParts)
             {
-				if (ap.type == AvatarPartType.MAGIC || ap.type == AvatarPartType.WING || ap.type == AvatarPartType.MAGIC_PASS || (ap.type == AvatarPartType.MAGIC_RING && ap.avatarParamData.id != AvatarPartID.SHADOW)){
+				if (ap.type == AvatarPartType.BODY || ap.type == AvatarPartType.MAGIC || ap.type == AvatarPartType.WING || ap.type == AvatarPartType.MAGIC_PASS || (ap.type == AvatarPartType.MAGIC_RING && ap.avatarParamData.id != AvatarPartID.SHADOW)){
 					ap.offsetOnMountX = offMountX;
 					ap.offsetOnMountY = offMountY;
 				}

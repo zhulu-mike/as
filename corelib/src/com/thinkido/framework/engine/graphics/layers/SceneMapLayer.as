@@ -41,7 +41,7 @@
         private var _waitingLoadDatas:Object;
         private static const MAX_ZONE_CACHE_X:int = 3;
         private static const MAX_ZONE_CACHE_Y:int = 2;
-		private var mapLoader:BulkLoader = new BulkLoader("SceneMapLayerLoader",1);
+		private var mapLoader:BulkLoader = new BulkLoader("SceneMapLayerLoader",5);
 		
 		private var bytelist:Array = [];
 		private var loadTimer:TimerData ;
@@ -174,7 +174,7 @@
                     }
                     if (this._waitingLoadDatas[key] == null)
                     {
-                        priori = -Math.round(ZMath.getDistanceSquare(mz.pixel_x, mz.pixel_y, mapZone.pixel_x, mapZone.pixel_y));
+//                        priori = -Math.round(ZMath.getDistanceSquare(mz.pixel_x, mz.pixel_y, mapZone.pixel_x, mapZone.pixel_y));
                         loadData = this.addMapZone(mz, priori);
                         if (loadData)
                         {
@@ -185,7 +185,7 @@
                 }
                 if (loadDataArr.length > 0)
                 {
-                    loadDataArr.sortOn(["priority"], [Array.NUMERIC | Array.DESCENDING]);
+                    loadDataArr.sortOn(["priority"], [Array.NUMERIC]);
                 }
 //				LoaderManager.load(loadDataArr,mapLoader,true) ;
 				var _len:int = loadDataArr.length ;
@@ -199,6 +199,7 @@
 					}
 					var prop:Object = {id:loadData.key,type:BulkLoader.TYPE_BINARY,retry:1} ;
 					loadItem = mapLoader.add(loadData.url,prop) ;
+					mapLoader.topLoadingItem(loadItem);
 					loadItem.addEventListener(Event.COMPLETE,loadData.onComplete);
 					mapLoader.loadNow(loadItem);
 				}
@@ -226,7 +227,7 @@
             return;
         }
 		
-		private function addLoadByteList($parent:DisplayObjectContainer,imageByte:ByteArray,$priority:int,$filePath:String):void{
+		private function addLoadByteList($parent:DisplayObjectContainer,imageByte:ByteArray,$priority:int,$filePath:String, tx:int, ty:int):void{
 			if( imageByte ==null ){
 				return ;
 			}
@@ -240,11 +241,29 @@
 				}
 				i-- ;
 			}
-			bytelist.push({pri:$priority,filePath:$filePath,data:[$parent,imageByte]});
+			bytelist.push({pri:$priority,filePath:$filePath,data:[$parent,imageByte], tx:tx, ty:ty});
+			resetZonePriority();
+			bytelist.sortOn("pri",Array.NUMERIC|Array.DESCENDING);
 			if( loadTimer == null ){
 				loadTimer = TimerManager.createTimer(loadTime,int.MAX_VALUE,loadByteHandler,null,reset);
 			}else{
 				loadTimer.timer.start();
+			}
+		}
+		
+		private function resetZonePriority():void
+		{
+			var tilePoint:Point = Transformer.transPixelPoint2TilePoint(new Point(this._scene.sceneCamera.pixel_x, this._scene.sceneCamera.pixel_y));
+			var zonePoint:Point = Transformer.transTilePoint2ZonePoint(tilePoint);
+			var mapZone:MapZone = SceneCache.mapZones[zonePoint.x + "_" + zonePoint.y]; //摄像机中心点 zonePoint
+			if (!mapZone)
+			{
+				return;
+			}
+			var i:int = 0, len:int = bytelist.length;
+			for (;i<len;i++)
+			{
+				bytelist[i].pri = -Math.round(ZMath.getDistanceSquare(bytelist[i].tx, bytelist[i].ty, mapZone.tile_x, mapZone.tile_y));
 			}
 		}
 		
@@ -305,14 +324,14 @@
 				else if (GlobalConfig.useSo && SharedObjectManager.getDataByHttpUrl(filePath) != null){
 					/**TRACEDISABLE:trace("c",key); TRACEDISABLE*/
 					var bytes:ByteArray = SharedObjectManager.getDataByHttpUrl(filePath) as ByteArray;
-					addLoadByteList($mapZone.showContainer,bytes,$priority,filePath);
+					addLoadByteList($mapZone.showContainer,bytes,$priority,filePath,$mapZone.tile_x,$mapZone.tile_y);
 				}
                 else
                 {
                     var itemLoadComplete:Function = function (event:Event) : void
 			            {
 							/**TRACEDISABLE:trace("d2",key); TRACEDISABLE*/
-							addLoadByteList($mapZone.showContainer,mapLoader.getBinary(loadData.key),$priority,filePath) ;
+							addLoadByteList($mapZone.showContainer,mapLoader.getBinary(loadData.key),$priority,filePath,$mapZone.tile_x,$mapZone.tile_y) ;
 		                	$mapZone.showContainer.name = loadData.key ;
 			                _waitingLoadDatas[key] = null;
 			                delete _waitingLoadDatas[key];

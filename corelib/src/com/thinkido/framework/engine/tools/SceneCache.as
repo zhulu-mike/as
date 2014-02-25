@@ -5,6 +5,8 @@
     import com.thinkido.framework.common.share.CountShare;
     import com.thinkido.framework.engine.SceneCharacter;
     import com.thinkido.framework.engine.graphics.avatar.AvatarPart;
+    import com.thinkido.framework.engine.staticdata.AvatarPartID;
+    import com.thinkido.framework.engine.staticdata.AvatarPartType;
     import com.thinkido.framework.engine.vo.avatar.AvatarParamData;
     import com.thinkido.framework.engine.vo.avatar.AvatarPartStatus;
     import com.thinkido.framework.manager.CacheManager;
@@ -64,6 +66,10 @@
 			if (!$ap.usable || !$ap.avatar.usable)
 			{
 				return;
+			}
+			if ($ap.type == AvatarPartType.BODY && $ap.id != AvatarPartID.BLANK)
+			{
+				$ap.avatar.sceneCharacter.loadAvatarPart($ap.avatar.sceneCharacter.scene.blankAvatarParamData);
 			}
 			var watingArr:Array = waitingLoadAvatars[$fullSourchPath];
 			if (watingArr == null)
@@ -129,6 +135,10 @@
 			if (!$ap.usable || !$ap.avatar.usable)
 			{
 				return;
+			}
+			if ($ap.type == AvatarPartType.BODY && $ap.id != AvatarPartID.BLANK)
+			{
+				$ap.avatar.sceneCharacter.removeAvatarPartByID(AvatarPartID.BLANK,false);
 			}
 			uniqueID = $ap.uniqueID;
 			arr = [$ap, $aps, ht_addAvatarPart];
