@@ -42,11 +42,11 @@
                 return;
             }
             value1.dispose();
-            if (this._objArr.indexOf(value1) == -1)
-            {
+//            if (this._objArr.indexOf(value1) == -1)
+//            {
                 this._objArr[this._objArr.length] = value1;
                 this.resize(this._maxSize);
-            }
+//            }
             return;
         }
 

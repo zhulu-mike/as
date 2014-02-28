@@ -89,6 +89,24 @@
             return null;
         }
 		/**
+		 * 交集 
+		 * @param value1
+		 * @return 
+		 * 
+		 */
+        public function intersectionRect(value1:Bounds) : Rectangle
+        {
+			var _leftMax:int = max(this.left, value1.left);
+			var _rightMin:int = min(this.right, value1.right);
+			var _topMax:int = max(this.top, value1.top);
+			var _bottomMin:int = min(this.bottom, value1.bottom);
+			if (_leftMax < _rightMin && _topMax < _bottomMin)
+			{
+				return new Rectangle(_leftMax, _topMax, _rightMin - _leftMax, _bottomMin - _topMax);
+            }
+            return null;
+        }
+		/**
 		 * 返回新的并集 
 		 * @param value1
 		 * @return 

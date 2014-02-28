@@ -42,6 +42,9 @@
         private var _dV:Number;
         public var removeBoundsArr:Array;
         public var clearBoundsArr:Array;
+		/**
+		 * 静止的，休眠的
+		 */		
         public var restingAvatarPartArr:Array;
         private var _dirtyBoundsMaker:DirtyBoundsMaker;
         public static const MAX_AVATARBD_WIDTH:Number = 300;
@@ -365,7 +368,7 @@
             {
                 sc.runAvatar();
             }
-			/**TRACEDISABLE:trace("runAvatar时间："+(getTimer()-t)); TRACEDISABLE*/
+			trace("runAvatar时间："+(getTimer()-t)); 
 			t = getTimer();
             this.clearBoundsArr = this.clearBoundsArr.concat(this.removeBoundsArr);
             this.clearBoundsArr.sortOn("top", Array.NUMERIC);
@@ -379,36 +382,33 @@
 					Bounds.deleteBounds(bounds);
 				}
             }
+			trace("addBounds时间："+(getTimer()-t)); 
+			t = getTimer();
             tempArr = this._dirtyBoundsMaker.getBoundsArr();
-			var secBound:Bounds;
             for each (ap in this.restingAvatarPartArr)
             {
                 for each (bounds in tempArr)
                 {
 					apBound = Bounds.fromRectangle(ap.cutRect);
-					if (apBound.intersects(bounds))
+					rec = apBound.intersectionRect(bounds);
+					if (rec != null)
 					{
-						secBound = apBound.intersection(bounds);
-						rec = Bounds.toRectangle(secBound);
 						ap.updateNow = true;
 						ap.renderRectArr.push(rec);
-						Bounds.deleteBounds(secBound);
-						secBound = null;
 					}
 					Bounds.deleteBounds(apBound);
-					apBound = null;
                 }
             }
-			/**TRACEDISABLE:trace("op bounds时间："+(getTimer()-t)); TRACEDISABLE*/
+			trace("op bounds时间："+(getTimer()-t)); 
 			t = getTimer();
             this.clear(tempArr);
-			/**TRACEDISABLE:trace("clearBound时间："+(getTimer()-t)); TRACEDISABLE*/
+			trace("clearBound时间："+(getTimer()-t));
 			t = getTimer();
             for each (sc in scs)
             {
                 sc.drawAvatar(this);
             }
-			/**TRACEDISABLE:trace("drawAvatar时间："+(getTimer()-t)); TRACEDISABLE*/
+			trace("drawAvatar时间："+(getTimer()-t));
             return;
         }
 
