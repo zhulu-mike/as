@@ -258,7 +258,6 @@ package br.com.stimuli.loading.loadingtypes {
         *   @private
         */
         public function onHttpStatusHandler(evt : HTTPStatusEvent) : void{
-			trace("进入场景，http："+evt.status+this.url.url+"/"+getTimer());
             _httpStatus = evt.status;
             dispatchEvent(evt);
         }
@@ -267,7 +266,6 @@ package br.com.stimuli.loading.loadingtypes {
         *   @private
         */
         public function onProgressHandler(evt : *) : void {
-			trace("进入场景，加载中："+this.url.url+"/"+getTimer());
            _bytesLoaded = evt.bytesLoaded;
            _bytesTotal = evt.bytesTotal;
            _bytesRemaining = _bytesTotal - bytesLoaded;

@@ -23,7 +23,6 @@ package br.com.stimuli.loading.loadingtypes {
         
 		override public function load() : void{
 		    super.load();
-			trace("进入场景，发送加载图片请求："+getTimer());
 		    loader = new Loader();
 		    loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, onProgressHandler, false, 0, true);
             loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onCompleteHandler, false, 0, true);

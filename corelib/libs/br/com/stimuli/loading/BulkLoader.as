@@ -32,13 +32,30 @@
 */
 package br.com.stimuli.loading {
     
-import br.com.stimuli.loading.loadingtypes.*;
-
-import flash.display.*;
-import flash.events.*;
+import flash.display.AVM1Movie;
+import flash.display.Bitmap;
+import flash.display.BitmapData;
+import flash.display.Loader;
+import flash.display.MovieClip;
+import flash.display.Sprite;
+import flash.events.ErrorEvent;
+import flash.events.Event;
+import flash.events.EventDispatcher;
+import flash.events.ProgressEvent;
 import flash.media.Sound;
-import flash.net.*;
-import flash.utils.*;
+import flash.net.NetStream;
+import flash.net.URLRequest;
+import flash.utils.ByteArray;
+import flash.utils.Dictionary;
+import flash.utils.getTimer;
+
+import br.com.stimuli.loading.loadingtypes.BinaryItem;
+import br.com.stimuli.loading.loadingtypes.ImageItem;
+import br.com.stimuli.loading.loadingtypes.LoadingItem;
+import br.com.stimuli.loading.loadingtypes.SoundItem;
+import br.com.stimuli.loading.loadingtypes.URLItem;
+import br.com.stimuli.loading.loadingtypes.VideoItem;
+import br.com.stimuli.loading.loadingtypes.XMLItem;
 
     
 /**
@@ -610,6 +627,16 @@ bulkLoader.start(3)
             }
             return item;
         }
+		
+		public function topLoadingItem(item:LoadingItem):void
+		{
+			var index:int = _items.indexOf(item);
+			if (index >= 0 && index != _items.length-1)
+			{
+				_items.splice(index,1);
+				_items.push(item);
+			}
+		}
         
         /** Start loading all items added previously
         *   @param  withConnections [optional]The maximum number of connections to make at the same time. If specified, will override the parameter passed (if any) to the constructor.
@@ -777,11 +804,14 @@ bulkLoader.start(3)
                     _removeFromConnections(i);
                 }
             });
-            for each (var checkItem:LoadingItem in _items){
-               if (!checkItem._isLoading && checkItem.status != LoadingItem.STATUS_STOPPED && _canOpenConnectioForItem(checkItem)){
-                   return checkItem;
-               }
-            }
+			var len:int = _items.length-1,checkItem:LoadingItem;
+			for (;len >= 0;len--)
+			{
+				checkItem = _items[len];
+				if (!checkItem._isLoading && checkItem.status != LoadingItem.STATUS_STOPPED && _canOpenConnectioForItem(checkItem)){
+					return checkItem;
+				}
+			}
             return null;
         }
         // if toLoad is specified it will take precedence over whoever is queued cut line
@@ -813,7 +843,7 @@ bulkLoader.start(3)
             }
             return next;
         }
-        
+		
         /** @private */
         public function _onItemComplete(evt : Event) : void {
            var item : LoadingItem  = evt.target as LoadingItem;

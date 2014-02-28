@@ -63,7 +63,7 @@
 				loadConfig();
 			}
 			
-			/**加载配置XML*/
+			/**加载配置XML,用于存储资源文件的时间和注册点信息，方便下次使用，还未完成*/
 			private function loadConfig():void
 			{
 				var file:File = File.applicationDirectory;

@@ -69,7 +69,8 @@
 			}
 			if ($ap.type == AvatarPartType.BODY && $ap.id != AvatarPartID.BLANK)
 			{
-				$ap.avatar.sceneCharacter.loadAvatarPart($ap.avatar.sceneCharacter.scene.blankAvatarParamData);
+				if ($ap.avatar.sceneCharacter.scene != null)
+					$ap.avatar.sceneCharacter.loadAvatarPart($ap.avatar.sceneCharacter.scene.blankAvatarParamData);
 			}
 			var watingArr:Array = waitingLoadAvatars[$fullSourchPath];
 			if (watingArr == null)
