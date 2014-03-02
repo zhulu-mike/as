@@ -38,7 +38,7 @@ package game.modules.engine.controller
 			GameInstance.scene = new Scene(GameConfig.sceneWidth,GameConfig.sceneHeight);
 			LayerManager.sceneLayer.addChildAt(GameInstance.scene, 0);
 			GameInstance.scene.switchScene(1001,"taiyixianjing");
-			var apd:AvatarParamData = new AvatarParamData(ResourceUtil.getAvatarPath(5));
+			var apd:AvatarParamData = new AvatarParamData(ResourceUtil.getAvatarPath(569));
 			GameInstance.scene.mainChar.loadAvatarPart(apd);
 			GameInstance.scene.mainChar.setTileXY(100,110);
 			GameInstance.scene.mainChar.playTo(CharStatusType.STAND);

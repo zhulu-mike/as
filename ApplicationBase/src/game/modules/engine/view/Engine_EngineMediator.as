@@ -21,6 +21,13 @@ package game.modules.engine.view
 		{
 			super(NAME, viewComponent);
 			EventDispatchCenter.getInstance().addEventListener(SceneEvent.INTERACTIVE, onSceneInteractive);
+			EventDispatchCenter.getInstance().addEventListener(SceneEvent.STATUS, onSceneStatus);
+		}
+		
+		protected function onSceneStatus(event:SceneEvent):void
+		{
+			// TODO Auto-generated method stub
+			sendNotification(Engine_ApplicationFacade.SC_STATUS_EVENT, event);
 		}
 		
 		protected function onSceneInteractive(event:SceneEvent):void

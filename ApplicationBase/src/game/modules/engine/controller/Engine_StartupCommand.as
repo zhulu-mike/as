@@ -24,6 +24,7 @@ package game.modules.engine.controller
 			facade.registerMediator(new Engine_EngineMediator(GameInstance.scene));
 			facade.registerCommand(Engine_ApplicationFacade.INIT_ENGINE, Engine_InitCommand);
 			facade.registerCommand(Engine_ApplicationFacade.SCENE_INTERACTIVE_EVENT, Engine_sceneInteractiveCommand);
+			facade.registerCommand(Engine_ApplicationFacade.SC_STATUS_EVENT, Engine_statusCommand);
 			
 			facade.sendNotification(Engine_ApplicationFacade.INIT_ENGINE);
             return;

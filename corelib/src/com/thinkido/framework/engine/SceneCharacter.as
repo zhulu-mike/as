@@ -695,8 +695,10 @@
 		private var _currInView:Boolean = false ;
 		public function inViewDistance() : Boolean
 		{
-			if (this.scene == null)
+			if (this.scene == null){
+				isInView = true;
 				return true;
+			}
 			_lastInView = _currInView ;
 			_currInView = this.scene.sceneCamera.canSee(this);
 			isInView = _currInView;

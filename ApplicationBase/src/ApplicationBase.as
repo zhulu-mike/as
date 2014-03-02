@@ -94,6 +94,9 @@ package
 			Global.instance.initStage(stage);
 			KeyBoardManager.instance.start();
 			GameManager.init();
+			var status:FlashStatus = new FlashStatus();
+			LayerManager.uiLayer.addChild(status);
+			status.init(stage);
 //			Logger.isOpen = false;
 			Logger.isOpen = false;
 		}
