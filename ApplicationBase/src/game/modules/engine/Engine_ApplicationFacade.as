@@ -2,12 +2,9 @@ package game.modules.engine
 {
 	import com.thinkido.framework.common.observer.Notification;
 	
-	import flash.display.DisplayObject;
-	
 	import game.events.PipeEvent;
 	import game.manager.PipeManager;
 	import game.modules.engine.controller.Engine_StartupCommand;
-	import game.modules.engine.view.Engine_EngineMediator;
 	
 	import org.puremvc.as3.multicore.patterns.facade.Facade;
 
@@ -23,6 +20,10 @@ package game.modules.engine
 		 * 场景交互事件
 		 */		
 		public static const SCENE_INTERACTIVE_EVENT:String = "SCENE_INTERACTIVE_EVENT";
+		/**
+		 * sc状态改变
+		 */		
+		public static const SC_STATUS_EVENT:String = "SC_STATUS_EVENT";
 
 		public function Engine_ApplicationFacade(param1:String)
 		{
