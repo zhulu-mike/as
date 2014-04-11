@@ -206,8 +206,8 @@
                 else
                 {
 //                    $sound = $sound.toLowerCase();
-                    re1 = new RegExp("^.+.mp3$");
-                    re2 = new RegExp("^.+.wmv$");
+                    re1 = new RegExp("^.+.mp3");
+                    re2 = new RegExp("^.+.wmv");
                     str1True = re1.test($sound);
                     str2True = re2.test($sound);
                     if (str1True || str2True)

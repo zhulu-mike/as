@@ -417,6 +417,16 @@
             MagicHelper.showMagic_from1pass1toPointArea(this, $toP, $fromApd, $toApd, $passApd);
             return;
         }
+		
+		/**
+		 * @see MagicHelper#showMagic_from1pass1toPointArea
+		 * 
+		 */
+        public function showMagic_from1pass1toPoint_NoPath($toP:Point, $fromApd:AvatarParamData = null, $toApd:AvatarParamData = null, $passApd:AvatarParamData = null) : void
+        {
+            MagicHelper.showMagic_from1pass1toPoint_NoPath(this, $toP, $fromApd, $toApd, $passApd);
+            return;
+        }
 
         public function showMagic_from1pass1toRectArea(value1:Point, value2:int, value3:int, value4:int = 1, value5:Boolean = true, value6:AvatarParamData = null, value7:AvatarParamData = null, value8:AvatarParamData = null) : void
         {

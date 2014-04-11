@@ -159,7 +159,7 @@
 	                if ($sc.usable == false)
 	                {
 						tm.kill() ;
-						tm1.kill() ;
+//						tm1.kill() ;
 	                    return;
 	                }
 	                return;

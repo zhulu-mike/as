@@ -242,8 +242,8 @@
 				i-- ;
 			}
 			bytelist.push({pri:$priority,filePath:$filePath,data:[$parent,imageByte], tx:tx, ty:ty});
-			resetZonePriority();
-			bytelist.sortOn("pri",Array.NUMERIC|Array.DESCENDING);
+//			resetZonePriority();
+//			bytelist.sortOn("pri",Array.NUMERIC|Array.DESCENDING);
 			if( loadTimer == null ){
 				loadTimer = TimerManager.createTimer(loadTime,int.MAX_VALUE,loadByteHandler,null,reset);
 			}else{

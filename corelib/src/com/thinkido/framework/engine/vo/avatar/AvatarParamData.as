@@ -148,7 +148,7 @@
 				return;
 			}
 			var apc:AvatarPlayCallBack = this._playCallBackDict[$status];
-			if (this._playCallBackDict[$status] == null)
+			if (apc == null)
 			{
 				apc = new AvatarPlayCallBack();
 				this._playCallBackDict[$status] = apc;
@@ -361,16 +361,15 @@
 			{
 				return;
 			}
-			_apcb.executeCallBack(sc, ap,useBefore, useStart, useUpdate, useComplete, useAdd, useRemove,$beforeDelay, $startDelay, $updateDelay, $completeDelay, $addDelay,$removeDelay);
-			return;
-			
-			
 			beforeDelay = $beforeDelay||beforeDelay ;
 			startDelay = $startDelay||startDelay ;
 			updateDelay = $updateDelay||updateDelay ;
 			completeDelay = $completeDelay||completeDelay ;
 			addDelay = $addDelay||addDelay ;
 			removeDelay = $removeDelay||removeDelay ;
+			_apcb.executeCallBack(sc, ap,useBefore, useStart, useUpdate, useComplete, useAdd, useRemove,$beforeDelay, $startDelay, $updateDelay, $completeDelay, $addDelay,$removeDelay);
+			return;
+			
 			if (this.playCallBack == null || hasExecutedCallback )
 			{
 				return;

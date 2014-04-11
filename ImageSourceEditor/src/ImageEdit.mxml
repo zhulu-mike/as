@@ -25,6 +25,10 @@
 			
 			import vo.DirectoryVO;
 			
+			
+			
+			
+			
 			private var allDirectory:Vector.<DirectoryVO> = new Vector.<DirectoryVO>();//所有的目录
 			
 			private var fileTotal:int = 0;	//要加载的文件个数
@@ -61,6 +65,8 @@
 				initEvent();
 				
 				loadConfig();
+				
+				ctrlPanel.playBtn.addEventListener(MouseEvent.CLICK, playAni);
 			}
 			
 			/**加载配置XML,用于存储资源文件的时间和注册点信息，方便下次使用，还未完成*/
@@ -157,6 +163,7 @@
 			
 			private function onDrop(event:NativeDragEvent):void
 			{
+				timer.stop();
 				this.clear();
 				var arr:Array = event.clipboard.getData(ClipboardFormats.FILE_LIST_FORMAT) as Array;
 				var file:File = new File(arr[0].nativePath);
@@ -204,6 +211,7 @@
 			 */	 
 			private function importSourcesFile(event:MouseEvent):void
 			{
+				timer.stop();
 				this.clear();
 				
 				var fl:File = File.desktopDirectory;
@@ -308,7 +316,7 @@
 					readDirectory(allDirectory[i]);
 					if (i == 0)
 					{
-						ctrlPanel.intervalTime_textInput.text = ConfigHelper.getConfig(allDirectory[i].fileName) ? ConfigHelper.getConfig(allDirectory[i].fileName).time : "67";
+						ctrlPanel.intervalTime_textInput.text = ConfigHelper.getConfig(allDirectory[i].fileName) ? ConfigHelper.getConfig(allDirectory[i].fileName).time : "100";
 					}
 				}
 			}
@@ -425,6 +433,7 @@
 			
 			private function createAllNewImages(event:MouseEvent):void
 			{
+				timer.stop();
 				swfPacker.registerPoint = ctrlPanel.xValue.selected ? 0 : ctrlPanel.yValue.selected ? 1 : 2;
 				if(ctrlPanel.xValue.selected == true)
 				{
@@ -442,6 +451,7 @@
 			
 			private function clear():void
 			{
+				timer.stop();
 				this.allDirectory = new Vector.<DirectoryVO>();
 				this.isAddToStage = false;
 				this.loadIndex = 0;
@@ -455,6 +465,52 @@
 				this.registerDot.y = int(ctrlPanel.yPos.text);
 				this.setShadowXY();
 			}
+			
+			private function playAni(e:MouseEvent):void
+			{
+				timer.stop();
+				playIndex = 0;
+				if (allDirectory.length < 1 || allDirectory[0].imgArr.length < 1)
+				{
+					Alert.show("请先导入资源文件");
+					return;
+				}
+				playImgs = allDirectory[0].imgArr[4].tempArr as Array;
+				var i:int = 0, len:int = playImgs.length;
+				var arr:Array = [], nameArr:Array;
+				for (;i<len;i++)
+				{
+					nameArr = playImgs[i].name.split("_");
+					if (nameArr[0] == 0)
+					{
+						arr.push({index:int(nameArr[1]),img:playImgs[i]});
+					}
+				}
+				arr.sortOn("index", Array.NUMERIC);
+				playImgs = arr;
+				timer.delay = int(ctrlPanel.intervalTime_textInput.text);
+				timer.addEventListener(TimerEvent.TIMER, onTimer);
+				timer.start();
+			}
+			
+			private function onTimer(e:TimerEvent):void
+			{
+				if (playImgs.length > playIndex)
+				{
+					while(sta.numChildren > 0)
+					{
+						sta.removeElementAt(0);
+					}
+					sta.addElement(playImgs[playIndex].img);
+					playIndex++;
+				}else{
+					playIndex = 0;
+				}
+			}
+			
+			private var timer:Timer = new Timer(30);
+			private var playImgs:Array;
+			private var playIndex:int = 0;
 		]]>
 	</fx:Script>
 	

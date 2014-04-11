@@ -3,8 +3,6 @@
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
-	import org.osflash.thunderbolt.Logger;
 
 	/**
 	 * Math 工具，包含常用方法
@@ -304,7 +302,6 @@
 		{
 			var tempX:int = nx - cx;
 			var tempY:int = ny - cy;
-			Logger.warn(cx+","+cy+","+nx+","+ny+":"+tempX+"-"+tempY);
 			if (tempX == 0 && tempY == 1)
 			{
 				return 0;

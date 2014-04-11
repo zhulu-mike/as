@@ -66,6 +66,8 @@
         private static const BOTTOM_BAR_SPACE:int = 2;
 		public static const HEADBAR_TWEENLITE_TIME:Number = 0.2;
 		
+		private var _relationBmp:Bitmap ;
+		
 		public var updateNow:Boolean = false;
 
         public function HeadFace($nickName:String = "", $nickColor:uint = 16777215, $customTitle:String = "", $leftIco:DisplayObject = null, $topIco:DisplayObject = null)
@@ -73,7 +75,7 @@
             this.reSet([$nickName, $nickColor, $customTitle, $leftIco, $topIco, this._customFaces, this._nickLeftIco]);
             return;
         }
-
+		
 		/**
 		 * 设置特别位置 
 		 * @return 
@@ -161,6 +163,10 @@
 			this.updateNow = false;
 			_specialPostion = false ;
             visible = true;
+			if( _relationBmp != null && _relationBmp.parent != null ){
+				_relationBmp.parent.removeChild(_relationBmp);
+			}
+			_relationBmp = null ;
             return;
         }
 
@@ -321,6 +327,7 @@
 		
 		public function addCustomHeadFace(value:BaseCustomFace):void
 		{
+			removeCustomHeadFaceByName(value.name);
 			this._customFaces.push(value);
 			this.sortCustomFaces();
 			this.reSet([this._nickName, this._nickNameColor, this._customTitle, this._leftIco, this._topIco, this._customFaces, this._nickLeftIco]);
@@ -495,7 +502,7 @@
             var _loc_7:Rectangle = null;
             var _loc_8:Rectangle = null;
             var _loc_9:Matrix = null;
-            var _loc_1:* = new Sprite();
+            var tempContainer:Sprite = new Sprite();
 			var _nick:TextField;
 			var nWidth:Number = 0;
 			if (this._showNickLeftIco && this._nickLeftIco.length > 0)
@@ -549,19 +556,19 @@
             }
             if (_loc_2 != null)
             {
-                _loc_1.addChild(_loc_2);
+                tempContainer.addChild(_loc_2);
             }
             if (_loc_3 != null)
             {
-                _loc_1.addChild(_loc_3);
+                tempContainer.addChild(_loc_3);
             }
             if (this._showLeftIco && this._leftIco != null)
             {
-                _loc_1.addChild(this._leftIco);
+                tempContainer.addChild(this._leftIco);
             }
             if (this._showTopIco && this._topIco != null)
             {
-                _loc_1.addChild(this._topIco);
+                tempContainer.addChild(this._topIco);
             }
 			var customMaxWidth:Number = 0;
 			var customMaxHeight:Number = 0;
@@ -574,7 +581,7 @@
 					tempCustomFace = _customFaces[ii];
 					if (tempCustomFace.content == null)
 						continue;
-					_loc_1.addChild(tempCustomFace.content);
+					tempContainer.addChild(tempCustomFace.content);
 					if (customMaxWidth < tempCustomFace.content.width)
 						customMaxWidth = tempCustomFace.content.width;
 					if (customMaxHeight < tempCustomFace.content.height)
@@ -652,19 +659,19 @@
                     this._topIco.y = -_loc_7.y - _loc_5 - TOP_ICO_SPACE - _loc_7.height;
                 }
             }
-            if (_loc_1.numChildren > 0)
+            if (tempContainer.numChildren > 0)
             {
                 if (this._mainBitmap == null)
                 {
                     this._mainBitmap = new Bitmap();
                     addChild(this._mainBitmap);
                 }
-                this._mainBitmap.bitmapData = new BitmapData(_loc_1.width, _loc_1.height, true, 0);
-                _loc_8 = _loc_1.getBounds(_loc_1);
+                this._mainBitmap.bitmapData = new BitmapData(tempContainer.width, tempContainer.height, true, 0);
+                _loc_8 = tempContainer.getBounds(tempContainer);
                 _loc_9 = new Matrix();
                 _loc_9.tx = -_loc_8.x;
                 _loc_9.ty = -_loc_8.y;
-                this._mainBitmap.bitmapData.draw(_loc_1, _loc_9);
+                this._mainBitmap.bitmapData.draw(tempContainer, _loc_9);
             }
             else if (this._mainBitmap)
             {
@@ -789,6 +796,25 @@
             }
             return;
         }
+		
+		
+		public function get relationBmp():Bitmap
+		{
+			return _relationBmp;
+		}
+		
+		public function set relationBmp(value:Bitmap):void
+		{
+			if( _relationBmp != null){
+				removeChild(_relationBmp);
+			}
+			_relationBmp = value;
+			if( value == null ){
+				return ;
+			}
+			addChild(_relationBmp);
+		}
+		
 		/**
 		 * @see HeadFace
 		 * 

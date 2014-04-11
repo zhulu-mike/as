@@ -15,6 +15,7 @@
     import com.thinkido.framework.engine.staticdata.AvatarPartType;
     import com.thinkido.framework.engine.staticdata.SceneCharacterType;
     import com.thinkido.framework.engine.tools.SceneCache;
+    import com.thinkido.framework.engine.utils.Astar;
     import com.thinkido.framework.engine.vo.ShowContainer;
     import com.thinkido.framework.engine.vo.avatar.AvatarParamData;
     import com.thinkido.framework.utils.DrawUtil;
@@ -25,6 +26,7 @@
     import flash.events.Event;
     import flash.geom.Point;
     import flash.utils.ByteArray;
+    import flash.utils.getTimer;
     
     import org.osflash.thunderbolt.Logger;
 
@@ -395,7 +397,7 @@
                 var sc:SceneCharacter = null;
                 mapConfig = $mapConfig;
                 SceneCache.mapTiles = $mapTile;
-				SceneCache.mapSolidsByte = $mapSolid;
+				Astar.starGrid.grids = $mapSolid;
                 if (mapConfig.slipcovers != null && mapConfig.slipcovers.length > 0)
                 {
                     for each (slipcover in mapConfig.slipcovers)
@@ -697,7 +699,6 @@
             SceneCache.mapImgCache.dispose();
             SceneCache.currentMapZones = {};
             SceneCache.mapTiles = {};
-			SceneCache.mapSolidsByte.clear();
             SceneCache.mapZones = {};
             this.mapConfig = null;
             this.sceneSmallMapLayer.dispose();
@@ -713,6 +714,7 @@
                 if (sc != this.mainChar && sc != this._mouseChar)
                 {
                     this.removeCharacter(sc);
+					trace(getTimer());
                     continue;
                 }
                 index++;
@@ -881,7 +883,7 @@
             var $x:int = floor($point.x / MAX_AVATARBD_WIDTH);
             var $y:int = floor($point.y / MAX_AVATARBD_HEIGHT);
             var bmd:BitmapData = this.sceneAvatarLayer.getAvatarBD($x, $y);
-            if (this.sceneAvatarLayer.getAvatarBD($x, $y) != null)
+            if (bmd != null)
             {
                 color = bmd.getPixel32($point.x - $x * MAX_AVATARBD_WIDTH, $point.y - $y * MAX_AVATARBD_HEIGHT);
                 if (color != 0)
@@ -955,7 +957,7 @@
 		{
 			var i:int = 0, j:int = 0, offset:int = 0;
 			var deep:int = 1, index:int = 0, gridx:int = mapConfig.mapGridX, gridy:int = mapConfig.mapGridY;
-			var tar:ByteArray = SceneCache.mapSolidsByte;
+			var tar:ByteArray = Astar.starGrid.grids;
 			var newX:int = 0, newY:int = 0;
 			while((p.x + deep < gridx || p.x - deep >= 0 || p.y + deep < gridy || p.y - deep >= 0))
 			{
@@ -982,6 +984,11 @@
 				deep++;
 			}
 			return null;
+		}
+		
+		public function isMouseChar(sc:SceneCharacter):Boolean
+		{
+			return sc == _mouseChar;
 		}
     }
 }

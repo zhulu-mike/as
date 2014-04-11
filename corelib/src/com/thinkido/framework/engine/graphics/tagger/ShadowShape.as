@@ -109,7 +109,7 @@ package com.thinkido.framework.engine.graphics.tagger
 							 this.graphics.endFill();
 						 }
 					 }
-					 _index = _index - 1;
+					 _index--;
 				 }
 				 
 				 if (needDraw)

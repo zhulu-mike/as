@@ -63,9 +63,9 @@
 						this.add( nodePool.createObj(LNode,bound) as LNode, lNode.pre);
 						return;
 					}
-					if (lBound.intersects(bound))
+					_interBounds = lBound.intersection(bound);
+					if (_interBounds)
 					{
-						_interBounds = lBound.intersection(bound);
 						if (_interBounds.equals(bound))
 						{
 							Bounds.deleteBounds(bound);
@@ -87,7 +87,7 @@
 							_unionBounds = lBound.union(bound);
 							this.remove(lNode);
 							this.beginLN = this.first;
-							Bounds.deleteBounds(bound);
+//							Bounds.deleteBounds(bound);
 							if (this.beginLN != null)
 							{
 								this.addBounds(_unionBounds);
@@ -97,7 +97,7 @@
 								this.add(new LNode(_unionBounds), this.last);
 							}
 						}
-						Bounds.deleteBounds(_interBounds);
+//						Bounds.deleteBounds(_interBounds);
 						return;
 					}
 					lNode = lNode.next;

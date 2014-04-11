@@ -208,11 +208,11 @@
             var isIsland:Boolean = targetMapTile.isIsland;
             if (targetMapTile.isIsland)
             {
-                pathArr = Astar.search(SceneCache.mapSolidsByte, targetMapTile.tile_x, targetMapTile.tile_y, sc.tile_x, sc.tile_y,sc.scene.mapConfig);
+                pathArr = Astar.search(Astar.starGrid.grids, targetMapTile.tile_x, targetMapTile.tile_y, sc.tile_x, sc.tile_y,sc.scene.mapConfig);
             }
             else
             {
-                pathArr = Astar.search(SceneCache.mapSolidsByte, sc.tile_x, sc.tile_y, targetMapTile.tile_x, targetMapTile.tile_y,sc.scene.mapConfig);
+                pathArr = Astar.search(Astar.starGrid.grids, sc.tile_x, sc.tile_y, targetMapTile.tile_x, targetMapTile.tile_y,sc.scene.mapConfig);
             }
             if (pathArr == null || pathArr.length < 2)
             {

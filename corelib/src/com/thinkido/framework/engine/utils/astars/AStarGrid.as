@@ -3,6 +3,7 @@ package com.thinkido.framework.engine.utils.astars
 	import com.thinkido.framework.utils.MathUtil;
 	
 	import flash.geom.Point;
+	import flash.utils.ByteArray;
 
 	public class AStarGrid
 	{
@@ -16,9 +17,14 @@ package com.thinkido.framework.engine.utils.astars
 		
 		private var _straightCost:Number = 1.0;
 		private var _diagCost:Number = Math.SQRT2;
+		public var grids:ByteArray = new ByteArray();
 		
 		public function AStarGrid(numCols:int=0, numRows:int=0){
 			init(numCols, numRows);
+		}
+		public function getIndexByXY(x:int, y:int):int
+		{
+			return x * _numRows + y;
 		}
 		
 		public function init(numCols:int, numRows:int):void
@@ -101,7 +107,14 @@ package com.thinkido.framework.engine.utils.astars
 		
 		public function getNode(x:int, y:int):AStarNode {
 			if (_nodes[x+"_"+y] == undefined)
-				return null;
+			{
+				var index:int = getIndexByXY(x,y);
+				grids.position = index;
+				if (grids.readByte() == 0)
+				{
+					setWalkable(x,y,true);
+				}
+			}
 			return _nodes[x+"_"+y];
 		}
 		
@@ -145,6 +158,7 @@ package com.thinkido.framework.engine.utils.astars
 			{
 				temp.dispose();
 			}
+			grids.clear();
 			_nodes = null;
 			_numCols = 0;
 			_numRows = 0;

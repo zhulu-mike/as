@@ -32,7 +32,6 @@
         public static var mapImgCache:Cache = CacheManager.creatNewCache("mapImgCache");
         public static var mapTiles:Object = {};
         public static var tempMapTiles:Object = {};
-		public static var mapSolidsByte:ByteArray = new ByteArray(); 
 		
         private static var waitingLoadAvatarHT:HandlerThread = new HandlerThread();
         private static var waitingLoadAvatarFun:Object = new Object();

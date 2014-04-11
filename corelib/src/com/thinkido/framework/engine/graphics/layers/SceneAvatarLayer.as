@@ -358,18 +358,28 @@
             var ap:AvatarPart = null;
             var apBound:Bounds = null;
             var rec:Rectangle = null;
-			var t:int = getTimer();
+			var time:int = getTimer();
             this._dirtyBoundsMaker.clear();
             this.clearBoundsArr.length = 0;
             this.restingAvatarPartArr.length = 0;
             var scs:Array = this._scene.renderCharacters;
+			var really:Array = [];
+			for each (sc in scs)
+			{
+				if (sc.inViewDistance())
+				{
+					really.push(sc);
+				}
+			}
+			scs = really;
             scs.sortOn(["showIndex", "pixel_y", "pixel_x", "logicAnglePRI", "id"], [Array.NUMERIC, Array.NUMERIC, Array.NUMERIC, Array.NUMERIC, Array.NUMERIC]);
+			
             for each (sc in scs)
             {
                 sc.runAvatar();
             }
-			trace("runAvatar时间："+(getTimer()-t)); 
-			t = getTimer();
+//			trace("runavatar时间"+(getTimer()-time));
+			time = getTimer();
             this.clearBoundsArr = this.clearBoundsArr.concat(this.removeBoundsArr);
             this.clearBoundsArr.sortOn("top", Array.NUMERIC);
             this.removeBoundsArr.length = 0;
@@ -379,11 +389,9 @@
 				{
 					this._dirtyBoundsMaker.addBounds(bounds);
 				}else{
-					Bounds.deleteBounds(bounds);
+//					Bounds.deleteBounds(bounds);
 				}
             }
-			trace("addBounds时间："+(getTimer()-t)); 
-			t = getTimer();
             tempArr = this._dirtyBoundsMaker.getBoundsArr();
             for each (ap in this.restingAvatarPartArr)
             {
@@ -396,19 +404,17 @@
 						ap.updateNow = true;
 						ap.renderRectArr.push(rec);
 					}
-					Bounds.deleteBounds(apBound);
+//					Bounds.deleteBounds(apBound);
                 }
             }
-			trace("op bounds时间："+(getTimer()-t)); 
-			t = getTimer();
+//			trace("bounds时间"+(getTimer()-time));
+			time = getTimer();
             this.clear(tempArr);
-			trace("clearBound时间："+(getTimer()-t));
-			t = getTimer();
             for each (sc in scs)
             {
                 sc.drawAvatar(this);
             }
-			trace("drawAvatar时间："+(getTimer()-t));
+//			trace("drawavatar时间"+scs.length+"/"+(getTimer()-time));
             return;
         }
 

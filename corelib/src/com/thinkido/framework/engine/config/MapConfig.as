@@ -1,5 +1,6 @@
 ﻿package com.thinkido.framework.engine.config
 {
+	import flash.geom.Rectangle;
 
     public class MapConfig extends Object
     {
@@ -29,6 +30,11 @@
 		 */		
         public var smallMapUrl:String;
         public var slipcovers:Array;
+		
+		/**
+		 * 安全区
+		 */		
+		public var safeRect:Rectangle = new Rectangle();
 
         public function MapConfig()
         {

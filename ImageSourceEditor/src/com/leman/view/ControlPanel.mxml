@@ -137,7 +137,7 @@
 		<s:Button id="outXML" label="清理" />
 		
 		<s:CheckBox id="checkBox" label="显示人物参考模型"/>
-		<s:Label color="#FFFFFF"/>
+		<s:Button id="playBtn" label="播放"/>
 		
 		<s:RadioButton id="xValue" width="100" label="默认点" selected="false"/>
 		<s:RadioButton id="yValue" label="中心点" selected="false"/>
@@ -149,7 +149,7 @@
 		<s:Label text="时间间隔类型：" paddingTop="5" textAlign="center" width="100"/>
 		<s:DropDownList id="comboBox" dataProvider="{this.timeSetData}" width="100" selectedIndex="0" change="updateTimeInterval()"/>
 		<s:Label text="两帧间隔时间：" paddingTop="5" textAlign="center" visible="{intervalTime_textInput.visible}"  includeInLayout="{intervalTime_textInput.visible}"/>
-		<s:TextInput id="intervalTime_textInput" text="67" color="#FFFFFF" restrict="0-9 ." width="100" includeInLayout="{intervalTime_textInput.visible}"/>
+		<s:TextInput id="intervalTime_textInput" text="100" color="#FFFFFF" restrict="0-9 ." width="100" includeInLayout="{intervalTime_textInput.visible}"/>
 	</s:Group>
 	<s:Group id="actionTimePanel" includeInLayout="{actionTimePanel.visible}" visible="false" color="0xff0000" direction="ltr">
 		<s:layout>

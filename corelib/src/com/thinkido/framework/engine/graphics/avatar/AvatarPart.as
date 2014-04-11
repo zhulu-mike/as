@@ -22,8 +22,8 @@
     import com.thinkido.framework.engine.vo.avatar.AvatarPartStatus;
     import com.thinkido.framework.engine.vo.avatar.AvatarPlayCallBack;
     import com.thinkido.framework.engine.vo.avatar.AvatarPlayCondition;
-    import com.thinkido.framework.engine.vo.avatar.XmlImgData;
     import com.thinkido.framework.engine.vo.avatar.DynamicPosition.IDynamicPosition;
+    import com.thinkido.framework.engine.vo.avatar.XmlImgData;
     import com.thinkido.framework.manager.TimerManager;
     
     import flash.display.BitmapData;
@@ -294,7 +294,7 @@
 						this.setStatus(CharStatusType.STAND);
 				}else if (type == AvatarPartType.WING)
 				{
-					if ( _currentStatus != CharStatusType.DEATH)
+					if ( $status != CharStatusType.DEATH)
 						setStatus( CharStatusType.STAND );
 					else
 						setStatus( $status);
@@ -355,17 +355,12 @@
             }
             if (this._currentStatus == CharStatusType.DEATH)
             {
-//                this._currentLogicAngel = 0;
                 this._only1LogicAngel = false ;
             }
             if (CharStatusType.isOnly1Repeat(this._currentStatus))
             {
                 this._only1Repeat = true;
             }
-//            if (this.type == AvatarPartType.MAGIC_PASS)
-//            {
-//                this._only1Frame = true;
-//            }
             if (this.type == AvatarPartType.MAGIC_PASS || this.type == AvatarPartType.MAGIC)
             {
                 this._autoRecycle = true;
@@ -400,23 +395,8 @@
             {
                 _changed = true;
             }
-//			if (_tempInView != this.avatar.sceneCharacter.inViewDistance())
-//			{
-//				//可见状态发生变化时，也要更新
-//				_changed = true;
-//				_tempViewChanged = true;
-//			}
             if (_changed)
             {
-				//此处如果加入_tempViewChanged视野的改变优化。当切换场景时，服务端的数据在加载场景完毕之前，由于重设主角
-				//SC的setLogicAngle，此时由于SC的inViewDistance返回的是false，会导致旧图像销毁，但是新的图像不会生产
-				//从而导致切换场景后主角不可见的bug。
-				//BUG的解决办法:
-				//1:在加载新场景时，inViewDistance方法始终返回true(暂时用这个)
-				//2.在if (_tempInView != this.avatar.sceneCharacter.inViewDistance())逻辑中对oldData.inView也赋值，但是此办法
-				//依然会导致进入场景后如果人物不动时无法看到形象
-				//3.如果场景被dispose后，不进入uninstallAvatarImg逻辑
-//				if (_tempStatus != this._currentStatus || _tempViewChanged)
                 if (_tempStatus != this._currentStatus)
                 {
                     this._lastTime = 0;
@@ -677,7 +657,7 @@
                             this.cutRect.height = this._drawSourceBitmapData.height;
                             this._sourcePoint.x = 0;
                             this._sourcePoint.y = 0;
-							trace("旋转用时："+(getTimer()-tt));
+//							trace("旋转用时："+(getTimer()-tt));
                         }
                         else if (this._drawMouseOn && this.avatar.sceneCharacter.isMouseOn)//如果为true，加滤镜
                         {
@@ -1011,8 +991,12 @@
             var bd:BitmapData = this._inMaskDrawSourceBitmapData || this._drawSourceBitmapData;
             if (bd != null)
             {
-                _color = bd.getPixel32($p.x - this.cutRect.x + this._sourcePoint.x, $p.y - this.cutRect.y + this._sourcePoint.y);
-                if (_color != 0)
+                try{
+					_color = bd.getPixel32($p.x - this.cutRect.x + this._sourcePoint.x, $p.y - this.cutRect.y + this._sourcePoint.y);
+				}catch(e:Error){
+					trace("what's reason cause error!");
+				}
+				if (_color != 0)
                 {
                     return true;
                 }
@@ -1121,6 +1105,7 @@
             this._offsetOnMountX = this._avatarParamData.offsetOnMountX;
             this._offsetOnMountY = this._avatarParamData.offsetOnMountY;
             this._dynamicPosition = this._avatarParamData.dynamicPosition;
+			this._currentRotation = this._avatarParamData.rotation ;
             this._sleepTime = this._avatarParamData.sleepTime;
             this._useSpecilizeXY = this._avatarParamData.useSpecilizeXY;
             var apcb:AvatarPlayCallBack = this._avatarParamData.playCallBack;

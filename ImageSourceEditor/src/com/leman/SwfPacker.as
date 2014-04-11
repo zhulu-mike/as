@@ -424,6 +424,8 @@ package com.leman
 			{
 				if (last == -1){
 					last = actionImages[i].r;
+					if (len == 1)
+						arr.push([actionImages[0]]);
 				}else if (actionImages[i].r != last || i == len - 1)
 				{
 					arr.push(actionImages.slice(begin,i == len - 1 ? len : i));

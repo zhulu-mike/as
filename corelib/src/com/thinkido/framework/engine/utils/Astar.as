@@ -1,10 +1,12 @@
 ﻿package com.thinkido.framework.engine.utils
 {
 	import com.thinkido.framework.engine.config.MapConfig;
+	import com.thinkido.framework.engine.config.SceneConfig;
 	import com.thinkido.framework.engine.utils.astars.AStarGrid;
 	import com.thinkido.framework.engine.utils.astars.AStarNode;
 	import com.thinkido.framework.engine.utils.astars.BinaryHeap;
 	
+	import flash.geom.Point;
 	import flash.utils.ByteArray;
 	import flash.utils.getTimer;
 	
@@ -124,7 +126,7 @@
 					var test:AStarNode = node.links[i].node;
 					var cost:Number = node.links[i].cost;
 					var g:Number = node.g + cost;
-					var h:Number = euclidian2(test);
+					var h:Number = manhattan(test);
 					var f:Number = g + h;
 					if (test.version == nowversion){
 						if (test.f > f){
@@ -148,91 +150,123 @@
 				}
 				node = _open.pop() as AStarNode;
 			}
+			var arr:Array = buildPath();
 			Logger.warn("寻路花费："+(getTimer()-time));
-			return buildPath();
+			return arr;
 			
 		}
 		
-		/** 弗洛伊德路径平滑处理 */
-		public static function floyd(path:Array):Array 
+		/**
+		 * 曼哈顿
+		 * @param param1
+		 * @return 
+		 * 
+		 */		
+		public static function manhattan(param1:AStarNode) : Number
 		{
-			if (path == null)
-				return null;
-			var _floydPath:Array = path.concat([]);
-			var len:int = _floydPath.length;
-			if (len > 2)
+			return Math.max(Math.abs(param1.x - _endNode.x)+Math.abs(param1.y - _endNode.y));
+		}// end function
+		
+		
+		/**
+		 * 
+		 * @param needPinghua 是否需要平滑处理
+		 * @return 
+		 * 
+		 */		
+		private static function buildPath(needPinghua:Boolean=false):Array {
+			var pp:Array = null;
+			var arr:Array = [];
+			var node:AStarNode = _endNode;
+			arr.push([node.x, node.y]);
+			while (node != _startNode)
 			{
-				var vector:AStarNode = new AStarNode(0, 0);
-				var tempVector:AStarNode = new AStarNode(0, 0);
-				//遍历路径数组中全部路径节点，合并在同一直线上的路径节点
-				//假设有1,2,3,三点，若2与1的横、纵坐标差值分别与3与2的横、纵坐标差值相等则
-				//判断此三点共线，此时可以删除中间点2
-				floydVector(vector, _floydPath[len - 1], _floydPath[len - 2]);
-				for (var i:int = _floydPath.length - 3; i >= 0; i--)
-				{
-					floydVector(tempVector, _floydPath[i + 1], _floydPath[i]);
-					if (vector.x == tempVector.x && vector.y == tempVector.y)
-					{
-						_floydPath.splice(i + 1, 1);
-					}
-					else
-					{
-						vector.x = tempVector.x;
-						vector.y = tempVector.y;
-					}
-				}
+				node = node.parent;
+				arr.push([node.x, node.y]);
 			}
-			//合并共线节点后进行第二步，消除拐点操作。算法流程如下：
-			//如果一个路径由1-10十个节点组成，那么由节点10从1开始检查
-			//节点间是否存在障碍物，若它们之间不存在障碍物，则直接合并
-			//此两路径节点间所有节点。
-			len = _floydPath.length;
-			for (i = len - 1; i >= 0; i--)
+			if (!needPinghua)
+				return arr;
+			var _path:Array = [];
+			_path.push([_endNode.x, _endNode.y]);
+			var startX:int = _endNode.x;
+			var startY:int = _endNode.y;
+			var i:int = 0;
+			var len:int = arr.length;
+			var cut:int = 0;
+			if (len > (cut + 1))
 			{
-				for (var j:int = 0; j <= i - 2; j++)
+				len = len - cut;
+			}
+			var index:int = len - 1;
+			while (index > i)
+			{
+				pp = arr[index] as Array;
+				if (pathCheck(startX, startY, pp[0], pp[1]))
 				{
-					if ( starGrid.hasBarrier(_floydPath[i].x, _floydPath[i].y, _floydPath[j].x, _floydPath[j].y) == false )
+					_path.push(pp);
+					if (index == (len - 1))
 					{
-						for (var k:int = i - 1; k > j; k--)
-						{
-							_floydPath.splice(k, 1);
-						}
-						i = j;
-						len = _floydPath.length;
 						break;
 					}
+					startX = pp[0];
+					startY = pp[1];
+					i = index;
+					index = len;
 				}
+				index--;
 			}
-			len = _floydPath.length;
-			i = 0;
-			var ret:Array = [];
-			for (;i<len;i++)
+			if (_path.length == 1)
 			{
-				ret.push([_floydPath[i].x, _floydPath[i].y]);
-			}
-			return ret;
-			
-		}
-		
-		private static function floydVector(target:AStarNode, n1:AStarNode, n2:AStarNode):void {
-			target.x = n1.x - n2.x;
-			target.y = n1.y - n2.y;
-		}
-		
-		
-		
-		private static function buildPath():Array {
-			var _path:Array = [];
-			var node:AStarNode = _endNode;
-//			Logger.warn("路径"+node.x+","+node.y+"-"+node.walkable);
-			_path.push([node.x, node.y]);
-			while (node != _startNode){
-				node = node.parent;
-				_path.push([node.x, node.y]);
-//				Logger.warn("路径"+node.x+","+node.y+"-"+node.walkable);
+				_path.push([_startNode.x, _startNode.y]);
 			}
 			return _path;
 		}
+		
+		private static function pathCheck(startx:int, starty:int, xx:int, yy:int) : Boolean
+		{
+			var ww:int = 0;
+			var bili:Number = NaN;
+			var posy:int = 0;
+			var posx:int = 0;
+			var _loc_14:AStarNode = null;
+			var tw:Number = SceneConfig.TILE_WIDTH;
+			var halftw:Number = SceneConfig.TILE_WIDTH >> 1;
+			var grid:AStarGrid = Astar.starGrid;
+			startx = startx * tw;
+			starty = starty * tw;
+			xx = xx * tw;
+			yy = yy * tw;
+			var disx:int = xx - startx;
+			var disy:int = yy - starty;
+			//2点之间的距离
+			var disSqurt:Number = Math.sqrt(disy * disy + disx * disx);
+			while (true)
+			{
+				var tempw:Number = ww + halftw;
+				ww += halftw;
+				if (tempw > disSqurt)
+				{
+					return true;
+				}
+				bili = ww / disSqurt;
+				posy = bili * disy + starty;
+				posx = bili * disx + startx;
+				if (disx > 0 && posx > xx || disx < 0 && posx < xx)
+				{
+					posx = xx;
+				}
+				if (disy > 0 && posy > yy || disy < 0 && posy < yy)
+				{
+					posy = yy;
+				}
+				_loc_14 = grid.getNode(posx / tw, posy / tw);
+				if (_loc_14 == null || _loc_14.walkable == false)
+				{
+					return false;
+				}
+			}
+			return true;
+		}// end function
      /*   public static function search($mapSolid:Object, $sx:int, $sy:int, $ex:int, $ey:int, param6:int = -1) : Array
         {
 			var time:int = getTimer();

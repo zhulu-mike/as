@@ -6,7 +6,6 @@
     import flash.display.BitmapData;
     import flash.geom.Matrix;
     import flash.geom.Rectangle;
-    import flash.sampler.getSize;
     import flash.utils.Dictionary;
     
 	/**
@@ -47,7 +46,6 @@
 				if (_dir07654[key] == null)
 				{
 					_dir07654[key] = RslLoaderManager.getInstance(key,0,0) as BitmapData;
-					trace(getSize(_dir07654[key])+","+_baseClassName+_status);
 				}
 				return _dir07654[key] as BitmapData;
 			}
@@ -85,11 +83,9 @@
 					if (this._dir07654[key] == null)
 					{
 						_dir07654[key] = RslLoaderManager.getInstance(key,0,0) as BitmapData;
-						trace(getSize(_dir07654[key])+","+_baseClassName+_status);
 					}
 					_bitmapdata.draw(this._dir07654[key], _matrix, null, null, new Rectangle(0, 0, _w, _h));
 					this._dir123Dict[_key] = _bitmapdata;
-					trace(getSize(_bitmapdata)+","+_baseClassName+_status);
 					return this._dir123Dict[_key] as BitmapData;
 				}
 			}

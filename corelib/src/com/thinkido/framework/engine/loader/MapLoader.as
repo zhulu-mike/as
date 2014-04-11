@@ -18,8 +18,9 @@
     
     import flash.display.Bitmap;
     import flash.events.Event;
-    import flash.system.System;
     import flash.utils.ByteArray;
+    import flash.utils.Endian;
+    import flash.utils.getTimer;
     
     import br.com.stimuli.loading.BulkLoader;
     import br.com.stimuli.loading.BulkProgressEvent;
@@ -61,6 +62,7 @@
 			}
             newOnComplete = function (event:Event) : void
 	            {
+					trace("进入地图初始化"+getTimer());
 	                var temp:* = undefined;
 	                var item:XML = null;
 	                var path:String = null;
@@ -86,67 +88,120 @@
 	                        return;
 	                    }
 	                }
+					trace("进入地图初始化2"+getTimer());
 					if(temp is ByteArray && GlobalConfig.customDecode != null)
 					{
 						temp = GlobalConfig.customDecode.call(null, temp);
 					}
-					
-//					地图数据
-	                var data:XML = XML(temp);
-	                var mapConfig:MapConfig = new MapConfig();
+					trace("加载地图完毕"+getTimer());
+					var mapConfig:MapConfig = new MapConfig();
 					mapConfig.mapID = mapID;
-	                mapConfig.mapGridX = data.head.grids.@grid_h;
-	                mapConfig.mapGridY = data.head.grids.@grid_v;
+//					地图数据
+					var by:ByteArray;
+					if (temp is ByteArray)
+					{
+						by = temp as ByteArray;
+						by.endian = Endian.LITTLE_ENDIAN;
+						by.readInt();
+						by.readInt();
+						mapConfig.mapGridX = by.readInt();
+						mapConfig.mapGridY = by.readInt();
+						mapConfig.safeRect.top = by.readInt();
+						mapConfig.safeRect.left = by.readInt();
+						mapConfig.safeRect.right = by.readInt();
+						mapConfig.safeRect.bottom = by.readInt();
+					}else{
+						var data:XML = XML(temp);
+						mapConfig.mapGridX = data.head.grids.@grid_h;
+						mapConfig.mapGridY = data.head.grids.@grid_v;
+						mapConfig.safeRect.top = int(data.head.grids.@safetop); 
+						mapConfig.safeRect.left = int(data.head.grids.@safeleft); 
+						mapConfig.safeRect.right = int(data.head.grids.@saferight); 
+						mapConfig.safeRect.bottom = int(data.head.grids.@safebuttom);
+					}
+					trace("初始化xml"+getTimer());
 					Astar.init();
 					Astar.starGrid.init(mapConfig.mapGridX, mapConfig.mapGridY);
 	                mapConfig.width = mapConfig.mapGridX * SceneConfig.TILE_WIDTH;
 	                mapConfig.height = mapConfig.mapGridY * SceneConfig.TILE_HEIGHT;
 	                mapConfig.zoneMapDir = GlobalConfig.getZoneMapFolder(mapConfigName);
 	                mapConfig.smallMapUrl = GlobalConfig.getSmallMapPath(mapConfigName);
-//	                	地图上的动画
-					if (data.movies != undefined && data.movies.movie != undefined)
-	                {
-	                    for each (item in data.movies.movie)
-	                    {
-	                        
-	                        path = GlobalConfig.getAvatarMapSlipcoverPath(int(item.@id));
-	                        slipcover = {pixel_x:Number(item.@x), pixel_y:Number(item.@y), sourcePath:path};
-	                        if (mapConfig.slipcovers == null)
-	                        {
-	                            mapConfig.slipcovers = [slipcover];
-	                            continue;
-	                        }
-	                        mapConfig.slipcovers.push(slipcover);
-	                    }
-	                }
-	                var trans:Object = SceneCache.transports;
-	                var tempMapId:int = mapConfig.mapID;
-	                var mapTypeDic:Object = {};
+					var trans:Object = SceneCache.transports;
+					var tempMapId:int = mapConfig.mapID;
+					var mapTypeDic:Object = {};
 					var astarGrid:AStarGrid = Astar.starGrid;
-	                for each (item in data.tiles.tile)
-	                {
-	                    mapTipX = item.@x;
-	                    mapTipY = item.@y;
-	                    mapTypeDic[mapTipX + "_" + mapTipY] = new MapTile(mapTipX, mapTipY, item.@s == "1", item.@s == "2", item.@m == "1", trans[tempMapId + "_" + mapTipX + "_" + mapTipY] != undefined);
-						if (item.@s != "1")
-							astarGrid.setWalkable(mapTipX, mapTipY, true);//只保存可用的点
-	                }
-					System.disposeXML(data);
 					var gridByte:ByteArray = new ByteArray();
-					for (var i:int = 0; i < mapConfig.mapGridX; i++) 
+//	                	地图上的动画
+					if (temp is ByteArray)
 					{
-						for (var j:int = 0; j < mapConfig.mapGridY ; j++) 
+						var m:int = 0, n:int = 0, v:int = mapConfig.mapGridY, h:int = mapConfig.mapGridX, value:int;
+						for (;m<h;m++)
 						{
-							if( mapTypeDic[i + "_" + j] == undefined ){
-								mapTypeDic[i + "_" + j] = new MapTile(i, j,false,false,false, trans[tempMapId + "_" + i + "_" + j] != undefined);
-								astarGrid.setWalkable(i, j, true);
-								gridByte.writeByte(0);
-							}else{
-								gridByte.writeByte(astarGrid.getNode(i,j)!=null?0:1);
+							for (n=0;n<v;n++)
+							{
+								value = by.readByte();
+								mapTipX = m;
+								mapTipY = n;
+								mapTypeDic[mapTipX + "_" + mapTipY] = new MapTile(mapTipX, mapTipY, value == 1, value == 2, value == 2, trans[tempMapId + "_" + mapTipX + "_" + mapTipY] != undefined);
+								gridByte.writeByte(value!=1?0:1);
+							}
+						}
+						trace("读完grids"+getTimer());
+						var len:int = by.readByte();
+						if (len > 0)
+						{
+							for (m=0;m<len;m++)
+							{
+								path = GlobalConfig.getAvatarMapSlipcoverPath(int(by.readUTFBytes(1)));
+								slipcover = {pixel_x:Number(by.readInt()), pixel_y:Number(by.readInt()), sourcePath:path};
+								if (mapConfig.slipcovers == null)
+								{
+									mapConfig.slipcovers = [slipcover];
+									continue;
+								}
+								mapConfig.slipcovers.push(slipcover);
+							}
+						}
+						trace("读完movies"+getTimer());
+					}else{
+						if (data.movies != undefined && data.movies.movie != undefined)
+						{
+							for each (item in data.movies.movie)
+							{
+								path = GlobalConfig.getAvatarMapSlipcoverPath(int(item.@id));
+								slipcover = {pixel_x:Number(item.@x), pixel_y:Number(item.@y), sourcePath:path};
+								if (mapConfig.slipcovers == null)
+								{
+									mapConfig.slipcovers = [slipcover];
+									continue;
+								}
+								mapConfig.slipcovers.push(slipcover);
+							}
+						}
+						trace("初始化astar"+getTimer());
+						for each (item in data.tiles.tile)
+						{
+							mapTipX = item.@x;
+							mapTipY = item.@y;
+							mapTypeDic[mapTipX + "_" + mapTipY] = new MapTile(mapTipX, mapTipY, item.@s == "1", item.@s == "2", item.@m == "1", trans[tempMapId + "_" + mapTipX + "_" + mapTipY] != undefined);
+						}
+						trace("初始化astar2"+getTimer());
+						
+						for (var i:int = 0; i < mapConfig.mapGridX; i++) 
+						{
+							for (var j:int = 0; j < mapConfig.mapGridY ; j++) 
+							{
+								if( mapTypeDic[i + "_" + j] == undefined ){
+									mapTypeDic[i + "_" + j] = new MapTile(i, j,false,false,false, trans[tempMapId + "_" + i + "_" + j] != undefined);
+									gridByte.writeByte(0);
+								}else{
+									gridByte.writeByte(mapTypeDic[i + "_" + j].isSolid?1:0);
+								}
 							}
 						}
 					}
 					
+					trace("生成astar"+getTimer());
 					//记载玩马晒客地图胡进入场景
 					var bm:Bitmap = SceneLoader.smallMapImgLoader.getBitmap(mapImg);
 					if (bm)
@@ -168,6 +223,7 @@
 					return;
 	            };
 //			加载地图配置文件.xml
+			trace("开始加载地图"+getTimer());
 			var murl:String = GlobalConfig.getMapConfigPath(mapConfigName);
 			SystemUtil.clearChildren(scene.sceneSmallMapLayer, true);
 			SceneLoader.smallMapImgLoader.pauseAll();

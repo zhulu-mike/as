@@ -7,6 +7,7 @@
 	import com.thinkido.framework.common.handler.helper.HandlerHelper;
 	import com.thinkido.framework.common.utils.ZMath;
 	import com.thinkido.framework.engine.Scene;
+	import com.thinkido.framework.engine.SceneCamera;
 	import com.thinkido.framework.engine.SceneCharacter;
 	import com.thinkido.framework.engine.graphics.avatar.AvatarPart;
 	import com.thinkido.framework.engine.staticdata.CharStatusType;
@@ -170,12 +171,11 @@
                 }
                 hasRun = true;
                 scene = $from.scene;
-                toArr;
-                i;
+                toArr =  [];
+                i = 0;
                 while (i <= $toRectHalfWidth)
                 {
-                    
-                    j;
+                    j = 0;
                     while (j <= $toRectHalfHeight)
                     {
                         
@@ -244,19 +244,19 @@
                 if ($passApd != null)
                 {
                     var new_onPlayStart_for_to:* = function (value1:SceneCharacter = null, value2:AvatarPart = null) : void
-                {
-                    if ($includeCenter)
-                    {
-                        toArr.unshift(centerSc);
-                    }
-                    else
-                    {
-                        scene.removeCharacter(centerSc);
-                    }
-                    showMagic($from, toArr, null, $toApd, null);
-                    return;
-                }
-                ;
+	                {
+	                    if ($includeCenter)
+	                    {
+	                        toArr.unshift(centerSc);
+	                    }
+	                    else
+	                    {
+	                        scene.removeCharacter(centerSc);
+	                    }
+	                    showMagic($from, toArr, null, $toApd, null);
+	                    return;
+	                }
+	                ;
                     tempToApd = new AvatarParamData();
                     tempToApd.extendCallBack(MAGIC_STATUS,null, new_onPlayStart_for_to);
                     showMagic($from, [centerSc], $fromApd, tempToApd, $passApd);
@@ -335,11 +335,11 @@
                 hasRun = true;
                 scene = $from.scene;
                 var toArr:Array;
-                i;
+                i = 0;
                 while (i <= $toRectHalfWidth)
                 {
                     
-                    j;
+                    j= 0;
                     while (j <= $toRectHalfHeight)
                     {
                         
@@ -474,10 +474,10 @@
                 }
                 hasRun = true;
                 scene = $from.scene;
-                toArr;
+                toArr =  [];
                 var pi2:* = Math.PI * 2;
                 var stepRad:* = pi2 / $edgeEffectCount;
-                r;
+                r=0;
                 while (r <= $toCircleR)
                 {
                     
@@ -490,7 +490,7 @@
                     }
                     else
                     {
-                        rad;
+                        rad=0;
                         while (rad < pi2)
                         {
                             
@@ -508,20 +508,19 @@
                 $toApd.extendCallBack(MAGIC_STATUS,null, null, null, new_onPlayComplete);
                 if ($passApd != null)
                 {
-                    var new_onPlayStart_for_to:* = function (value1:SceneCharacter = null, value2:AvatarPart = null) : void
-                {
-                    if ($includeCenter)
-                    {
-                        toArr.unshift(centerSc);
-                    }
-                    else
-                    {
-                        scene.removeCharacter(centerSc);
-                    }
-                    showMagic($from, toArr, null, $toApd, null);
-                    return;
-                }
-                ;
+                    var new_onPlayStart_for_to:Function = function (value1:SceneCharacter = null, value2:AvatarPart = null) : void
+	                {
+	                    if ($includeCenter)
+	                    {
+	                        toArr.unshift(centerSc);
+	                    }
+	                    else
+	                    {
+	                        scene.removeCharacter(centerSc);
+	                    }
+	                    showMagic($from, toArr, null, $toApd, null);
+	                    return;
+	                }                ;
                     tempToApd = new AvatarParamData();
                     tempToApd.extendCallBack(MAGIC_STATUS,null, new_onPlayStart_for_to);
                     showMagic($from, [centerSc], $fromApd, tempToApd, $passApd);
@@ -563,15 +562,16 @@
         }
 		/**
 		 * 
-		 * @param $from
-		 * @param $toCircleCenter
-		 * @param $toCircleR
-		 * @param $edgeEffectCount
-		 * @param $showSpace
-		 * @param $includeCenter
+		  * @param $from
+		 * @param $toCircleCenter 原中心
+		 * @param $toCircleR 圆半径
+		 * @param $edgeEffectCount 攻击个数
+		 * @param $showSpace 半径r之间的间隔
+		 * @param $includeCenter 是否在园中心
 		 * @param $fromApd
 		 * @param $toApd
 		 * @param $passApd
+		 * 序列化攻击圆形区域
 		 * 
 		 */
         public static function showMagic_from1passNtoCircleArea($from:SceneCharacter, $toCircleCenter:Point, $toCircleR:int, $edgeEffectCount:int = 10, $showSpace:int = 30, $includeCenter:Boolean = true, $fromApd:AvatarParamData = null, $toApd:AvatarParamData = null, $passApd:AvatarParamData = null) : void
@@ -602,7 +602,7 @@
                 var toArr:Array;
                 var pi2:* = Math.PI * 2;
                 var stepRad:* = pi2 / $edgeEffectCount;
-                r;
+                r=0;
                 while (r <= $toCircleR)
                 {
                     
@@ -619,7 +619,7 @@
                     }
                     else
                     {
-                        rad;
+                        rad=0;
                         while (rad < pi2)
                         {
                             
@@ -662,16 +662,16 @@
 		/**
 		 * 
 		 * @param $from
-		 * @param $toCircleCenter
-		 * @param $toCircleR
-		 * @param $edgeEffectCount
-		 * @param $showSpace
-		 * @param $includeCenter
+		 * @param $toCircleCenter 原中心
+		 * @param $toCircleR 圆半径
+		 * @param $edgeEffectCount 攻击个数
+		 * @param $showSpace 半径r之间的间隔
+		 * @param $includeCenter 是否在园中心
 		 * @param $fromApd
 		 * @param $toApd
 		 * @param $passApd
-		 * @param $delay
-		 * 
+		 * @param $delay 每个间隔延迟时间、毫秒
+		 * 序列化攻击圆形区域
 		 */		
         public static function showMagic_from1pass0toCircleArea_byQueue($from:SceneCharacter, $toCircleCenter:Point, $toCircleR:int, $edgeEffectCount:int = 10, $showSpace:int = 30, $includeCenter:Boolean = true, $fromApd:AvatarParamData = null, $toApd:AvatarParamData = null, $passApd:AvatarParamData = null, $delay:int = 10) : void
         {
@@ -730,11 +730,11 @@
                 }
                 hasRun = true;
                 scene = $from.scene;
-                toArr;
+                toArr = [];
                 var pi2:* = Math.PI * 2;
                 var stepRad:* = pi2 / $edgeEffectCount;
                 var fromRad:* = Transformer.transLogicAngle2Angle($from.getLogicAngle()) / 180 * Math.PI;
-                r;
+                r = 0 ;
                 while (r <= $toCircleR)
                 {
                     
@@ -752,7 +752,7 @@
                     }
                     else
                     {
-                        rad;
+                        rad=0;
                         while (rad < pi2)
                         {
                             
@@ -801,7 +801,7 @@
 		 * @param $fromApd
 		 * @param $toApd
 		 * @param $passApd
-		 * 
+		 * 扇形区域技能
 		 */
         public static function showMagic_from1passNtoSectorEdge($from:SceneCharacter, $toSectorOutCenter:Point, $centralAngle:Number = 30, $passCount:int = 10, $fromApd:AvatarParamData = null, $toApd:AvatarParamData = null, $passApd:AvatarParamData = null) : void
         {
@@ -853,7 +853,7 @@
                 {
                     stepAngle = $centralAngle / ($passCount - 1);
                 }
-                i;
+                i = 0;
                 while (i < $passCount)
                 {
                     
@@ -958,6 +958,140 @@
             $from.loadAvatarPart($fromApd);
             return;
         }
+		
+		/**
+		 * 
+		 * @param $from
+		 * @param $toP 像素坐标
+		 * @param $fromApd
+		 * @param $toApd
+		 * @param $passApd
+		 * 
+		 */
+		public static function showMagic_from1pass1toPoint_NoPath($from:SceneCharacter, $toP:Point, $fromApd:AvatarParamData = null, $toApd:AvatarParamData = null, $passApd:AvatarParamData = null) : void
+		{
+			var hasRun:Boolean;
+			var showAttack:Function;
+			showAttack = function () : void
+			{
+				var scene:Scene;
+				var new_onPlayComplete:Function;
+				new_onPlayComplete = function (value1:SceneCharacter = null, value2:AvatarPart = null) : void
+				{
+					scene.removeCharacter(value1);
+					return;
+				};
+				if (hasRun)
+				{
+					return;
+				}
+				hasRun = true;
+				scene = $from.scene;
+				var toSc:* = scene.createSceneCharacter(SceneCharacterType.DUMMY);
+				toSc.setTileXY($toP.x, $toP.y);
+				$toApd = $toApd || new AvatarParamData();
+				$toApd.extendCallBack(MAGIC_STATUS, null,null, null, new_onPlayComplete);
+				showMagic_NoPath($from, [toSc], $fromApd, $toApd, $passApd);
+				return;
+			};
+			$from.faceToTile($toP.x, $toP.y);
+			if ($from.type != SceneCharacterType.DUMMY)
+			{
+				if (!$from.isJumping())
+				{
+					$from.playTo(CharStatusType.ATTACK, -1, -1, new AvatarPlayCondition(true));
+					$from.showAttack = showAttack;
+				}
+				else
+				{
+					showAttack();
+				}
+			}
+			else
+			{
+				showAttack();
+			}
+			hasRun;
+			return;
+		}
+		/**
+		 * 
+		 * @param $from
+		 * @param $toArr
+		 * @param $fromApd
+		 * @param $toApd
+		 * @param $passApd
+		 * 
+		 */
+		public static function showMagic_NoPath($from:SceneCharacter, $toArr:Array, $fromApd:AvatarParamData = null, $toApd:AvatarParamData = null, $passApd:AvatarParamData = null) : void
+		{
+			var passAndHit:Function;
+			passAndHit = function (value1:SceneCharacter = null, value2:AvatarPart = null) : void
+			{
+				var sc:SceneCharacter = null;
+				if ($passApd == null )
+				{
+					for each (sc in $toArr)
+					{
+						if (sc.usable)
+						{
+							sc.loadAvatarPart($toApd);
+							continue;
+						}
+						if ($toApd != null)
+						{
+							$toApd.executeCallBack(sc);
+						}
+					}
+				}
+				else
+				{
+					for each (sc in $toArr)
+					{
+						showAvatarPart($from, sc, $toApd != null ? ($toApd.clone()) : (null), $passApd != null ? ($passApd.clone()) : (null));
+					}
+				}
+				return;
+			};
+			if( $fromApd == null ){
+				passAndHit();
+			}else{
+				
+				$fromApd = $fromApd ? ($fromApd.clone()) : (new AvatarParamData());
+				$fromApd.extendCallBack(MAGIC_STATUS,null, passAndHit, null, null);
+				$from.loadAvatarPart($fromApd);
+			}
+			return;
+		}
+		
+		/**
+		 * 
+		 * @param $fromSc
+		 * @param $toSc
+		 * @param $toApd
+		 * @param $passApd
+		 * 落石技能等，非弹道技能。
+		 */
+        private static function showAvatarPart($fromSc:SceneCharacter, $toSc:SceneCharacter, $toApd:AvatarParamData, $passApd:AvatarParamData) : void
+        {
+			var scene:Scene;
+			var passSc:SceneCharacter;
+			var new_onPlayBeforeStart:Function;
+			new_onPlayBeforeStart = function (value1:SceneCharacter = null, value2:AvatarPart = null) : void
+			{
+				scene.removeCharacter(passSc,true);
+				$toSc.loadAvatarPart($toApd);
+				return;
+			};			
+			scene = $toSc.scene ;
+			$passApd = $passApd || new AvatarParamData();
+			$passApd.extendCallBack(MAGIC_STATUS,null,null,null,new_onPlayBeforeStart);
+			passSc = scene.createSceneCharacter(SceneCharacterType.DUMMY);
+			passSc.setTileXY($toSc.tile_x,$toSc.tile_y);
+			passSc.loadAvatarPart($passApd);
+			return;
+		}
+		
 		/**
 		 * 
 		 * @param $fromSc
