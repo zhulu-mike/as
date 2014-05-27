@@ -17,6 +17,8 @@
     import flash.events.Event;
     import flash.geom.Matrix;
     import flash.geom.Rectangle;
+    
+    import org.osflash.thunderbolt.Logger;
 
 	/**
 	 * AvatarPart swf 的加载器 
@@ -84,6 +86,8 @@
 						$class = RslLoaderManager.getClass(apd.baseClassName+$status);
 						if (apd.statusList == null)
 						{
+							if ($class == null)
+								Logger.info("加载不成功"+$ld.url);
 							apd.statusList = $class.STATUS_LIST as Array;
 						}
 						if ($class != null)

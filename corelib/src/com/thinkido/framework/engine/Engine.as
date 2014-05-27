@@ -1,7 +1,11 @@
 ﻿package com.thinkido.framework.engine
 {
-    import com.thinkido.framework.engine.config.*;
-    import com.thinkido.framework.engine.tools.*;
+    import com.thinkido.framework.engine.config.GlobalConfig;
+    import com.thinkido.framework.engine.tools.SceneCache;
+    import com.thinkido.framework.engine.utils.FrameUtil;
+    
+    import flash.display.Stage;
+
 	/**
 	 * 引擎 
 	 * @author thinkido
@@ -13,6 +17,7 @@
         public static var enableJumpStop:Boolean = false;
         public static var font_HeadFace:String = "宋体";
         public static var font_AttackFace:String = "楷体";
+		private static var stage:Stage;
 
         public function Engine()
         {
@@ -28,8 +33,10 @@
 		 * @param $decode 解码方法
 		 * @param useSo 是否使用so管理文件
 		 */		
-        public static function initEngine($map_config_tem:String = "", $map_small_tem:String = "", $map_zone_tem:String = "", $map_slipcover_tem:String = "", $frameRate:int = 24, $decode:Function = null, useSo:Boolean=false) : void
+        public static function initEngine($stage:Stage, $map_config_tem:String = "", $map_small_tem:String = "", $map_zone_tem:String = "", $map_slipcover_tem:String = "", $frameRate:int = 24, $decode:Function = null, useSo:Boolean=false) : void
         {
+			stage = $stage;
+			FrameUtil.init($stage);
             GlobalConfig.map_config_tem = $map_config_tem;
             GlobalConfig.map_small_tem = $map_small_tem;
             GlobalConfig.map_zone_tem = $map_zone_tem;

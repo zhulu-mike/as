@@ -9,7 +9,6 @@
     import com.thinkido.framework.engine.graphics.layers.SceneInteractiveLayer;
     import com.thinkido.framework.engine.graphics.layers.SceneMapLayer;
     import com.thinkido.framework.engine.graphics.layers.SceneShadowLayer;
-    import com.thinkido.framework.engine.graphics.layers.SceneSmallMapLayer;
     import com.thinkido.framework.engine.loader.MapLoader;
     import com.thinkido.framework.engine.staticdata.AvatarPartID;
     import com.thinkido.framework.engine.staticdata.AvatarPartType;
@@ -41,7 +40,6 @@
         public var mapConfig:MapConfig;
         public var sceneCamera:SceneCamera;
         public var sceneRender:SceneRender;
-        public var sceneSmallMapLayer:SceneSmallMapLayer;
 		public var mapGrid:Sprite ;
         public var sceneMapLayer:SceneMapLayer;
         public var sceneAvatarLayer:SceneAvatarLayer;
@@ -67,12 +65,51 @@
         private var _charHeadVisible:Boolean = true;
         private var _charAvatarVisible:Boolean = true;
 		private var _gridVisible:Boolean = false ;
+
         private static const floor:Function = Math.floor;
         private static const TILE_WIDTH:Number = SceneConfig.TILE_WIDTH;
         private static const TILE_HEGHT:Number = SceneConfig.TILE_HEIGHT;
         private static const MAX_AVATARBD_WIDTH:Number = SceneAvatarLayer.MAX_AVATARBD_WIDTH;
         private static const MAX_AVATARBD_HEIGHT:Number = SceneAvatarLayer.MAX_AVATARBD_HEIGHT;
-
+		
+		/**
+		 * 优化方案,可同时使用2种，如 useCount|useCpu 
+		 * 通过控制 sc.avatar.visible 控制
+		 */		
+		public var optimizeWay:int = 0 ;
+		/**
+		 * 使用cpu 进行优化，屏蔽人物时，fps下限触发条件。 
+		 */		
+		public var optimizeCpuFps:int = 20 ;
+		/**
+		 * 使用固定数目优化，人物个数。 
+		 */		
+		public var optimizeCountNum:int = 60 ;
+		
+		/**
+		 * 使用固定人数优化 
+		 */		
+		public static const useCount:int = 1 ;
+		/**
+		 * 更具cpu 优化。 
+		 */		
+		public static const useCpu:int = 2 ;
+		/**
+		 *  不使用优化
+		 */		
+		public static const useNone:int = 0 ;
+		/**
+		 * 当前游戏fps,默认初始值30 
+		 */		
+		private var _fps:int = 30 ;
+		
+		/**
+		 * 和逻辑层相关，屏蔽玩家功能。
+		 * 关闭后，需要手动通过 打开屏蔽功能来显示人物 
+		 * 打开后，会在自动移除sc后，显示一个隐藏sc
+		 */		
+		public var optimizeAutoShow:Boolean = false ;
+		
         public function Scene($width:Number, $height:Number)
         {
             this.renderCharacters = [];
@@ -85,8 +122,6 @@
                 throw new Error("引擎尚未初始化！");
             }
             this.sceneConfig = new SceneConfig($width, $height);
-            this.sceneSmallMapLayer = new SceneSmallMapLayer(this);
-            addChild(this.sceneSmallMapLayer);
             this.sceneMapLayer = new SceneMapLayer(this);
             addChild(this.sceneMapLayer);
 			mapGrid = new Sprite();
@@ -393,6 +428,9 @@
             var $onUpdate:Function = updateFun;
             newOnComplete = function ($mapConfig:MapConfig, $mapTile:Object, $mapSolid:ByteArray) : void
             {
+				var oldTime:int = getTimer();
+				trace('map 加载完成——1：', oldTime)
+				
                 var slipcover:Object = null;
                 var sc:SceneCharacter = null;
                 mapConfig = $mapConfig;
@@ -432,6 +470,8 @@
                 {
                     $onComplete();
                 }
+				
+				trace('map 加载完成——2：', getTimer() - oldTime)
                 return;
             }
             ;
@@ -567,19 +607,40 @@
             }
             return sc;
         }
-
+		
+		
         public function addCharacter(sc:SceneCharacter) : void
         {
             if (sc == null)
             {
                 return;
             }
+			var scLen:uint = sceneCharacters.length;
             if (sc.type != SceneCharacterType.DUMMY)
             {
                 if (this.sceneCharacters.indexOf(sc) != -1)
                 {
                     return;
                 }
+				if( optimizeWay & useCount == 1 ){
+					var temp:SceneCharacter ;
+					var showNum:int = 0 ;
+					for (var i:int = 0; i < scLen; i++) 
+					{
+						temp = sceneCharacters[i] ;
+						if( temp.visible && temp.avatar.visible && temp.avatar.avatarPartsLen > 0 ){   // 可是玩家数目
+							showNum ++ ;
+						}
+					}
+					if( showNum > optimizeCountNum ){
+						sc.avatar.visible = false ;
+					}
+				}
+				if( optimizeWay & useCpu == 1 ){
+					if( fps < optimizeCpuFps ){
+						sc.avatar.visible = false ;
+					}
+				}
                 this.sceneCharacters.push(sc);
                 this.renderCharacters.push(sc);
                 Logger.info("###场景角色数量：" + this.sceneCharacters.length + " 虚拟体数量：" + this._sceneDummies.length);
@@ -602,7 +663,8 @@
         public function removeCharacter(sc:SceneCharacter, recycle:Boolean = true) : void
         {
             var index:int = 0;
-            if (sc == null)
+			var sclen:uint = sceneCharacters.length ;
+			if (sc == null)
             {
                 return;
             }
@@ -631,8 +693,21 @@
                     {
                         sc.clearMe();
                     }
+					if( optimizeWay > 0 && optimizeAutoShow ){
+						if( fps > optimizeCpuFps ){
+							var item:SceneCharacter ;
+							for (var i:int = 0; i < sclen; i++) 
+							{
+								item = sceneCharacters[i] ;
+								if( item.avatar.visible == false ){
+									item.avatar.visible = true ;
+									break ;
+								}
+							}
+						}
+					}
                 }
-                Logger.info("###场景角色数量：" + this.sceneCharacters.length + " 虚拟体数量：" + this._sceneDummies.length);
+                Logger.info("###场景角色数量：" + sclen + " 虚拟体数量：" + this._sceneDummies.length);
             }
             else
             {
@@ -697,11 +772,9 @@
         {
             var sc:SceneCharacter = null;
             SceneCache.mapImgCache.dispose();
-            SceneCache.currentMapZones = {};
             SceneCache.mapTiles = {};
             SceneCache.mapZones = {};
             this.mapConfig = null;
-            this.sceneSmallMapLayer.dispose();
             this.sceneMapLayer.dispose();
             this.sceneAvatarLayer.dispose();
             this.sceneHeadLayer.dispose();
@@ -989,6 +1062,20 @@
 		public function isMouseChar(sc:SceneCharacter):Boolean
 		{
 			return sc == _mouseChar;
+		}
+		
+		/**
+		 * 当前游戏fps 
+		 * @return 
+		 * 
+		 */
+		public function get fps():int
+		{
+			return _fps;
+		}
+		public function set fps(value:int):void
+		{
+			_fps = value;
 		}
     }
 }

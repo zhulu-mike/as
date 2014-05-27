@@ -54,6 +54,9 @@
             }
         }
 
+		private var frame:int = 0;
+		private var lastTime:int = 0;
+		
         private function render(evt:Event = null) : void
         {
             var chara:SceneCharacter = null;
@@ -65,6 +68,12 @@
             {
                 chara.runWalk();
             }
+			frame++;
+			if ( nowTime - lastTime >= 1000){
+				lastTime = nowTime ;
+				_scene.fps = frame ;
+				frame = 0;
+			}
 //			trace("走路时间："+(getTimer()-t));
 //			t = getTimer();
             _scene.sceneCamera.run();

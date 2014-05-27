@@ -115,7 +115,7 @@
             var ap:AvatarPart = null;
             for each (ap in this.avatarParts)
             {
-                if (ap.avatarParamData.equals(apd))
+                if (ap.avatarParamData != null && ap.avatarParamData.equals(apd))
                 {
                     return true;
                 }
@@ -238,7 +238,7 @@
 			ap.type = apd.type ? apd.type :"" ;
 			this.avatarParts.push(ap);
 			this.needSort = true;
-			ap.playTo(this.status);
+			ap.playTo(this.status,this.logicAngle);
 			return ap ;
 		}
         public function addAvatarPart(ap:AvatarPart, isOverride:Boolean = false) : void
@@ -596,6 +596,10 @@
 			 this.avatarParts.length = 0;
             return;
         }
+		
+		public function get avatarPartsLen():int{
+			return avatarParts.length ;
+		}
 
         public function reSet(value1:Array) : void
         {

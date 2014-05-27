@@ -32,8 +32,12 @@ package game.modules.engine.controller
 		{
 			if (show)
 			{
-				if(sc.data)
+				if(sc.data){
 					sc.loadAvatarPart(sc.data.body as AvatarParamData);
+//					sc.loadAvatarPart(sc.data.weapon as AvatarParamData);
+//					sc.loadAvatarPart(sc.data.mount as AvatarParamData);
+//					sc.loadAvatarPart(sc.data.wing as AvatarParamData);
+				}
 			}else{
 				sc.removeAllAvatarParts(false);
 			}

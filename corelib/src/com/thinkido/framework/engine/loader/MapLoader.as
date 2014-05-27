@@ -14,7 +14,6 @@
     import com.thinkido.framework.engine.utils.astars.AStarGrid;
     import com.thinkido.framework.engine.vo.map.MapTile;
     import com.thinkido.framework.manager.loader.LoaderManager;
-    import com.thinkido.framework.utils.SystemUtil;
     
     import flash.display.Bitmap;
     import flash.events.Event;
@@ -208,9 +207,7 @@
 					{
 						var se:SceneEvent = null;
 						scene.mapConfig = mapConfig ;
-						bm.width = scene.mapConfig.width;
-						bm.height = scene.mapConfig.height;
-						scene.sceneSmallMapLayer.addChild(bm);
+						scene.sceneMapLayer.initSmallMap(bm.bitmapData);
 						se = new SceneEvent(SceneEvent.PROCESS, SceneEventAction_process.LOAD_SMALL_MAP_COMPLETE, bm.bitmapData);
 						EventDispatchCenter.getInstance().dispatchEvent(se);
 					}
@@ -225,7 +222,6 @@
 //			加载地图配置文件.xml
 			trace("开始加载地图"+getTimer());
 			var murl:String = GlobalConfig.getMapConfigPath(mapConfigName);
-			SystemUtil.clearChildren(scene.sceneSmallMapLayer, true);
 			SceneLoader.smallMapImgLoader.pauseAll();
 			SceneLoader.smallMapImgLoader.removeAll();			
 			var loadingItem:LoadingItem = SceneLoader.smallMapImgLoader.add(murl,{type:BulkLoader.TYPE_BINARY});
@@ -253,15 +249,16 @@
 					bm  = item.content as Bitmap;
 	                if (bm)
 	                {
-	                    bm.width = $scene.mapConfig.width;
-	                    bm.height = $scene.mapConfig.height;
-	                    $scene.sceneSmallMapLayer.addChild(bm);
+//	                    bm.width = $scene.mapConfig.width;
+//	                    bm.height = $scene.mapConfig.height;
+//	                    $scene.sceneSmallMapLayer.addChild(bm);
+						$scene.sceneMapLayer.initSmallMap(bm.bitmapData);
 	                    se = new SceneEvent(SceneEvent.PROCESS, SceneEventAction_process.LOAD_SMALL_MAP_COMPLETE, bm.bitmapData);
 	                    EventDispatchCenter.getInstance().dispatchEvent(se);
 	                }
 	                return;
 	            };
-            SystemUtil.clearChildren($scene.sceneSmallMapLayer, true);
+//            SystemUtil.clearChildren($scene.sceneSmallMapLayer, true);
             SceneLoader.smallMapImgLoader.pauseAll();
             SceneLoader.smallMapImgLoader.removeAll();
             LoaderManager.lazyLoad(loadSmallMapComplete, SceneLoader.smallMapImgLoader, false, $scene.mapConfig.smallMapUrl);

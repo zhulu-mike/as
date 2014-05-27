@@ -1,5 +1,6 @@
 ﻿package com.thinkido.framework.engine.graphics.avatar
 {
+    import com.thinkido.framework.common.enum.EnumValue;
     import com.thinkido.framework.common.handler.helper.HandlerHelper;
     import com.thinkido.framework.common.pool.IPoolClass;
     import com.thinkido.framework.common.utils.ZMath;
@@ -22,14 +23,14 @@
     import com.thinkido.framework.engine.vo.avatar.AvatarPartStatus;
     import com.thinkido.framework.engine.vo.avatar.AvatarPlayCallBack;
     import com.thinkido.framework.engine.vo.avatar.AvatarPlayCondition;
-    import com.thinkido.framework.engine.vo.avatar.DynamicPosition.IDynamicPosition;
     import com.thinkido.framework.engine.vo.avatar.XmlImgData;
+    import com.thinkido.framework.engine.vo.avatar.DynamicPosition.IDynamicPosition;
     import com.thinkido.framework.manager.TimerManager;
     
+    import flash.display.Bitmap;
     import flash.display.BitmapData;
     import flash.display.IBitmapDrawable;
     import flash.filters.GlowFilter;
-    import flash.geom.ColorTransform;
     import flash.geom.Matrix;
     import flash.geom.Point;
     import flash.geom.Rectangle;
@@ -61,7 +62,6 @@
         private var _sceneCharacterPosition:Point = null;
         public var cutRect:Rectangle = null;
         private var _sourcePoint:Point = null;
-        public var renderRectArr:Array = null;
         public var id:String;
         public var type:String;
         private var _classNamePrefix:String;
@@ -118,14 +118,14 @@
 		/**人物头顶位置是否需要更新*/
 		private var _bodyPositionUpdate:Boolean = true;
 		private var _bodyPositionY:Number = 0;
-		
+		public var bitmap:Bitmap;
 		
         public function AvatarPart(ap:Avatar,apd:AvatarParamData)
         {
 			this.cutRect = new Rectangle();
 			this._sourcePoint = new Point();
-			this.renderRectArr = [];
 			this._bitmapFilters = [];
+			this.bitmap = new Bitmap();
             this.reSet([ap,apd]);
             return;
         }
@@ -281,7 +281,7 @@
 				$status = CharStatusType.STAND;
 			else if ($status != null && this.avatar.sceneCharacter.type == SceneCharacterType.TRANSPORT)
 				$status = CharStatusType.STAND;
-			else if ($status != null && this.type == AvatarPartType.MOUNT && $status != CharStatusType.DEATH && $status != CharStatusType.SIT)
+			else if ($status != null && this.type == AvatarPartType.MOUNT && $status != CharStatusType.DEATH)
 			{
 				$status = CharStatusType.STAND;
 			}
@@ -347,12 +347,20 @@
                 {
                     this._currentStatus = CharStatusType.WALK;
                 }
-                else if (this._currentStatus != CharStatusType.STAND && this._currentStatus != CharStatusType.DEATH && $status != CharStatusType.SIT)
+                else if (this._currentStatus != CharStatusType.STAND && this._currentStatus != CharStatusType.DEATH)
                 {
 //                    this._currentStatus = CharStatusType.MOUNT_ATTACK;     //御剑修改
                     this._currentStatus = CharStatusType.STAND;
                 }
             }
+			if (_currentStatus == CharStatusType.WALK)
+			{
+				speed = EnumValue.getMoveAvatarPlaySpeed(sceneCharacter.getSpeed());
+			}
+			else if (CharStatusType.getIsFight(_currentStatus) || _currentStatus == CharStatusType.INJURED)
+			{
+				speed = EnumValue.getAttackAvatarPlaySpeed(sceneCharacter.getSpeed());
+			}
             if (this._currentStatus == CharStatusType.DEATH)
             {
                 this._only1LogicAngel = false ;
@@ -468,16 +476,11 @@
             {
                 return;
             }
-            this.renderRectArr.length = 0;
             var inSleep:Boolean = false;
             var nowTime:uint = SceneRender.nowTime;
             if (this._sleepTime > 0 && this._lastPlayCompleteTime > 0 && nowTime - this._lastPlayCompleteTime <= this._sleepTime)
             {
                 inSleep = true;
-            }
-            if (this.avatar.sceneCharacter.updateNow)
-            {
-                this.updateNow = true;
             }
             if (this.avatar.updateNow)
             {
@@ -584,7 +587,7 @@
                 {
                     this._currentFrame = 0;
                 }
-                if (this.visible && this.avatar.visible && this.avatar.sceneCharacter.visible && this.avatar.sceneCharacter.isInView && this.avatarImg != null && !inSleep && this._currentAvatarPartStatus != null)
+                if (this.visible && this.avatar.visible && this.avatar.sceneCharacter.isInView && this.avatarImg != null && !inSleep && this._currentAvatarPartStatus != null)
                 {
                     targetPoint = this.getTargetPosition();
                     if (this._dynamicPosition != null)
@@ -601,10 +604,10 @@
                     {
                         this.cutRect.width = apd.width;
                         this.cutRect.height = apd.height;
-                        this.cutRect.x = this._sceneCharacterPosition.x - apd.tx;
-                        this.cutRect.y = this._sceneCharacterPosition.y - apd.ty;
-                        this._sourcePoint.x = apd.sx;
-                        this._sourcePoint.y = apd.sy;
+                        this.cutRect.x = apd.tx;
+                        this.cutRect.y = apd.ty;
+                        this._sourcePoint.x = 0;
+                        this._sourcePoint.y = 0;
                         if (this._currentRotation > 0)
                         {
 							var tt:int = getTimer();
@@ -626,68 +629,33 @@
 								this._oldData.oldOffsetX = temp.oldOffsetX;
 								this._oldData.oldOffsetY = temp.oldOffsetY;
 							}
-//							var rotationBitmap:BitmapData;
-//							//3个度数划分，比如0到2度，则实际取0度的图
-//							var reaRotation:int = int(_currentRotation);
-//							reaRotation = reaRotation % 5 == 0 ? reaRotation : int(reaRotation / 5)*5;
-//							if (this._avatarImgData)
-//								rotationBitmap = this._avatarImgData.getRotationBitmapData(this._currentLogicAngel, this._currentFrame, int(reaRotation));
-//							if (rotationBitmap == null)
-//							{
-	                            matrix = new Matrix();
-								matrix.translate( - apd.tx,  - apd.ty);
-								matrix.rotate(this._currentRotation * Math.PI / 180);
-								matrix.translate( apd.tx,  apd.ty);								
-	                            matrix.translate(-this._oldData.oldOffsetX, -this._oldData.oldOffsetY);
-//								if (this._drawSourceBitmapData && _drawSourceBitmapData != avatarImg) 
-//									this._drawSourceBitmapData.dispose();
-								_drawSourceBitmapData = new BitmapData(bdWidth, bdHeight, true, 0);
-								_rotationDrawSourceBitmapData = new BitmapData( apd.width , apd.height , true, 0);
-								_rotationDrawSourceBitmapData.copyPixels(this.avatarImg, new Rectangle(this._sourcePoint.x, this._sourcePoint.y, apd.width, apd.height), new Point(0,0), null, null, true);
-								this._drawSourceBitmapData.draw(_rotationDrawSourceBitmapData, matrix  );
-								_rotationDrawSourceBitmapData.dispose();
-//								if (this._avatarImgData)
-//									this._avatarImgData.setRotationBitmapData(this._currentLogicAngel, this._currentFrame, int(reaRotation), this._drawSourceBitmapData.clone());
-//							}else{
-//								this._drawSourceBitmapData = rotationBitmap;
-//							}
-							this.cutRect.x = this._sceneCharacterPosition.x - (apd.tx - this._oldData.oldOffsetX);
-                            this.cutRect.y = this._sceneCharacterPosition.y - (apd.ty - this._oldData.oldOffsetY);
+                            matrix = new Matrix();
+							matrix.translate( - apd.tx,  - apd.ty);
+							matrix.rotate(this._currentRotation * Math.PI / 180);
+							matrix.translate( apd.tx,  apd.ty);								
+                            matrix.translate(-this._oldData.oldOffsetX, -this._oldData.oldOffsetY);
+							_drawSourceBitmapData = new BitmapData(bdWidth, bdHeight, true, 0);
+							_rotationDrawSourceBitmapData = new BitmapData( apd.width , apd.height , true, 0);
+							_rotationDrawSourceBitmapData.copyPixels(this.avatarImg, new Rectangle(this._sourcePoint.x, this._sourcePoint.y, apd.width, apd.height), new Point(0,0), null, null, true);
+							this._drawSourceBitmapData.draw(_rotationDrawSourceBitmapData, matrix  );
+							_rotationDrawSourceBitmapData.dispose();
+							this.cutRect.x = (apd.tx - this._oldData.oldOffsetX);
+                            this.cutRect.y = (apd.ty - this._oldData.oldOffsetY);
                             this.cutRect.width = this._drawSourceBitmapData.width;
                             this.cutRect.height = this._drawSourceBitmapData.height;
-                            this._sourcePoint.x = 0;
-                            this._sourcePoint.y = 0;
 //							trace("旋转用时："+(getTimer()-tt));
                         }
                         else if (this._drawMouseOn && this.avatar.sceneCharacter.isMouseOn)//如果为true，加滤镜
                         {
-//							if (this._drawSourceBitmapData && _drawSourceBitmapData != avatarImg) 
-//								this._drawSourceBitmapData.dispose();
                             this._drawSourceBitmapData = new BitmapData(apd.width, apd.height, true, 0);
                             this._drawSourceBitmapData.copyPixels(this.avatarImg, new Rectangle(this._sourcePoint.x, this._sourcePoint.y, apd.width, apd.height), new Point(0, 0), null, null, true);
                             this._drawSourceBitmapData.applyFilter(this._drawSourceBitmapData, new Rectangle(0, 0, apd.width, apd.height), new Point(), MOUSE_ON_GLOWFILTER);
-                            this._sourcePoint.x = 0;
-                            this._sourcePoint.y = 0;
                         }
                         else
                         {
                             this._drawSourceBitmapData = this.avatarImg;
                         }
-						if(this.avatar.sceneCharacter.alpha < 1 ){
-							this._inMaskDrawSourceBitmapData = new BitmapData(this.cutRect.width, this.cutRect.height, true, 0);
-							this._inMaskDrawSourceBitmapData.copyPixels(this._drawSourceBitmapData, new Rectangle(this._sourcePoint.x, this._sourcePoint.y, this.cutRect.width, this.cutRect.height), new Point(0, 0), null, null, true);
-							this._inMaskDrawSourceBitmapData.colorTransform(this._inMaskDrawSourceBitmapData.rect, new ColorTransform(1, 1, 1, this.avatar.sceneCharacter.alpha , 0, 0, 0, 0));
-							this._sourcePoint.x = 0;
-							this._sourcePoint.y = 0;
-						}else if (this.avatar.sceneCharacter.isInMask)
-                        {
-                            this._inMaskDrawSourceBitmapData = new BitmapData(this.cutRect.width, this.cutRect.height, true, 0);
-                            this._inMaskDrawSourceBitmapData.copyPixels(this._drawSourceBitmapData, new Rectangle(this._sourcePoint.x, this._sourcePoint.y, this.cutRect.width, this.cutRect.height), new Point(0, 0), null, null, true);
-							this._inMaskDrawSourceBitmapData.colorTransform(this._inMaskDrawSourceBitmapData.rect, new ColorTransform(1, 1, 1, 0.5 , 0, 0, 0, 0));
-                            this._sourcePoint.x = 0;
-                            this._sourcePoint.y = 0;
-                        }
-                        else if (this._inMaskDrawSourceBitmapData != null)
+						if (this._inMaskDrawSourceBitmapData != null)
                         {
                             this._inMaskDrawSourceBitmapData.dispose();
                             this._inMaskDrawSourceBitmapData = null;
@@ -705,21 +673,6 @@
                     this.cutRect.setEmpty();
                     this._sourcePoint.x = 0;
                     this._sourcePoint.y = 0;
-                }
-                if (this.avatar.sceneCharacter.scene)
-                {
-                    if (!this._oldData.oldCutRect.isEmpty())
-                    {
-                        this.avatar.sceneCharacter.scene.sceneAvatarLayer.clearBoundsArr.push(Bounds.fromRectangle(this._oldData.oldCutRect));
-                    }
-                    if (!this.cutRect.isEmpty() && !this.cutRect.equals(this._oldData.oldCutRect))
-                    {
-                        this.avatar.sceneCharacter.scene.sceneAvatarLayer.clearBoundsArr.push(Bounds.fromRectangle(this.cutRect));
-                    }
-                }
-                if (!this.cutRect.isEmpty())
-                {
-                    this.renderRectArr.push(this.cutRect);
                 }
                 this._oldData.oldCutRect.x = this.cutRect.x;
                 this._oldData.oldCutRect.y = this.cutRect.y;
@@ -770,6 +723,8 @@
             {
                 return;
             }
+//			if (this.bitmap.parent)
+//				this.sceneCharacter.container.removeChild(this.bitmap);
             this.updateNow = false;
             if (!this._enablePlay)
             {
@@ -794,16 +749,20 @@
             if (this.visible && this.avatar.visible && this.avatar.sceneCharacter.isInView && this.avatar.sceneCharacter.visible && this.avatarImg)
             {
                 bmd = this._inMaskDrawSourceBitmapData || this._drawSourceBitmapData;
-                if (bmd != null)
-                {
-                    for each (rec in this.renderRectArr)
-                    {
-                        if (!rec.isEmpty())
-                        {
-                            this.copyToAvatarBD(ibmdable, bmd, this._sourcePoint.x + (rec.x - this.cutRect.x), this._sourcePoint.y + (rec.y - this.cutRect.y), rec.width, rec.height, rec.x, rec.y);
-						}
-                    }
-                }
+//				this.sceneCharacter.container.addChild(this.bitmap);
+				this.bitmap.bitmapData = bmd;
+				this.bitmap.x = -this.cutRect.x;
+				this.bitmap.y = -this.cutRect.y;
+//                if (bmd != null)
+//                {
+//                    for each (rec in this.renderRectArr)
+//                    {
+//                        if (!rec.isEmpty())
+//                        {
+//                            this.copyToAvatarBD(ibmdable, bmd, this._sourcePoint.x + (rec.x - this.cutRect.x), this._sourcePoint.y + (rec.y - this.cutRect.y), rec.width, rec.height, rec.x, rec.y);
+//						}
+//                    }
+//                }
             }
             if (this._playStart)
             {
@@ -866,14 +825,14 @@
 				bmd = this._inMaskDrawSourceBitmapData || this._drawSourceBitmapData;
 				if (bmd != null)
 				{
-					for each (rec in this.renderRectArr)
-					{
-						
-						if (!rec.isEmpty())
-						{
-							this.copyToAvatarBD(ibmdable, bmd, this._sourcePoint.x + (rec.x - this.cutRect.x), this._sourcePoint.y + (rec.y - this.cutRect.y), rec.width, rec.height, rec.x, rec.y);
-						}
-					}
+//					for each (rec in this.renderRectArr)
+//					{
+//						
+//						if (!rec.isEmpty())
+//						{
+//							this.copyToAvatarBD(ibmdable, bmd, this._sourcePoint.x + (rec.x - this.cutRect.x), this._sourcePoint.y + (rec.y - this.cutRect.y), rec.width, rec.height, rec.x, rec.y);
+//						}
+//					}
 				}
 			}
 		}
@@ -928,7 +887,7 @@
             }
             _x = _x + this._offsetX;
             _y = _y + this._offsetY;
-            if (this.avatar.sceneCharacter.isOnMount)
+            if (this.avatar.isOnMount)
             {
                 _x = _x + this._offsetOnMountX;
                 _y = _y + this._offsetOnMountY;
@@ -1006,7 +965,7 @@
 
         public function clearMe() : void
         {
-            if (this.avatar.sceneCharacter.scene)
+            if (this.avatar != null && this.avatar.sceneCharacter != null && this.avatar.sceneCharacter.scene != null)
             {
                 this.avatar.sceneCharacter.scene.sceneAvatarLayer.removeBoundsArr.push(Bounds.fromRectangle(this._oldData.oldCutRect));
             }
@@ -1022,6 +981,11 @@
 				var cname:String = this.avatarParamData.getFullSourcePath(this._currentStatus);
 				SceneCache.avatarCountShare.uninstallShareData(cname);
 			}
+			if (this.bitmap.parent)
+			{
+				this.bitmap.bitmapData = null;
+				this.bitmap.parent.removeChild(this.bitmap);
+			}
 			this.speed = 1;
 			this.cacheObject = {} ;
             this._enablePlay = false;
@@ -1033,7 +997,6 @@
             this._sceneCharacterPosition = null;
             this.cutRect = null;
             this._sourcePoint = null;
-            this.renderRectArr = null;
             this.id = "";
             this.type = "";
             this._classNamePrefix = "";
@@ -1095,7 +1058,7 @@
 			this._avatarParamData = value1[1];
 			this.sceneCharacter = this.avatar.sceneCharacter;
 //			mouseEnabled = this._avatarParamData.mouseEnabled;
-			
+			this.sceneCharacter.container.addChild(this.bitmap);
             this.id = this._avatarParamData.id;
             this.type = this._avatarParamData.type || AvatarPartType.BODY;
             this._repeat = this._avatarParamData.repeat;
@@ -1123,7 +1086,6 @@
             this._sceneCharacterPosition = new Point(-int.MAX_VALUE, -int.MAX_VALUE);
             this.cutRect = new Rectangle();
             this._sourcePoint = new Point();
-            this.renderRectArr = [];
             this.usable = true;
             return;
         }

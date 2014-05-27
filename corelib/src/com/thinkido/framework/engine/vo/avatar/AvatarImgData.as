@@ -5,6 +5,7 @@
     
     import flash.display.BitmapData;
     import flash.geom.Matrix;
+    import flash.geom.Point;
     import flash.geom.Rectangle;
     import flash.utils.Dictionary;
     
@@ -32,24 +33,29 @@
 		
 		public function getBitmapData(angle:int, frame:int) : BitmapData
 		{
-			var _key:String = null;
+			var _key:String = "";
 			var _angle:int = 0;
 			var _apd:AvatarPartData = null;
 			var _w:Number = NaN;
 			var _h:Number = NaN;
+			var i:int = 0;
 			var _matrix:Matrix = null;
 			var _bitmapdata:BitmapData = null;
+			var _tempBMD:BitmapData;
 			var className:String = _baseClassName + _status;
 			var key:String = className + angle;
+			_key = angle + "_" + frame;
+		
 			if (angle == 0 || angle >= 4)
 			{
 				if (_dir07654[key] == null)
 				{
-					_dir07654[key] = RslLoaderManager.getInstance(key,0,0) as BitmapData;
+					_tempBMD = RslLoaderManager.getInstance(key,0,0) as BitmapData;
+					_dir07654[key] = new AvatarImgDirectData(_tempBMD,_aps,angle);
 				}
-				return _dir07654[key] as BitmapData;
+				return (_dir07654[key] as AvatarImgDirectData).getFrameBitmapData(frame);
 			}
-			_key = angle + "_" + frame;
+			
 			if (this._dir07654 != null && this._aps.angle == 8)
 			{
 				this._dir123Dict = this._dir123Dict || new Dictionary();
@@ -78,13 +84,14 @@
 					_h = _apd.height;
 					_matrix = new Matrix();
 					_matrix.scale(-1, 1);
-					_matrix.translate(_apd.sx + _w, -_apd.sy);
+					_matrix.translate(_w, 0);
 					_bitmapdata = new BitmapData(_w, _h, true, 0);
 					if (this._dir07654[key] == null)
 					{
-						_dir07654[key] = RslLoaderManager.getInstance(key,0,0) as BitmapData;
+						_tempBMD = RslLoaderManager.getInstance(key,0,0) as BitmapData;
+						_dir07654[key] = new AvatarImgDirectData(_tempBMD,_aps,angle);
 					}
-					_bitmapdata.draw(this._dir07654[key], _matrix, null, null, new Rectangle(0, 0, _w, _h));
+					_bitmapdata.draw((this._dir07654[key] as AvatarImgDirectData).getFrameBitmapData(frame), _matrix, null, null, new Rectangle(0, 0, _w, _h));
 					this._dir123Dict[_key] = _bitmapdata;
 					return this._dir123Dict[_key] as BitmapData;
 				}
@@ -96,14 +103,14 @@
 		{
 			var _key:String = null;
 			var _bmd:BitmapData = null;
+			var direct:AvatarImgDirectData;
 			this._aps = null;
 			if (this._dir07654 != null)
 			{
 				for (_key in this._dir07654)
 				{
-					_bmd = this._dir07654[_key];
-					DisposeHelper.add(_bmd);
-					_bmd = null;
+					direct = this._dir07654[_key];
+					direct.dispose();
 				}
 				this._dir07654 = null;
 			}

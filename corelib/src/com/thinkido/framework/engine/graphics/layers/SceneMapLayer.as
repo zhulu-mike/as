@@ -16,12 +16,16 @@
     import com.thinkido.framework.manager.loader.vo.LoadData;
     import com.thinkido.framework.utils.SystemUtil;
     
+    import flash.display.Bitmap;
+    import flash.display.BitmapData;
     import flash.display.DisplayObject;
     import flash.display.DisplayObjectContainer;
     import flash.display.Loader;
     import flash.display.LoaderInfo;
+    import flash.display.Shape;
     import flash.display.Sprite;
     import flash.events.Event;
+    import flash.geom.Matrix;
     import flash.geom.Point;
     import flash.net.URLLoader;
     import flash.utils.ByteArray;
@@ -49,9 +53,12 @@
 		 * 没70毫秒显示(解码)一个图片 , 1024/15 = 67, 每秒大概处理15张图
 		 */		
 		private var loadTime:Number = 67 ; 
+		private var mapShape:Shape;
 		
         public function SceneMapLayer($scene:Scene)
         {
+			mapShape = new Shape();
+			this.addChild(mapShape);
             this._currentCameraPos = new Point(int.MAX_VALUE, int.MAX_VALUE);
             this.loadMapHT = new HandlerThread();
             this._waitingLoadDatas = {};
@@ -67,11 +74,11 @@
         {
 			bytelist.length = 0 ;
 			mapLoader.removeAll() ;
-			SystemUtil.clearChildren(this, false, false);
             this._currentCameraPos = new Point(int.MAX_VALUE, int.MAX_VALUE);
             this._currentMapZone = null;
             this._waitingLoadDatas = {};
             this.loadMapHT.removeAllHandlers();
+			mapShape.graphics.clear();
             return;
         }
 		/**
@@ -91,13 +98,9 @@
                 _y = 0;
                 while (_y < row)
                 {
-                    mapZone = new MapZone(this);
-                    mapZone.tile_width = SceneConfig.ZONE_WIDTH;
-                    mapZone.tile_height = SceneConfig.ZONE_HEIGHT;
+                    mapZone = new MapZone();
                     mapZone.tile_x = _x;
                     mapZone.tile_y = _y;
-                    mapZone.showContainer.x = mapZone.pixel_x;
-                    mapZone.showContainer.y = mapZone.pixel_y;
                     temp[_x + "_" + _y] = mapZone;
                     _y++;
                 }
@@ -106,6 +109,22 @@
             SceneCache.mapZones = temp;
             return;
         }
+		
+		/**
+		 * 马赛克地图设置
+		 * @param bmd
+		 * 
+		 */		
+		public function initSmallMap(bmd:BitmapData):void
+		{
+			var mapW:int = this._scene.mapConfig.width;
+			var mapH:int = this._scene.mapConfig.height;
+			var matrix:Matrix = new Matrix(mapW/bmd.width,0,0,mapH/bmd.height,0,0);
+			mapShape.graphics.beginBitmapFill(bmd,matrix,false,false);
+			mapShape.graphics.drawRect(0,0,mapW,mapH);
+			mapShape.graphics.endFill();
+		}
+		
 		/**
 		 * 根据人物移动，加载地图
 		 */		
@@ -160,18 +179,12 @@
                         continue;
                     }
                     key = point.x + "_" + point.y;
-                    mz = SceneCache.currentMapZones[key];
-                    if (mz == null)
+                    mz = SceneCache.mapZones[key];
+                    if (mz == null || mz.loadComplete)
                     {
-                        mz = SceneCache.mapZones[key];
-                        currentMapZoneObj[key] = mz;
+                        continue;
                     }
-                    else //删除过后避免进入remove不可见对象的逻辑
-                    {
-                        currentMapZoneObj[key] = mz;
-                        SceneCache.currentMapZones[key] = null;
-                        delete SceneCache.currentMapZones[key];
-                    }
+					currentMapZoneObj[key] = mz;
                     if (this._waitingLoadDatas[key] == null)
                     {
 //                        priori = -Math.round(ZMath.getDistanceSquare(mz.pixel_x, mz.pixel_y, mapZone.pixel_x, mapZone.pixel_y));
@@ -193,10 +206,6 @@
 				for (var i:int = 0; i < _len ; i++) 
 				{
 					loadData = loadDataArr[i] ;
-					if( mapLoader.getBinary(loadData.key) != null ){
-						loadData.onComplete(null);
-						continue ;
-					}
 					var prop:Object = {id:loadData.key,type:BulkLoader.TYPE_BINARY,retry:1} ;
 					loadItem = mapLoader.add(loadData.url,prop) ;
 					mapLoader.topLoadingItem(loadItem);
@@ -205,23 +214,6 @@
 				}
 //				mapLoader.start(1);
 				
-                for (key in SceneCache.currentMapZones)
-                {
-//                  删除看不见的mapzone
-                    mz = SceneCache.currentMapZones[key];
-                    if (this.contains(mz.showContainer))
-                    {
-						/**TRACEDISABLE:trace("remove a",key); TRACEDISABLE*/
-						this.removeChild(mz.showContainer);
-                    }
-					
-                    if (Math.abs(mz.tile_x - mapZone.tile_x) > this._scene.sceneCamera.zoneRangeXY.x + MAX_ZONE_CACHE_X || Math.abs(mz.tile_y - mapZone.tile_y) > this._scene.sceneCamera.zoneRangeXY.y + MAX_ZONE_CACHE_Y)
-                    {
-						/**TRACEDISABLE:trace("remove b",key); TRACEDISABLE*/
-						SceneCache.mapImgCache.remove(mz.showContainer.name);
-                    }
-                }
-                SceneCache.currentMapZones = currentMapZoneObj;
                 this._currentMapZone = mapZone;
             }
             return;
@@ -278,16 +270,20 @@
 			}
 			var _obj:Object = bytelist.shift() ; 
 			var _data:Array = _obj.data ;
-			var $parent:DisplayObjectContainer = _data[0] ;
+			var $parent:Shape = mapShape;
 			var imageByte:ByteArray = _data[1] ;
 			var filePath:String = _obj.filePath ;
 			function loadImageComplete(event:Event):void{
-				SceneCache.mapImgCache.push(event.target.content, filePath);
 				if (GlobalConfig.useSo)
 				{
 					SharedObjectManager.setDataByHttpUrl(filePath, (event.currentTarget as LoaderInfo).bytes);
 				}
-				$parent.addChild(event.target.content);
+				var bmd:BitmapData = (event.currentTarget.content as Bitmap).bitmapData;
+				var tx:int = _obj.tx * SceneConfig.ZONE_WIDTH, ty:int = _obj.ty * SceneConfig.ZONE_HEIGHT;
+				$parent.graphics.beginBitmapFill(bmd,null,true,false);
+				$parent.graphics.drawRect(tx, ty,SceneConfig.ZONE_WIDTH,SceneConfig.ZONE_HEIGHT);
+				$parent.graphics.endFill();
+				SceneCache.mapZones[_obj.tx+"_"+_obj.ty].loadComplete = true;
 //				Logger.error("addchild:"+filePath); 
 			}
 			var loader:Loader = new Loader() ;
@@ -311,47 +307,32 @@
             var filePath:String;
             var $mapZone:MapZone = mapZone;
             var $priority:int = priori;
-            if ($mapZone.showContainer.numChildren == 0)
+            key = $mapZone.tile_x + "_" + $mapZone.tile_y;
+			filePath = this._scene.mapConfig.zoneMapDir + key + ".jpg";
+			if (GlobalConfig.useSo && SharedObjectManager.getDataByHttpUrl(filePath) != null){
+				/**TRACEDISABLE:trace("c",key); TRACEDISABLE*/
+				var bytes:ByteArray = SharedObjectManager.getDataByHttpUrl(filePath) as ByteArray;
+				addLoadByteList(null,bytes,$priority,filePath,$mapZone.tile_x,$mapZone.tile_y);
+			}
+            else
             {
-                key = $mapZone.tile_x + "_" + $mapZone.tile_y;
-				filePath = this._scene.mapConfig.zoneMapDir + key + ".jpg";
-				/**TRACEDISABLE:trace("a",key); TRACEDISABLE*/
-				if (SceneCache.mapImgCache.has(filePath))
+                var itemLoadComplete:Function = function (event:Event) : void
+	            {
+					/**TRACEDISABLE:trace("d2",key); TRACEDISABLE*/
+					addLoadByteList(null,mapLoader.getBinary(loadData.key),$priority,filePath,$mapZone.tile_x,$mapZone.tile_y) ;
+	                _waitingLoadDatas[key] = null;
+	                delete _waitingLoadDatas[key];
+	                return;
+	            };
+				var itemLoadError:Function = function(event:Event) : void
 				{
-					/**TRACEDISABLE:trace("b",key); TRACEDISABLE*/
-					$mapZone.showContainer.addChild(SceneCache.mapImgCache.get(filePath) as DisplayObject);
+					_waitingLoadDatas[key] = null;
+                    delete _waitingLoadDatas[key];
 				}
-				else if (GlobalConfig.useSo && SharedObjectManager.getDataByHttpUrl(filePath) != null){
-					/**TRACEDISABLE:trace("c",key); TRACEDISABLE*/
-					var bytes:ByteArray = SharedObjectManager.getDataByHttpUrl(filePath) as ByteArray;
-					addLoadByteList($mapZone.showContainer,bytes,$priority,filePath,$mapZone.tile_x,$mapZone.tile_y);
-				}
-                else
-                {
-                    var itemLoadComplete:Function = function (event:Event) : void
-			            {
-							/**TRACEDISABLE:trace("d2",key); TRACEDISABLE*/
-							addLoadByteList($mapZone.showContainer,mapLoader.getBinary(loadData.key),$priority,filePath,$mapZone.tile_x,$mapZone.tile_y) ;
-		                	$mapZone.showContainer.name = loadData.key ;
-			                _waitingLoadDatas[key] = null;
-			                delete _waitingLoadDatas[key];
-			                return;
-			            };
-					var itemLoadError:Function = function(event:Event) : void
-					{
-						_waitingLoadDatas[key] = null;
-	                    delete _waitingLoadDatas[key];
-					}
-					/**TRACEDISABLE:trace("d1",key); TRACEDISABLE*/
-					loadData = new LoadData(filePath, itemLoadComplete, null, itemLoadError, "", filePath, $priority);
-					loadData.userData.type = BulkLoader.TYPE_BINARY ;
-					loadData.userData.retry = 1 ;
-                }
-            }
-            if ($mapZone.showContainer.parent != this)
-            {
-				/**TRACEDISABLE:trace("e",$mapZone.tile_x + "_" + $mapZone.tile_y); TRACEDISABLE*/
-				this.addChild($mapZone.showContainer);
+				/**TRACEDISABLE:trace("d1",key); TRACEDISABLE*/
+				loadData = new LoadData(filePath, itemLoadComplete, null, itemLoadError, "", filePath, $priority);
+				loadData.userData.type = BulkLoader.TYPE_BINARY ;
+				loadData.userData.retry = 1 ;
             }
             return loadData;
         }

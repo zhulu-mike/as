@@ -291,6 +291,43 @@
 			}
 			return -1;
 		}
+		
+		public static function getPointByAngle(x:int, y:int, angle:int):Point
+		{
+			var p:Point = new Point(x, y);
+			switch (angle)
+			{
+				case 0:
+					p.y += 1; 
+					break;
+				case 1:
+					p.x -= 1;
+					p.y += 1; 
+					break;
+				case 2:
+					p.x -= 1; 
+					break;
+				case 3:
+					p.x -= 1;
+					p.y -= 1; 
+					break;
+				case 4:
+					p.y -= 1; 
+					break;
+				case 5:
+					p.x += 1;
+					p.y -= 1; 
+					break;
+				case 6:
+					p.x += 1; 
+					break;
+				case 7:
+					p.x += 1;
+					p.y += 1; 
+					break;
+			}
+			return p;
+		}
 		/**
 		 * 根据2点获取前端方向 ，-1 为错误，
 		 * @param curP

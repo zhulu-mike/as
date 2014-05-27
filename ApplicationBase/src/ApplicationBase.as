@@ -45,7 +45,6 @@ package
 			initApp();
 			startup();
 			FacadeManager.startupFacade(PipeEvent.STARTUP_ENGINE);
-			
 			stage.addEventListener(MouseEvent.CLICK, onClick);
 		}
 		
@@ -97,7 +96,6 @@ package
 			var status:FlashStatus = new FlashStatus();
 			LayerManager.uiLayer.addChild(status);
 			status.init(stage);
-//			Logger.isOpen = false;
 			Logger.isOpen = false;
 		}
 		

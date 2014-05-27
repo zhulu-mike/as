@@ -2,7 +2,7 @@ package com.thinkido.framework.net
 {
 	import com.adobe.serialization.json.JSON;
 	import com.adobe.serialization.json.JSONParseError;
-	import com.thinkido.framework.data.LocalSO;
+	import com.thinkido.framework.engine.utils.DecodeUtil;
 	import com.thinkido.framework.events.TSocketEvent;
 	
 	import flash.errors.IOError;
@@ -17,6 +17,7 @@ package com.thinkido.framework.net
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 	import flash.utils.Timer;
+	import flash.utils.getTimer;
 	
 	import org.osflash.thunderbolt.Logger;
 	
@@ -187,7 +188,12 @@ package com.thinkido.framework.net
 					error.text = "严重错误： socket head != content , type:" + _protocol.type + ",len:" + _msgLen + ",bytesAvailable:" + _fSocket.bytesAvailable + ",content:" + txt ;
 					this.dispatchEvent(error);
 				}
+				
+				_buffer.position = 0;
+				DecodeUtil.ByteArrayArichmeticXOR(_buffer,0, _buffer.length - 1);
+				_buffer.position = 0;
 				var jsonStr:String = _buffer.readUTFBytes(_buffer.bytesAvailable);
+				_protocol.length = _buffer.length;
 				//Logger.warn(jsonStr);
 				try{
 					_protocol.body = com.adobe.serialization.json.JSON.decode(jsonStr);
@@ -209,10 +215,15 @@ package com.thinkido.framework.net
 			var sendBytes:ByteArray = new ByteArray();
 			sendBytes.endian = Endian.LITTLE_ENDIAN ;
 			sendBytes.writeInt(protocol.type);
-			sendBytes.writeInt(dataStr.length);
+			sendBytes.writeInt(dataStr.length + 1); //
 			sendBytes.writeByte(2);
 			sendBytes.writeByte(0);
 			sendBytes.writeUTFBytes(dataStr);
+			sendBytes.position = 4;
+			sendBytes.writeInt(sendBytes.length - 9); //sendBytes.length - 10 + 1
+			DecodeUtil.ByteArrayArichmeticXOR(sendBytes, 10);
+			
+			sendBytes.position = sendBytes.length;
 			sendBytes.writeByte(0);
 			
 			try

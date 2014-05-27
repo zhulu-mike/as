@@ -28,6 +28,7 @@
     
     import flash.display.DisplayObject;
     import flash.display.IBitmapDrawable;
+    import flash.display.Sprite;
     import flash.geom.Point;
     import flash.geom.Rectangle;
     import flash.utils.ByteArray;
@@ -63,11 +64,14 @@
 		private var _enabledShadow:Boolean = false;
 		/**是否需要更新实时影子*/
 		private var _needUpdateShadow:Boolean = false;
-		public var alpha:Number = 1 ;
+		private var _alpha:Number = 1 ;
 		public var isInView:Boolean = false;
+		/**装avatar的容器*/
+		public var container:Sprite;
 
         public function SceneCharacter($type:int, $scene:Scene, $tile_x:int = 0, $tile_y:int = 0, $showIndex:int = 0)
         {
+			container = new Sprite();
             this.reSet([$type, $scene, $tile_x, $tile_y, $showIndex]);
             return;
         }
@@ -83,7 +87,8 @@
 
         public function get isInMask() : Boolean
         {
-            return SceneCache.mapTiles[tile_x + "_" + tile_y] != null && (SceneCache.mapTiles[tile_x + "_" + tile_y] as MapTile).isMask;
+			var tile:MapTile = SceneCache.mapTiles[tile_x + "_" + tile_y] as MapTile;
+            return tile != null && tile.isMask;
         }
 
         public function faceTo($pixelX:Number, $pixelY:Number) : void
@@ -712,14 +717,15 @@
 			_lastInView = _currInView ;
 			_currInView = this.scene.sceneCamera.canSee(this);
 			isInView = _currInView;
+			var sEvt:SceneEvent ;
 			if( _lastInView == false && _currInView ){
 				//				2013-11-22 添加一个功能，接受非同屏数据时不加载。进入屏幕时在加载。
-				var sEvt:SceneEvent = new SceneEvent(SceneEvent.STATUS, SceneEventAction_status.INVIEW_CHECKANDLOAD,[this,true]);
+				sEvt = new SceneEvent(SceneEvent.STATUS, SceneEventAction_status.INVIEW_CHECKANDLOAD,[this,true]);
 				EventDispatchCenter.getInstance().dispatchEvent(sEvt);
 			}else if (_lastInView && !_currInView)
 			{
 				//离开视野范围内时，移除avatar
-				var sEvt:SceneEvent = new SceneEvent(SceneEvent.STATUS, SceneEventAction_status.INVIEW_CHECKANDLOAD,[this,false]);
+				sEvt = new SceneEvent(SceneEvent.STATUS, SceneEventAction_status.INVIEW_CHECKANDLOAD,[this,false]);
 				EventDispatchCenter.getInstance().dispatchEvent(sEvt);
 			}
 			return _currInView;
@@ -775,6 +781,10 @@
                 }
                 HeadFace.recycleHeadFace(this.headFace);
             }
+			if (this.container.parent)
+			{
+				this.container.parent.removeChild(this.container);
+			}
             this.visible = true;
             this.updateNow = false;
             this._oldData = null;
@@ -811,6 +821,7 @@
             if (this.scene != null)
             {
                 this.avatar.visible = this.scene.isAlwaysShowChar(this) || this.scene.getCharAvatarVisible(this.type);
+				this.scene.sceneAvatarLayer.addChild(container);
             }
             this._oldData = {visible:true, inViewDistance:false, isMouseOn:false, isSelected:false, pos:new Point(), spPos:new Point(), restStatus:this.restStatus};
             this.usable = true;
@@ -880,8 +891,12 @@
                 this.oldMouseRect = this.mouseRect.clone();
             }
 			//画影子
-			if (this.needUpdateShadow)
-				this.shadowShape.drawShadow(this);
+//			if (this.needUpdateShadow)
+//				this.shadowShape.drawShadow(this);
+			if (this.isInMask)
+				this.container.alpha = 0.5;
+			else
+				this.container.alpha = this.alpha;
 			this.needUpdateShadow = false;
             this.updateNow = false;
             return;
@@ -950,6 +965,40 @@
 			_needUpdateShadow = value;
 		}
 
+		override public function set pixel_x($x:Number):void
+		{
+			super.pixel_x = $x;
+			container.x = $x;
+		}
+		
+		override public function set pixel_y($y:Number):void
+		{
+			super.pixel_y = $y;
+			container.y = $y;
+		}
+		
+		override public function set tile_x(value1:int):void
+		{
+			super.tile_x = value1;
+			container.x = pixel_x;
+		}
+		
+		override public function set tile_y(value1:int):void
+		{
+			super.tile_y = value1;
+			container.y = pixel_y;
+		}
+
+		public function get alpha():Number
+		{
+			return _alpha;
+		}
+
+		public function set alpha(value:Number):void
+		{
+			_alpha = value;
+			this.container.alpha = value;
+		}
 
     }
 }

@@ -14,6 +14,7 @@ package com.thinkido.framework.net
 		private var _type:int = 0;
 		private var _body:Object = null;
 		private var _destroyed:Boolean = false;
+		private var _length:int = 0;
 		
 		
 		public function get destroyed():Boolean
@@ -51,5 +52,16 @@ package com.thinkido.framework.net
 		{
 			_type = value;
 		}
+
+		public function get length():int
+		{
+			return _length;
+		}
+
+		public function set length(value:int):void
+		{
+			_length = value;
+		}
+
 	}
 }

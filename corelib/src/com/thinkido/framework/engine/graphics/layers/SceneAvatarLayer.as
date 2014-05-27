@@ -9,6 +9,7 @@
     
     import flash.display.Bitmap;
     import flash.display.BitmapData;
+    import flash.display.BlendMode;
     import flash.display.Sprite;
     import flash.geom.Point;
     import flash.geom.Rectangle;
@@ -88,7 +89,7 @@
 
         public function dispose() : void
         {
-            this.removeAllAvatarBD();
+//            this.removeAllAvatarBD();
             this.removeBoundsArr = [];
             this.clearBoundsArr = [];
             this.restingAvatarPartArr = [];
@@ -98,7 +99,7 @@
 
         public function initAvatarBD() : void
         {
-            this.removeAllAvatarBD();
+//            this.removeAllAvatarBD();
             this._mapWidth = this._scene.mapConfig.width;
             this._mapHeight = this._scene.mapConfig.height;
             this._mH = this._mapWidth % MAX_AVATARBD_WIDTH;
@@ -359,9 +360,9 @@
             var apBound:Bounds = null;
             var rec:Rectangle = null;
 			var time:int = getTimer();
-            this._dirtyBoundsMaker.clear();
-            this.clearBoundsArr.length = 0;
-            this.restingAvatarPartArr.length = 0;
+//            this._dirtyBoundsMaker.clear();
+//            this.clearBoundsArr.length = 0;
+//            this.restingAvatarPartArr.length = 0;
             var scs:Array = this._scene.renderCharacters;
 			var really:Array = [];
 			for each (sc in scs)
@@ -372,7 +373,7 @@
 				}
 			}
 			scs = really;
-            scs.sortOn(["showIndex", "pixel_y", "pixel_x", "logicAnglePRI", "id"], [Array.NUMERIC, Array.NUMERIC, Array.NUMERIC, Array.NUMERIC, Array.NUMERIC]);
+            scs.sortOn("showIndex", Array.NUMERIC);
 			
             for each (sc in scs)
             {
@@ -380,36 +381,36 @@
             }
 //			trace("runavatar时间"+(getTimer()-time));
 			time = getTimer();
-            this.clearBoundsArr = this.clearBoundsArr.concat(this.removeBoundsArr);
-            this.clearBoundsArr.sortOn("top", Array.NUMERIC);
-            this.removeBoundsArr.length = 0;
-            for each (bounds in this.clearBoundsArr)
-            {
-				if (!bounds.isEmpty())
-				{
-					this._dirtyBoundsMaker.addBounds(bounds);
-				}else{
-//					Bounds.deleteBounds(bounds);
-				}
-            }
-            tempArr = this._dirtyBoundsMaker.getBoundsArr();
-            for each (ap in this.restingAvatarPartArr)
-            {
-                for each (bounds in tempArr)
-                {
-					apBound = Bounds.fromRectangle(ap.cutRect);
-					rec = apBound.intersectionRect(bounds);
-					if (rec != null)
-					{
-						ap.updateNow = true;
-						ap.renderRectArr.push(rec);
-					}
-//					Bounds.deleteBounds(apBound);
-                }
-            }
+//            this.clearBoundsArr = this.clearBoundsArr.concat(this.removeBoundsArr);
+//            this.clearBoundsArr.sortOn("top", Array.NUMERIC);
+//            this.removeBoundsArr.length = 0;
+//            for each (bounds in this.clearBoundsArr)
+//            {
+//				if (!bounds.isEmpty())
+//				{
+//					this._dirtyBoundsMaker.addBounds(bounds);
+//				}else{
+////					Bounds.deleteBounds(bounds);
+//				}
+//            }
+//            tempArr = this._dirtyBoundsMaker.getBoundsArr();
+//            for each (ap in this.restingAvatarPartArr)
+//            {
+//                for each (bounds in tempArr)
+//                {
+//					apBound = Bounds.fromRectangle(ap.cutRect);
+//					rec = apBound.intersectionRect(bounds);
+//					if (rec != null)
+//					{
+//						ap.updateNow = true;
+//						ap.renderRectArr.push(rec);
+//					}
+////					Bounds.deleteBounds(apBound);
+//                }
+//            }
 //			trace("bounds时间"+(getTimer()-time));
 			time = getTimer();
-            this.clear(tempArr);
+//            this.clear(tempArr);
             for each (sc in scs)
             {
                 sc.drawAvatar(this);

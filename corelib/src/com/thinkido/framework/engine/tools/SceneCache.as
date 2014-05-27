@@ -25,10 +25,6 @@
         public static const UNINSTALL_DELAY_TIME:int = 5000;
         public static var transports:Object = {};
         public static var mapZones:Object = {};
-		/**
-		 * 当前显示对象列表 
-		 */		
-        public static var currentMapZones:Object = {};
         public static var mapImgCache:Cache = CacheManager.creatNewCache("mapImgCache");
         public static var mapTiles:Object = {};
         public static var tempMapTiles:Object = {};

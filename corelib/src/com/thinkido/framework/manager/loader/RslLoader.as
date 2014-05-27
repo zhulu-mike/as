@@ -18,6 +18,7 @@
 	import flash.system.ApplicationDomain;
 	import flash.system.LoaderContext;
 	import flash.utils.ByteArray;
+	
 
 	/**
 	 * 通常用来加载swf 文件到 当前域中   
@@ -160,7 +161,7 @@
 
         private function onComplete(event:Event) : void
         {
-            this.stop();
+			this.stop();
             dispatchEvent(event);
             return;
         }

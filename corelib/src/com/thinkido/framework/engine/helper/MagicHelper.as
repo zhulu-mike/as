@@ -59,7 +59,7 @@
             }
             if ($from.type != SceneCharacterType.DUMMY)
             {
-                if (!$from.isJumping())
+                if (!$from.isJumping()&&　$from.inViewDistance())
                 {
                     $from.playTo(CharStatusType.ATTACK, -1, -1, new AvatarPlayCondition(true));
                     $from.showAttack = showAttack;
@@ -114,7 +114,7 @@
             $from.faceTo($toP.x, $toP.y);
             if ($from.type != SceneCharacterType.DUMMY)
             {
-                if (!$from.isJumping())
+                if (!$from.isJumping()&&　$from.inViewDistance())
                 {
                     $from.playTo(CharStatusType.ATTACK, -1, -1, new AvatarPlayCondition(true));
                     $from.showAttack = showAttack;
@@ -279,7 +279,7 @@
             $from.faceTo($toRectCenter.x, $toRectCenter.y);
             if ($from.type != SceneCharacterType.DUMMY)
             {
-                if (!$from.isJumping())
+                if (!$from.isJumping()&&　$from.inViewDistance())
                 {
                     $from.playTo(CharStatusType.ATTACK, -1, -1, new AvatarPlayCondition(true));
                     $from.showAttack = showAttack;
@@ -416,7 +416,7 @@
             $from.faceTo($toRectCenter.x, $toRectCenter.y);
             if ($from.type != SceneCharacterType.DUMMY)
             {
-                if (!$from.isJumping())
+                if (!$from.isJumping()&&　$from.inViewDistance())
                 {
                     $from.playTo(CharStatusType.ATTACK, -1, -1, new AvatarPlayCondition(true));
                     $from.showAttack = showAttack;
@@ -543,7 +543,7 @@
             $from.faceTo($toCircleCenter.x, $toCircleCenter.y);
             if ($from.type != SceneCharacterType.DUMMY)
             {
-                if (!$from.isJumping())
+                if (!$from.isJumping() &&　$from.inViewDistance())
                 {
                     $from.playTo(CharStatusType.ATTACK, -1, -1, new AvatarPlayCondition(true));
                     $from.showAttack = showAttack;
@@ -642,7 +642,7 @@
             $from.faceTo($toCircleCenter.x, $toCircleCenter.y);
             if ($from.type != SceneCharacterType.DUMMY)
             {
-                if (!$from.isJumping())
+                if (!$from.isJumping() &&　$from.inViewDistance())
                 {
                     $from.playTo(CharStatusType.ATTACK, -1, -1, new AvatarPlayCondition(true));
                     $from.showAttack = showAttack;
@@ -775,7 +775,7 @@
             $from.faceTo($toCircleCenter.x, $toCircleCenter.y);
             if ($from.type != SceneCharacterType.DUMMY)
             {
-                if (!$from.isJumping())
+                if (!$from.isJumping() &&　$from.inViewDistance())
                 {
                     $from.playTo(CharStatusType.ATTACK, -1, -1, new AvatarPlayCondition(true));
                     $from.showAttack = showAttack;
@@ -896,7 +896,7 @@
             $from.faceTo($toSectorOutCenter.x, $toSectorOutCenter.y);
             if ($from.type != SceneCharacterType.DUMMY)
             {
-                if (!$from.isJumping())
+                if (!$from.isJumping() &&　$from.inViewDistance())
                 {
                     $from.playTo(CharStatusType.ATTACK, -1, -1, new AvatarPlayCondition(true));
                     $from.showAttack = showAttack;
@@ -932,14 +932,14 @@
                 {
                     for each (sc in $toArr)
                     {
-                        if (sc.usable)
+                        if (sc.usable && sc.inViewDistance() )
                         {
                             sc.loadAvatarPart($toApd);
                             continue;
                         }
                         if ($toApd != null)
                         {
-                            $toApd.executeCallBack(sc);
+                            $toApd.executeCallBack(sc,null,MAGIC_STATUS);
                         }
                     }
                 }
@@ -955,7 +955,10 @@
             ;
             $fromApd = $fromApd ? ($fromApd.clone()) : (new AvatarParamData());
             $fromApd.extendCallBack(MAGIC_STATUS,null, passAndHit, null, null);
-            $from.loadAvatarPart($fromApd);
+			if ($from.isInView)
+           		$from.loadAvatarPart($fromApd);
+			else
+				$fromApd.executeCallBack($from,null,MAGIC_STATUS);
             return;
         }
 		
@@ -997,7 +1000,7 @@
 			$from.faceToTile($toP.x, $toP.y);
 			if ($from.type != SceneCharacterType.DUMMY)
 			{
-				if (!$from.isJumping())
+				if (!$from.isJumping() &&　$from.inViewDistance())
 				{
 					$from.playTo(CharStatusType.ATTACK, -1, -1, new AvatarPlayCondition(true));
 					$from.showAttack = showAttack;
@@ -1033,14 +1036,14 @@
 				{
 					for each (sc in $toArr)
 					{
-						if (sc.usable)
+						if (sc.usable && sc.inViewDistance() )
 						{
 							sc.loadAvatarPart($toApd);
 							continue;
 						}
 						if ($toApd != null)
 						{
-							$toApd.executeCallBack(sc);
+							$toApd.executeCallBack(sc,null,MAGIC_STATUS);
 						}
 					}
 				}
@@ -1053,7 +1056,7 @@
 				}
 				return;
 			};
-			if( $fromApd == null ){
+			if( $fromApd == null || !$from.inViewDistance() ){
 				passAndHit();
 			}else{
 				
