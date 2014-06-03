@@ -31,17 +31,32 @@
 		public static var shadowAngle:int = 45;
 
 		public static var version:Function;
+		/**渲染窗口宽度格子数量*/
+		public static var renderWidth:int = 40;
+		/**渲染窗口高度格子数量*/
+		public static var renderHeight:int = 24;
 		
         public function GlobalConfig()
         {
             return;
         }
-		public static function setGlobalConfig(framerate:int, $decode:Function, $version:Function = null) : void
+		/**
+		 * 
+		 * @param framerate
+		 * @param $decode
+		 * @param $version 
+		 * @param renderW 渲染窗口宽度格子数量，默认40格 渲染窗口内的怪物才可见
+		 * @param renderH 渲染窗口高度格子数量，默认24格 渲染窗口内的怪物才可见
+		 * 
+		 */		
+		public static function setGlobalConfig(framerate:int, $decode:Function, $version:Function = null,renderW:int=40,renderH:int=24) : void
 		{
 			FRAME_RATE = framerate;
 			SETP_TIME = 1000 / framerate;
 			decode = $decode;
 			version = $version;
+			renderWidth = renderW;
+			renderHeight = renderH;
 			return;
 		}
         public static function getMapConfigPath(repl:* = "", p:String = "$") : String

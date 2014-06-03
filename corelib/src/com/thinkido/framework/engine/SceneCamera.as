@@ -1,9 +1,12 @@
 ﻿package com.thinkido.framework.engine
 {
+	import com.thinkido.framework.engine.config.GlobalConfig;
+	import com.thinkido.framework.engine.config.SceneConfig;
 	import com.thinkido.framework.engine.utils.SceneUtil;
 	import com.thinkido.framework.engine.vo.BaseElement;
 	
 	import flash.geom.Point;
+
 	/**
 	 * 摄像机,用于控制屏幕移动 
 	 * @author Administrator
@@ -23,6 +26,7 @@
 
         public function SceneCamera(scene:Scene)
         {
+			this.tileRangeXY = new Point();
             this._scene = scene;
             this.updateRangeXY();
         }
@@ -42,11 +46,24 @@
 		 */
         public function updateRangeXY() : void
         {
-            this.tileRangeXY = SceneUtil.getViewTileRangeXY(this._scene);
+            getViewTileRangeXY();
             this.zoneRangeXY = SceneUtil.getViewZoneRangeXY(this._scene);
             this.x_limen = this._scene.sceneConfig.width * this.LIMEN_RATIO;
             this.y_limen = this._scene.sceneConfig.height * this.LIMEN_RATIO;
         }
+		
+		/**
+		 * 获取可渲染范围的区域。
+		 * @param $scene
+		 * @return 
+		 * 
+		 */
+		private function getViewTileRangeXY() : void
+		{
+			tileRangeXY.x = GlobalConfig.renderWidth >> 1;
+			tileRangeXY.y = GlobalConfig.renderHeight >> 1;
+		}
+		
 		/**
 		 * 能否看到角色 
 		 * @param sc 需要判断 的 角色
@@ -55,7 +72,8 @@
 		 */
         public function canSee(sc:SceneCharacter) : Boolean
         {
-            return sc.tile_x > tile_x - this.tileRangeXY.x && sc.tile_x < tile_x + this.tileRangeXY.x && sc.tile_y > tile_y - this.tileRangeXY.y && sc.tile_y < tile_y + this.tileRangeXY.y;
+			var tx:int = sc.tile_x, ty:int = sc.tile_y, stx:int = _lastScTileX, sty:int = _lastScTileY;
+            return tx >= stx-this.tileRangeXY.x && tx <= this.tileRangeXY.x+stx && ty >= sty-this.tileRangeXY.y && ty <= this.tileRangeXY.y+sty;
         }
 		/**
 		 * 能否看到网格 
@@ -64,7 +82,8 @@
 		 */
         public function canSeeTile($tileX:int ,$tileY:int) : Boolean
         {
-            return $tileX > tile_x - this.tileRangeXY.x && $tileX < tile_x + this.tileRangeXY.x && $tileY > tile_y - this.tileRangeXY.y && $tileY < tile_y + this.tileRangeXY.y;
+			var stx:int = _lastScTileX, sty:int = _lastScTileY;
+            return $tileX >= stx-this.tileRangeXY.x && $tileX <= this.tileRangeXY.x+stx && $tileY >= sty-this.tileRangeXY.y && $tileY <= this.tileRangeXY.y+sty;
         }
 		/**
 		 * 设定摄像机根据角色移动 
@@ -79,6 +98,8 @@
         }
 		private var _lastScPixelX:int = -1 ; 
 		private var _lastScPixelY:int = -1 ; 
+		private var _lastScTileX:int = -1;
+		private var _lastScTileY:int = -1;
 		/**
 		 * 移动摄像头
 		 * @param useTween 缓动
@@ -90,27 +111,29 @@
             {
                 return;
             }
-            var _centerX:Number = 0;
-            var _y:Number = 0;
-            var gapW:Number = 0;
-            var gapY:Number = 0;
-            var resuleX:Number = 0;
-            var resuleY:Number = 0;
-            var moveDisX:Number = 0;
-            var moveDisY:Number = 0;
-            var sMoveX:Number = 0;
-            var sMoveY:Number = 0;
 			if( _lastScPixelX == _followCharacter.pixel_x && _lastScPixelY == _followCharacter.pixel_y && !isForce){
 				return ;
 			}else{
 				_lastScPixelX = _followCharacter.pixel_x ;
+				_lastScTileX = _lastScPixelX / SceneConfig.TILE_WIDTH;
 				_lastScPixelY = _followCharacter.pixel_y ;
+				_lastScTileY = _lastScPixelY/SceneConfig.TILE_HEIGHT;
 			}
+			var _centerX:Number = 0;
+			var _y:Number = 0;
+			var gapW:Number = 0;
+			var gapY:Number = 0;
+			var resuleX:Number = 0;
+			var resuleY:Number = 0;
+			var moveDisX:Number = 0;
+			var moveDisY:Number = 0;
+			var sMoveX:Number = 0;
+			var sMoveY:Number = 0;
             var _cp:Point = new Point(this._followCharacter.pixel_x, this._followCharacter.pixel_y);
             _cp = this._scene.localToGlobal(_cp);
             if (this._scene.mapConfig.width > this._scene.sceneConfig.width)
             {
-                _centerX = this._scene.sceneConfig.width * 0.5;
+                _centerX = this._scene.sceneConfig.width >> 1;
                 gapW = this._scene.sceneConfig.width - this._scene.mapConfig.width;
                 moveDisX = _centerX - _cp.x;
                 if (moveDisX > this.x_limen)
@@ -135,7 +158,7 @@
                 {
                     if (!useTween)
                     {
-                        this._scene.x = this._scene.x + moveDisX;
+                        this._scene.x += moveDisX;
                     }
                     else
                     {
@@ -145,8 +168,8 @@
             }
             else
             {
-                _centerX = this._scene.mapConfig.width * 0.5;
-                resuleX = (this._scene.sceneConfig.width - this._scene.mapConfig.width) / 2;
+                _centerX = this._scene.mapConfig.width >> 1;
+                resuleX = (this._scene.sceneConfig.width - this._scene.mapConfig.width) >> 1;
                 if (this._scene.x != resuleX)
                 {
                     this._scene.x = resuleX;
@@ -154,7 +177,7 @@
             }
             if (this._scene.mapConfig.height > this._scene.sceneConfig.height)
             {
-                _y = this._scene.sceneConfig.height * 0.5;
+                _y = this._scene.sceneConfig.height >> 1;
                 gapY = this._scene.sceneConfig.height - this._scene.mapConfig.height;
                 moveDisY = _y - _cp.y;
                 if (moveDisY > this.y_limen)
@@ -179,7 +202,7 @@
                 {
                     if (!useTween)
                     {
-                        this._scene.y = this._scene.y + moveDisY ;
+                        this._scene.y += moveDisY ;
                     }
                     else
                     {
@@ -189,17 +212,18 @@
             }
             else
             {
-                _y = this._scene.mapConfig.height * 0.5;
-                resuleY = (this._scene.sceneConfig.height - this._scene.mapConfig.height) / 2;
+                _y = this._scene.mapConfig.height >> 1;
+                resuleY = (this._scene.sceneConfig.height - this._scene.mapConfig.height) >> 1;
                 if (this._scene.y != resuleY)
                 {
                     this._scene.y = resuleY;
                 }
             }
-            var _p:Point = new Point(_centerX, _y);
-            _p = this._scene.globalToLocal(_p);
-            pixel_x = _p.x;
-            pixel_y = _p.y;
+			_cp.x = _centerX;
+			_cp.y = _y;
+			_cp = this._scene.globalToLocal(_cp);
+            pixel_x = _cp.x;
+            pixel_y = _cp.y;
             return;
         }
 
