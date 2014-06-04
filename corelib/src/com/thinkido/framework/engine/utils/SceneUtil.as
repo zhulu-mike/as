@@ -3,6 +3,7 @@
     
     import com.thinkido.framework.common.utils.ZMath;
     import com.thinkido.framework.engine.Scene;
+    import com.thinkido.framework.engine.SceneCamera;
     import com.thinkido.framework.engine.config.SceneConfig;
     import com.thinkido.framework.engine.tools.SceneCache;
     import com.thinkido.framework.engine.vo.BaseElement;
@@ -22,19 +23,7 @@
         {
             return;
         }
-		/**
-		 * 获取总共tile/2 横向、纵向 数。向上取整 
-		 * @param $scene
-		 * @return 
-		 * 
-		 */
-        public static function getViewTileRangeXY($scene:Scene) : Point
-        {
-            var temp:Point = new Point();
-            temp.x = Math.ceil(($scene.sceneConfig.width / SceneConfig.TILE_WIDTH - 1) / 2) + 1;
-            temp.y = Math.ceil(($scene.sceneConfig.height / SceneConfig.TILE_HEIGHT - 1) / 2) + 1;
-            return temp;
-        }
+		
 		/**
 		 * 获取总共zone/2 横向、纵向 数。向上取整 
 		 * @param $scene

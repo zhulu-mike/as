@@ -15,6 +15,7 @@
     import com.thinkido.framework.engine.helper.MoveHelper;
     import com.thinkido.framework.engine.helper.TaggerHelper;
     import com.thinkido.framework.engine.move.WalkStep;
+    import com.thinkido.framework.engine.staticdata.CharStatusType;
     import com.thinkido.framework.engine.staticdata.RestType;
     import com.thinkido.framework.engine.tools.SceneCache;
     import com.thinkido.framework.engine.tools.ScenePool;
@@ -49,16 +50,16 @@
         public var avatar:Avatar;
         public var headFace:HeadFace;
         private var _moveData:MoveData;
-        public var specilize_x:Number = 0;
-        public var specilize_y:Number = 0;
+        private var _specilize_x:Number = 0;
+        private var _specilize_y:Number = 0;
         public var showIndex:int = 0;
         public var showAttack:Function;
         public var oldMouseRect:Rectangle;
 		public var bodyPosition:int = 0;
         public var mouseRect:Rectangle;
-        public var isMouseOn:Boolean;
+        private var _isMouseOn:Boolean;
         public var isSelected:Boolean;
-        public var restStatus:int;
+        private var _restStatus:int;
 		private var shadowShape:ShadowShape;
 		/**是否可以使用实时影子*/
 		private var _enabledShadow:Boolean = false;
@@ -719,12 +720,14 @@
 			isInView = _currInView;
 			var sEvt:SceneEvent ;
 			if( _lastInView == false && _currInView ){
+				this.updateNow = true;
 				//				2013-11-22 添加一个功能，接受非同屏数据时不加载。进入屏幕时在加载。
 				sEvt = new SceneEvent(SceneEvent.STATUS, SceneEventAction_status.INVIEW_CHECKANDLOAD,[this,true]);
 				EventDispatchCenter.getInstance().dispatchEvent(sEvt);
 			}else if (_lastInView && !_currInView)
 			{
 				//离开视野范围内时，移除avatar
+				this.updateNow = true;
 				sEvt = new SceneEvent(SceneEvent.STATUS, SceneEventAction_status.INVIEW_CHECKANDLOAD,[this,false]);
 				EventDispatchCenter.getInstance().dispatchEvent(sEvt);
 			}
@@ -840,50 +843,13 @@
 		 */
         public function runAvatar(frameIndex:int = -1) : void
         {
-            var posX:int = Math.round(pixel_x);
-            var posY:int = Math.round(pixel_y);
-            if (this._oldData.pos.x != posX || this._oldData.pos.y != posY)
-            {
-                this._oldData.pos.x = posX;
-                this._oldData.pos.y = posY;
-                this.updateNow = true;
-            }
-            posX = Math.round(this.specilize_x);
-            posY = Math.round(this.specilize_y);
-            if (this._oldData.spPos.x != posX || this._oldData.spPos.y != posY)
-            {
-                this._oldData.spPos.x = posX;
-                this._oldData.spPos.y = posY;
-                this.updateNow = true;
-            }
-            if (this._oldData.isMouseOn != this.isMouseOn)
-            {
-                this._oldData.isMouseOn = this.isMouseOn;
-                this.updateNow = true;
-            }
-            if (this._oldData.visible != this.visible)
-            {
-                this._oldData.visible = this.visible;
-                this.updateNow = true;
-            }
-            var inView:Boolean = this.inViewDistance();
 			if( showContainer ){
-				if( inView ){
+				if( isInView ){
 					showContainer.visible = true ;
 				}else{
 					showContainer.visible = false ;
 				}
 			}
-            if (this._oldData.inViewDistance != inView)
-            {
-                this._oldData.inViewDistance = inView;
-                this.updateNow = true;
-            }
-            if (this._oldData.restStatus != this.restStatus)
-            {
-                this._oldData.restStatus = this.restStatus;
-                this.updateNow = true;
-            }
             this.mouseRect = null;
             this.avatar.run(frameIndex);
             if (this.mouseRect != null)
@@ -965,17 +931,6 @@
 			_needUpdateShadow = value;
 		}
 
-		override public function set pixel_x($x:Number):void
-		{
-			super.pixel_x = $x;
-			container.x = $x;
-		}
-		
-		override public function set pixel_y($y:Number):void
-		{
-			super.pixel_y = $y;
-			container.y = $y;
-		}
 		
 		override public function set tile_x(value1:int):void
 		{
@@ -999,6 +954,125 @@
 			_alpha = value;
 			this.container.alpha = value;
 		}
+		
+		public function isDeath():Boolean
+		{
+			return this.avatar.status == CharStatusType.DEATH;
+		}
 
+		public function isAttack():Boolean
+		{
+			return this.avatar.status == CharStatusType.ATTACK;
+		}
+		
+		public function isInjured():Boolean
+		{
+			return this.avatar.status == CharStatusType.INJURED;
+		}
+		
+		public function isJump():Boolean
+		{
+			return this.avatar.status == CharStatusType.JUMP;
+		}
+		public function isSit():Boolean
+		{
+			return this.avatar.status == CharStatusType.SIT;
+		}
+		
+		public function isSkill():Boolean
+		{
+			return this.avatar.status == CharStatusType.SKILL;
+		}
+		
+		public function isSkill1():Boolean
+		{
+			return this.avatar.status == CharStatusType.SKILL1;
+		}
+		
+		public function isStand():Boolean
+		{
+			return this.avatar.status == CharStatusType.STAND;
+		}
+		
+		public function isWalk():Boolean
+		{
+			return this.avatar.status == CharStatusType.WALK;
+		}
+
+		public function get restStatus():int
+		{
+			return _restStatus;
+		}
+
+		public function set restStatus(value:int):void
+		{
+			if (_restStatus != value)
+			{
+				_restStatus = value;
+				this.updateNow = true;
+			}
+		}
+
+		public function get isMouseOn():Boolean
+		{
+			return _isMouseOn;
+		}
+
+		public function set isMouseOn(value:Boolean):void
+		{
+			if (_isMouseOn != value)
+			{
+				_isMouseOn = value;
+				this.updateNow = true;
+			}
+		}
+
+		public function get specilize_x():Number
+		{
+			return _specilize_x;
+		}
+
+		public function set specilize_x(value:Number):void
+		{
+			if (_specilize_x != value)
+			{
+				_specilize_x = value;
+				this.updateNow = true;
+			}
+		}
+
+		public function get specilize_y():Number
+		{
+			return _specilize_y;
+		}
+
+		public function set specilize_y(value:Number):void
+		{
+			if (_specilize_y != value)
+			{
+				_specilize_y = value;
+				this.updateNow = true;
+			}
+		}
+
+		override public function set pixel_x($x:Number):void
+		{
+			if (pixel_x != $x)
+			{
+				super.pixel_x = $x;
+				container.x = $x;
+				this.updateNow = true;
+			}
+		}
+		
+		override public function set pixel_y($y:Number):void
+		{
+			if (pixel_y != $y)
+			{
+				super.pixel_y = $y;
+				container.y = $y;
+				this.updateNow = true;
+			}
+		}
     }
 }

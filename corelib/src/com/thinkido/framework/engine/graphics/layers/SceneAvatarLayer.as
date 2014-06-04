@@ -352,15 +352,6 @@
         public function run() : void
         {
             var sc:SceneCharacter = null;
-            var bounds:Bounds = null;
-            var tempArr:Array = null;
-            var ap:AvatarPart = null;
-            var apBound:Bounds = null;
-            var rec:Rectangle = null;
-			var time:int = getTimer();
-//            this._dirtyBoundsMaker.clear();
-//            this.clearBoundsArr.length = 0;
-//            this.restingAvatarPartArr.length = 0;
             var scs:Array = this._scene.renderCharacters;
 			var really:Array = [];
 			for each (sc in scs)
@@ -377,43 +368,10 @@
             {
                 sc.runAvatar();
             }
-//			trace("runavatar时间"+(getTimer()-time));
-			time = getTimer();
-//            this.clearBoundsArr = this.clearBoundsArr.concat(this.removeBoundsArr);
-//            this.clearBoundsArr.sortOn("top", Array.NUMERIC);
-//            this.removeBoundsArr.length = 0;
-//            for each (bounds in this.clearBoundsArr)
-//            {
-//				if (!bounds.isEmpty())
-//				{
-//					this._dirtyBoundsMaker.addBounds(bounds);
-//				}else{
-////					Bounds.deleteBounds(bounds);
-//				}
-//            }
-//            tempArr = this._dirtyBoundsMaker.getBoundsArr();
-//            for each (ap in this.restingAvatarPartArr)
-//            {
-//                for each (bounds in tempArr)
-//                {
-//					apBound = Bounds.fromRectangle(ap.cutRect);
-//					rec = apBound.intersectionRect(bounds);
-//					if (rec != null)
-//					{
-//						ap.updateNow = true;
-//						ap.renderRectArr.push(rec);
-//					}
-////					Bounds.deleteBounds(apBound);
-//                }
-//            }
-//			trace("bounds时间"+(getTimer()-time));
-			time = getTimer();
-//            this.clear(tempArr);
             for each (sc in scs)
             {
                 sc.drawAvatar(this);
             }
-//			trace("drawavatar时间"+scs.length+"/"+(getTimer()-time));
             return;
         }
 

@@ -40,24 +40,24 @@
 
         public static function step(sc:SceneCharacter) : void
         {
-            var sEvt:SceneEvent = null;
-            var item:Array = null;
-            var lastTime:int = 0;
-            var stepNum:Number = NaN;
-            var mapTile:MapTile = null;
-            if (sc.getStatus() == DEATH)
+            if (sc.isDeath())
             {
-                if (sc == sc.scene.mainChar)
+                if (sc.isMainChar())
                 {
                     sc.scene.hideMouseChar();
                 }
                 sc.moveData.clear();
                 return;
             }
+			var sEvt:SceneEvent = null;
+			var item:Array = null;
+			var lastTime:int = 0;
+			var stepNum:Number = NaN;
+			var mapTile:MapTile = null;
             var moveData:MoveData = sc.moveData ;
             if (moveData.walk_pathArr == null || moveData.walk_pathArr.length == 0)
             {
-                if (sc.getStatus() == WALK && sc.type != SceneCharacterType.MOUNT && sc.type != SceneCharacterType.NPC_FRIEND)
+                if (sc.isWalk() && sc.type != SceneCharacterType.MOUNT && sc.type != SceneCharacterType.NPC_FRIEND)
                 {
                     sc.playTo(STAND);
                 }
@@ -91,14 +91,7 @@
 					sc.playTo(WALK, CharAngleType["ANGEL_" + angle]);
 				}
 			}
-//			if(items.length == 0){
-				sc.setXY(tempPoint.x, tempPoint.y);
-//			}else{
-//				var len:int = items.length;
-//				sc.setTileXY(items[len - 1][0],items[len - 1][1]);
-//			}
-			
-//			Logger.warn(sc.pixel_x + " "+ sc.pixel_y + " " + sc.tile_x + " " + sc.tile_y);
+			sc.setXY(tempPoint.x, tempPoint.y);
 			for each (item in items)
             {
                 if (sc == sc.scene.mainChar)

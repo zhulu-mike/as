@@ -60,7 +60,6 @@
         private function render(evt:Event = null) : void
         {
             var chara:SceneCharacter = null;
-//			trace("上帧时间："+(getTimer()-nowTime));
             nowTime = getTimer();
             var charaArr:Array = _scene.sceneCharacters;
 			var t:int = nowTime;

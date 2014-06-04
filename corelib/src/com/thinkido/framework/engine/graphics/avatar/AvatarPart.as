@@ -66,7 +66,7 @@
         public var type:String;
         private var _classNamePrefix:String;
         private var _repeat:int = 0;
-        public var _depth:int = 0;
+        public var _depth:int = int.MAX_VALUE;
         private var _offsetX:int = 0;
         private var _offsetY:int = 0;
         private var _offsetOnMountX:int = 0;
@@ -669,7 +669,7 @@
             return;
         }
 		/**
-		 * 将图像绘制到 sceneAvatarLayer上 ,主要处理绘制的逻辑处理。
+		 * 
 		 * @param ibmdable
 		 * 
 		 */
@@ -679,8 +679,6 @@
             {
                 return;
             }
-//			if (this.bitmap.parent)
-//				this.sceneCharacter.container.removeChild(this.bitmap);
             this.updateNow = false;
             if (this._playBeforeStart)
             {
@@ -693,6 +691,31 @@
 			var bmd:BitmapData = null;
 			var rec:Rectangle = null;
 			var showAttackFun:Function = null;
+            if (!this._enablePlay)
+            {
+                return;
+            }
+            if (!this.avatar || !this.avatar.sceneCharacter)
+            {
+                return;
+            }
+            if (this.visible && this.avatar.visible && this.avatar.sceneCharacter.isInView && this.sceneCharacter.visible)
+            {
+                bmd = this._inMaskDrawSourceBitmapData || this._drawSourceBitmapData;
+				this.bitmap.bitmapData = bmd;
+				this.bitmap.x = -this.cutRect.x;
+				this.bitmap.y = -this.cutRect.y;
+//                if (bmd != null)
+//                {
+//                    for each (rec in this.renderRectArr)
+//                    {
+//                        if (!rec.isEmpty())
+//                        {
+//                            this.copyToAvatarBD(ibmdable, bmd, this._sourcePoint.x + (rec.x - this.cutRect.x), this._sourcePoint.y + (rec.y - this.cutRect.y), rec.width, rec.height, rec.x, rec.y);
+//						}
+//                    }
+//                }
+            }
             if (this._playStart)
             {
                 this._playStart = false;
@@ -804,22 +827,22 @@
         {
             var _x:Number = NaN;
             var _y:Number = NaN;
-            if (this._useSpecilizeXY && (this.avatar.sceneCharacter.isJumping() || this.avatar.sceneCharacter.restStatus == RestType.DOUBLE_SIT))
+            if (this._useSpecilizeXY && (this.sceneCharacter.isJumping() || this.sceneCharacter.restStatus == RestType.DOUBLE_SIT))
             {
-                _x = Math.round(this.avatar.sceneCharacter.specilize_x);
-                _y = Math.round(this.avatar.sceneCharacter.specilize_y);
+                _x = Math.round(this.sceneCharacter.specilize_x);
+                _y = Math.round(this.sceneCharacter.specilize_y);
             }
             else
             {
-                _x = Math.round(this.avatar.sceneCharacter.pixel_x);
-                _y = Math.round(this.avatar.sceneCharacter.pixel_y);
+                _x = Math.round(this.sceneCharacter.pixel_x);
+                _y = Math.round(this.sceneCharacter.pixel_y);
             }
-            _x = _x + this._offsetX;
-            _y = _y + this._offsetY;
+            _x += this._offsetX;
+            _y += this._offsetY;
             if (this.avatar.isOnMount)
             {
-                _x = _x + this._offsetOnMountX;
-                _y = _y + this._offsetOnMountY;
+                _x += this._offsetOnMountX;
+                _y += this._offsetOnMountY;
             }
             return new Point(_x, _y);
         }
@@ -930,7 +953,7 @@
             this.type = "";
             this._classNamePrefix = "";
             this._repeat = 0;
-            this.depth = 0;
+            this._depth = int.MAX_VALUE;
             this._offsetX = 0;
             this._offsetY = 0;
             this._offsetOnMountX = 0;
@@ -1056,9 +1079,9 @@
 
 		public function set depth($depth:int) : void
 		{
-			_depth = $depth;
-			if (this.avatar != null)
+			if (_depth != $depth)
 			{
+				_depth = $depth;
 				this.avatar.needSort = true;
 			}
 			return;
@@ -1092,6 +1115,12 @@
 			}
 		}
 
-
+		public function setChildIndex(index:int):void
+		{
+			if (bitmap.parent.getChildIndex(bitmap) != index)
+			{
+				bitmap.parent.setChildIndex(bitmap,index);
+			}
+		}
     }
 }

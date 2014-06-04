@@ -6,7 +6,6 @@
     import com.thinkido.framework.engine.SceneCharacter;
     import com.thinkido.framework.engine.events.SceneEvent;
     import com.thinkido.framework.engine.events.SceneEventAction_status;
-    import com.thinkido.framework.engine.staticdata.AvatarPartID;
     import com.thinkido.framework.engine.staticdata.AvatarPartType;
     import com.thinkido.framework.engine.staticdata.CharStatusType;
     import com.thinkido.framework.engine.staticdata.SceneCharacterType;
@@ -270,7 +269,6 @@
                 ap.depth = AvatarPartType.getDefaultDepth(ap.type, this.logicAngle);
             }
             this.avatarParts.push(ap);
-            this.sortAvatarParts();
             ap.onAdd();
             return;
         }
@@ -278,6 +276,11 @@
         public function sortAvatarParts() : void
         {
             this.avatarParts.sortOn("depth", Array.NUMERIC);
+			var i:int = 0, len:int = this.avatarParts.length, index:int = 0;
+			for (;i<len;i++)
+			{
+				avatarParts[i].setChildIndex(i);
+			}
             return;
         }
 
@@ -407,9 +410,6 @@
             var ap:AvatarPart = null;
             var fun:Function = null;
             var sEvt:SceneEvent = null;
-			if( status == CharStatusType.SIT && status != $status ){
-				removeAvatarPartByID( "SIT" );   //直接写字符串不好，需要整理调整优化
-			}
             if ($status != null)
             {
                 this.status = $status;
@@ -430,7 +430,6 @@
             {
                 ap.playTo($status, $angle, $rotation, this.playCondition.clone());
             }
-            this.sortAvatarParts();
             if (this.sceneCharacter.showAttack != null)
             {
                 fun = this.sceneCharacter.showAttack;
@@ -441,7 +440,7 @@
                     this.playTo(CharStatusType.ATTACK);
                 }
             }
-            if (this.sceneCharacter.scene && this.sceneCharacter == this.sceneCharacter.scene.mainChar && status != this.status)
+            if (this.sceneCharacter.scene && this.sceneCharacter.isMainChar() && status != this.status)
             {
                 sEvt = new SceneEvent(SceneEvent.STATUS, SceneEventAction_status.CHANGED, [this.sceneCharacter, this.status]);
                 EventDispatchCenter.getInstance().dispatchEvent(sEvt);
@@ -456,36 +455,8 @@
         public function run(frameIndex:int = -1) : void
         {
             var ap:AvatarPart = null;
-            if (this._oldData.visible != this.visible)
-            {
-                this._oldData.visible = this.visible;
-				this.sceneCharacter.needUpdateShadow = true;
-            }
-			var offMountX:int = 0;
-			var offMountY:int = 0;
-			if (this.sceneCharacter.isOnMount)
-			{
-				var bodys:Array = this.getAvatarPartsByType(AvatarPartType.BODY);
-				if (bodys.length > 0)
-				{
-					var body:AvatarPart , i:int = 0, len:int = bodys.length;
-					for (;i<len;i++)
-					{
-						body = bodys[i];
-						if (body.id != AvatarPartID.BLANK){
-							offMountX = body.offsetOnMountX;
-							offMountY = body.offsetOnMountY;
-							break;
-						}
-					}
-				}
-			}
             for each (ap in this.avatarParts)
             {
-				if (ap.type == AvatarPartType.BODY || ap.type == AvatarPartType.MAGIC || ap.type == AvatarPartType.WING || ap.type == AvatarPartType.MAGIC_PASS || (ap.type == AvatarPartType.MAGIC_RING && ap.avatarParamData.id != AvatarPartID.SHADOW)){
-					ap.offsetOnMountX = offMountX;
-					ap.offsetOnMountY = offMountY;
-				}
                 ap.run(frameIndex);
             }
             return;
@@ -501,7 +472,7 @@
 			if (this.needSort)
 			{
 				this.needSort = false;
-				this.avatarParts.sortOn("depth", Array.NUMERIC);
+				sortAvatarParts();
 			}
 			for each (ap in this.avatarParts)
             {

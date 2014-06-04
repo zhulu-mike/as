@@ -32,8 +32,10 @@
 		 * @param $frameRate
 		 * @param $decode 解码方法
 		 * @param useSo 是否使用so管理文件
+		 * @param $renderWidth 渲染区域的横向格子数量
+		 * @param $renderHeight 渲染区域的纵向格子数量
 		 */		
-        public static function initEngine($stage:Stage, $map_config_tem:String = "", $map_small_tem:String = "", $map_zone_tem:String = "", $map_slipcover_tem:String = "", $frameRate:int = 24, $decode:Function = null, useSo:Boolean=false) : void
+        public static function initEngine($stage:Stage, $map_config_tem:String = "", $map_small_tem:String = "", $map_zone_tem:String = "", $map_slipcover_tem:String = "", $frameRate:int = 24, $decode:Function = null, useSo:Boolean=false,$renderWidth:int=40,$renderHeight:int=24) : void
         {
 			stage = $stage;
 			FrameUtil.init($stage);
@@ -41,9 +43,7 @@
             GlobalConfig.map_small_tem = $map_small_tem;
             GlobalConfig.map_zone_tem = $map_zone_tem;
             GlobalConfig.map_slipcover_tem = $map_slipcover_tem;
-            GlobalConfig.FRAME_RATE = $frameRate;
-            GlobalConfig.SETP_TIME = 1000 / $frameRate;
-            GlobalConfig.decode = $decode;
+            GlobalConfig.setGlobalConfig($frameRate,$decode,null,$renderWidth,$renderHeight);
 			GlobalConfig.useSo = useSo;
             engineReady = true;
             return;
