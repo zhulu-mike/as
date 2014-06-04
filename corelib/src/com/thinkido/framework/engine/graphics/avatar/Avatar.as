@@ -17,6 +17,7 @@
     import com.thinkido.framework.engine.vo.avatar.AvatarPlayCondition;
     
     import flash.display.IBitmapDrawable;
+    import flash.display.Sprite;
     import flash.geom.Point;
     
     
@@ -27,7 +28,7 @@
     public class Avatar extends Object implements IPoolClass
     {
         public var usable:Boolean = false;
-        public var visible:Boolean = true;
+        private var _visible:Boolean = true;
         public var updateNow:Boolean = false;
         private var _oldData:Object;
         public var sceneCharacter:SceneCharacter;
@@ -39,10 +40,11 @@
         private var _hideAvatarPartIds:Array;
         private var avatarParts:Array;
 		public var needSort:Boolean = false;
-
+		public var avatarContainer:Sprite;
 
         public function Avatar(sc:SceneCharacter)
         {
+			avatarContainer = new Sprite();
             this._hideAvatarPartTypes = [];
             this._hideAvatarPartIds = [];
             this.avatarParts = [];
@@ -457,7 +459,6 @@
             if (this._oldData.visible != this.visible)
             {
                 this._oldData.visible = this.visible;
-                this.updateNow = true;
 				this.sceneCharacter.needUpdateShadow = true;
             }
 			var offMountX:int = 0;
@@ -487,7 +488,6 @@
 				}
                 ap.run(frameIndex);
             }
-            this.updateNow = false;
             return;
         }
 		/**
@@ -593,7 +593,9 @@
             this._hideAvatarPartTypes.length = 0;
             this._hideAvatarPartIds.length = 0;
 			this.needSort = false;
-			 this.avatarParts.length = 0;
+			this.avatarParts.length = 0;
+			if (avatarContainer.parent)
+				 avatarContainer.parent.removeChild(avatarContainer);
             return;
         }
 		
@@ -604,6 +606,8 @@
         public function reSet(value1:Array) : void
         {
             this.sceneCharacter = value1[0];
+//			if (this.sceneCharacter)
+//				this.sceneCharacter.container.addChild(avatarContainer);
             this._oldData = {visible:true};
             this.usable = true;
             return;
@@ -619,6 +623,21 @@
             ScenePool.avatarPool.disposeObj(avatar);
             return;
         }
+
+		public function get visible():Boolean
+		{
+			return _visible;
+		}
+
+		public function set visible(value:Boolean):void
+		{
+			if (_visible != value)
+			{
+				_visible = value;
+				avatarContainer.visible = value;
+			}
+		}
+
 
     }
 }

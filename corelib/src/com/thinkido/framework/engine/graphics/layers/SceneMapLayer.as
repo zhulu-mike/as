@@ -8,6 +8,7 @@
     import com.thinkido.framework.engine.config.GlobalConfig;
     import com.thinkido.framework.engine.config.SceneConfig;
     import com.thinkido.framework.engine.tools.SceneCache;
+    import com.thinkido.framework.engine.utils.FrameUtil;
     import com.thinkido.framework.engine.utils.SceneUtil;
     import com.thinkido.framework.engine.utils.Transformer;
     import com.thinkido.framework.engine.vo.map.MapZone;
@@ -27,7 +28,10 @@
     import flash.events.Event;
     import flash.geom.Matrix;
     import flash.geom.Point;
+    import flash.geom.Rectangle;
     import flash.net.URLLoader;
+    import flash.sampler.getSize;
+    import flash.system.System;
     import flash.utils.ByteArray;
     
     import br.com.stimuli.loading.BulkLoader;
@@ -200,7 +204,6 @@
                 {
                     loadDataArr.sortOn(["priority"], [Array.NUMERIC]);
                 }
-//				LoaderManager.load(loadDataArr,mapLoader,true) ;
 				var _len:int = loadDataArr.length ;
 				var loadItem:LoadingItem ;
 				for (var i:int = 0; i < _len ; i++) 
@@ -212,7 +215,6 @@
 					loadItem.addEventListener(Event.COMPLETE,loadData.onComplete);
 					mapLoader.loadNow(loadItem);
 				}
-//				mapLoader.start(1);
 				
                 this._currentMapZone = mapZone;
             }
@@ -223,7 +225,6 @@
 			if( imageByte ==null ){
 				return ;
 			}
-//			Logger.error("bytes:"+$filePath);
 			var i:int = bytelist.length ;
 			var item:Object ;
 			while( i > 0){
@@ -283,13 +284,13 @@
 				$parent.graphics.beginBitmapFill(bmd,null,true,false);
 				$parent.graphics.drawRect(tx, ty,SceneConfig.ZONE_WIDTH,SceneConfig.ZONE_HEIGHT);
 				$parent.graphics.endFill();
+//				bmd.fillRect(new Rectangle(0,0,100,100),0xff0000);//此句可证明beginBitmapFill不会立即生效
+				
 				SceneCache.mapZones[_obj.tx+"_"+_obj.ty].loadComplete = true;
-//				Logger.error("addchild:"+filePath); 
 			}
 			var loader:Loader = new Loader() ;
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadImageComplete);
 			loader.loadBytes(imageByte);
-//			trace("loadByteHandler",getTimer());
 		}
 		
 		/**

@@ -33,18 +33,11 @@
 		
 		public function getBitmapData(angle:int, frame:int) : BitmapData
 		{
-			var _key:String = "";
-			var _angle:int = 0;
-			var _apd:AvatarPartData = null;
-			var _w:Number = NaN;
-			var _h:Number = NaN;
-			var i:int = 0;
-			var _matrix:Matrix = null;
-			var _bitmapdata:BitmapData = null;
+			
 			var _tempBMD:BitmapData;
 			var className:String = _baseClassName + _status;
 			var key:String = className + angle;
-			_key = angle + "_" + frame;
+			var _key:String = angle + "_" + frame;
 		
 			if (angle == 0 || angle >= 4)
 			{
@@ -63,6 +56,13 @@
 				{
 					return this._dir123Dict[_key] as BitmapData;
 				}
+				var _angle:int = 0;
+				var _apd:AvatarPartData = null;
+				var _w:Number = NaN;
+				var _h:Number = NaN;
+				var i:int = 0;
+				var _matrix:Matrix = null;
+				var _bitmapdata:BitmapData = null;
 				_angle = angle;
 				if (angle == 1)
 				{

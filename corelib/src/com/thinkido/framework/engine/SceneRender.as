@@ -74,21 +74,10 @@
 				_scene.fps = frame ;
 				frame = 0;
 			}
-//			trace("走路时间："+(getTimer()-t));
-//			t = getTimer();
             _scene.sceneCamera.run();
-//			trace("摄像头时间："+(getTimer()-t));
-//			t = getTimer();
             _scene.sceneMapLayer.run();
-//			trace("地图时间："+(getTimer()-t));
-//			t = getTimer();
             _scene.sceneAvatarLayer.run();
-//			trace("绘图时间："+(getTimer()-t));
-//			t = getTimer();
             _scene.sceneHeadLayer.run();
-//			trace("头顶时间："+(getTimer()-t));
-//			t = getTimer();
-//			trace("总共时间："+(getTimer()-t));
         }
 
     }

@@ -57,7 +57,6 @@
             this._avatarBDDict = new Dictionary();
             this.removeBoundsArr = [];
             this.clearBoundsArr = [];
-            this.restingAvatarPartArr = [];
             this._dirtyBoundsMaker = new DirtyBoundsMaker();
             this._scene = $sc;
             mouseEnabled = false;
@@ -92,7 +91,6 @@
 //            this.removeAllAvatarBD();
             this.removeBoundsArr = [];
             this.clearBoundsArr = [];
-            this.restingAvatarPartArr = [];
             this._dirtyBoundsMaker.clear();
             return;
         }
