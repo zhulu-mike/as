@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--游戏模拟登陆器——愤怒的犀牛-->
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx" 
+					   minWidth="1000" minHeight="600"
+					   title="游戏模拟登陆器" frameRate="60" 
+					   addedToStage="createCom(event)"
+					   resize="resize(event)">
+	
+	<fx:Script>
+		<![CDATA[
+			import flash.net.URLRequest;
+			
+			import mx.events.ResizeEvent;
+			
+			import managers.ResizeManager;
+			
+			import threads.LoginThread;
+			
+			private var threadVect:Vector.<LoginThread> = new Vector.<LoginThread>();
+			
+			private var htmlHost:HTMLHost = new HTMLHost();
+			
+			/**开始模拟*/
+			protected function beginSimulate(event:MouseEvent):void
+			{
+				threadVect.length = 0;
+				var i:int = 1, len:int = 20,baseUid:int = 0;
+				var thread:LoginThread;
+				for (;i<=len;i++)
+				{
+					thread = new LoginThread(baseUid+i,1);
+					threadVect.push(thread);
+					thread.startSimulate(htmlHost);
+				}
+			}
+			
+			private function next():void
+			{
+//				navigateToURL(new URLRequest("http://www.baidu.com"),"_blank");
+				var html:HTMLLoader = new HTMLLoader();
+				var urlReq:URLRequest = new URLRequest("http://www.baidu.com/");
+				html.width = 1000;
+				html.height = 600;
+				html.load(urlReq); 
+				stage.addChild(html);
+			}
+			
+			private function next2():void
+			{
+//				navigateToURL(new URLRequest("http://www.baidu.com"),"_blank");
+				var html:HTMLLoader = new HTMLLoader();
+				var urlReq:URLRequest = new URLRequest("http://www.baidu.com/");
+				html.width = 1000;
+				html.height = 600;
+				html.load(urlReq); 
+				html.y = 200;
+				stage.addChild(html);
+			}
+			
+			protected function createCom(event: Event):void
+			{
+				// TODO Auto-generated method stub
+				ResizeManager.init(stage);
+				
+				
+			}
+			
+			private var htmlLoader:HTMLLoader;
+			
+			protected function resize(event:ResizeEvent):void
+			{
+				// TODO Auto-generated method stub
+				if (htmlLoader){
+					htmlLoader.width = stage.stageWidth;
+					htmlLoader.height = stage.stageHeight;
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:Button x="10" y="100" label="开始" click="beginSimulate(event)"/>
+</s:WindowedApplication>
