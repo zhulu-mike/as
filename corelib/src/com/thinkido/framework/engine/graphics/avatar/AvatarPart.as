@@ -253,12 +253,12 @@
 		
         public function playTo($status:String = null, $angle:int = -1, $rotation:int = -1, $apc:AvatarPlayCondition = null) : void
         {
-            var _tempClassName:String = null;
-            var _loc_17:Object = null;
             if (!this.avatar || !this.avatar.sceneCharacter)
             {
                 return;
             }
+			var _tempClassName:String = null;
+			var _loc_17:Object = null;
             if ($rotation != -1)
             {
                 $rotation = ($rotation % 360 + 360) % 360;
@@ -839,11 +839,6 @@
             }
             _x += this._offsetX;
             _y += this._offsetY;
-            if (this.avatar.isOnMount)
-            {
-                _x += this._offsetOnMountX;
-                _y += this._offsetOnMountY;
-            }
             return new Point(_x, _y);
         }
 		/**
@@ -917,10 +912,7 @@
 
         public function clearMe() : void
         {
-            if (this.avatar != null && this.avatar.sceneCharacter != null && this.avatar.sceneCharacter.scene != null)
-            {
-                this.avatar.sceneCharacter.scene.sceneAvatarLayer.removeBoundsArr.push(Bounds.fromRectangle(this._oldData.oldCutRect));
-            }
+            this.bitmap.bitmapData = null;
             return;
         }
 
