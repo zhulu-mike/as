@@ -10,5 +10,9 @@ package configs
 //		public static var game_login_url:String = "http://www.baidu.com";
 		
 		public static var game_login_key:String = "zdfh456$454*as";
+		
+		public static var mainIP:String = "192.168.1.200";
+		
+		public static var mainPort:int = 9211;
 	}
 }
