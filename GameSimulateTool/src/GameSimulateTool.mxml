@@ -14,6 +14,7 @@
 			
 			import mx.events.ResizeEvent;
 			
+			import managers.LogManager;
 			import managers.ResizeManager;
 			
 			import threads.LoginThread;
@@ -26,13 +27,13 @@
 			protected function beginSimulate(event:MouseEvent):void
 			{
 				threadVect.length = 0;
-				var i:int = 1, len:int = 100,baseUid:int = 0;
+				var i:int = 1, len:int = 1000,baseUid:int = 0;
 				var thread:LoginThread;
 				for (;i<=len;i++)
 				{
 					thread = new LoginThread(baseUid+i,1);
 					threadVect.push(thread);
-					thread.startSimulate(htmlHost);
+					thread.startSimulateSocket(stage);
 				}
 			}
 			
@@ -64,7 +65,7 @@
 				// TODO Auto-generated method stub
 				ResizeManager.init(stage);
 				
-				
+				LogManager.instance = this;
 			}
 			
 			private var htmlLoader:HTMLLoader;
@@ -85,5 +86,6 @@
 		
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
-	<s:Button x="10" y="100" label="开始" click="beginSimulate(event)"/>
+	<s:Button x="10" y="10" label="开始" click="beginSimulate(event)"/>
+	<s:TextArea id="logTxt" x="10" y="50" width="800" height="500" editable="false"/> 
 </s:WindowedApplication>
