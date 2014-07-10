@@ -11,14 +11,14 @@ package modules.scene.views
 		 */		
 		private var road:Road;
 		
-		public function ScenePart()
+		public function ScenePart(h:int)
 		{
 			mainPlayer = new MainPlayer();
 			this.addChild(mainPlayer);
 			
 			road = new Road(GameInstance.instance.sceneWidth);
 			this.addChild(road);
-			
+			road.y = h - road.height;
 		}
 		
 		/**

@@ -9,6 +9,7 @@ package
 	import modules.scene.views.GameScene;
 	
 	import starling.display.Sprite;
+	import starling.events.Event;
 	import starling.events.ResizeEvent;
 	
 	public class Game extends Sprite
@@ -19,9 +20,10 @@ package
 			this.addEventListener(ResizeEvent.RESIZE, onResize);
 			EventCenter.instance.addEventListener(GameEvent.GAME_STATE_CHANGE, stateHandler);
 			EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.BEGIN});
+			this.addEventListener(Event.ADDED_TO_STAGE,onResize);
 		}
 		
-		private function onResize(event:ResizeEvent):void
+		private function onResize(event:Event):void
 		{
 			GameInstance.instance.sceneWidth = stage.stageWidth;
 			GameInstance.instance.sceneHeight = stage.stageHeight;

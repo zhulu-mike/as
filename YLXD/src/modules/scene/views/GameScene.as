@@ -1,5 +1,6 @@
 package modules.scene.views
 {
+	import configs.GameInstance;
 	import configs.GamePattern;
 	
 	import starling.display.Sprite;
@@ -35,7 +36,7 @@ package modules.scene.views
 		 */		
 		private function makePuTong():void
 		{
-			var scene:ScenePart = new ScenePart();
+			var scene:ScenePart = new ScenePart(GameInstance.instance.sceneHeight);
 			this.addChild(scene);
 		}
 	}
