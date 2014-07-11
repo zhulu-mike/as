@@ -1,6 +1,7 @@
 package
 {
 	import configs.GameInstance;
+	import configs.GamePattern;
 	import configs.GameState;
 	
 	import events.GameEvent;
@@ -10,31 +11,36 @@ package
 	
 	import starling.display.Sprite;
 	import starling.events.Event;
-	import starling.events.ResizeEvent;
 	
 	public class Game extends Sprite
 	{
 		public function Game()
 		{
 			
-			this.addEventListener(ResizeEvent.RESIZE, onResize);
 			EventCenter.instance.addEventListener(GameEvent.GAME_STATE_CHANGE, stateHandler);
-			EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.BEGIN});
 			this.addEventListener(Event.ADDED_TO_STAGE,onResize);
+		}
+		
+		private function onRender(event:Event):void
+		{
+			gameScene.update();
 		}
 		
 		private function onResize(event:Event):void
 		{
 			GameInstance.instance.sceneWidth = stage.stageWidth;
 			GameInstance.instance.sceneHeight = stage.stageHeight;
+			EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.BEGIN});
+			this.addEventListener(Event.ENTER_FRAME, onRender);
 		}
 		
 		private var _mainMenu:MainMenu;
 
 		public function get mainMenu():MainMenu
 		{
-			if (_mainMenu == null)
+			if (_mainMenu == null){
 				_mainMenu = new MainMenu();
+			}
 			return _mainMenu;
 		}
 		
@@ -72,6 +78,7 @@ package
 				case GameState.PAUSE:
 					break;
 				case GameState.OVER:
+					endGame();
 					break;
 				case GameState.CONTINUE:
 					break;
@@ -92,8 +99,25 @@ package
 		 */		
 		private function gameRun(pattern:int):void
 		{
+			GameInstance.instance.score = 0;
+			GameInstance.instance.pattern = pattern;
 			this.addChild(gameScene);
 			gameScene.start(pattern);
+			this.addEventListener(Event.ENTER_FRAME, onRender);
+		}
+		
+		private function endGame():void
+		{
+			this.removeEventListener(Event.ENTER_FRAME, onRender);
+			gameScene.removeFromParent();
+			begin();
+			if (GameInstance.instance.pattern != GamePattern.FIGHT)
+			{
+				mainMenu.scoreTtx.visible = true;
+				mainMenu.scoreTtx.text = Language.FENSHU.replace("$SCORE",GameInstance.instance.score);
+			}else{
+				mainMenu.scoreTtx.visible = false;
+			}
 		}
 	}
 }

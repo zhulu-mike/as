@@ -16,5 +16,15 @@ package events
 		 * 游戏状态改变
 		 */		
 		public static const GAME_STATE_CHANGE:String = "GAME_STATE_CHANGE";
+		
+		/**
+		 * 分数更新
+		 */		
+		public static const SCORE_UPDATE:String = "SCORE_UPDATE";
+		
+		/**
+		 * 检测对战是否结束
+		 */		
+		public static const CHECK_RACE_END:String = "CHECK_RACE_END";
 	}
 }

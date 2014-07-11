@@ -29,6 +29,7 @@ package modules.mainui.views
 		private function initUI():void
 		{
 			panel.beginTxt.addEventListener(TouchEvent.TOUCH, onBegin);
+			panel.duizhan.addEventListener(TouchEvent.TOUCH, onBegin);
 		}
 		
 		private function onBegin(event:TouchEvent):void
@@ -39,7 +40,8 @@ package modules.mainui.views
 			{
 				LogManager.logTrace("开始游戏");
 				panel.parent.removeChild(panel);
-				EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.RUNNING,pattern:GamePattern.PUTONG});
+				var pattern:int = touch.target == panel.duizhan ? GamePattern.FIGHT : GamePattern.PUTONG;
+				EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.RUNNING,pattern:pattern});
 			}
 		}
 	}

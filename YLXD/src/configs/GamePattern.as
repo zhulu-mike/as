@@ -16,5 +16,10 @@ package configs
 		 * 普通模式
 		 */		
 		public static const PUTONG:int = 1;
+		
+		/**
+		 * 对战
+		 */		
+		public static const FIGHT:int = 2;
 	}
 }

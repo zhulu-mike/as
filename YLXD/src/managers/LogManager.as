@@ -15,7 +15,7 @@ package managers
 		
 		private static var logThread:Boolean = false;
 		
-		public static function logTrace(str:String):void
+		public static function logTrace(str:*):void
 		{
 			trace(str);
 		}

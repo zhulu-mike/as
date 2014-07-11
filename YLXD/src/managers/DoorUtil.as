@@ -1,4 +1,4 @@
-package modules.scene.views
+package managers
 {
 	import flash.display.BitmapData;
 	import flash.display.Shape;
@@ -8,27 +8,18 @@ package modules.scene.views
 	import starling.display.DisplayObject;
 	import starling.display.Image;
 	import starling.display.Quad;
-	import starling.display.Sprite;
 	import starling.textures.Texture;
-	
-	public class MainPlayer extends Sprite
+
+	public class DoorUtil
 	{
-		private var shape:DisplayObject = new Quad(30,30,0x00ff00);
-		private var states:Array = PlayerState.stateList;
-		private var currIndex:int = 0;
-		public var state:int = 1;
-		
-		public function MainPlayer()
+		public function DoorUtil()
 		{
-			this.addChild(shape);
 		}
 		
-		public function updateState():void
+		public static function getDoorShape(state:int):DisplayObject
 		{
-			currIndex++;
-			currIndex = currIndex >= states.length ? 0 : currIndex;
-			shape.removeFromParent(true);
-			switch (states[currIndex])
+			var shape:DisplayObject;
+			switch (state)
 			{
 				case PlayerState.RECT:
 					shape = new Quad(30,30,0x00ff00);
@@ -55,8 +46,7 @@ package modules.scene.views
 					shape = new Image(Texture.fromBitmapData(bmd));
 					break;
 			}
-			state = states[currIndex];
-			this.addChild(shape);
+			return shape;
 		}
 	}
 }

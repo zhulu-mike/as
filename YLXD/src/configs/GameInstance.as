@@ -18,5 +18,11 @@ package configs
 		public var sceneWidth:int;
 		
 		public var sceneHeight:int;
+		
+		public static const DOOR_DIS:int = 300;
+		
+		public var score:int = 0;
+		
+		public var pattern:int = 0;
 	}
 }
