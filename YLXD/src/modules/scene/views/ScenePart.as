@@ -149,7 +149,11 @@ package modules.scene.views
 		
 		private function makeDoor():void
 		{
-			var state:int = PlayerState.randomState();
+			var state:int ;
+			if (doorList.length > 0)
+				state = PlayerState.randomStateByPrevState(doorList[doorList.length-1].state);
+			else
+				state = PlayerState.randomState();
 			var door:Door = new Door(state);
 			this.addChild(door);
 			doorList.push(door);
