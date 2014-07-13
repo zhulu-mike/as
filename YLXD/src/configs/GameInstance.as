@@ -1,5 +1,8 @@
 package configs
 {
+	import infos.GameRecord;
+	import infos.data.LocalSO;
+
 	public class GameInstance
 	{
 		public function GameInstance()
@@ -19,10 +22,20 @@ package configs
 		
 		public var sceneHeight:int;
 		
-		public static const DOOR_DIS:int = 300;
+		/**
+		 * 两次出拳之间的距离，可用来控制游戏难度
+		 */		
+		public static const DOOR_DIS:int = 400;
 		
 		public var score:int = 0;
 		
 		public var pattern:int = 0;
+		
+		public var YLXD_CLASS:Class;
+		
+		public var scoreRecord:GameRecord = new GameRecord();
+		
+		public var so:LocalSO;
+		
 	}
 }

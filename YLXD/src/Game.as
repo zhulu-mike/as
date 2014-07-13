@@ -1,5 +1,8 @@
 package
 {
+	
+	import flash.utils.setTimeout;
+	
 	import configs.GameInstance;
 	import configs.GamePattern;
 	import configs.GameState;
@@ -30,6 +33,13 @@ package
 		{
 			GameInstance.instance.sceneWidth = stage.stageWidth;
 			GameInstance.instance.sceneHeight = stage.stageHeight;
+			EventCenter.instance.dispatchEvent(new GameEvent(GameEvent.STARLING_CREATE));
+			EventCenter.instance.addEventListener(GameEvent.START_GAME, beginAfterRes);
+		}
+		
+		
+		public function beginAfterRes(e:GameEvent=null):void
+		{
 			EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.BEGIN});
 			this.addEventListener(Event.ENTER_FRAME, onRender);
 		}
@@ -109,6 +119,11 @@ package
 		private function endGame():void
 		{
 			this.removeEventListener(Event.ENTER_FRAME, onRender);
+			beginLater();
+		}
+		
+		private function beginLater():void
+		{
 			gameScene.removeFromParent();
 			begin();
 			if (GameInstance.instance.pattern != GamePattern.FIGHT)

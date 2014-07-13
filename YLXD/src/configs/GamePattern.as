@@ -21,5 +21,10 @@ package configs
 		 * 对战
 		 */		
 		public static const FIGHT:int = 2;
+		
+		/**
+		 * 逆向，输的为赢
+		 */		
+		public static const NIXIANG:int = 3;
 	}
 }

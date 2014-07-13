@@ -5,6 +5,8 @@ package modules.scene.views
 	
 	import configs.PlayerState;
 	
+	import managers.DoorUtil;
+	
 	import starling.display.DisplayObject;
 	import starling.display.Image;
 	import starling.display.Quad;
@@ -13,13 +15,14 @@ package modules.scene.views
 	
 	public class MainPlayer extends Sprite
 	{
-		private var shape:DisplayObject = new Quad(30,30,0x00ff00);
+		private var shape:DisplayObject;
 		private var states:Array = PlayerState.stateList;
 		private var currIndex:int = 0;
 		public var state:int = 1;
 		
 		public function MainPlayer()
 		{
+			shape = DoorUtil.getDoorShape(PlayerState.RECT);
 			this.addChild(shape);
 		}
 		
@@ -28,6 +31,10 @@ package modules.scene.views
 			currIndex++;
 			currIndex = currIndex >= states.length ? 0 : currIndex;
 			shape.removeFromParent(true);
+			state = states[currIndex];
+			shape = DoorUtil.getDoorShape(state);
+			this.addChild(shape);
+			return;
 			switch (states[currIndex])
 			{
 				case PlayerState.RECT:
@@ -55,8 +62,7 @@ package modules.scene.views
 					shape = new Image(Texture.fromBitmapData(bmd));
 					break;
 			}
-			state = states[currIndex];
-			this.addChild(shape);
+			
 		}
 	}
 }

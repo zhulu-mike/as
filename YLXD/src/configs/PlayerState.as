@@ -39,6 +39,7 @@ package configs
 					three *= -1;
 				index += three;
 			}
+			index = index > 98 ? 98 : index;
 			index = index / unit;
 			return stateList[index];
 		}

@@ -1,6 +1,10 @@
 package modules.scene.views
 {
 	import flash.geom.Point;
+	import flash.media.Sound;
+	import flash.net.URLRequest;
+	import flash.net.dns.AAAARecord;
+	import flash.utils.setTimeout;
 	
 	import configs.GameInstance;
 	import configs.GamePattern;
@@ -9,7 +13,9 @@ package modules.scene.views
 	
 	import events.GameEvent;
 	
+	import managers.GameUtil;
 	import managers.LogManager;
+	import managers.ResManager;
 	
 	import starling.display.Quad;
 	import starling.display.Sprite;
@@ -32,6 +38,7 @@ package modules.scene.views
 		public var score:int = 0;
 		public var end:Boolean = false;
 		public var gameOver:TextField;
+		private var beyondMax:Boolean = false;
 		
 		public function ScenePart(h:int)
 		{
@@ -39,17 +46,17 @@ package modules.scene.views
 			
 			doorList = new Vector.<Door>();
 			
-			bg = new Quad(GameInstance.instance.sceneWidth,h,0);
+			bg = new Quad(GameInstance.instance.sceneWidth,h,0xffffff);
 			this.addChild(bg);
 			
 			mainPlayer = new MainPlayer();
 			this.addChild(mainPlayer);
-			mainPlayer.x = GameInstance.instance.sceneWidth - mainPlayer.width >> 1;
+			mainPlayer.x = 100;
 			
 			
 			road = new Road(GameInstance.instance.sceneWidth);
 			this.addChild(road);
-			road.y = h - road.height;
+			road.y = h - road.height-40;
 			mainPlayer.y = road.y - mainPlayer.height;
 			
 			scoreTxt = new TextField(300,40,Language.DEFEN.replace("$SCORE",0),"Verdana",30,0x00ff00);
@@ -57,19 +64,13 @@ package modules.scene.views
 			scoreTxt.vAlign = VAlign.CENTER;
 			this.addChild(scoreTxt);
 			scoreTxt.x = GameInstance.instance.sceneWidth - scoreTxt.width >> 1;
-			EventCenter.instance.addEventListener(GameEvent.SCORE_UPDATE, onScoreUpdate);
 			
-			gameOver = new TextField(300,40,Language.JIESHU,"Verdana",20,0xffffff);
+			gameOver = new TextField(300,40,Language.JIESHU,"Verdana",20,0x000000);
 			this.addChild(gameOver);
 			gameOver.visible = false;
 			gameOver.x = GameInstance.instance.sceneWidth - gameOver.width >> 1;
 			gameOver.y = this.height - gameOver.height >> 1;
 			this.addEventListener(TouchEvent.TOUCH, onTouch);
-		}
-		
-		protected function onScoreUpdate(event:GameEvent):void
-		{
-			
 		}
 		
 		private function onTouch(event:TouchEvent):void
@@ -111,26 +112,52 @@ package modules.scene.views
 		private function isHit():void
 		{
 			var door:Door;
+			var winState:int;
 			for each (door in doorList)
 			{
 				if (!door.passed && door.x <= mainPlayer.x)
 				{
-					if (door.state != mainPlayer.state)
+					if (GamePattern.NIXIANG != GameInstance.instance.pattern){
+						winState = door.state - 1;
+						winState = winState < PlayerState.RECT ? PlayerState.TRIANGLE : winState;
+					}else{
+						winState = door.state + 1;
+						winState = winState > PlayerState.TRIANGLE ? PlayerState.RECT : winState;
+					}
+					if (winState == mainPlayer.state){
+						var sound:Sound = new Sound(new URLRequest(ResManager.PASS_SOUND));
+						sound.play();
+						score += 1;
+						if (GameInstance.instance.pattern != GamePattern.FIGHT && GameUtil.getMaxScore(GameInstance.instance.pattern) < score)
+						{
+							//突破最高纪录
+							GameUtil.setMaxScore(GameInstance.instance.pattern, score);
+							EventCenter.instance.dispatchGameEvent(GameEvent.UPDATE_MAX_SCORE);
+							if (!beyondMax){
+								beyondMax = true;
+								sound = new Sound(new URLRequest(ResManager.BEYOND_MAX));
+								sound.play();
+							}
+						}
+						scoreTxt.text = Language.DEFEN.replace("$SCORE",score);
+						GameInstance.instance.score += 1;
+					}else
 					{
 						end = true;
 						if (GameInstance.instance.pattern != GamePattern.FIGHT){
-							EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE, {state:GameState.OVER});
+							EventCenter.instance.dispatchGameEvent(GameEvent.PLAY_GAME_OVER_SOUND);
+							setTimeout(function():void
+							{
+								EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE, {state:GameState.OVER});
+							},1000);
+							
 						}else{
 							gameOver.visible = true;
 							EventCenter.instance.dispatchGameEvent(GameEvent.CHECK_RACE_END);
 						}
 						return;
-					}else{
-						score += 1;
-						scoreTxt.text = Language.DEFEN.replace("$SCORE",score);
-						GameInstance.instance.score += 1;
-						EventCenter.instance.dispatchGameEvent(GameEvent.SCORE_UPDATE);
 					}
+					
 					door.passed = true;
 				}
 			}

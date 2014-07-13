@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<application xmlns="http://ns.adobe.com/air/application/3.4">
-
+<application xmlns="http://ns.adobe.com/air/application/4.0">
 <!-- Adobe AIR Application Descriptor File Template.
 
 	Specifies parameters for identifying, installing, and launching AIR applications.
 
-	xmlns - The Adobe AIR namespace: http://ns.adobe.com/air/application/3.4
+	xmlns - The Adobe AIR namespace: http://ns.adobe.com/air/application/4.0
 			The last segment of the namespace specifies the version 
 			of the AIR runtime required for this application to run.
 			
@@ -247,6 +246,8 @@
 <android>
         <manifestAdditions><![CDATA[
 			<manifest android:installLocation="auto">
+            <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 			    <!--See the Adobe AIR documentation for more information about setting Google Android permissions-->
 			    <!--Removing the permission android.permission.INTERNET will have the side effect
 		of preventing you from debugging your application on your device-->
@@ -264,6 +265,15 @@
 		together in order to use AIR's NetworkInfo APIs-->
 			    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 			    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+			    <application android:enabled="true">
+        			<activity android:name="com.baidu.mobads.AppActivity" android:configChanges="keyboard|keyboardHidden|orientation"/>
+					<activity android:excludeFromRecents="false">
+						<intent-filter>
+							<action android:name="android.intent.action.MAIN"/>
+							<category android:name="android.intent.category.LAUNCHER"/>
+						</intent-filter>
+					</activity>
+				</application>
 			</manifest>
 			
 		]]></manifestAdditions>
@@ -278,4 +288,8 @@
 		]]></InfoAdditions>
         <requestedDisplayResolution>high</requestedDisplayResolution>
     </iPhone>
+<extensions>
+        <extensionID>so.cuo.platform.baidu</extensionID>
+    </extensions>
+    
 </application>

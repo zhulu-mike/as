@@ -10,6 +10,8 @@ package
 		
 		public static const DUIZHAN:String = "对战";
 		
+		public static const NIXIANG:String = "逆向";
+		
 		public static const FENSHU:String = "本次得分：$SCORE";
 		
 		public static const DEFEN:String = "得分：$SCORE";
@@ -21,5 +23,7 @@ package
 		public static const WOSHULE:String = "还得再练练啊。";
 		
 		public static const PINGJU:String = "不分上下，再来一局！";
+		
+		public static const MAX_SCORE:String = "最高得分：$SCORE";
 	}
 }

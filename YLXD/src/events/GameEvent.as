@@ -26,5 +26,13 @@ package events
 		 * 检测对战是否结束
 		 */		
 		public static const CHECK_RACE_END:String = "CHECK_RACE_END";
+		
+		public static const STARLING_CREATE:String = "STARLING_CREATE";
+		
+		public static const START_GAME:String = "START_GAME";
+		
+		public static const UPDATE_MAX_SCORE:String = "UPDATE_MAX_SCORE";
+		
+		public static const PLAY_GAME_OVER_SOUND:String = "PLAY_GAME_OVER_SOUND";
 	}
 }

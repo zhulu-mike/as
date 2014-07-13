@@ -11,6 +11,7 @@ package modules.mainui.views
 	{
 		
 		public var beginTxt:TextField;
+		public var niXiangTxt:TextField;
 		public var duizhan:TextField;
 		public var scoreTtx:TextField;
 		
@@ -31,13 +32,20 @@ package modules.mainui.views
 			beginTxt.y = GameInstance.instance.sceneHeight - beginTxt.height >> 1;
 			beginTxt.x = GameInstance.instance.sceneWidth - beginTxt.width >> 1;
 			
+			niXiangTxt = new TextField(200,50,Language.NIXIANG,"Verdaba",30);
+			niXiangTxt.hAlign = HAlign.CENTER;
+			niXiangTxt.vAlign = VAlign.CENTER;
+			this.addChild(niXiangTxt);
+			niXiangTxt.y = beginTxt.y + 60;
+			niXiangTxt.x = GameInstance.instance.sceneWidth - niXiangTxt.width >> 1;
+			
 			scoreTtx.y = beginTxt.y - 30 - scoreTtx.height;
 			
 			duizhan = new TextField(200,50,Language.DUIZHAN,"Verdaba",30);
 			duizhan.hAlign = HAlign.CENTER;
 			duizhan.vAlign = VAlign.CENTER;
 			this.addChild(duizhan);
-			duizhan.y = beginTxt.y + 60;
+			duizhan.y = niXiangTxt.y + 60;
 			duizhan.x = GameInstance.instance.sceneWidth - duizhan.width >> 1;
 			
 			new MainMenuController(this);

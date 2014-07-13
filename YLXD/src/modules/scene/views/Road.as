@@ -7,7 +7,7 @@ package modules.scene.views
 	{
 		public function Road(w:int)
 		{
-			var r:Quad = new Quad(w,30,0xff0000);
+			var r:Quad = new Quad(w,30,0xcccccc);
 			this.addChild(r);
 		}
 	}

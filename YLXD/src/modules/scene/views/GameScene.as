@@ -1,24 +1,39 @@
 package modules.scene.views
 {
 	
+	import flash.events.Event;
+	import flash.media.Sound;
+	import flash.net.URLRequest;
+	
 	import configs.GameInstance;
 	import configs.GamePattern;
 	import configs.GameState;
 	
 	import events.GameEvent;
 	
+	import managers.GameUtil;
+	import managers.ResManager;
+	
 	import starling.display.Sprite;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
+	import starling.text.TextField;
+	import starling.utils.HAlign;
 	
 	public class GameScene extends Sprite
 	{
-		
+		private var maxScoreTxt:TextField;
 		public function GameScene()
 		{
-			
+			maxScoreTxt = new TextField(300,40,"","Verdana",30,0xff0000);
+			maxScoreTxt.hAlign = HAlign.CENTER;
+			this.addChild(maxScoreTxt);
+			maxScoreTxt.visible = false;
+			maxScoreTxt.x = 20;//GameInstance.instance.sceneWidth - maxScoreTxt.width >> 1;
+			maxScoreTxt.y = 0;
 			EventCenter.instance.addEventListener(GameEvent.CHECK_RACE_END, checkRaceEnd);
+			EventCenter.instance.addEventListener(GameEvent.PLAY_GAME_OVER_SOUND, playGameOverSound);
 		}
 		
 		
@@ -31,10 +46,13 @@ package modules.scene.views
 			switch (pattern)
 			{
 				case GamePattern.PUTONG:
+				case GamePattern.NIXIANG:
 					makePuTong();
+					showMaxScore(pattern);
 					break;
 				case GamePattern.FIGHT:
 					makeDuiZhan();
+					hideMaxScore();
 					break;
 			}
 		}
@@ -64,6 +82,7 @@ package modules.scene.views
 			sceneList.push(scene);
 		}
 		
+		
 		/**
 		 * 对战
 		 * 
@@ -78,6 +97,26 @@ package modules.scene.views
 			this.addChildAt(scene,0);
 			scene.y = h;
 			sceneList.push(scene);
+		}
+		
+		private function showMaxScore(pattern:int):void
+		{
+			maxScoreTxt.visible = true;
+			var score:int = GameUtil.getMaxScore(pattern);
+			maxScoreTxt.text = Language.MAX_SCORE.replace("$SCORE",score);
+			EventCenter.instance.addEventListener(GameEvent.UPDATE_MAX_SCORE, updateMaxScore);
+		}
+		
+		protected function updateMaxScore(event:GameEvent):void
+		{
+			var score:int = GameUtil.getMaxScore(GameInstance.instance.pattern);
+			maxScoreTxt.text = Language.MAX_SCORE.replace("$SCORE",score);
+		}
+		
+		private function hideMaxScore():void
+		{
+			maxScoreTxt.visible = false;
+			EventCenter.instance.removeEventListener(GameEvent.UPDATE_MAX_SCORE, updateMaxScore);
 		}
 		
 		public function update():void
@@ -118,6 +157,12 @@ package modules.scene.views
 				this.removeEventListener(TouchEvent.TOUCH, onTouch);
 				EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE, {state:GameState.OVER});
 			}
+		}
+		
+		private function playGameOverSound(e:GameEvent):void
+		{
+			var s:Sound = new Sound(new URLRequest(ResManager.GAME_OVER));
+			s.play();
 		}
 	}
 }

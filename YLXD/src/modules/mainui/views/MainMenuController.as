@@ -30,6 +30,7 @@ package modules.mainui.views
 		{
 			panel.beginTxt.addEventListener(TouchEvent.TOUCH, onBegin);
 			panel.duizhan.addEventListener(TouchEvent.TOUCH, onBegin);
+			panel.niXiangTxt.addEventListener(TouchEvent.TOUCH, onBegin);
 		}
 		
 		private function onBegin(event:TouchEvent):void
@@ -40,7 +41,7 @@ package modules.mainui.views
 			{
 				LogManager.logTrace("开始游戏");
 				panel.parent.removeChild(panel);
-				var pattern:int = touch.target == panel.duizhan ? GamePattern.FIGHT : GamePattern.PUTONG;
+				var pattern:int = touch.target == panel.duizhan ? GamePattern.FIGHT : (touch.target == panel.beginTxt ? GamePattern.PUTONG : GamePattern.NIXIANG);
 				EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.RUNNING,pattern:pattern});
 			}
 		}
