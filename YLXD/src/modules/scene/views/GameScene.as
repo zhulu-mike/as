@@ -1,7 +1,6 @@
 package modules.scene.views
 {
 	
-	import flash.events.Event;
 	import flash.media.Sound;
 	import flash.net.URLRequest;
 	
@@ -13,6 +12,9 @@ package modules.scene.views
 	
 	import managers.GameUtil;
 	import managers.ResManager;
+	
+	import so.cuo.platform.baidu.BaiDu;
+	import so.cuo.platform.baidu.RelationPosition;
 	
 	import starling.display.Sprite;
 	import starling.events.Touch;
@@ -27,10 +29,9 @@ package modules.scene.views
 		public function GameScene()
 		{
 			maxScoreTxt = new TextField(300,40,"","Verdana",30,0xff0000);
-			maxScoreTxt.hAlign = HAlign.CENTER;
 			this.addChild(maxScoreTxt);
 			maxScoreTxt.visible = false;
-			maxScoreTxt.x = 20;//GameInstance.instance.sceneWidth - maxScoreTxt.width >> 1;
+			maxScoreTxt.x = GameInstance.instance.sceneWidth - maxScoreTxt.width >> 1;
 			maxScoreTxt.y = 0;
 			EventCenter.instance.addEventListener(GameEvent.CHECK_RACE_END, checkRaceEnd);
 			EventCenter.instance.addEventListener(GameEvent.PLAY_GAME_OVER_SOUND, playGameOverSound);
@@ -49,6 +50,7 @@ package modules.scene.views
 				case GamePattern.NIXIANG:
 					makePuTong();
 					showMaxScore(pattern);
+					BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
 					break;
 				case GamePattern.FIGHT:
 					makeDuiZhan();

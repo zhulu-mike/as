@@ -17,16 +17,16 @@
 	<id>YLXD</id>
 
 	<!-- Used as the filename for the application. Required. -->
-	<filename>YLXD</filename>
+	<filename>crazystone</filename>
 
 	<!-- The name that is displayed in the AIR application installer. 
 	May have multiple values for each language. See samples or xsd schema file. Optional. -->
-	<name>YLXD</name>
+	<name>疯狂的石头</name>
 	
 	<!-- A string value of the format <0-999>.<0-999>.<0-999> that represents application version which can be used to check for application upgrade. 
 	Values can also be 1-part or 2-part. It is not necessary to have a 3-part value.
 	An updated version of application must have a versionNumber value higher than the previous version. Required for namespace >= 2.5 . -->
-	<versionNumber>0.0.0</versionNumber>
+	<versionNumber>1.1.1</versionNumber>
 		         
 	<!-- A string value (such as "v1", "2.5", or "Alpha 1") that represents the version of the application, as it should be shown to users. Optional. -->
 	<!-- <versionLabel></versionLabel> -->
@@ -132,6 +132,12 @@
 
 	<!-- The icon the system uses for the application. For at least one resolution,
 	specify the path to a PNG file included in the AIR package. Optional. -->
+	<!-- <icon>
+		<image16x16></image16x16>
+		<image32x32></image32x32>
+		<image48x48></image48x48>
+		<image128x128></image128x128>
+	</icon> -->
 	<!-- <icon>
 		<image16x16></image16x16>
 		<image29x29></image29x29>
@@ -266,6 +272,8 @@
 			    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 			    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 			    <application android:enabled="true">
+			    	<meta-data android:name="BaiduMobAd_APP_ID" android:value="b9a6ee49" /> 
+    				<meta-data android:name="BaiduMobAd_APP_SEC" android:value="b9a6ee49" />
         			<activity android:name="com.baidu.mobads.AppActivity" android:configChanges="keyboard|keyboardHidden|orientation"/>
 					<activity android:excludeFromRecents="false">
 						<intent-filter>
@@ -290,6 +298,7 @@
     </iPhone>
 <extensions>
         <extensionID>so.cuo.platform.baidu</extensionID>
+    <extensionID>cn.sharesdk.ane.ShareSDKExtension</extensionID>
     </extensions>
     
 </application>

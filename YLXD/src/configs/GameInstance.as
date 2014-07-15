@@ -37,5 +37,9 @@ package configs
 		
 		public var so:LocalSO;
 		
+		public var lastShowFullAd:int;
+		
+		public static const SHOW_AD_DELAY:int = 60000;
+		
 	}
 }

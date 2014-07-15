@@ -28,6 +28,7 @@ package managers
 		public static function setMaxScore(pattern:int, score:int):void
 		{
 			GameInstance.instance.scoreRecord.maxScores[pattern] = score;
+			GameInstance.instance.so.setAt("pattern_"+pattern,score);
 		}
 	}
 }

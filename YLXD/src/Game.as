@@ -1,7 +1,7 @@
 package
 {
 	
-	import flash.utils.setTimeout;
+	import flash.utils.getTimer;
 	
 	import configs.GameInstance;
 	import configs.GamePattern;
@@ -11,6 +11,9 @@ package
 	
 	import modules.mainui.views.MainMenu;
 	import modules.scene.views.GameScene;
+	
+	import so.cuo.platform.baidu.BaiDu;
+	import so.cuo.platform.baidu.RelationPosition;
 	
 	import starling.display.Sprite;
 	import starling.events.Event;
@@ -99,6 +102,7 @@ package
 		
 		private function begin():void
 		{
+			BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_RIGHT);
 			this.addChild(mainMenu);
 		}
 		
@@ -109,6 +113,7 @@ package
 		 */		
 		private function gameRun(pattern:int):void
 		{
+			BaiDu.getInstance().hideBanner();
 			GameInstance.instance.score = 0;
 			GameInstance.instance.pattern = pattern;
 			this.addChild(gameScene);
@@ -120,6 +125,14 @@ package
 		{
 			this.removeEventListener(Event.ENTER_FRAME, onRender);
 			beginLater();
+			if (BaiDu.getInstance().isInterstitialReady())
+			{
+				if (GameInstance.instance.lastShowFullAd == 0 || getTimer()-GameInstance.instance.lastShowFullAd>=GameInstance.SHOW_AD_DELAY)
+				{
+					BaiDu.getInstance().showInterstitial();
+					GameInstance.instance.lastShowFullAd = getTimer();
+				}
+			}
 		}
 		
 		private function beginLater():void

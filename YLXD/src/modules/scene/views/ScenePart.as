@@ -1,9 +1,7 @@
 package modules.scene.views
 {
-	import flash.geom.Point;
 	import flash.media.Sound;
 	import flash.net.URLRequest;
-	import flash.net.dns.AAAARecord;
 	import flash.utils.setTimeout;
 	
 	import configs.GameInstance;
@@ -51,18 +49,22 @@ package modules.scene.views
 			
 			mainPlayer = new MainPlayer();
 			this.addChild(mainPlayer);
-			mainPlayer.x = 100;
+			mainPlayer.x = 20;
 			
 			
 			road = new Road(GameInstance.instance.sceneWidth);
 			this.addChild(road);
-			road.y = h - road.height-40;
+			road.y = (h - road.height>>1) + 50;
 			mainPlayer.y = road.y - mainPlayer.height;
 			
 			scoreTxt = new TextField(300,40,Language.DEFEN.replace("$SCORE",0),"Verdana",30,0x00ff00);
 			scoreTxt.hAlign = HAlign.CENTER;
 			scoreTxt.vAlign = VAlign.CENTER;
 			this.addChild(scoreTxt);
+			if (GameInstance.instance.pattern == GamePattern.FIGHT)
+				scoreTxt.y = 30;
+			else
+				scoreTxt.y = 60;
 			scoreTxt.x = GameInstance.instance.sceneWidth - scoreTxt.width >> 1;
 			
 			gameOver = new TextField(300,40,Language.JIESHU,"Verdana",20,0x000000);

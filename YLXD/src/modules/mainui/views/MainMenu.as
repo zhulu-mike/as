@@ -14,6 +14,7 @@ package modules.mainui.views
 		public var niXiangTxt:TextField;
 		public var duizhan:TextField;
 		public var scoreTtx:TextField;
+		private var desc:TextField;
 		
 		public function MainMenu()
 		{
@@ -29,7 +30,7 @@ package modules.mainui.views
 			beginTxt.hAlign = HAlign.CENTER;
 			beginTxt.vAlign = VAlign.CENTER;
 			this.addChild(beginTxt);
-			beginTxt.y = GameInstance.instance.sceneHeight - beginTxt.height >> 1;
+			beginTxt.y = (GameInstance.instance.sceneHeight - beginTxt.height >> 1) - 100;
 			beginTxt.x = GameInstance.instance.sceneWidth - beginTxt.width >> 1;
 			
 			niXiangTxt = new TextField(200,50,Language.NIXIANG,"Verdaba",30);
@@ -48,6 +49,9 @@ package modules.mainui.views
 			duizhan.y = niXiangTxt.y + 60;
 			duizhan.x = GameInstance.instance.sceneWidth - duizhan.width >> 1;
 			
+//			desc = new TextField(300,40,Language.ADVISE_DESC,"Verdana",20);
+//			this.addChild(desc);
+//			desc.y = GameInstance.instance.sceneHeight - desc.height - 20;
 			new MainMenuController(this);
 		}
 	}

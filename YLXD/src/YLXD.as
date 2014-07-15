@@ -9,23 +9,28 @@ package
 	import flash.system.Capabilities;
 	import flash.ui.Multitouch;
 	import flash.ui.MultitouchInputMode;
+	import flash.utils.getTimer;
 	
 	import br.com.stimuli.loading.BulkLoader;
 	import br.com.stimuli.loading.loadingtypes.LoadingItem;
 	import br.com.stimuli.loading.loadingtypes.XMLItem;
 	
+	import cn.sharesdk.ane.PlatformID;
+	import cn.sharesdk.ane.ShareSDKExtension;
+	
 	import configs.GameInstance;
+	import configs.GamePattern;
 	
 	import events.GameEvent;
 	
 	import infos.data.LocalSO;
 	
+	import managers.GameUtil;
 	import managers.LogManager;
 	import managers.ResManager;
 	
 	import so.cuo.platform.baidu.BaiDu;
 	import so.cuo.platform.baidu.BaiDuAdEvent;
-	import so.cuo.platform.baidu.RelationPosition;
 	
 	import starling.core.Starling;
 	import starling.textures.Texture;
@@ -43,7 +48,7 @@ package
 		public function YLXD()
 		{
 			super();
-			
+			trace(getTimer());
 			if (stage){
 				init(null);
 			}else{
@@ -51,20 +56,24 @@ package
 			}
 		}
 		
-		protected function onResize(event:Event):void
-		{
-			trace(stage.stageWidth, stage.stageHeight);
-		}
 		
 		private function init(event:Event=null):void
 		{
+			trace(getTimer());
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.frameRate = 60;
-			stage.setOrientation(StageOrientation.ROTATED_RIGHT);
+			stage.setOrientation(StageOrientation.DEFAULT);
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
-			GameInstance.instance.YLXD_CLASS = YlxdBmd;
 			
+			
+			
+			GameInstance.instance.YLXD_CLASS = YlxdBmd;
+			if (BaiDu.getInstance().supportDevice)
+			{
+				BaiDu.getInstance().setKeys("b9a6ee49","b9a6ee49");// BaiDu.getInstance().setKeys("appsid","计费id");
+				BaiDu.getInstance().cacheInterstitial();
+			}
 			ResManager.resLoader = new BulkLoader("main");
 			LogManager.logTrace(Multitouch.inputMode);
 			LogManager.logTrace(Multitouch.maxTouchPoints);
@@ -74,6 +83,11 @@ package
 			app.start();
 			EventCenter.instance.addEventListener(GameEvent.STARLING_CREATE, loadRes);
 			GameInstance.instance.so = new LocalSO("ylxd_game");
+			if(GameInstance.instance.so.hasKey("pattern_"+GamePattern.PUTONG))
+				GameUtil.setMaxScore(GamePattern.PUTONG,int(GameInstance.instance.so.getAt("pattern_"+GamePattern.PUTONG)));
+			if(GameInstance.instance.so.hasKey("pattern_"+GamePattern.NIXIANG))
+				GameUtil.setMaxScore(GamePattern.NIXIANG,int(GameInstance.instance.so.getAt("pattern_"+GamePattern.NIXIANG)));
+			trace(getTimer());
 		}
 		
 		protected function onAD(event:BaiDuAdEvent):void
@@ -84,22 +98,6 @@ package
 		public function loadRes(e:GameEvent):void
 		{
 			
-			if (BaiDu.getInstance().supportDevice)
-			{
-				BaiDu.getInstance().setKeys("debug","debug");// BaiDu.getInstance().setKeys("appsid","计费id");
-				BaiDu.getInstance().showInterstitial();
-				BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.MIDDLE_CENTER);
-				BaiDu.getInstance().addEventListener(BaiDuAdEvent.onBannerFailedReceive, onAD);
-				BaiDu.getInstance().addEventListener(BaiDuAdEvent.onBannerReceive, onAD);
-				BaiDu.getInstance().addEventListener(BaiDuAdEvent.onBannerDismiss, onAD);
-				BaiDu.getInstance().addEventListener(BaiDuAdEvent.onBannerLeaveApplication, onAD);
-				BaiDu.getInstance().addEventListener(BaiDuAdEvent.onBannerPresent, onAD);
-				BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialDismiss, onAD);
-				BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialFailedReceive, onAD);
-				BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialLeaveApplication, onAD);
-				BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialPresent, onAD);
-				BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialReceive, onAD);
-			}
 			var loadData:LoadingItem = ResManager.resLoader.add(ResManager.YLXDXML);
 			var comp:Function = function(e:flash.events.Event):void
 			{
@@ -109,9 +107,11 @@ package
 				var ta:TextureAtlas = new TextureAtlas(Texture.fromEmbeddedAsset(GameInstance.instance.YLXD_CLASS), (loadData as XMLItem).content);
 				am.addTextureAtlas(ResManager.YLXD_NAME,ta);
 				EventCenter.instance.dispatchEvent(new GameEvent(GameEvent.START_GAME));
+				trace(getTimer());
 			}
 			loadData.addEventListener(flash.events.Event.COMPLETE, comp);
 			ResManager.resLoader.loadNow(loadData);
+			trace(getTimer());
 		}
 		
 	}
