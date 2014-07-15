@@ -30,7 +30,7 @@ package modules.mainui.views
 			beginTxt.hAlign = HAlign.CENTER;
 			beginTxt.vAlign = VAlign.CENTER;
 			this.addChild(beginTxt);
-			beginTxt.y = (GameInstance.instance.sceneHeight - beginTxt.height >> 1) - 100;
+			beginTxt.y = (GameInstance.instance.sceneHeight - beginTxt.height >> 1) - 70;
 			beginTxt.x = GameInstance.instance.sceneWidth - beginTxt.width >> 1;
 			
 			niXiangTxt = new TextField(200,50,Language.NIXIANG,"Verdaba",30);

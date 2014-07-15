@@ -54,7 +54,7 @@ package modules.scene.views
 			
 			road = new Road(GameInstance.instance.sceneWidth);
 			this.addChild(road);
-			road.y = (h - road.height>>1) + 50;
+			road.y = (h - road.height>>1) + 90;
 			mainPlayer.y = road.y - mainPlayer.height;
 			
 			scoreTxt = new TextField(300,40,Language.DEFEN.replace("$SCORE",0),"Verdana",30,0x00ff00);
