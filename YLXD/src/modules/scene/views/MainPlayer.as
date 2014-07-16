@@ -22,7 +22,7 @@ package modules.scene.views
 		
 		public function MainPlayer()
 		{
-			shape = DoorUtil.getDoorShape(PlayerState.RECT);
+			shape = DoorUtil.getDoorShape(PlayerState.RECT,false);
 			this.addChild(shape);
 		}
 		

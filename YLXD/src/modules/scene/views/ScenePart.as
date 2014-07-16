@@ -119,7 +119,7 @@ package modules.scene.views
 			{
 				if (!door.passed && door.x <= mainPlayer.x)
 				{
-					if (GamePattern.NIXIANG != GameInstance.instance.pattern){
+					if (!door.isReverse){
 						winState = door.state - 1;
 						winState = winState < PlayerState.RECT ? PlayerState.TRIANGLE : winState;
 					}else{
@@ -183,8 +183,7 @@ package modules.scene.views
 				state = PlayerState.randomStateByPrevState(doorList[doorList.length-1].state);
 			else
 				state = PlayerState.randomState();
-			var door:Door = new Door(state);
-			this.addChild(door);
+			var needReverse:Boolean = false;
 			if (score > 50 && GameInstance.instance.pattern != GamePattern.NIXIANG)
 			{
 				//50关后，有反转率
@@ -192,8 +191,13 @@ package modules.scene.views
 				reverse = reverse > 30 ? 30 : reverse;
 				var random:int = Math.random() * 100;
 				if (random <= reverse)
-					door.isReverse = true;
+					needReverse = true;
+			}else if (GameInstance.instance.pattern == GamePattern.NIXIANG)
+			{
+				needReverse = true;
 			}
+			var door:Door = new Door(state,needReverse);
+			this.addChild(door);
 			var speed:int = int(score / 100);
 			speed = speed > 5 ? 5 : speed;
 			door.speed = GameInstance.INIT_SPEED + speed;

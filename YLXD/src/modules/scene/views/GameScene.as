@@ -21,7 +21,6 @@ package modules.scene.views
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.text.TextField;
-	import starling.utils.HAlign;
 	
 	public class GameScene extends Sprite
 	{

@@ -19,10 +19,11 @@ package modules.scene.views
 		 */		
 		public var isReverse:Boolean = false;
 		
-		public function Door(state:int)
+		public function Door(state:int, need:Boolean=false)
 		{
 			this.state = state;
-			shape = DoorUtil.getDoorShape(state);
+			isReverse = need;
+			shape = DoorUtil.getDoorShape(state,isReverse);
 			this.addChild(shape);
 		}
 		
