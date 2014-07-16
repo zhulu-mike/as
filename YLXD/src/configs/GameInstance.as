@@ -52,5 +52,7 @@ package configs
 		
 		public static const INIT_SPEED:int = 5;
 		
+		public var soundEnable:Boolean = true;
+		
 	}
 }

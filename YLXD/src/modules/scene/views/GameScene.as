@@ -1,9 +1,6 @@
 package modules.scene.views
 {
 	
-	import flash.media.Sound;
-	import flash.net.URLRequest;
-	
 	import configs.GameInstance;
 	import configs.GamePattern;
 	import configs.GameState;
@@ -12,6 +9,7 @@ package modules.scene.views
 	
 	import managers.GameUtil;
 	import managers.ResManager;
+	import managers.SoundManager;
 	
 	import so.cuo.platform.baidu.BaiDu;
 	import so.cuo.platform.baidu.RelationPosition;
@@ -162,8 +160,7 @@ package modules.scene.views
 		
 		private function playGameOverSound(e:GameEvent):void
 		{
-			var s:Sound = new Sound(new URLRequest(ResManager.GAME_OVER));
-			s.play();
+			SoundManager.playSound(ResManager.GAME_OVER);
 		}
 	}
 }

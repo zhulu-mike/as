@@ -8,6 +8,7 @@ package
 	import events.GameEvent;
 	
 	import managers.GameUtil;
+	import managers.ResManager;
 	
 	import modules.mainui.views.MainMenu;
 	import modules.scene.views.GameOver;
@@ -17,14 +18,18 @@ package
 	import so.cuo.platform.baidu.BaiDuAdEvent;
 	import so.cuo.platform.baidu.RelationPosition;
 	
+	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Event;
+	import starling.events.Touch;
+	import starling.events.TouchEvent;
+	import starling.events.TouchPhase;
 	
 	public class Game extends Sprite
 	{
+		private var music:Image;
 		public function Game()
 		{
-			
 			EventCenter.instance.addEventListener(GameEvent.GAME_STATE_CHANGE, stateHandler);
 			this.addEventListener(Event.ADDED_TO_STAGE,onResize);
 		}
@@ -45,8 +50,25 @@ package
 		
 		public function beginAfterRes(e:GameEvent=null):void
 		{
+			music = new Image(ResManager.assetsManager.getTextureAtlas(ResManager.YLXD_NAME).getTexture("btn_sound_on.png"));
+			this.addChild(music);
+			music.x = stage.stageWidth - music.width - 10;
+			music.addEventListener(TouchEvent.TOUCH, onTouchMusic);
 			EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.BEGIN});
 			this.addEventListener(Event.ENTER_FRAME, onRender);
+		}
+		
+		private function onTouchMusic(e:TouchEvent):void
+		{
+			var touch:Touch = e.touches[0];
+			if (touch.phase == TouchPhase.ENDED)
+			{
+				GameInstance.instance.soundEnable = !GameInstance.instance.soundEnable;
+				if (GameInstance.instance.soundEnable)
+					music.texture = ResManager.assetsManager.getTextureAtlas(ResManager.YLXD_NAME).getTexture("btn_sound_on.png");
+				else
+					music.texture = ResManager.assetsManager.getTextureAtlas(ResManager.YLXD_NAME).getTexture("btn_sound_off.png");
+			}
 		}
 		
 		private var _mainMenu:MainMenu;
@@ -113,7 +135,7 @@ package
 		private function begin():void
 		{
 			BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
-			this.addChild(mainMenu);
+			this.addChildAt(mainMenu,0);
 		}
 		
 		/**
@@ -126,7 +148,7 @@ package
 			BaiDu.getInstance().hideBanner();
 			GameInstance.instance.score = 0;
 			GameInstance.instance.pattern = pattern;
-			this.addChild(gameScene);
+			this.addChildAt(gameScene,0);
 			gameScene.start(pattern);
 			this.addEventListener(Event.ENTER_FRAME, onRender);
 		}
@@ -160,7 +182,7 @@ package
 		private function beginLater():void
 		{
 			gameScene.removeFromParent();
-			this.addChild(gameOverPanel);
+			this.addChildAt(gameOverPanel,0);
 			BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
 			gameOverPanel.patternTxt.text = GameUtil.getPatternName(GameInstance.instance.pattern);
 			if (GameInstance.instance.pattern != GamePattern.FIGHT)

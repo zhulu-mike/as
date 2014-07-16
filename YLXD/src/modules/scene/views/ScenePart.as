@@ -14,6 +14,7 @@ package modules.scene.views
 	import managers.GameUtil;
 	import managers.LogManager;
 	import managers.ResManager;
+	import managers.SoundManager;
 	
 	import starling.display.Quad;
 	import starling.display.Sprite;
@@ -127,8 +128,7 @@ package modules.scene.views
 						winState = winState > PlayerState.TRIANGLE ? PlayerState.RECT : winState;
 					}
 					if (winState == mainPlayer.state){
-						var sound:Sound = new Sound(new URLRequest(ResManager.PASS_SOUND));
-						sound.play();
+						SoundManager.playSound(ResManager.PASS_SOUND);
 						score += 1;
 						if (GameInstance.instance.pattern != GamePattern.FIGHT && GameUtil.getMaxScore(GameInstance.instance.pattern) < score)
 						{
@@ -137,8 +137,7 @@ package modules.scene.views
 							EventCenter.instance.dispatchGameEvent(GameEvent.UPDATE_MAX_SCORE);
 							if (!beyondMax){
 								beyondMax = true;
-								sound = new Sound(new URLRequest(ResManager.BEYOND_MAX));
-								sound.play();
+								SoundManager.playSound(ResManager.BEYOND_MAX);
 							}
 						}
 						scoreTxt.text = Language.DEFEN.replace("$SCORE",score);
