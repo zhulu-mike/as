@@ -41,5 +41,14 @@ package configs
 		
 		public static const SHOW_AD_DELAY:int = 60000;
 		
+		/**
+		 * 剩下几局显示大屏广告
+		 */		
+		public var leftShowFullAd:int = 10;
+		/**
+		 *每10局显示一次 
+		 */		
+		public static const FULLE_AD:int = 10;
+		
 	}
 }

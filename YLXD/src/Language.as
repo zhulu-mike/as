@@ -26,6 +26,10 @@ package
 		
 		public static const MAX_SCORE:String = "最高得分：$SCORE";
 		
-		public static const ADVISE_DESC:String = "赚点奶粉钱容易吗——>";
+		public static const ADVISE_DESC:String = "杭州鲲鹏游戏工作室出品";
+		
+		public static const FANHUI:String = "返回";
+		public static const CHONGLAI:String = "重来";
+		public static const XUANYAO:String = "炫耀";
 	}
 }

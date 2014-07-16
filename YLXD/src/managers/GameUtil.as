@@ -1,6 +1,7 @@
 package managers
 {
 	import configs.GameInstance;
+	import configs.GamePattern;
 
 	public class GameUtil
 	{
@@ -29,6 +30,16 @@ package managers
 		{
 			GameInstance.instance.scoreRecord.maxScores[pattern] = score;
 			GameInstance.instance.so.setAt("pattern_"+pattern,score);
+		}
+		
+		public static function getPatternName(pattern:int):String
+		{
+			if (pattern == GamePattern.PUTONG)
+				return Language.PUTONG;
+			else if (pattern == GamePattern.NIXIANG)
+				return Language.NIXIANG;
+			else
+				return Language.DUIZHAN;
 		}
 	}
 }

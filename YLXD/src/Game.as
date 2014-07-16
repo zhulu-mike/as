@@ -1,18 +1,20 @@
 package
 {
 	
-	import flash.utils.getTimer;
-	
 	import configs.GameInstance;
 	import configs.GamePattern;
 	import configs.GameState;
 	
 	import events.GameEvent;
 	
+	import managers.GameUtil;
+	
 	import modules.mainui.views.MainMenu;
+	import modules.scene.views.GameOver;
 	import modules.scene.views.GameScene;
 	
 	import so.cuo.platform.baidu.BaiDu;
+	import so.cuo.platform.baidu.BaiDuAdEvent;
 	import so.cuo.platform.baidu.RelationPosition;
 	
 	import starling.display.Sprite;
@@ -66,6 +68,14 @@ package
 			return _gameScene;
 		}
 		
+		private var _gameOverPanel:GameOver;
+		public function get gameOverPanel():GameOver
+		{
+			if (_gameOverPanel == null){
+				_gameOverPanel = new GameOver();
+			}
+			return _gameOverPanel;
+		}
 		
 		private function stateHandler(event:GameEvent):void
 		{
@@ -102,7 +112,7 @@ package
 		
 		private function begin():void
 		{
-			BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_RIGHT);
+			BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
 			this.addChild(mainMenu);
 		}
 		
@@ -125,26 +135,43 @@ package
 		{
 			this.removeEventListener(Event.ENTER_FRAME, onRender);
 			beginLater();
-			if (BaiDu.getInstance().isInterstitialReady())
+			GameInstance.instance.leftShowFullAd--;
+			if (GameInstance.instance.leftShowFullAd <= 0)
 			{
-				if (GameInstance.instance.lastShowFullAd == 0 || getTimer()-GameInstance.instance.lastShowFullAd>=GameInstance.SHOW_AD_DELAY)
+				if (BaiDu.getInstance().isInterstitialReady())
 				{
 					BaiDu.getInstance().showInterstitial();
-					GameInstance.instance.lastShowFullAd = getTimer();
+					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialDismiss, onCloseFullAd);
+					GameInstance.instance.leftShowFullAd = GameInstance.FULLE_AD;
 				}
 			}
+		}
+		/**
+		 * 关闭全屏广告后，再次缓冲 
+		 * @param event
+		 * 
+		 */		
+		protected function onCloseFullAd(event:BaiDuAdEvent):void
+		{
+			BaiDu.getInstance().removeEventListener(BaiDuAdEvent.onInterstitialDismiss, onCloseFullAd);
+			BaiDu.getInstance().cacheInterstitial();
 		}
 		
 		private function beginLater():void
 		{
 			gameScene.removeFromParent();
-			begin();
+			this.addChild(gameOverPanel);
+			BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
+			gameOverPanel.patternTxt.text = GameUtil.getPatternName(GameInstance.instance.pattern);
 			if (GameInstance.instance.pattern != GamePattern.FIGHT)
 			{
-				mainMenu.scoreTtx.visible = true;
-				mainMenu.scoreTtx.text = Language.FENSHU.replace("$SCORE",GameInstance.instance.score);
+				gameOverPanel.maxScoreTxt.visible = true;
+				gameOverPanel.scoreTxt.visible = true;
+				gameOverPanel.scoreTxt.text = Language.FENSHU.replace("$SCORE",GameInstance.instance.score);
+				gameOverPanel.maxScoreTxt.text = Language.MAX_SCORE.replace("$SCORE",GameUtil.getMaxScore(GameInstance.instance.pattern));
 			}else{
-				mainMenu.scoreTtx.visible = false;
+				gameOverPanel.maxScoreTxt.visible = false;
+				gameOverPanel.scoreTxt.visible = false;
 			}
 		}
 	}

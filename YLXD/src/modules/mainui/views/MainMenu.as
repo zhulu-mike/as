@@ -49,9 +49,10 @@ package modules.mainui.views
 			duizhan.y = niXiangTxt.y + 60;
 			duizhan.x = GameInstance.instance.sceneWidth - duizhan.width >> 1;
 			
-//			desc = new TextField(300,40,Language.ADVISE_DESC,"Verdana",20);
-//			this.addChild(desc);
-//			desc.y = GameInstance.instance.sceneHeight - desc.height - 20;
+			desc = new TextField(300,40,Language.ADVISE_DESC,"Verdana",15);
+			desc.hAlign = HAlign.LEFT;
+			this.addChild(desc);
+			desc.y = 0;
 			new MainMenuController(this);
 		}
 	}

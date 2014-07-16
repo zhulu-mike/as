@@ -1,12 +1,15 @@
 package
 {
+	import flash.desktop.NativeApplication;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageOrientation;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
+	import flash.events.KeyboardEvent;
 	import flash.geom.Rectangle;
 	import flash.system.Capabilities;
+	import flash.ui.Keyboard;
 	import flash.ui.Multitouch;
 	import flash.ui.MultitouchInputMode;
 	import flash.utils.getTimer;
@@ -48,7 +51,7 @@ package
 		public function YLXD()
 		{
 			super();
-			trace(getTimer());
+//			trace(getTimer());
 			if (stage){
 				init(null);
 			}else{
@@ -56,17 +59,24 @@ package
 			}
 		}
 		
+		private function onKeyDown(e:KeyboardEvent):void
+		{
+			if (e.keyCode == Keyboard.BACK)
+			{
+				NativeApplication.nativeApplication.exit();
+			}
+		}
 		
 		private function init(event:Event=null):void
 		{
-			trace(getTimer());
+//			trace(getTimer());
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.frameRate = 60;
 			stage.setOrientation(StageOrientation.ROTATED_RIGHT);
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
 			
-			
+			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			
 			GameInstance.instance.YLXD_CLASS = YlxdBmd;
 			if (BaiDu.getInstance().supportDevice)
@@ -79,6 +89,7 @@ package
 			LogManager.logTrace(Multitouch.maxTouchPoints);
 			LogManager.logTrace(Capabilities.screenResolutionX+"-"+Capabilities.screenResolutionY);
 			var rect:Rectangle = new Rectangle(0,0,Capabilities.screenResolutionX,Capabilities.screenResolutionY);
+			Starling.handleLostContext = true;
 			app = new Starling(Game,stage,rect,null,"auto","auto");
 			app.start();
 			EventCenter.instance.addEventListener(GameEvent.STARLING_CREATE, loadRes);
@@ -87,7 +98,7 @@ package
 				GameUtil.setMaxScore(GamePattern.PUTONG,int(GameInstance.instance.so.getAt("pattern_"+GamePattern.PUTONG)));
 			if(GameInstance.instance.so.hasKey("pattern_"+GamePattern.NIXIANG))
 				GameUtil.setMaxScore(GamePattern.NIXIANG,int(GameInstance.instance.so.getAt("pattern_"+GamePattern.NIXIANG)));
-			trace(getTimer());
+//			trace(getTimer());
 		}
 		
 		protected function onAD(event:BaiDuAdEvent):void
@@ -107,11 +118,11 @@ package
 				var ta:TextureAtlas = new TextureAtlas(Texture.fromEmbeddedAsset(GameInstance.instance.YLXD_CLASS), (loadData as XMLItem).content);
 				am.addTextureAtlas(ResManager.YLXD_NAME,ta);
 				EventCenter.instance.dispatchEvent(new GameEvent(GameEvent.START_GAME));
-				trace(getTimer());
+//				trace(getTimer());
 			}
 			loadData.addEventListener(flash.events.Event.COMPLETE, comp);
 			ResManager.resLoader.loadNow(loadData);
-			trace(getTimer());
+//			trace(getTimer());
 		}
 		
 	}
