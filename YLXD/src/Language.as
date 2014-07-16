@@ -31,5 +31,10 @@ package
 		public static const FANHUI:String = "返回";
 		public static const CHONGLAI:String = "重来";
 		public static const XUANYAO:String = "炫耀";
+		
+		public static const EXIT_DESC:String = "您确定要退出休息一会吗？";
+		
+		public static const QUEDING:String = "确定";
+		public static const QUXIAO:String = "取消";
 	}
 }

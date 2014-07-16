@@ -74,7 +74,7 @@ package
 				{
 					e.preventDefault();
 				};
-				AirAlert.getInstance().showAlert("您确定要退出休息一会吗？","","确定",okFunc,"取消",cancelFunc);
+				AirAlert.getInstance().showAlert(Language.EXIT_DESC,"",Language.QUEDING,okFunc,Language.QUXIAO,cancelFunc);
 			}
 		}
 		
