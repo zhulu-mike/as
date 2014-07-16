@@ -92,7 +92,7 @@ package
 			GameInstance.instance.YLXD_CLASS = YlxdBmd;
 			if (BaiDu.getInstance().supportDevice)
 			{
-				BaiDu.getInstance().setKeys("b9a6ee49","b9a6ee49");// BaiDu.getInstance().setKeys("appsid","计费id");
+				BaiDu.getInstance().setKeys("ac15d8a4","ac15d8a4");// BaiDu.getInstance().setKeys("appsid","计费id");
 				BaiDu.getInstance().cacheInterstitial();
 			}
 			ResManager.resLoader = new BulkLoader("main");

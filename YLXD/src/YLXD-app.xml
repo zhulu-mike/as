@@ -14,7 +14,7 @@
 
 	<!-- A universally unique application identifier. Must be unique across all AIR applications.
 	Using a reverse DNS-style name as the id is recommended. (Eg. com.example.ExampleApplication.) Required. -->
-	<id>YLXD</id>
+	<id>com.kunpeng.cainimei</id>
 
 	<!-- Used as the filename for the application. Required. -->
 	<filename>crazyguess</filename>
@@ -132,12 +132,12 @@
 
 	<!-- The icon the system uses for the application. For at least one resolution,
 	specify the path to a PNG file included in the AIR package. Optional. -->
-	<!-- <icon>
-		<image16x16></image16x16>
-		<image32x32></image32x32>
-		<image48x48></image48x48>
-		<image128x128></image128x128>
-	</icon> -->
+	<icon>
+		<image16x16>assets/icon_16x16.png</image16x16>
+		<image32x32>assets/icon_32x32.png</image32x32>
+		<image48x48>assets/icon_48x48.png</image48x48>
+		<image128x128>assets/icon_128x128.png</image128x128>
+	</icon>
 	<!-- <icon>
 		<image16x16></image16x16>
 		<image29x29></image29x29>
@@ -272,8 +272,8 @@
 			    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 			    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 			    <application android:enabled="true">
-			    	<meta-data android:name="BaiduMobAd_APP_ID" android:value="b9a6ee49" /> 
-    				<meta-data android:name="BaiduMobAd_APP_SEC" android:value="b9a6ee49" />
+			    	<meta-data android:name="BaiduMobAd_APP_ID" android:value="ac15d8a4" /> 
+    				<meta-data android:name="BaiduMobAd_APP_SEC" android:value="ac15d8a4" />
         			<activity android:name="com.baidu.mobads.AppActivity" android:configChanges="keyboard|keyboardHidden|orientation"/>
 					<activity android:excludeFromRecents="false">
 						<intent-filter>
