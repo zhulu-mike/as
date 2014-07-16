@@ -299,6 +299,7 @@
 <extensions>
         <extensionID>so.cuo.platform.baidu</extensionID>
     <extensionID>cn.sharesdk.ane.ShareSDKExtension</extensionID>
+    <extensionID>com.freshplanet.AirAlert</extensionID>
     </extensions>
     
 </application>

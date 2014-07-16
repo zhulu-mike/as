@@ -1,5 +1,7 @@
 package
 {
+	import com.freshplanet.ane.AirAlert.AirAlert;
+	
 	import flash.desktop.NativeApplication;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
@@ -63,7 +65,16 @@ package
 		{
 			if (e.keyCode == Keyboard.BACK)
 			{
-				NativeApplication.nativeApplication.exit();
+				e.preventDefault();
+				var okFunc:Function = function():void
+				{
+					NativeApplication.nativeApplication.exit();
+				};
+				var cancelFunc:Function = function():void
+				{
+					e.preventDefault();
+				};
+				AirAlert.getInstance().showAlert("您确定要退出休息一会吗？","","确定",okFunc,"取消",cancelFunc);
 			}
 		}
 		
