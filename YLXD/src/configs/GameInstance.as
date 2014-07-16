@@ -50,5 +50,7 @@ package configs
 		 */		
 		public static const FULLE_AD:int = 10;
 		
+		public static const INIT_SPEED:int = 5;
+		
 	}
 }

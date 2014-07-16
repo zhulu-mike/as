@@ -185,6 +185,18 @@ package modules.scene.views
 				state = PlayerState.randomState();
 			var door:Door = new Door(state);
 			this.addChild(door);
+			if (score > 50 && GameInstance.instance.pattern != GamePattern.NIXIANG)
+			{
+				//50关后，有反转率
+				var reverse:int = int(score / 50)*10 ;
+				reverse = reverse > 30 ? 30 : reverse;
+				var random:int = Math.random() * 100;
+				if (random <= reverse)
+					door.isReverse = true;
+			}
+			var speed:int = int(score / 100);
+			speed = speed > 5 ? 5 : speed;
+			door.speed = GameInstance.INIT_SPEED + speed;
 			doorList.push(door);
 			door.x = GameInstance.instance.sceneWidth-door.width;
 			door.y = mainPlayer.y + mainPlayer.height - door.height;

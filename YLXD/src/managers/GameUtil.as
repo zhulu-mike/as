@@ -2,6 +2,7 @@ package managers
 {
 	import configs.GameInstance;
 	import configs.GamePattern;
+	import configs.PlayerState;
 
 	public class GameUtil
 	{
@@ -40,6 +41,21 @@ package managers
 				return Language.NIXIANG;
 			else
 				return Language.DUIZHAN;
+		}
+		/**
+		 * 获取反向的手型
+		 * @param state
+		 * @return 
+		 * 
+		 */		
+		public static function getReverseState(state:int):int
+		{
+			if (state == PlayerState.RECT)
+				return PlayerState.CIRCLE;
+			else if (state == PlayerState.CIRCLE)
+				return PlayerState.TRIANGLE;
+			else
+				return PlayerState.RECT;
 		}
 	}
 }

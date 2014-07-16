@@ -14,6 +14,11 @@ package modules.scene.views
 		
 		public var passed:Boolean = false;
 		
+		/**
+		 * 是否是相反的
+		 */		
+		public var isReverse:Boolean = false;
+		
 		public function Door(state:int)
 		{
 			this.state = state;
