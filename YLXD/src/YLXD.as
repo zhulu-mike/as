@@ -31,7 +31,7 @@ package
 	
 	import managers.GameUtil;
 	import managers.ResManager;
-	import managers.ShareManager;
+	import com.mike.utils.ShareManager;
 	
 	import modules.mainui.views.WorkRoomIntroduce;
 	

@@ -14,24 +14,37 @@ package modules.scene.views
 	import so.cuo.platform.baidu.BaiDu;
 	import so.cuo.platform.baidu.RelationPosition;
 	
+	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.text.TextField;
+	import starling.textures.Texture;
 	
 	public class GameScene extends Sprite
 	{
 		private var maxScoreTxt:TextField;
+		[Embed(source="../../../assets/background.jpg")]
+		private var BackGroundBG:Class;
+		
+		private var middleLayer:Sprite;
 		public function GameScene()
 		{
-			maxScoreTxt = new TextField(300,40,"","Verdana",30,0xff0000);
+			
+			EventCenter.instance.addEventListener(GameEvent.CHECK_RACE_END, checkRaceEnd);
+			EventCenter.instance.addEventListener(GameEvent.PLAY_GAME_OVER_SOUND, playGameOverSound);
+			var bg:Image = new Image(Texture.fromEmbeddedAsset(BackGroundBG));
+			this.addChild(bg);
+			bg.width = GameInstance.instance.sceneWidth;
+			bg.height = GameInstance.instance.sceneHeight;
+			middleLayer = new Sprite();
+			this.addChild(middleLayer);
+			maxScoreTxt = new TextField(300,40,"","Verdana",24,0x89c997);
 			this.addChild(maxScoreTxt);
 			maxScoreTxt.visible = false;
 			maxScoreTxt.x = GameInstance.instance.sceneWidth - maxScoreTxt.width >> 1;
 			maxScoreTxt.y = 0;
-			EventCenter.instance.addEventListener(GameEvent.CHECK_RACE_END, checkRaceEnd);
-			EventCenter.instance.addEventListener(GameEvent.PLAY_GAME_OVER_SOUND, playGameOverSound);
 		}
 		
 		
@@ -66,7 +79,7 @@ package modules.scene.views
 			for each (s in sceneList)
 			{
 				s.destroy();
-				this.removeChild(s);
+				middleLayer.removeChild(s);
 			}
 			sceneList.length = 0;
 		}
@@ -77,7 +90,7 @@ package modules.scene.views
 		private function makePuTong():void
 		{
 			var scene:ScenePart = new ScenePart(GameInstance.instance.sceneHeight);
-			this.addChildAt(scene,0);
+			middleLayer.addChild(scene);
 			sceneList.push(scene);
 		}
 		
@@ -90,10 +103,10 @@ package modules.scene.views
 		{
 			var h:int = GameInstance.instance.sceneHeight >> 1;
 			var scene:ScenePart = new ScenePart(h);
-			this.addChildAt(scene,0);
+			middleLayer.addChild(scene);
 			sceneList.push(scene);
 			scene = new ScenePart(h);
-			this.addChildAt(scene,0);
+			middleLayer.addChild(scene);
 			scene.y = h;
 			sceneList.push(scene);
 		}

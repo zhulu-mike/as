@@ -13,7 +13,7 @@ package modules.scene.views
 	import events.GameEvent;
 	
 	import managers.GameUtil;
-	import managers.ShareManager;
+	import com.mike.utils.ShareManager;
 	
 	import so.cuo.platform.baidu.BaiDu;
 	
