@@ -31,6 +31,18 @@ package modules.mainui.views
 			panel.beginTxt.addEventListener(TouchEvent.TOUCH, onBegin);
 			panel.duizhan.addEventListener(TouchEvent.TOUCH, onBegin);
 			panel.niXiangTxt.addEventListener(TouchEvent.TOUCH, onBegin);
+			panel.desc.addEventListener(TouchEvent.TOUCH, onShowIntroduce);
+		}
+		
+		private function onShowIntroduce(e:TouchEvent):void
+		{
+			var touchs:Vector.<Touch> = e.touches;
+			var touch:Touch = touchs[0];
+			if (touch.phase == TouchPhase.ENDED)
+			{
+				panel.removeFromParent();
+				EventCenter.instance.dispatchGameEvent(GameEvent.SHOW_INTRODUCE);
+			}
 		}
 		
 		private function onBegin(event:TouchEvent):void

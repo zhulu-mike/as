@@ -34,5 +34,7 @@ package events
 		public static const UPDATE_MAX_SCORE:String = "UPDATE_MAX_SCORE";
 		
 		public static const PLAY_GAME_OVER_SOUND:String = "PLAY_GAME_OVER_SOUND";
+		
+		public static const SHOW_INTRODUCE:String = "SHOW_INTRODUCE";
 	}
 }

@@ -28,6 +28,8 @@ package
 		
 		public static const ADVISE_DESC:String = "杭州鲲鹏游戏工作室出品";
 		
+		public static const WORKROOM_DESC:String = "杭州鲲鹏游戏工作室\n专注于为互联网世界提供多彩体验！";
+		
 		public static const FANHUI:String = "返回";
 		public static const CHONGLAI:String = "重来";
 		public static const XUANYAO:String = "炫耀";
@@ -36,5 +38,7 @@ package
 		
 		public static const QUEDING:String = "确定";
 		public static const QUXIAO:String = "取消";
+		
+		public static const ZHIZUOREN:String = "制作人：王江林";
 	}
 }

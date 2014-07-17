@@ -32,6 +32,7 @@ package configs
 		public var pattern:int = 0;
 		
 		public var YLXD_CLASS:Class;
+		public var LOG_CLASS:Class;
 		
 		public var scoreRecord:GameRecord = new GameRecord();
 		
@@ -53,6 +54,14 @@ package configs
 		public static const INIT_SPEED:int = 5;
 		
 		public var soundEnable:Boolean = true;
+		
+		public var YLXD_XML:XML = null;
+		
+		public var haveStarlingCreate:Boolean = false;
+		
+		public var resLoadCom:Boolean = false;
+		
+		public var introduceTime:int = 0;
 		
 	}
 }

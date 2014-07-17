@@ -1,6 +1,9 @@
 package
 {
 	
+	import flash.events.MouseEvent;
+	import flash.utils.setTimeout;
+	
 	import configs.GameInstance;
 	import configs.GamePattern;
 	import configs.GameState;
@@ -11,6 +14,7 @@ package
 	import managers.ResManager;
 	
 	import modules.mainui.views.MainMenu;
+	import modules.mainui.views.WorkRoomIntroduceStarling;
 	import modules.scene.views.GameOver;
 	import modules.scene.views.GameScene;
 	
@@ -24,6 +28,9 @@ package
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
+	import starling.textures.Texture;
+	import starling.textures.TextureAtlas;
+	import starling.utils.AssetManager;
 	
 	public class Game extends Sprite
 	{
@@ -50,12 +57,32 @@ package
 		
 		public function beginAfterRes(e:GameEvent=null):void
 		{
+			var am:AssetManager = new AssetManager();
+			ResManager.assetsManager = am;
+			var ta:TextureAtlas = new TextureAtlas(Texture.fromEmbeddedAsset(GameInstance.instance.YLXD_CLASS),GameInstance.instance.YLXD_XML);
+			am.addTextureAtlas(ResManager.YLXD_NAME,ta);
 			music = new Image(ResManager.assetsManager.getTextureAtlas(ResManager.YLXD_NAME).getTexture("btn_sound_on.png"));
 			this.addChild(music);
 			music.x = stage.stageWidth - music.width - 10;
 			music.addEventListener(TouchEvent.TOUCH, onTouchMusic);
 			EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.BEGIN});
+			EventCenter.instance.addEventListener(GameEvent.SHOW_INTRODUCE, onShowIntroduce);
 			this.addEventListener(Event.ENTER_FRAME, onRender);
+		}
+		
+		protected function onShowIntroduce(event:GameEvent):void
+		{
+			this.addChild(introduce);
+		}
+		
+		protected function onCloseIntroduce(event:TouchEvent):void
+		{
+			var touch:Touch = event.touches[0];
+			if (touch.phase == TouchPhase.ENDED)
+			{
+				this.removeChild(_introduce);
+				EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.BEGIN});
+			}
 		}
 		
 		private function onTouchMusic(e:TouchEvent):void
@@ -69,6 +96,16 @@ package
 				else
 					music.texture = ResManager.assetsManager.getTextureAtlas(ResManager.YLXD_NAME).getTexture("btn_sound_off.png");
 			}
+		}
+		
+		private var _introduce:WorkRoomIntroduceStarling;
+		public function get introduce():WorkRoomIntroduceStarling
+		{
+			if (_introduce == null){
+				_introduce = new WorkRoomIntroduceStarling(GameInstance.instance.sceneWidth, GameInstance.instance.sceneHeight);
+				_introduce.addEventListener(TouchEvent.TOUCH, onCloseIntroduce);
+			}
+			return _introduce;
 		}
 		
 		private var _mainMenu:MainMenu;
@@ -162,12 +199,22 @@ package
 			{
 				if (BaiDu.getInstance().isInterstitialReady())
 				{
-					BaiDu.getInstance().showInterstitial();
-					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialDismiss, onCloseFullAd);
-					GameInstance.instance.leftShowFullAd = GameInstance.FULLE_AD;
+					//延迟1秒显示
+					setTimeout(showFullAdvise,1000);
 				}
 			}
 		}
+		/**
+		 * 显示全屏广告
+		 * 
+		 */		
+		private function showFullAdvise():void
+		{
+			BaiDu.getInstance().showInterstitial();
+			BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialDismiss, onCloseFullAd);
+			GameInstance.instance.leftShowFullAd = GameInstance.FULLE_AD;
+		}
+		
 		/**
 		 * 关闭全屏广告后，再次缓冲 
 		 * @param event

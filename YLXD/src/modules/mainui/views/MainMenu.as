@@ -14,7 +14,7 @@ package modules.mainui.views
 		public var niXiangTxt:TextField;
 		public var duizhan:TextField;
 		public var scoreTtx:TextField;
-		private var desc:TextField;
+		public var desc:TextField;
 		
 		public function MainMenu()
 		{
