@@ -26,18 +26,18 @@ package modules.mainui.views
 			desc.wordWrap = true;
 			desc.y = bp.height + 20;
 			desc.defaultTextFormat = new TextFormat(null,30,0,null,null,null,null,null,"center");
-			desc.text = Language.WORKROOM_DESC;
+			desc.text = Language.WORKROOM_DESC2;
 			desc.height = desc.textHeight + 10;
 			container.addChild(desc);
 			
-			var author:TextField = new TextField();
-			author.width = 500;
-			author.wordWrap = true;
-			author.defaultTextFormat = new TextFormat(null,30,0,null,null,null,null,null,"center");
-			author.text = Language.ZHIZUOREN;
-			author.height = 40;
-			author.y = desc.y + desc.height + 20;
-			container.addChild(author);
+//			var author:TextField = new TextField();
+//			author.width = 500;
+//			author.wordWrap = true;
+//			author.defaultTextFormat = new TextFormat(null,30,0,null,null,null,null,null,"center");
+//			author.text = Language.ZHIZUOREN;
+//			author.height = 40;
+//			author.y = desc.y + desc.height + 20;
+//			container.addChild(author);
 		}
 		
 		public function resize(w:int, h:int):void

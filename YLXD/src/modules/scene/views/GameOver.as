@@ -1,17 +1,29 @@
 package modules.scene.views
 {
+	import com.mike.weixin.MicroMessage;
+	
+	import cn.sharesdk.ane.PlatformID;
+	import cn.sharesdk.ane.ShareMenuArrowDirection;
+	import cn.sharesdk.ane.ShareSDKExtension;
+	import cn.sharesdk.ane.ShareType;
+	
 	import configs.GameInstance;
 	import configs.GameState;
 	
 	import events.GameEvent;
 	
+	import managers.GameUtil;
+	import managers.ShareManager;
+	
 	import so.cuo.platform.baidu.BaiDu;
 	
+	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.text.TextField;
+	import starling.textures.Texture;
 	import starling.utils.HAlign;
 	
 	public class GameOver extends Sprite
@@ -28,6 +40,7 @@ package modules.scene.views
 		public function GameOver()
 		{
 			patternTxt = new TextField(200,40,"","Verdana",30,0,true);
+			patternTxt.hAlign = HAlign.CENTER;
 			this.addChild(patternTxt);
 			patternTxt.x = GameInstance.instance.sceneWidth - patternTxt.width >> 1;
 			patternTxt.y = 10;
@@ -61,8 +74,22 @@ package modules.scene.views
 			
 			this.returnBtn.addEventListener(TouchEvent.TOUCH, onReturn);
 			this.againBtn.addEventListener(TouchEvent.TOUCH, onPlayAgain);
+			this.xuanYaoBtn.addEventListener(TouchEvent.TOUCH, onXuanYao);
 			
 		}
+		
+		
+		
+		private function onXuanYao(e:TouchEvent):void
+		{
+			var touch:Touch = e.touches[0];
+			if (touch.phase == TouchPhase.ENDED)
+			{
+				ShareManager.instance.xuanYao();
+			}
+		}
+		
+		
 		
 		private function onPlayAgain(e:TouchEvent):void
 		{

@@ -57,5 +57,6 @@ package managers
 			else
 				return PlayerState.RECT;
 		}
+		
 	}
 }

@@ -11,6 +11,7 @@ package
 	import flash.events.KeyboardEvent;
 	import flash.geom.Rectangle;
 	import flash.system.Capabilities;
+	import flash.system.System;
 	import flash.ui.Keyboard;
 	import flash.ui.Multitouch;
 	import flash.ui.MultitouchInputMode;
@@ -30,6 +31,7 @@ package
 	
 	import managers.GameUtil;
 	import managers.ResManager;
+	import managers.ShareManager;
 	
 	import modules.mainui.views.WorkRoomIntroduce;
 	
@@ -86,6 +88,7 @@ package
 			stage.frameRate = 60;
 			stage.setOrientation(StageOrientation.ROTATED_RIGHT);
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
+			ShareManager.instance.init();
 			GameInstance.instance.LOG_CLASS = LogAsset;
 			showIntroduce();
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
@@ -151,7 +154,7 @@ package
 		{
 			if (_introduce.parent == null)
 				return;
-			if (GameInstance.instance.resLoadCom && GameInstance.instance.haveStarlingCreate && (getTimer()-GameInstance.instance.introduceTime > 2000))
+			if (GameInstance.instance.resLoadCom && GameInstance.instance.haveStarlingCreate && (getTimer()-GameInstance.instance.introduceTime >= 2000))
 			{
 				this.removeChild(_introduce);
 				EventCenter.instance.dispatchEvent(new GameEvent(GameEvent.START_GAME));

@@ -29,6 +29,7 @@ package
 		public static const ADVISE_DESC:String = "杭州鲲鹏游戏工作室出品";
 		
 		public static const WORKROOM_DESC:String = "杭州鲲鹏游戏工作室\n专注于为互联网世界提供多彩体验！";
+		public static const WORKROOM_DESC2:String = "杭州鲲鹏游戏";
 		
 		public static const FANHUI:String = "返回";
 		public static const CHONGLAI:String = "重来";

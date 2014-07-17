@@ -50,8 +50,8 @@ package
 		{
 			GameInstance.instance.sceneWidth = stage.stageWidth;
 			GameInstance.instance.sceneHeight = stage.stageHeight;
-			EventCenter.instance.dispatchEvent(new GameEvent(GameEvent.STARLING_CREATE));
 			EventCenter.instance.addEventListener(GameEvent.START_GAME, beginAfterRes);
+			EventCenter.instance.dispatchEvent(new GameEvent(GameEvent.STARLING_CREATE));
 		}
 		
 		
