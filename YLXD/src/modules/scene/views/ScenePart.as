@@ -46,6 +46,7 @@ package modules.scene.views
 			doorList = new Vector.<Door>();
 			
 			bg = new Quad(GameInstance.instance.sceneWidth,h,0xffffff);
+			bg.alpha = 0;
 			this.addChild(bg);
 			
 			mainPlayer = new MainPlayer();
@@ -53,12 +54,12 @@ package modules.scene.views
 			mainPlayer.x = 20;
 			
 			
-			road = new Road(GameInstance.instance.sceneWidth);
-			this.addChild(road);
-			road.y = (h - road.height>>1) + 90;
-			mainPlayer.y = road.y - mainPlayer.height;
+//			road = new Road(GameInstance.instance.sceneWidth);
+//			this.addChild(road);
+//			road.y = (h - road.height>>1) + 90;
+			mainPlayer.y = 330 - mainPlayer.height;
 			
-			scoreTxt = new TextField(300,40,Language.DEFEN.replace("$SCORE",0),"Verdana",30,0x00ff00);
+			scoreTxt = new TextField(300,40,Language.DEFEN.replace("$SCORE",0),"Verdana",24,0xffffff,true);
 			scoreTxt.hAlign = HAlign.CENTER;
 			scoreTxt.vAlign = VAlign.CENTER;
 			this.addChild(scoreTxt);
@@ -189,8 +190,10 @@ package modules.scene.views
 				var reverse:int = int(score / 50)*10 ;
 				reverse = reverse > 30 ? 30 : reverse;
 				var random:int = Math.random() * 100;
-				if (random <= reverse)
+				if (random <= reverse){
 					needReverse = true;
+					mainPlayer.addSpeed();
+				}
 			}else if (GameInstance.instance.pattern == GamePattern.NIXIANG)
 			{
 				needReverse = true;
