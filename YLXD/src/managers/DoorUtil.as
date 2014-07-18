@@ -27,30 +27,26 @@ package managers
 		{
 			if (state == PlayerState.RECT)
 			{
-				if (player1 == null){
-					player1 = new MovieClip(ResManager.assetsManager.getTextures("player1"));
-					player1.loop = true;
-				}
-				return player1;
+				return MainPlayerStoneFactory.getInstance().getShape();
 			}else if (state == PlayerState.CIRCLE)
 			{
-				if (player2 == null){
-					player2 = new MovieClip(ResManager.assetsManager.getTextures("player2"));
-					player2.loop = true;
-				}
-				return player2;
+				return MainPlayerJianDaoFactory.getInstance().getShape();
 			}else{
-				if (player3 == null){
-					player3 = new MovieClip(ResManager.assetsManager.getTextures("player3"));
-					player3.loop = true;
-				}
-				return player3;
+				return MainPlayerBuFactory.getInstance().getShape();
 			}
 		}
 		
-		private static var player1:MovieClip;
-		private static var player2:MovieClip;
-		private static var player3:MovieClip;
-				
+		public static function recyclePlayerMC(state:int, mc:MovieClip):void
+		{
+			if (state == PlayerState.RECT)
+			{
+				 MainPlayerStoneFactory.getInstance().recycleShape(mc);
+			}else if (state == PlayerState.CIRCLE)
+			{
+				 MainPlayerJianDaoFactory.getInstance().recycleShape(mc);
+			}else{
+				 MainPlayerBuFactory.getInstance().recycleShape(mc);
+			}
+		}
 	}
 }

@@ -1,7 +1,6 @@
 package
 {
 	
-	import flash.events.MouseEvent;
 	import flash.utils.setTimeout;
 	
 	import configs.GameInstance;
@@ -23,6 +22,7 @@ package
 	import so.cuo.platform.baidu.RelationPosition;
 	
 	import starling.display.Image;
+	import starling.display.QuadBatch;
 	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.events.Touch;
@@ -35,6 +35,13 @@ package
 	public class Game extends Sprite
 	{
 		private var music:Image;
+		[Embed(source="assets/background.jpg")]
+		private var BackGroundBG:Class;
+		private var bg:QuadBatch;
+		private var firstLayer:Sprite;
+		private var secondeLayer:Sprite;
+		private var showBG:Boolean = true;
+		
 		public function Game()
 		{
 			EventCenter.instance.addEventListener(GameEvent.GAME_STATE_CHANGE, stateHandler);
@@ -44,6 +51,31 @@ package
 		private function onRender(event:Event):void
 		{
 			gameScene.update();
+			if (showBG)
+				backgroundUpdate();
+		}
+		
+		private function backgroundUpdate():void
+		{
+			bg.reset();
+			var i:int = 0, len:int = bgImages.length;
+			var img:Image;
+			var totalWidth:int = 0;
+			for (;i<len;i++)
+			{
+				img = bgImages[i];
+				if (img.x+img.width <= 0)
+				{
+					img.removeFromParent();
+					bgImages.splice(i,1);
+					len--;
+					i--;
+				}else{
+					img.x -= GameInstance.instance.currentSpeed;
+					bg.addImage(img);
+				}
+			}
+			createBackground();
 		}
 		
 		private function onResize(event:Event):void
@@ -59,20 +91,63 @@ package
 		{
 			var am:AssetManager = new AssetManager();
 			ResManager.assetsManager = am;
+			am.addTexture("background",Texture.fromEmbeddedAsset(BackGroundBG));
+			ResManager.backGroundBmd = new BackGroundBG().bitmapData;
 			var ta:TextureAtlas = new TextureAtlas(Texture.fromEmbeddedAsset(GameInstance.instance.YLXD_CLASS),GameInstance.instance.YLXD_XML);
 			am.addTextureAtlas(ResManager.YLXD_NAME,ta);
+			initUI();
+			EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.BEGIN});
+			EventCenter.instance.addEventListener(GameEvent.SHOW_INTRODUCE, onShowIntroduce);
+			EventCenter.instance.addEventListener(GameEvent.CONTROL_BIG_BACKGROUND, onControlBackGround);
+		}
+		
+		private function initUI():void
+		{
+			firstLayer = new Sprite();
+			this.addChild(firstLayer);
+			
+			bg = new QuadBatch();
+			firstLayer.addChild(bg);
+			createBackground();
+			bg.width = GameInstance.instance.sceneWidth;
+			bg.height = GameInstance.instance.sceneHeight;
+			
+			secondeLayer = new Sprite();
+			this.addChild(secondeLayer);
+			
 			music = new Image(ResManager.assetsManager.getTextureAtlas(ResManager.YLXD_NAME).getTexture("btn_sound_on.png"));
 			this.addChild(music);
 			music.x = stage.stageWidth - music.width - 10;
 			music.addEventListener(TouchEvent.TOUCH, onTouchMusic);
-			EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.BEGIN});
-			EventCenter.instance.addEventListener(GameEvent.SHOW_INTRODUCE, onShowIntroduce);
-			this.addEventListener(Event.ENTER_FRAME, onRender);
+		}
+		
+		private var bgImages:Array = [];
+		private function createBackground():void
+		{
+			var i:int = 0, len:int = bgImages.length;
+			var img:Image;
+			var totalWidth:int = 0;
+			for (;i<len;i++)
+			{
+				img = bgImages[i];
+				if (img.x < 0)
+					totalWidth += (img.width + img.x);
+				else
+					totalWidth += img.width;
+			}
+			while (GameInstance.instance.sceneWidth > totalWidth)
+			{
+				img = new Image(ResManager.assetsManager.getTexture("background"));
+				bg.addImage(img);
+				bgImages.push(img);
+				img.x = totalWidth;
+				totalWidth += img.width;
+			}
 		}
 		
 		protected function onShowIntroduce(event:GameEvent):void
 		{
-			this.addChild(introduce);
+			secondeLayer.addChild(introduce);
 		}
 		
 		protected function onCloseIntroduce(event:TouchEvent):void
@@ -80,7 +155,7 @@ package
 			var touch:Touch = event.touches[0];
 			if (touch.phase == TouchPhase.ENDED)
 			{
-				this.removeChild(_introduce);
+				secondeLayer.removeChild(_introduce);
 				EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.BEGIN});
 			}
 		}
@@ -172,7 +247,7 @@ package
 		private function begin():void
 		{
 			BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
-			this.addChildAt(mainMenu,0);
+			secondeLayer.addChild(mainMenu);
 		}
 		
 		/**
@@ -185,7 +260,7 @@ package
 			BaiDu.getInstance().hideBanner();
 			GameInstance.instance.score = 0;
 			GameInstance.instance.pattern = pattern;
-			this.addChildAt(gameScene,0);
+			secondeLayer.addChild(gameScene);
 			gameScene.start(pattern);
 			this.addEventListener(Event.ENTER_FRAME, onRender);
 		}
@@ -229,7 +304,7 @@ package
 		private function beginLater():void
 		{
 			gameScene.removeFromParent();
-			this.addChildAt(gameOverPanel,0);
+			secondeLayer.addChild(gameOverPanel);
 			BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
 			gameOverPanel.patternTxt.text = GameUtil.getPatternName(GameInstance.instance.pattern);
 			if (GameInstance.instance.pattern != GamePattern.FIGHT)
@@ -241,6 +316,17 @@ package
 			}else{
 				gameOverPanel.maxScoreTxt.visible = false;
 				gameOverPanel.scoreTxt.visible = false;
+			}
+		}
+		
+		private function onControlBackGround(event:GameEvent):void
+		{
+			showBG = event.data as Boolean;
+			if (!showBG)
+			{
+				bg.removeFromParent();
+			}else{
+				firstLayer.addChild(bg);
 			}
 		}
 	}

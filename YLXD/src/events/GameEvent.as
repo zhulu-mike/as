@@ -35,6 +35,14 @@ package events
 		
 		public static const PLAY_GAME_OVER_SOUND:String = "PLAY_GAME_OVER_SOUND";
 		
+		/**
+		 *  显示开发商介绍
+		 */		
 		public static const SHOW_INTRODUCE:String = "SHOW_INTRODUCE";
+		
+		/**
+		 * 对战模式时用来隐藏大背景
+		 */		
+		public static const CONTROL_BIG_BACKGROUND:String = "CONTROL_BIG_BACKGROUND";
 	}
 }

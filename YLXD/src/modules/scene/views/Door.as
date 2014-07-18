@@ -1,8 +1,14 @@
 package modules.scene.views
 {
+	import com.mike.utils.MathUtil;
+	
 	import managers.DoorUtil;
 	import managers.ResManager;
 	
+	import starling.animation.Juggler;
+	import starling.animation.Transitions;
+	import starling.animation.Tween;
+	import starling.core.Starling;
 	import starling.display.DisplayObject;
 	import starling.display.Image;
 	import starling.display.Sprite;
@@ -23,16 +29,25 @@ package modules.scene.views
 		 */		
 		public var isReverse:Boolean = false;
 		
+		private var container:Sprite;
+		
 		public function Door(state:int, need:Boolean=false)
 		{
+			container = new Sprite();
+			this.addChild(container);
+			
 			this.state = state;
 			isReverse = need;
 			shape = DoorUtil.getDoorShape(state,isReverse);
-			this.addChild(shape);
+			shape.scaleX = -1;
+			shape.x += shape.width;
+			container.addChild(shape);
 			dizuo = new Image(ResManager.assetsManager.getTexture("dizuo.png"));
-			this.addChild(dizuo);
+			container.addChild(dizuo);
 			dizuo.y = shape.height;
 			dizuo.x = shape.width - dizuo.width >> 1;
+			container.x = -container.width >> 1;
+			container.y = -container.height >> 1;
 		}
 		
 		private var _speed:int = 5;
@@ -44,7 +59,8 @@ package modules.scene.views
 
 		public function set speed(value:int):void
 		{
-			_speed = value;
+			if (_speed != value)
+				_speed = value;
 		}
 
 		public function updatePos():void
@@ -52,6 +68,22 @@ package modules.scene.views
 			this.x -= _speed;
 		}
 		
+		public function flyOut():void
+		{
+			var tween:Tween = new Tween(this,1,Transitions.EASE_OUT);
+			tween.onComplete = flyComplete;
+//			tween.animate("scaleX",0);
+//			tween.animate("scaleY",0);
+			Starling.juggler.add(tween);
+			tween.animate("x",this.x + 200);
+			tween.animate("y",0);
+			tween.animate("rotation",MathUtil.angleToRadian(1800));
+			tween.repeatCount = 1;
+		}
 		
+		private function flyComplete():void
+		{
+			this.removeFromParent();
+		}
 	}
 }

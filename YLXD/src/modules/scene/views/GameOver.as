@@ -39,7 +39,7 @@ package modules.scene.views
 		
 		public function GameOver()
 		{
-			patternTxt = new TextField(200,40,"","Verdana",30,0,true);
+			patternTxt = new TextField(200,40,"","Verdana",30,0xffffff,true);
 			patternTxt.hAlign = HAlign.CENTER;
 			this.addChild(patternTxt);
 			patternTxt.x = GameInstance.instance.sceneWidth - patternTxt.width >> 1;
@@ -51,23 +51,23 @@ package modules.scene.views
 			maxScoreTxt.x = GameInstance.instance.sceneWidth - maxScoreTxt.width >> 1;
 			maxScoreTxt.y = (GameInstance.instance.sceneHeight - maxScoreTxt.height >> 1) - 100;
 			
-			scoreTxt = new TextField(300,40,"","Verdana",30,0);
+			scoreTxt = new TextField(300,40,"","Verdana",30,0xffffff);
 			this.addChild(scoreTxt);
 			scoreTxt.hAlign = HAlign.CENTER;
 			scoreTxt.x = GameInstance.instance.sceneWidth - scoreTxt.width >> 1;
 			scoreTxt.y = maxScoreTxt.y + 50;
 			
-			returnBtn = new TextField(100,40,Language.FANHUI,"Verdana",30,0);
+			returnBtn = new TextField(100,40,Language.FANHUI,"Verdana",30,0xffffff);
 			this.addChild(returnBtn);
 			returnBtn.x = (GameInstance.instance.sceneWidth >> 1) - 250;
 			returnBtn.y = scoreTxt.y + 100;
 			
-			againBtn = new TextField(100,40,Language.CHONGLAI,"Verdana",30,0);
+			againBtn = new TextField(100,40,Language.CHONGLAI,"Verdana",30,0xffffff);
 			this.addChild(againBtn);
 			againBtn.x = (GameInstance.instance.sceneWidth >> 1) + 150;
 			againBtn.y = returnBtn.y ;
 			
-			xuanYaoBtn = new TextField(100,40,Language.XUANYAO,"Verdana",30,0);
+			xuanYaoBtn = new TextField(100,40,Language.XUANYAO,"Verdana",30,0xffffff);
 			this.addChild(xuanYaoBtn);
 			xuanYaoBtn.x = GameInstance.instance.sceneWidth - xuanYaoBtn.width >> 1;
 			xuanYaoBtn.y = returnBtn.y ;

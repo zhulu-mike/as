@@ -1,7 +1,12 @@
 package managers
 {
+	import flash.display.BitmapData;
+	
 	import br.com.stimuli.loading.BulkLoader;
 	
+	import configs.GameInstance;
+	
+	import starling.textures.Texture;
 	import starling.utils.AssetManager;
 
 	public class ResManager
@@ -26,5 +31,6 @@ package managers
 		
 		public static const BEYOND_MAX:String = BASE + "win.mp3";
 		public static const GAME_OVER:String = BASE + "gameover.mp3";
+		public static var backGroundBmd:BitmapData;
 	}
 }

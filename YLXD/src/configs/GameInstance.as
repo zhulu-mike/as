@@ -63,5 +63,10 @@ package configs
 		
 		public var introduceTime:int = 0;
 		
+		public var currentSpeed:int = 5;
+		
+		public static const WUDITIME:int = 5000;
+		public static const WUDISPEED:int = 10;
+		
 	}
 }
