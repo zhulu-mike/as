@@ -2,16 +2,24 @@ package modules.scene.views
 {
 	import com.mike.utils.MathUtil;
 	
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
+	import flash.utils.getTimer;
+	
 	import configs.GameInstance;
 	import configs.PlayerState;
+	import configs.PlayerStatus;
 	
 	import managers.DoorUtil;
+	import managers.GameUtil;
 	
 	import starling.animation.Transitions;
 	import starling.animation.Tween;
 	import starling.core.Starling;
 	import starling.display.MovieClip;
 	import starling.display.Sprite;
+	import starling.text.TextField;
+	import starling.utils.HAlign;
 	
 	public class MainPlayer extends Sprite
 	{
@@ -20,6 +28,11 @@ package modules.scene.views
 		private var currIndex:int = 0;
 		public var state:int = 1;
 		private var frameSpeed:int = 12;
+		private var words:TextField;
+		private var lastSpeakTime:int = 0;
+		private const SPEAKTIME:int = 3000;
+		private const SPEAK_DELAY_TIME:int = 3000;
+		private var _playerStatus:int = PlayerStatus.COMMON;
 		
 		public function MainPlayer()
 		{
@@ -29,16 +42,19 @@ package modules.scene.views
 			shape.play();
 			Starling.juggler.add(shape);
 			this.addChild(shape);
+			
+			timer.addEventListener(TimerEvent.TIMER, onTimer);
 		}
 		
 		public function updateState():void
 		{
 			currIndex++;
 			currIndex = currIndex >= states.length ? 0 : currIndex;
-			shape.removeFromParent(true);
-			state = states[currIndex];
+			shape.removeFromParent(false);
 			shape.stop();
 			Starling.juggler.remove(shape);
+			DoorUtil.recyclePlayerMC(state, shape);
+			state = states[currIndex];
 			shape = DoorUtil.getPlayerMC(state);
 			shape.currentFrame = 0;
 			shape.fps = frameSpeed;
@@ -57,6 +73,8 @@ package modules.scene.views
 		
 		public function flyOut(h:int):void
 		{
+			hideSpeak();
+			timer.stop();
 			var tween:Tween = new Tween(this,0.8,Transitions.EASE_OUT);
 			Starling.juggler.add(tween);
 			tween.animate("y", h);
@@ -68,9 +86,91 @@ package modules.scene.views
 		
 		public function destroy():void
 		{
-			this.removeFromParent();
-			DoorUtil.recyclePlayerMC(state, shape);
+			if (this.parent)
+			{
+				this.removeFromParent();
+				DoorUtil.recyclePlayerMC(state, shape);
+				timer.stop();
+				timer.removeEventListener(TimerEvent.TIMER, onTimer);
+				timer = null;
+			}
 		}
 		
+		public function update():void
+		{
+			if (_playerStatus != PlayerStatus.WUDI && (words == null || words.parent == null))
+			{
+				if (Math.random()*1000 > 950 && getTimer() - lastSpeakTime > SPEAK_DELAY_TIME)
+				{
+					speak();
+				}
+			}else if (words && words.parent && getTimer() - lastSpeakTime > SPEAKTIME){
+				hideSpeak();
+			}
+		}
+		
+		private function speak(s:String=null):void
+		{
+			var str:String = s || GameUtil.randomPlayerWord();
+			if (words == null)
+			{
+				words = new TextField(100,60,str,"Verdana",15,0xffffff);
+				words.hAlign = HAlign.CENTER;
+				this.addChild(words);
+				words.x = this.reallyWidth - words.width >> 1;
+				words.y = -words.height - 10;
+			}else{
+				this.addChild(words);
+				words.text = str;
+			}
+			lastSpeakTime = getTimer();
+		}
+		
+		private function hideSpeak():void
+		{
+			lastSpeakTime = getTimer();
+			this.removeChild(words);
+		}
+		
+		public function get reallyWidth():int
+		{
+			return shape.width;
+		}
+		public function get reallyHeight():int
+		{
+			return shape.height;
+		}
+
+		public function get playerStatus():int
+		{
+			return _playerStatus;
+		}
+
+		private var timer:Timer = new Timer(1000,int.MAX_VALUE);
+		private var wuDiCount:int = 0;
+		public function set playerStatus(value:int):void
+		{
+			_playerStatus = value;
+			if (value == PlayerStatus.WUDI)
+			{
+				wuDiCount = GameInstance.WUDITIME;
+				timer.reset();
+				timer.start();
+				wuDiCount = 5;
+				speak(Language.WUDIWORDS.replace("$COUNT",wuDiCount));
+			}
+		}
+
+		private function onTimer(e:TimerEvent):void
+		{
+			if (wuDiCount < 0)
+			{
+				hideSpeak();
+				timer.stop();
+				return;
+			}
+			wuDiCount--;
+			speak(Language.WUDIWORDS.replace("$COUNT",wuDiCount));
+		}
 	}
 }

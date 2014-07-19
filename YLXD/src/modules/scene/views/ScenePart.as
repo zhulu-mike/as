@@ -1,9 +1,12 @@
 package modules.scene.views
 {
+	import flash.utils.getTimer;
 	import flash.utils.setTimeout;
 	
 	import configs.GameInstance;
+	import configs.GamePattern;
 	import configs.GameState;
+	import configs.PlayerStatus;
 	
 	import events.GameEvent;
 	
@@ -83,6 +86,19 @@ package modules.scene.views
 		{
 			super.sceneSpeed = value;
 			GameInstance.instance.currentSpeed = value;
+		}
+		
+		override protected function doWhenpass(door:Door):void
+		{
+			super.doWhenpass(door);
+			if (door.isReverse && mainPlayer.playerStatus == PlayerStatus.COMMON && GameInstance.instance.pattern != GamePattern.NIXIANG)
+			{
+				//加速
+				mainPlayer.playerStatus = PlayerStatus.WUDI
+				lastWuDiTime = getTimer();
+				sceneSpeed += GameInstance.WUDISPEED;
+				mainPlayer.setSpeed(sceneSpeed);
+			}
 		}
 		
 	}

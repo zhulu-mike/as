@@ -41,5 +41,13 @@ package
 		public static const QUXIAO:String = "取消";
 		
 		public static const ZHIZUOREN:String = "制作人：王江林";
+		
+		public static const NIXIANGWORDS:String = "赢了我开启5秒无敌模式哦";
+		public static const WUDIWORDS:String = "无敌模式，冲啊！$COUNT";
+		
+		public static const PLAYER_WORDS:Array = ["我有一只小毛驴，我从来也不骑......","我打赌你要出剪刀！",
+												  "噢，好难猜啊！","二货主人太菜了！"];
+		public static const MONSTER_WORDS:Array = ["我这辈子还没输过","你是我的小呀小苹果儿","我要把你踢下去",
+			"我的个乖乖啊，无敌了","我想要个妹子"];
 	}
 }

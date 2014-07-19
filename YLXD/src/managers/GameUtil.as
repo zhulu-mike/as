@@ -58,5 +58,14 @@ package managers
 				return PlayerState.RECT;
 		}
 		
+		public static function randomPlayerWord():String
+		{
+			return Language.PLAYER_WORDS[int(Math.random()*(Language.PLAYER_WORDS.length-1))];
+		}
+		public static function randomMonsterWord():String
+		{
+			return Language.MONSTER_WORDS[Math.random()*(Language.MONSTER_WORDS.length-1)];
+		}
+		
 	}
 }

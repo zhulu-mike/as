@@ -1,6 +1,8 @@
 package
 {
 	import com.freshplanet.ane.AirAlert.AirAlert;
+	import com.mike.utils.FlashStatus;
+	import com.mike.utils.ShareManager;
 	
 	import flash.desktop.NativeApplication;
 	import flash.display.Sprite;
@@ -31,7 +33,6 @@ package
 	
 	import managers.GameUtil;
 	import managers.ResManager;
-	import com.mike.utils.ShareManager;
 	
 	import modules.mainui.views.WorkRoomIntroduce;
 	
@@ -98,6 +99,7 @@ package
 				BaiDu.getInstance().setKeys("ac15d8a4","ac15d8a4");// BaiDu.getInstance().setKeys("appsid","计费id");
 				BaiDu.getInstance().cacheInterstitial();
 			}
+			trace(Capabilities.screenResolutionX,Capabilities.screenResolutionY);
 			EventCenter.instance.addEventListener(GameEvent.STARLING_CREATE, onStarlingCreated);
 			var rect:Rectangle = new Rectangle(0,0,Capabilities.screenResolutionX,Capabilities.screenResolutionY);
 			Starling.handleLostContext = true;
@@ -105,6 +107,9 @@ package
 			app.start();
 			loadRes(null);
 			initData();
+			var fs:FlashStatus = new FlashStatus();
+			addChild(fs);
+			fs.init(stage);
 		}
 		
 		

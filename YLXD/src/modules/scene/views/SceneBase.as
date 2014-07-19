@@ -1,20 +1,17 @@
 package modules.scene.views
 {
 	import flash.utils.getTimer;
-	import flash.utils.setTimeout;
 	
 	import configs.GameInstance;
 	import configs.GamePattern;
-	import configs.GameState;
 	import configs.PlayerState;
+	import configs.PlayerStatus;
 	
-	import events.GameEvent;
-	
-	import managers.GameUtil;
 	import managers.LogManager;
 	import managers.ResManager;
 	import managers.SoundManager;
 	
+	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
@@ -34,10 +31,11 @@ package modules.scene.views
 		protected var scoreTxt:TextField;
 		public var gameOver:TextField;
 		public var end:Boolean = false;
-		protected var inWuDi:Boolean = false;
 		private var _sceneSpeed:int = 5;
 		protected var lastWuDiTime:int = 0;
 		private var _sceneScore:int = 0;
+		protected var pauseBtn:Image;
+		protected var isPause:Boolean = false;
 		
 		public function SceneBase($sceneHeight:int)
 		{
@@ -68,7 +66,7 @@ package modules.scene.views
 		{
 			var touchs:Vector.<Touch> = event.touches;
 			var touch:Touch = touchs[0];
-			if (touch.phase == TouchPhase.ENDED && touch.target == this && !this.end)
+			if (touch.phase == TouchPhase.ENDED && touch.target == this && !this.end && !this.isPause)
 			{
 				LogManager.logTrace("改变状态"+touch.id+touch.target);
 				mainPlayer.updateState();
@@ -77,14 +75,17 @@ package modules.scene.views
 		
 		public function update():void
 		{
+			if (isPause)
+				return;
 			if (end){
-				inWuDi = false;
+				mainPlayer.playerStatus = PlayerStatus.COMMON;
 				return;
 			}
-			if (inWuDi && getTimer() - lastWuDiTime >= GameInstance.WUDITIME)
+			if (mainPlayer.playerStatus == PlayerStatus.WUDI && getTimer() - lastWuDiTime >= GameInstance.WUDITIME)
 			{
 				cancelWuDi();
 			}
+			mainPlayer.update();
 			updateDoorList();
 			isHit();
 			needMakeDoor();
@@ -95,7 +96,7 @@ package modules.scene.views
 		{
 			var speed:int = int(sceneScore / 100);
 			speed = speed > 5 ? 5 : speed;
-			if (!inWuDi)
+			if (mainPlayer.playerStatus == PlayerStatus.COMMON)
 				sceneSpeed  = GameInstance.INIT_SPEED + speed;
 			else
 				sceneSpeed  = GameInstance.INIT_SPEED + speed+ GameInstance.WUDISPEED;
@@ -103,7 +104,7 @@ package modules.scene.views
 		
 		protected function cancelWuDi():void
 		{
-			inWuDi = false;
+			mainPlayer.playerStatus = PlayerStatus.COMMON;
 			sceneSpeed -= GameInstance.WUDISPEED;
 			mainPlayer.setSpeed(sceneSpeed);
 		}
@@ -131,7 +132,7 @@ package modules.scene.views
 			var winState:int;
 			for each (door in doorList)
 			{
-				if (!door.passed && door.x <= mainPlayer.x + mainPlayer.width)
+				if (!door.passed && door.x <= mainPlayer.x + mainPlayer.reallyWidth)
 				{
 					door.passed = true;
 					if (!door.isReverse){
@@ -141,17 +142,10 @@ package modules.scene.views
 						winState = door.state + 1;
 						winState = winState > PlayerState.TRIANGLE ? PlayerState.RECT : winState;
 					}
-					if (inWuDi || winState == mainPlayer.state){
+					if (mainPlayer.playerStatus == PlayerStatus.WUDI || winState == mainPlayer.state){
 						SoundManager.playSound(ResManager.PASS_SOUND);
 						_sceneScore += 1;
-						if (door.isReverse && !inWuDi)
-						{
-							//加速
-							inWuDi = true;
-							lastWuDiTime = getTimer();
-							sceneSpeed += GameInstance.WUDISPEED;
-							mainPlayer.setSpeed(sceneSpeed);
-						}
+						doWhenpass(door);
 						scoreTxt.text = Language.DEFEN.replace("$SCORE",sceneScore);
 						GameInstance.instance.score += 1;
 					}else
@@ -163,6 +157,11 @@ package modules.scene.views
 					}
 				}
 			}
+		}
+		
+		protected function doWhenpass(door:Door):void
+		{
+			
 		}
 		
 		private function needMakeDoor():void
@@ -202,7 +201,7 @@ package modules.scene.views
 			door.speed = sceneSpeed;
 			doorList.push(door);
 			door.x = GameInstance.instance.sceneWidth-door.width;
-			door.y = mainPlayer.y + mainPlayer.height - (door.height * 0.5);
+			door.y = mainPlayer.y + mainPlayer.reallyHeight - (door.height * 0.5);
 		}
 		
 		protected function endGame():void

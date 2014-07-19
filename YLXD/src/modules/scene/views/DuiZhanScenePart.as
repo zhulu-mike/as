@@ -1,6 +1,10 @@
 package modules.scene.views
 {
+	import flash.utils.getTimer;
+	
 	import configs.GameInstance;
+	import configs.GamePattern;
+	import configs.PlayerStatus;
 	
 	import events.GameEvent;
 	
@@ -27,6 +31,17 @@ package modules.scene.views
 			EventCenter.instance.dispatchGameEvent(GameEvent.CHECK_RACE_END);
 		}
 		
-		
+		override protected function doWhenpass(door:Door):void
+		{
+			super.doWhenpass();
+			if (door.isReverse && mainPlayer.playerStatus == PlayerStatus.COMMON)
+			{
+				//加速
+				mainPlayer.playerStatus = PlayerStatus.WUDI;
+				lastWuDiTime = getTimer();
+				sceneSpeed += GameInstance.WUDISPEED;
+				mainPlayer.setSpeed(sceneSpeed);
+			}
+		}
 	}
 }

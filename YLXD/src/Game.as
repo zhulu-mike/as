@@ -21,6 +21,7 @@ package
 	import so.cuo.platform.baidu.BaiDuAdEvent;
 	import so.cuo.platform.baidu.RelationPosition;
 	
+	import starling.core.Starling;
 	import starling.display.Image;
 	import starling.display.QuadBatch;
 	import starling.display.Sprite;
@@ -31,6 +32,7 @@ package
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
 	import starling.utils.AssetManager;
+	import starling.utils.SystemUtil;
 	
 	public class Game extends Sprite
 	{

@@ -13,7 +13,7 @@ package managers
 				var i:int = 0;
 				for (i;i<1;i++)
 				{
-					freePools.push(new MovieClip(ResManager.assetsManager.getTextures("player1")));
+					freePools.push(new MovieClip(ResManager.assetsManager.getTextures("player3")));
 				}
 			}
 		}
