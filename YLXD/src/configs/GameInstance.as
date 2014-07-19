@@ -45,7 +45,7 @@ package configs
 		/**
 		 * 剩下几局显示大屏广告
 		 */		
-		public var leftShowFullAd:int = 10;
+		public var leftShowFullAd:int = 5;
 		/**
 		 *每10局显示一次 
 		 */		
@@ -67,6 +67,10 @@ package configs
 		
 		public static const WUDITIME:int = 5000;
 		public static const WUDISPEED:int = 10;
+		/**
+		 * 加速度
+		 */		
+		public static const ACCERATE_SPEED:Number = 0.1333333333;
 		
 	}
 }

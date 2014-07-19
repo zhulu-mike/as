@@ -1,6 +1,7 @@
 package
 {
 	
+	import flash.utils.getTimer;
 	import flash.utils.setTimeout;
 	
 	import configs.GameInstance;
@@ -9,6 +10,7 @@ package
 	
 	import events.GameEvent;
 	
+	import managers.BackGroundFactory;
 	import managers.GameUtil;
 	import managers.ResManager;
 	
@@ -21,7 +23,6 @@ package
 	import so.cuo.platform.baidu.BaiDuAdEvent;
 	import so.cuo.platform.baidu.RelationPosition;
 	
-	import starling.core.Starling;
 	import starling.display.Image;
 	import starling.display.QuadBatch;
 	import starling.display.Sprite;
@@ -32,7 +33,6 @@ package
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
 	import starling.utils.AssetManager;
-	import starling.utils.SystemUtil;
 	
 	public class Game extends Sprite
 	{
@@ -52,9 +52,11 @@ package
 		
 		private function onRender(event:Event):void
 		{
+//			var t:int = getTimer();
 			gameScene.update();
 			if (showBG)
 				backgroundUpdate();
+//			trace("背景耗时"+(getTimer() - t));
 		}
 		
 		private function backgroundUpdate():void
@@ -68,6 +70,7 @@ package
 				img = bgImages[i];
 				if (img.x+img.width <= 0)
 				{
+					BackGroundFactory.getInstance().recycleShape(img)
 					img.removeFromParent();
 					bgImages.splice(i,1);
 					len--;
@@ -119,7 +122,8 @@ package
 			
 			music = new Image(ResManager.assetsManager.getTextureAtlas(ResManager.YLXD_NAME).getTexture("btn_sound_on.png"));
 			this.addChild(music);
-			music.x = stage.stageWidth - music.width - 10;
+			music.x = stage.stageWidth - music.width - 20;
+			music.y = 10;
 			music.addEventListener(TouchEvent.TOUCH, onTouchMusic);
 		}
 		
@@ -139,11 +143,13 @@ package
 			}
 			while (GameInstance.instance.sceneWidth > totalWidth)
 			{
-				img = new Image(ResManager.assetsManager.getTexture("background"));
+				img = BackGroundFactory.getInstance().getShape();
 				bg.addImage(img);
 				bgImages.push(img);
 				img.x = totalWidth;
+				trace("创建背景",totalWidth,img.x);
 				totalWidth += img.width;
+				
 			}
 		}
 		
@@ -313,9 +319,15 @@ package
 			{
 				gameOverPanel.maxScoreTxt.visible = true;
 				gameOverPanel.scoreTxt.visible = true;
+				gameOverPanel.img.visible = false;
+				gameOverPanel.returnBtn.y = gameOverPanel.scoreTxt.y+ 100;
+				gameOverPanel.againBtn.y = gameOverPanel.xuanYaoBtn.y = gameOverPanel.returnBtn.y;
 				gameOverPanel.scoreTxt.text = Language.FENSHU.replace("$SCORE",GameInstance.instance.score);
 				gameOverPanel.maxScoreTxt.text = Language.MAX_SCORE.replace("$SCORE",GameUtil.getMaxScore(GameInstance.instance.pattern));
 			}else{
+				gameOverPanel.img.visible = true;
+				gameOverPanel.returnBtn.y = gameOverPanel.img.y+ gameOverPanel.img.height + 20;
+				gameOverPanel.againBtn.y = gameOverPanel.xuanYaoBtn.y = gameOverPanel.returnBtn.y;
 				gameOverPanel.maxScoreTxt.visible = false;
 				gameOverPanel.scoreTxt.visible = false;
 			}

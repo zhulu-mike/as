@@ -12,6 +12,7 @@ package modules.scene.views
 	
 	import managers.DoorUtil;
 	import managers.GameUtil;
+	import managers.ResManager;
 	
 	import starling.animation.Transitions;
 	import starling.animation.Tween;
@@ -33,10 +34,11 @@ package modules.scene.views
 		private const SPEAKTIME:int = 3000;
 		private const SPEAK_DELAY_TIME:int = 3000;
 		private var _playerStatus:int = PlayerStatus.COMMON;
+		private var wuDiEff:MovieClip;
 		
 		public function MainPlayer()
 		{
-			shape = DoorUtil.getPlayerMC(PlayerState.RECT);
+			shape = DoorUtil.getPlayerMC(PlayerState.STONE);
 			shape.loop = true;
 			shape.currentFrame = 0;
 			shape.play();
@@ -93,6 +95,12 @@ package modules.scene.views
 				timer.stop();
 				timer.removeEventListener(TimerEvent.TIMER, onTimer);
 				timer = null;
+				if (wuDiEff)
+				{
+					wuDiEff.removeFromParent();
+					Starling.juggler.remove(wuDiEff);
+					wuDiEff.dispose();
+				}
 			}
 		}
 		
@@ -114,7 +122,7 @@ package modules.scene.views
 			var str:String = s || GameUtil.randomPlayerWord();
 			if (words == null)
 			{
-				words = new TextField(100,60,str,"Verdana",15,0xffffff);
+				words = new TextField(150,80,str,"Verdana",18,0xffffff);
 				words.hAlign = HAlign.CENTER;
 				this.addChild(words);
 				words.x = this.reallyWidth - words.width >> 1;
@@ -150,7 +158,6 @@ package modules.scene.views
 		private var wuDiCount:int = 0;
 		public function set playerStatus(value:int):void
 		{
-			_playerStatus = value;
 			if (value == PlayerStatus.WUDI)
 			{
 				wuDiCount = GameInstance.WUDITIME;
@@ -158,7 +165,23 @@ package modules.scene.views
 				timer.start();
 				wuDiCount = 5;
 				speak(Language.WUDIWORDS.replace("$COUNT",wuDiCount));
+				if (wuDiEff == null)
+				{
+					wuDiEff = new MovieClip(ResManager.assetsManager.getTextures("wudieff"));
+					Starling.juggler.add(wuDiEff);
+					this.addChild(wuDiEff);
+					wuDiEff.loop = true;
+					wuDiEff.x = this.reallyWidth - wuDiEff.width >> 1;
+					wuDiEff.y = this.reallyHeight - wuDiEff.height >> 1;
+				}
+				wuDiEff.visible = true;
+				wuDiEff.play();
+			}else if (_playerStatus == PlayerStatus.WUDI)
+			{
+				wuDiEff.visible = false;
+				wuDiEff.stop();
 			}
+			_playerStatus = value;
 		}
 
 		private function onTimer(e:TimerEvent):void
@@ -171,6 +194,16 @@ package modules.scene.views
 			}
 			wuDiCount--;
 			speak(Language.WUDIWORDS.replace("$COUNT",wuDiCount));
+		}
+		
+		public function pause():void
+		{
+			shape.pause();
+		}
+		
+		public function restart():void
+		{
+			shape.play();
 		}
 	}
 }

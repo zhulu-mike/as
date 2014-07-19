@@ -50,12 +50,12 @@ package managers
 		 */		
 		public static function getReverseState(state:int):int
 		{
-			if (state == PlayerState.RECT)
-				return PlayerState.CIRCLE;
-			else if (state == PlayerState.CIRCLE)
-				return PlayerState.TRIANGLE;
+			if (state == PlayerState.STONE)
+				return PlayerState.JIANDAO;
+			else if (state == PlayerState.JIANDAO)
+				return PlayerState.BU;
 			else
-				return PlayerState.RECT;
+				return PlayerState.STONE;
 		}
 		
 		public static function randomPlayerWord():String

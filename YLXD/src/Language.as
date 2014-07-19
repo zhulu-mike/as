@@ -45,8 +45,8 @@ package
 		public static const NIXIANGWORDS:String = "赢了我开启5秒无敌模式哦";
 		public static const WUDIWORDS:String = "无敌模式，冲啊！$COUNT";
 		
-		public static const PLAYER_WORDS:Array = ["我有一只小毛驴，我从来也不骑......","我打赌你要出剪刀！",
-												  "噢，好难猜啊！","二货主人太菜了！"];
+		public static const PLAYER_WORDS:Array = ["反转模式好难啊","别忘了分享给你的小伙伴哦","点击屏幕切换我的手型","分数超过50后猜赢红色手型可得到5秒的无敌时间哦","遇到红色手型，要比它小才能赢哦！","我今天还没赢过，好衰啊！",
+												  "我喜欢妹子，你呢？","我有一只小毛驴，我从来也不骑......","二货主人太菜了！","呵呵！","我一直说的不停，主人你烦吗？",""];
 		public static const MONSTER_WORDS:Array = ["我这辈子还没输过","你是我的小呀小苹果儿","我要把你踢下去",
 			"我的个乖乖啊，无敌了","我想要个妹子"];
 	}

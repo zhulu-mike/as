@@ -5,18 +5,16 @@ package modules.scene.views
 	import managers.DoorUtil;
 	import managers.ResManager;
 	
-	import starling.animation.Juggler;
 	import starling.animation.Transitions;
 	import starling.animation.Tween;
 	import starling.core.Starling;
-	import starling.display.DisplayObject;
 	import starling.display.Image;
 	import starling.display.Sprite;
 	
 	public class Door extends Sprite
 	{
 		
-		private var shape:DisplayObject; 
+		private var shape:Image; 
 		
 		public var state:int = 0;
 		
@@ -70,6 +68,7 @@ package modules.scene.views
 		
 		public function flyOut():void
 		{
+			dizuo.removeFromParent();
 			var tween:Tween = new Tween(this,1,Transitions.EASE_OUT);
 			tween.onComplete = flyComplete;
 //			tween.animate("scaleX",0);
@@ -83,7 +82,16 @@ package modules.scene.views
 		
 		private function flyComplete():void
 		{
-			this.removeFromParent();
+			destroy();
+		}
+		
+		public function destroy():void
+		{
+			if (this.parent)
+			{
+				this.removeFromParent();
+				DoorUtil.recycleDoorShape(shape,state,isReverse);
+			}
 		}
 	}
 }

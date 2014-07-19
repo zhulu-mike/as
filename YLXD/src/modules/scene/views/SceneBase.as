@@ -11,8 +11,12 @@ package modules.scene.views
 	import managers.ResManager;
 	import managers.SoundManager;
 	
+	import starling.core.Starling;
 	import starling.display.Image;
+	import starling.display.MovieClip;
+	import starling.display.Quad;
 	import starling.display.Sprite;
+	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
@@ -36,37 +40,74 @@ package modules.scene.views
 		private var _sceneScore:int = 0;
 		protected var pauseBtn:Image;
 		protected var isPause:Boolean = false;
+		protected var doorLayer:Sprite;
+		protected var addSpeed:int = 0;//增加的速度
+		protected var firstLayer:Sprite;
+		private var interactiveLayer:Quad;
 		
 		public function SceneBase($sceneHeight:int)
 		{
 			sceneHeight = $sceneHeight;
-			touchGroup = true;
+//			touchGroup = true;
 			doorList = new Vector.<Door>();
 			
+			interactiveLayer = new Quad(GameInstance.instance.sceneWidth,$sceneHeight,0xffffff);
+			interactiveLayer.alpha = 0;
+			this.addChildAt(interactiveLayer,0);
+			
+			firstLayer = new Sprite();
+			firstLayer.touchable = false;
+			this.addChild(firstLayer);
+			
 			mainPlayer = new MainPlayer();
-			this.addChild(mainPlayer);
+			firstLayer.addChild(mainPlayer);
 			mainPlayer.x = 100;
+			mainPlayer.y = $sceneHeight * 0.6875 - mainPlayer.height;
+			
+			doorLayer = new Sprite();
+			firstLayer.addChild(doorLayer);
 			
 			scoreTxt = new TextField(300,40,Language.DEFEN.replace("$SCORE",0),"Verdana",24,0xffffff,true);
 			scoreTxt.hAlign = HAlign.CENTER;
 			scoreTxt.vAlign = VAlign.CENTER;
-			this.addChild(scoreTxt);
+			firstLayer.addChild(scoreTxt);
 			scoreTxt.x = GameInstance.instance.sceneWidth - scoreTxt.width >> 1;
 			gameOver = new TextField(300,40,Language.JIESHU,"Verdana",20,0xffffff);
 			
-			this.addChild(gameOver);
+			firstLayer.addChild(gameOver);
 			gameOver.visible = false;
 			gameOver.x = GameInstance.instance.sceneWidth - gameOver.width >> 1;
 			gameOver.y = this.sceneHeight - gameOver.height >> 1;
-			this.addEventListener(TouchEvent.TOUCH, onTouch);
+			interactiveLayer.addEventListener(TouchEvent.TOUCH, onTouch);
 			
+			pauseBtn = new Image(ResManager.assetsManager.getTexture("pausebutton"));
+			this.addChild(pauseBtn);
+			pauseBtn.x = GameInstance.instance.sceneWidth - pauseBtn.width - 80;
+			pauseBtn.y = 10;
+			pauseBtn.addEventListener(TouchEvent.TOUCH, onTouchPause);
+		}
+		
+		private function onTouchPause(e:TouchEvent):void
+		{
+			var touchs:Vector.<Touch> = e.touches;
+			var touch:Touch = touchs[0];
+			if (touch.phase == TouchPhase.ENDED && !this.end)
+			{
+				if (isPause)
+				{
+					restart();
+				}else{
+					pauseGame();
+				}
+			}
+			e.stopImmediatePropagation();
 		}
 		
 		protected function onTouch(event:TouchEvent):void
 		{
 			var touchs:Vector.<Touch> = event.touches;
 			var touch:Touch = touchs[0];
-			if (touch.phase == TouchPhase.ENDED && touch.target == this && !this.end && !this.isPause)
+			if (touch.phase == TouchPhase.ENDED  && touch.target == interactiveLayer && !this.end && !this.isPause)
 			{
 				LogManager.logTrace("改变状态"+touch.id+touch.target);
 				mainPlayer.updateState();
@@ -75,38 +116,54 @@ package modules.scene.views
 		
 		public function update():void
 		{
+//			var t:int = getTimer();
 			if (isPause)
 				return;
 			if (end){
 				mainPlayer.playerStatus = PlayerStatus.COMMON;
 				return;
 			}
+			doUpdate();
 			if (mainPlayer.playerStatus == PlayerStatus.WUDI && getTimer() - lastWuDiTime >= GameInstance.WUDITIME)
 			{
 				cancelWuDi();
 			}
 			mainPlayer.update();
+//			t = getTimer();
 			updateDoorList();
+//			t = getTimer();
 			isHit();
+//			trace("碰撞检测耗时"+(getTimer() - t));
+//			t = getTimer();
 			needMakeDoor();
 			needAddSpeed();
+//			trace("场景耗时"+(getTimer() - t));
+		}
+		
+		protected function doUpdate():void
+		{
+			
 		}
 		
 		private function needAddSpeed():void
 		{
 			var speed:int = int(sceneScore / 100);
 			speed = speed > 5 ? 5 : speed;
-			if (mainPlayer.playerStatus == PlayerStatus.COMMON)
+			if (mainPlayer.playerStatus == PlayerStatus.COMMON){
 				sceneSpeed  = GameInstance.INIT_SPEED + speed;
-			else
-				sceneSpeed  = GameInstance.INIT_SPEED + speed+ GameInstance.WUDISPEED;
+				mainPlayer.setSpeed(sceneSpeed);
+			}else{
+				var c:int = Math.round((getTimer() - lastWuDiTime)/16.6666);
+				c = c > 150 ? (150 - c + 150) : c;
+				addSpeed = GameInstance.ACCERATE_SPEED * c;
+				sceneSpeed  = GameInstance.INIT_SPEED + speed+ addSpeed;
+			}
 		}
 		
 		protected function cancelWuDi():void
 		{
 			mainPlayer.playerStatus = PlayerStatus.COMMON;
-			sceneSpeed -= GameInstance.WUDISPEED;
-			mainPlayer.setSpeed(sceneSpeed);
+			addSpeed = 0;
 		}
 		
 		protected function updateDoorList():void
@@ -135,16 +192,17 @@ package modules.scene.views
 				if (!door.passed && door.x <= mainPlayer.x + mainPlayer.reallyWidth)
 				{
 					door.passed = true;
+					playHitEffect();
 					if (!door.isReverse){
 						winState = door.state - 1;
-						winState = winState < PlayerState.RECT ? PlayerState.TRIANGLE : winState;
+						winState = winState < PlayerState.STONE ? PlayerState.BU : winState;
 					}else{
 						winState = door.state + 1;
-						winState = winState > PlayerState.TRIANGLE ? PlayerState.RECT : winState;
+						winState = winState > PlayerState.BU ? PlayerState.STONE : winState;
 					}
 					if (mainPlayer.playerStatus == PlayerStatus.WUDI || winState == mainPlayer.state){
 						SoundManager.playSound(ResManager.PASS_SOUND);
-						_sceneScore += 1;
+						sceneScore += 1;
 						doWhenpass(door);
 						scoreTxt.text = Language.DEFEN.replace("$SCORE",sceneScore);
 						GameInstance.instance.score += 1;
@@ -186,7 +244,7 @@ package modules.scene.views
 			if (sceneScore > 50 && GameInstance.instance.pattern != GamePattern.NIXIANG)
 			{
 				//50关后，有反转率
-				var reverse:int = int(sceneScore / 50)*10 ;
+				var reverse:int = int(sceneScore / 50)*5 ;
 				reverse = reverse > 30 ? 30 : reverse;
 				var random:int = Math.random() * 100;
 				if (random <= reverse){
@@ -197,7 +255,7 @@ package modules.scene.views
 				needReverse = true;
 			}
 			var door:Door = new Door(state,needReverse);
-			this.addChild(door);
+			doorLayer.addChild(door);
 			door.speed = sceneSpeed;
 			doorList.push(door);
 			door.x = GameInstance.instance.sceneWidth-door.width;
@@ -222,6 +280,12 @@ package modules.scene.views
 		public function destroy():void
 		{
 			mainPlayer.destroy();
+			var door:Door;
+			for each (door in doorList)
+			{
+				door.destroy();
+			}
+			doorList.length = 0;
 		}
 
 		public function get sceneSpeed():int
@@ -233,6 +297,44 @@ package modules.scene.views
 		{
 			_sceneSpeed = value;
 		}
-
+		
+		private var pauseTime:int = 0;
+		private function pauseGame():void
+		{
+			isPause = true;
+			mainPlayer.pause();
+			pauseTime = getTimer();
+			pauseBtn.texture = ResManager.assetsManager.getTexture("playbutton");
+		}
+		
+		private function restart():void
+		{
+			isPause = false;
+			mainPlayer.restart();
+			lastWuDiTime += (getTimer() - pauseTime);
+			pauseBtn.texture = ResManager.assetsManager.getTexture("pausebutton");
+		}
+		
+		protected function playHitEffect():void
+		{
+			var eff:MovieClip = new MovieClip(ResManager.assetsManager.getTextures("hit"),10);
+			eff.loop = false;
+			firstLayer.addChild(eff);
+			Starling.juggler.add(eff);
+			eff.play();
+			eff.x = this.mainPlayer.x + this.mainPlayer.reallyWidth * 0.5;
+			eff.y = this.mainPlayer.y - 20;
+			eff.addEventListener(Event.COMPLETE, onPlayerComplete);
+		}
+		
+		private function onPlayerComplete(e:Event):void
+		{
+			var eff:MovieClip = e.currentTarget as MovieClip;
+			firstLayer.removeChild(eff);
+			Starling.juggler.remove(eff);
+			eff.dispose();
+		}
+		
+		
 	}
 }

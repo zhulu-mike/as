@@ -27,16 +27,17 @@ package modules.scene.views
 		{
 			super($sceneHeight);
 			
-			bg = new Quad(GameInstance.instance.sceneWidth,$sceneHeight,0xffffff);
-			bg.alpha = 0;
-			this.addChild(bg);
+//			bg = new Quad(GameInstance.instance.sceneWidth,$sceneHeight,0xffffff);
+//			bg.alpha = 0;
+//			this.addChildAt(bg,0);
 			scoreTxt.y = 60;
-			mainPlayer.y = 330 - mainPlayer.height;
+//			mainPlayer.y = 330 - mainPlayer.height;
 			
 			maxScoreTxt = new TextField(300,40,"","Verdana",24,0x89c997);
 			this.addChild(maxScoreTxt);
 			maxScoreTxt.x = GameInstance.instance.sceneWidth - maxScoreTxt.width >> 1;
 			maxScoreTxt.y = 0;
+			maxScoreTxt.touchable = false;
 			
 			showMaxScore();
 		}
@@ -94,10 +95,11 @@ package modules.scene.views
 			if (door.isReverse && mainPlayer.playerStatus == PlayerStatus.COMMON && GameInstance.instance.pattern != GamePattern.NIXIANG)
 			{
 				//加速
-				mainPlayer.playerStatus = PlayerStatus.WUDI
+				addSpeed = 0;
+				mainPlayer.playerStatus = PlayerStatus.WUDI;
 				lastWuDiTime = getTimer();
-				sceneSpeed += GameInstance.WUDISPEED;
-				mainPlayer.setSpeed(sceneSpeed);
+//				sceneSpeed += GameInstance.WUDISPEED;
+//				mainPlayer.setSpeed(sceneSpeed);
 			}
 		}
 		

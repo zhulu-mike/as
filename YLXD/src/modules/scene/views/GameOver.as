@@ -1,19 +1,13 @@
 package modules.scene.views
 {
-	import com.mike.weixin.MicroMessage;
-	
-	import cn.sharesdk.ane.PlatformID;
-	import cn.sharesdk.ane.ShareMenuArrowDirection;
-	import cn.sharesdk.ane.ShareSDKExtension;
-	import cn.sharesdk.ane.ShareType;
+	import com.mike.utils.ShareManager;
 	
 	import configs.GameInstance;
 	import configs.GameState;
 	
 	import events.GameEvent;
 	
-	import managers.GameUtil;
-	import com.mike.utils.ShareManager;
+	import managers.ResManager;
 	
 	import so.cuo.platform.baidu.BaiDu;
 	
@@ -23,7 +17,6 @@ package modules.scene.views
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.text.TextField;
-	import starling.textures.Texture;
 	import starling.utils.HAlign;
 	
 	public class GameOver extends Sprite
@@ -35,6 +28,7 @@ package modules.scene.views
 		public var returnBtn:TextField;
 		public var againBtn:TextField;
 		public var xuanYaoBtn:TextField;
+		public var img:Image;
 		
 		
 		public function GameOver()
@@ -56,6 +50,12 @@ package modules.scene.views
 			scoreTxt.hAlign = HAlign.CENTER;
 			scoreTxt.x = GameInstance.instance.sceneWidth - scoreTxt.width >> 1;
 			scoreTxt.y = maxScoreTxt.y + 50;
+			
+			img = new Image(ResManager.assetsManager.getTexture("duizhan_bg"));
+			this.addChild(img);
+			img.visible = false;
+			img.x = GameInstance.instance.sceneWidth - img.width >> 1;
+			img.y = patternTxt.y + 50;
 			
 			returnBtn = new TextField(100,40,Language.FANHUI,"Verdana",30,0xffffff);
 			this.addChild(returnBtn);

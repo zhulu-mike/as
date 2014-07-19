@@ -11,6 +11,7 @@ package
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
+	import flash.events.StageOrientationEvent;
 	import flash.geom.Rectangle;
 	import flash.system.Capabilities;
 	import flash.system.System;
@@ -99,9 +100,13 @@ package
 				BaiDu.getInstance().setKeys("ac15d8a4","ac15d8a4");// BaiDu.getInstance().setKeys("appsid","计费id");
 				BaiDu.getInstance().cacheInterstitial();
 			}
-			trace(Capabilities.screenResolutionX,Capabilities.screenResolutionY);
 			EventCenter.instance.addEventListener(GameEvent.STARLING_CREATE, onStarlingCreated);
-			var rect:Rectangle = new Rectangle(0,0,Capabilities.screenResolutionX,Capabilities.screenResolutionY);
+			trace(stage.orientation,Capabilities.screenResolutionX,Capabilities.screenResolutionY);
+			var rect:Rectangle ;
+			if (stage.orientation != StageOrientation.ROTATED_RIGHT)
+				rect = new Rectangle(0,0,Capabilities.screenResolutionY,Capabilities.screenResolutionX);
+			else
+				rect = new Rectangle(0,0,Capabilities.screenResolutionX,Capabilities.screenResolutionY);
 			Starling.handleLostContext = true;
 			app = new Starling(Game,stage,rect,null,"auto","auto");
 			app.start();
@@ -110,8 +115,8 @@ package
 			var fs:FlashStatus = new FlashStatus();
 			addChild(fs);
 			fs.init(stage);
+			trace(getTimer());
 		}
-		
 		
 		protected function onStarlingCreated(event:GameEvent):void
 		{

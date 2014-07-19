@@ -7,7 +7,6 @@ package modules.scene.views
 	
 	import events.GameEvent;
 	
-	import managers.GameUtil;
 	import managers.ResManager;
 	import managers.SoundManager;
 	
@@ -18,7 +17,6 @@ package modules.scene.views
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
-	import starling.text.TextField;
 	
 	public class GameScene extends Sprite
 	{

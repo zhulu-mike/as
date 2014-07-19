@@ -8,13 +8,13 @@ package configs
 		{
 		}
 		
-		public static const RECT:int = 1;
+		public static const STONE:int = 1;
 		
-		public static const CIRCLE:int = 2;
+		public static const JIANDAO:int = 2;
 		
-		public static const TRIANGLE:int = 3;
+		public static const BU:int = 3;
 		
-		public static var stateList:Array = [RECT,CIRCLE,TRIANGLE];
+		public static var stateList:Array = [STONE,JIANDAO,BU];
 		
 		public static function randomState():int
 		{
