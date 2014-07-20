@@ -42,7 +42,7 @@ package modules.mainui.views
 		
 		public function resize(w:int, h:int):void
 		{
-			this.graphics.beginFill(0xffffff);
+			this.graphics.beginFill(0xcccccc);
 			this.graphics.drawRect(0,0,w,h);
 			this.graphics.endFill();
 			container.x = w - container.width >> 1;

@@ -72,5 +72,7 @@ package configs
 		 */		
 		public static const ACCERATE_SPEED:Number = 0.1333333333;
 		
+		public var gameState:int = 0;
+		
 	}
 }

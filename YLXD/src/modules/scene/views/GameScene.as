@@ -1,6 +1,8 @@
 package modules.scene.views
 {
 	
+	import flash.utils.getTimer;
+	
 	import configs.GameInstance;
 	import configs.GamePattern;
 	import configs.GameState;
@@ -13,6 +15,7 @@ package modules.scene.views
 	import so.cuo.platform.baidu.BaiDu;
 	import so.cuo.platform.baidu.RelationPosition;
 	
+	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
@@ -24,6 +27,7 @@ package modules.scene.views
 		
 		
 		private var middleLayer:Sprite;
+		private var pauseBtn:Image;
 		
 		public function GameScene()
 		{
@@ -33,9 +37,52 @@ package modules.scene.views
 			middleLayer = new Sprite();
 			this.addChild(middleLayer);
 			
+			pauseBtn = new Image(ResManager.assetsManager.getTexture("pausebutton"));
+			this.addChild(pauseBtn);
+			pauseBtn.x = GameInstance.instance.sceneWidth - pauseBtn.width - 150;
+			pauseBtn.y = 10;
+			pauseBtn.addEventListener(TouchEvent.TOUCH, onTouchPause);
 		}
 		
+		private function onTouchPause(e:TouchEvent):void
+		{
+			var touchs:Vector.<Touch> = e.touches;
+			var touch:Touch = touchs[0];
+			if (touch.phase == TouchPhase.ENDED && GameInstance.instance.gameState != GameState.OVER)
+			{
+				if (GameInstance.instance.gameState == GameState.PAUSE)
+				{
+					restart();
+				}else{
+					pauseGame();
+				}
+			}
+			e.stopImmediatePropagation();
+		}
 		
+		private function pauseGame():void
+		{
+			GameInstance.instance.gameState = GameState.PAUSE;
+			pauseBtn.texture = ResManager.assetsManager.getTexture("playbutton");
+			EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.PAUSE});
+			var s:SceneBase;
+			for each (s in sceneList)
+			{
+				s.pauseGame();
+			}
+		}
+		
+		private function restart():void
+		{
+			GameInstance.instance.gameState = GameState.CONTINUE
+			pauseBtn.texture = ResManager.assetsManager.getTexture("pausebutton");
+			EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.CONTINUE});
+			var s:SceneBase;
+			for each (s in sceneList)
+			{
+				s.restart();
+			}
+		}
 		
 		public var sceneList:Vector.<SceneBase> = new Vector.<SceneBase>();
 		
@@ -124,6 +171,7 @@ package modules.scene.views
 					sceneList[0].gameOver.text = Language.WOSHULE;
 					sceneList[1].gameOver.text = Language.YINGLE;
 				}
+				GameInstance.instance.gameState = GameState.OVER;
 				this.addEventListener(TouchEvent.TOUCH, onTouch);
 			}
 		}

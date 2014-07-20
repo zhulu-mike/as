@@ -97,6 +97,7 @@ package modules.scene.views
 			var totalWidth:int = 0;
 			for (;i<len;i++)
 			{
+				trace(img.x);
 				img = bgImages[i];
 				if (img.x < 0)
 					totalWidth += (img.width + img.x);

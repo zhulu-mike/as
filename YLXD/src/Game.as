@@ -232,6 +232,7 @@ package
 		public function gameStateChange(data:Object):void
 		{
 			var state:int = data.state;
+			GameInstance.instance.gameState = state;
 			switch (state)
 			{
 				case GameState.BEGIN:
@@ -241,15 +242,27 @@ package
 					gameRun(data.pattern);
 					break;
 				case GameState.PAUSE:
+					pauseGame();
 					break;
 				case GameState.OVER:
 					endGame();
 					break;
 				case GameState.CONTINUE:
+					continueGame();
 					break;
 				default:
 					break;
 			}
+		}
+		
+		private function continueGame():void
+		{
+			this.addEventListener(Event.ENTER_FRAME, onRender);
+		}
+		
+		private function pauseGame():void
+		{
+			this.removeEventListener(Event.ENTER_FRAME, onRender);
 		}
 		
 		private function begin():void
@@ -275,17 +288,10 @@ package
 		
 		private function endGame():void
 		{
+			GameInstance.instance.gameState = GameState.OVER;
 			this.removeEventListener(Event.ENTER_FRAME, onRender);
 			beginLater();
-			GameInstance.instance.leftShowFullAd--;
-			if (GameInstance.instance.leftShowFullAd <= 0)
-			{
-				if (BaiDu.getInstance().isInterstitialReady())
-				{
-					//延迟1秒显示
-					setTimeout(showFullAdvise,1000);
-				}
-			}
+			GameUtil.showFullSceenAd();
 		}
 		/**
 		 * 显示全屏广告
@@ -293,21 +299,10 @@ package
 		 */		
 		private function showFullAdvise():void
 		{
-			BaiDu.getInstance().showInterstitial();
-			BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialDismiss, onCloseFullAd);
-			GameInstance.instance.leftShowFullAd = GameInstance.FULLE_AD;
+			
 		}
 		
-		/**
-		 * 关闭全屏广告后，再次缓冲 
-		 * @param event
-		 * 
-		 */		
-		protected function onCloseFullAd(event:BaiDuAdEvent):void
-		{
-			BaiDu.getInstance().removeEventListener(BaiDuAdEvent.onInterstitialDismiss, onCloseFullAd);
-			BaiDu.getInstance().cacheInterstitial();
-		}
+		
 		
 		private function beginLater():void
 		{
@@ -326,7 +321,7 @@ package
 				gameOverPanel.maxScoreTxt.text = Language.MAX_SCORE.replace("$SCORE",GameUtil.getMaxScore(GameInstance.instance.pattern));
 			}else{
 				gameOverPanel.img.visible = true;
-				gameOverPanel.returnBtn.y = gameOverPanel.img.y+ gameOverPanel.img.height + 20;
+				gameOverPanel.returnBtn.y = gameOverPanel.img.y+ gameOverPanel.img.height + 30;
 				gameOverPanel.againBtn.y = gameOverPanel.xuanYaoBtn.y = gameOverPanel.returnBtn.y;
 				gameOverPanel.maxScoreTxt.visible = false;
 				gameOverPanel.scoreTxt.visible = false;

@@ -3,6 +3,8 @@ package com.mike.utils
 	import cn.sharesdk.ane.ShareMenuArrowDirection;
 	import cn.sharesdk.ane.ShareSDKExtension;
 	import cn.sharesdk.ane.ShareType;
+	
+	import configs.GameInstance;
 
 	public class ShareManager
 	{
@@ -57,8 +59,8 @@ package com.mike.utils
 		{
 			var shareParams:Object = new Object();
 			shareParams.title = "真疯狂猜你妹";
-			shareParams.text = "我再《真疯狂猜你妹》中得到了100分，谁敢一战？下载地址：http://www.baidu.com";
-			shareParams.site = "疯狂猜你妹";
+			shareParams.text = "我在《真疯狂猜你妹》中得到了"+GameInstance.instance.score+"分，谁敢一战？下载地址：http://www.baidu.com";
+			shareParams.site = "真疯狂猜你妹";
 			shareParams.url = "http://www.baidu.com";
 			shareParams.description = "真疯狂猜你妹";
 			shareParams.imagePath = AirUtil.screenShotAndSave();
