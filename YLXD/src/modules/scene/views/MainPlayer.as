@@ -186,7 +186,7 @@ package modules.scene.views
 
 		private function onTimer(e:TimerEvent):void
 		{
-			if (wuDiCount < 0)
+			if (wuDiCount <= 0)
 			{
 				hideSpeak();
 				timer.stop();

@@ -19,16 +19,15 @@ package modules.mainui.views
 			
 			var bp:Bitmap = new Bitmap(new GameInstance.instance.LOG_CLASS().bitmapData);
 			container.addChild(bp);
-			bp.x = 500 - bp.width >> 1;
 			
-			var desc:TextField = new TextField();
-			desc.width = 500;
-			desc.wordWrap = true;
-			desc.y = bp.height + 20;
-			desc.defaultTextFormat = new TextFormat(null,30,0,null,null,null,null,null,"center");
-			desc.text = Language.WORKROOM_DESC2;
-			desc.height = desc.textHeight + 10;
-			container.addChild(desc);
+//			var desc:TextField = new TextField();
+//			desc.width = 500;
+//			desc.wordWrap = true;
+//			desc.y = bp.height + 20;
+//			desc.defaultTextFormat = new TextFormat(null,30,0,null,null,null,null,null,"center");
+//			desc.text = Language.WORKROOM_DESC2;
+//			desc.height = desc.textHeight + 10;
+//			container.addChild(desc);
 			
 //			var author:TextField = new TextField();
 //			author.width = 500;

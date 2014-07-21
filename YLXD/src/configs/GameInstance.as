@@ -49,9 +49,9 @@ package configs
 		/**
 		 *每10局显示一次 
 		 */		
-		public static const FULLE_AD:int = 10;
+		public static const FULLE_AD:int = 20;
 		
-		public static const INIT_SPEED:int = 5;
+		public static const INIT_SPEED:int = 10;
 		
 		public var soundEnable:Boolean = true;
 		

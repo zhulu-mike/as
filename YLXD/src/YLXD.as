@@ -11,10 +11,8 @@ package
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
-	import flash.events.StageOrientationEvent;
 	import flash.geom.Rectangle;
 	import flash.system.Capabilities;
-	import flash.system.System;
 	import flash.ui.Keyboard;
 	import flash.ui.Multitouch;
 	import flash.ui.MultitouchInputMode;
@@ -49,7 +47,7 @@ package
 		[Embed(source="assets/ylxd.png")]
 		public var YlxdBmd:Class;
 		
-		[Embed(source="assets/icon_128x128.png")]
+		[Embed(source="assets/logo.png")]
 		public var LogAsset:Class;
 		
 		public function YLXD()
@@ -92,7 +90,6 @@ package
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
 			ShareManager.instance.init();
 			GameInstance.instance.LOG_CLASS = LogAsset;
-			showIntroduce();
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			GameInstance.instance.YLXD_CLASS = YlxdBmd;
 			if (BaiDu.getInstance().supportDevice)
@@ -103,19 +100,25 @@ package
 			EventCenter.instance.addEventListener(GameEvent.STARLING_CREATE, onStarlingCreated);
 			trace(stage.orientation,Capabilities.screenResolutionX,Capabilities.screenResolutionY);
 			var rect:Rectangle ;
-			if (stage.orientation != StageOrientation.ROTATED_RIGHT)
+			if (stage.orientation != StageOrientation.ROTATED_RIGHT){
+				GameInstance.instance.sceneWidth = Capabilities.screenResolutionY;
+				GameInstance.instance.sceneHeight = Capabilities.screenResolutionX;
 				rect = new Rectangle(0,0,Capabilities.screenResolutionY,Capabilities.screenResolutionX);
-			else
+			}else{
+				GameInstance.instance.sceneWidth = Capabilities.screenResolutionX;
+				GameInstance.instance.sceneHeight = Capabilities.screenResolutionY;
 				rect = new Rectangle(0,0,Capabilities.screenResolutionX,Capabilities.screenResolutionY);
+			}
+			showIntroduce();
 			Starling.handleLostContext = true;
 			app = new Starling(Game,stage,rect,null,"auto","auto");
 			app.start();
 			loadRes(null);
 			initData();
-			var fs:FlashStatus = new FlashStatus();
-			addChild(fs);
-			fs.init(stage);
-			trace(getTimer());
+//			var fs:FlashStatus = new FlashStatus();
+//			addChild(fs);
+//			fs.init(stage);
+//			trace(getTimer());
 		}
 		
 		protected function onStarlingCreated(event:GameEvent):void
@@ -130,7 +133,7 @@ package
 		private function showIntroduce():void
 		{
 			_introduce = new WorkRoomIntroduce();
-			_introduce.resize(Capabilities.screenResolutionX,Capabilities.screenResolutionY);
+			_introduce.resize(GameInstance.instance.sceneWidth,GameInstance.instance.sceneHeight);
 			this.addChild(_introduce);
 			setTimeout(starGame, 2000);
 		}

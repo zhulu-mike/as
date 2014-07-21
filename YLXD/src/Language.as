@@ -28,7 +28,7 @@ package
 		
 		public static const ADVISE_DESC:String = "杭州鲲鹏游戏工作室出品";
 		
-		public static const WORKROOM_DESC:String = "杭州鲲鹏游戏工作室\n专注于为互联网世界提供多彩体验！";
+		public static const WORKROOM_DESC:String = "专注于为互联网世界提供多彩体验！";
 		public static const WORKROOM_DESC2:String = "鲲鹏游戏";
 		
 		public static const FANHUI:String = "返回";
@@ -40,7 +40,7 @@ package
 		public static const QUEDING:String = "确定";
 		public static const QUXIAO:String = "取消";
 		
-		public static const ZHIZUOREN:String = "制作人：王江林";
+		public static const ZHIZUOREN:String = "产品制作人：王江林 \n美术制作人：止戈blue";
 		
 		public static const NIXIANGWORDS:String = "赢了我开启5秒无敌模式哦";
 		public static const WUDIWORDS:String = "无敌模式，冲啊！$COUNT";
