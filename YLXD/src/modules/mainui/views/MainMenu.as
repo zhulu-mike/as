@@ -2,8 +2,12 @@ package modules.mainui.views
 {
 	import configs.GameInstance;
 	
+	import managers.ResManager;
+	
+	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.text.TextField;
+	import starling.utils.AssetManager;
 	import starling.utils.HAlign;
 	import starling.utils.VAlign;
 	
@@ -15,6 +19,7 @@ package modules.mainui.views
 		public var duizhan:TextField;
 		public var scoreTtx:TextField;
 		public var desc:TextField;
+		private var log:Image;
 		
 		public function MainMenu()
 		{
@@ -49,10 +54,17 @@ package modules.mainui.views
 			duizhan.y = niXiangTxt.y + 60;
 			duizhan.x = GameInstance.instance.sceneWidth - duizhan.width >> 1;
 			
-			desc = new TextField(300,40,Language.ADVISE_DESC,"Verdana",15,0xffffff);
+			log = new Image(ResManager.assetsManager.getTexture("logo32"));
+			this.addChild(log);
+			log.x = 5;
+			log.y = 5;
+			
+			desc = new TextField(300,32,Language.ADVISE_DESC,"Verdana",15,0xffffff);
 			desc.hAlign = HAlign.LEFT;
+			desc.vAlign = VAlign.CENTER;
 			this.addChild(desc);
-			desc.y = 0;
+			desc.y = log.y;
+			desc.x = log.width + 5;
 			new MainMenuController(this);
 		}
 	}

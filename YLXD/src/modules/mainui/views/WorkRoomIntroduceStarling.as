@@ -15,6 +15,7 @@ package modules.mainui.views
 		
 		public function WorkRoomIntroduceStarling(w:int, h:int)
 		{
+			this.touchGroup = true;
 			bg = new Quad(w,h,0xcccccc);
 			this.addChild(bg);
 			

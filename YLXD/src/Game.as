@@ -136,6 +136,7 @@ package
 			for (;i<len;i++)
 			{
 				img = bgImages[i];
+				trace(img.x);
 				if (img.x < 0)
 					totalWidth += (img.width + img.x);
 				else
@@ -147,7 +148,6 @@ package
 				bg.addImage(img);
 				bgImages.push(img);
 				img.x = totalWidth;
-				trace("创建背景",totalWidth,img.x);
 				totalWidth += img.width;
 				
 			}
