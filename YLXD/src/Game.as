@@ -23,6 +23,7 @@ package
 	import so.cuo.platform.baidu.BaiDuAdEvent;
 	import so.cuo.platform.baidu.RelationPosition;
 	
+	import starling.display.BlendMode;
 	import starling.display.Image;
 	import starling.display.QuadBatch;
 	import starling.display.Sprite;
@@ -32,6 +33,7 @@ package
 	import starling.events.TouchPhase;
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
+	import starling.textures.TextureSmoothing;
 	import starling.utils.AssetManager;
 	
 	public class Game extends Sprite
@@ -43,6 +45,7 @@ package
 		private var firstLayer:Sprite;
 		private var secondeLayer:Sprite;
 		private var showBG:Boolean = true;
+		private var bgItem:Image;
 		
 		public function Game()
 		{
@@ -63,21 +66,21 @@ package
 		{
 			bg.reset();
 			var i:int = 0, len:int = bgImages.length;
-			var img:Image;
+			var img:Object;
 			var totalWidth:int = 0;
 			for (;i<len;i++)
 			{
 				img = bgImages[i];
-				if (img.x+img.width <= 0)
+				if (img.x+img.width-GameInstance.instance.currentSpeed <= 0)
 				{
-					BackGroundFactory.getInstance().recycleShape(img)
-					img.removeFromParent();
 					bgImages.splice(i,1);
 					len--;
 					i--;
 				}else{
 					img.x -= GameInstance.instance.currentSpeed;
-					bg.addImage(img);
+					bgItem.x = img.x;
+					bg.addImage(bgItem);
+//					trace(bgItem.x);
 				}
 			}
 			createBackground();
@@ -113,9 +116,9 @@ package
 			
 			bg = new QuadBatch();
 			firstLayer.addChild(bg);
+			bgItem = BackGroundFactory.getInstance().getShape();
+			bgItem.height = GameInstance.instance.sceneHeight;
 			createBackground();
-			bg.width = GameInstance.instance.sceneWidth;
-			bg.height = GameInstance.instance.sceneHeight;
 			
 			secondeLayer = new Sprite();
 			this.addChild(secondeLayer);
@@ -130,25 +133,31 @@ package
 		private var bgImages:Array = [];
 		private function createBackground():void
 		{
+//			bgItem.x = -400;
+//			bg.addImage(bgItem);
+//			bgItem.x = 410;
+//			bg.addImage(bgItem);
+//
+//			return;
 			var i:int = 0, len:int = bgImages.length;
-			var img:Image;
+			var img:Object;
 			var totalWidth:int = 0;
 			for (;i<len;i++)
 			{
 				img = bgImages[i];
-				trace(img.x);
 				if (img.x < 0)
 					totalWidth += (img.width + img.x);
 				else
 					totalWidth += img.width;
 			}
+			var itemW:int = bgItem.width;
 			while (GameInstance.instance.sceneWidth > totalWidth)
 			{
-				img = BackGroundFactory.getInstance().getShape();
-				bg.addImage(img);
-				bgImages.push(img);
-				img.x = totalWidth;
-				totalWidth += img.width;
+				
+				bgItem.x = totalWidth;
+				bg.addImage(bgItem);
+				bgImages.push({x:totalWidth, width:itemW});
+				totalWidth += itemW;
 				
 			}
 		}

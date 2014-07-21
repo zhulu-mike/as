@@ -16,12 +16,17 @@ package modules.scene.views
 	{
 		
 		private var bg:QuadBatch;
+		private var bgItem:Image;
+		private var bgItemWidth:int;
 		
 		public function DuiZhanScenePart($sceneHeight:int)
 		{
 			super($sceneHeight);
 			bg = new QuadBatch();
 			this.addChildAt(bg,0);
+			bgItem = BackGroundFactory.getInstance().getShape();
+			bgItem.height = sceneHeight;
+			bgItemWidth = bgItem.width;
 			scoreTxt.y = 30;
 		}
 		
@@ -54,36 +59,28 @@ package modules.scene.views
 			super.destroy();
 			bg.reset();
 			bg.removeFromParent();
-			var i:int = 0, len:int = bgImages.length;
-			var img:Image;
-			for (;i<len;i++)
-			{
-				img = bgImages[i];
-				if (img.parent)
-					img.removeFromParent();
-				BackGroundFactory.getInstance().recycleShape(img);
-			}
+			bgImages.length = 0;
+			BackGroundFactory.getInstance().recycleShape(bgItem);
 		}
 		
 		private function backgroundUpdate():void
 		{
 			bg.reset();
 			var i:int = 0, len:int = bgImages.length;
-			var img:Image;
+			var img:Object;
 			var totalWidth:int = 0;
 			for (;i<len;i++)
 			{
 				img = bgImages[i];
-				if (img.x+img.width <= 0)
+				if (img.x+img.width-sceneSpeed <= 0)
 				{
-					BackGroundFactory.getInstance().recycleShape(img)
-					img.removeFromParent();
 					bgImages.splice(i,1);
 					len--;
 					i--;
 				}else{
 					img.x -= sceneSpeed;
-					bg.addImage(img);
+					bgItem.x = img.x;
+					bg.addImage(bgItem);
 				}
 			}
 			createBackground();
@@ -93,12 +90,11 @@ package modules.scene.views
 		private function createBackground():void
 		{
 			var i:int = 0, len:int = bgImages.length;
-			var img:Image;
+			var img:Object;
 			var totalWidth:int = 0;
 			for (;i<len;i++)
 			{
 				img = bgImages[i];
-				trace(img.x);
 				if (img.x < 0)
 					totalWidth += (img.width + img.x);
 				else
@@ -106,12 +102,10 @@ package modules.scene.views
 			}
 			while (GameInstance.instance.sceneWidth > totalWidth)
 			{
-				img = BackGroundFactory.getInstance().getShape();
-				img.scaleY = sceneHeight / 480;
-				bg.addImage(img);
-				bgImages.push(img);
-				img.x = totalWidth;
-				totalWidth += img.width;
+				bgItem.x = totalWidth;
+				bg.addImage(bgItem);
+				bgImages.push({x:totalWidth,width:bgItemWidth});
+				totalWidth += bgItemWidth;
 			}
 		}
 	}
