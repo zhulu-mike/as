@@ -57,7 +57,7 @@ package modules.mainui.views
 			log = new Image(ResManager.assetsManager.getTexture("logo32"));
 			this.addChild(log);
 			log.x = 5;
-			log.y = 5;
+			log.y = 10;
 			
 			desc = new TextField(300,32,Language.ADVISE_DESC,"Verdana",15,0xffffff);
 			desc.hAlign = HAlign.LEFT;

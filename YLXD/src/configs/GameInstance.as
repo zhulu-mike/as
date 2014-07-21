@@ -49,7 +49,7 @@ package configs
 		/**
 		 *每10局显示一次 
 		 */		
-		public static const FULLE_AD:int = 10;
+		public static const FULLE_AD:int = 5;
 		
 		public static const INIT_SPEED:int = 5;
 		
@@ -66,7 +66,7 @@ package configs
 		public var currentSpeed:int = 5;
 		
 		public static const WUDITIME:int = 5000;
-		public static const WUDISPEED:int = 10;
+		public static const WUDISPEED:int = 20;
 		/**
 		 * 加速度
 		 */		
