@@ -4,6 +4,7 @@ package modules.scene.views
 	
 	import configs.GameInstance;
 	import configs.GamePattern;
+	import configs.GameState;
 	import configs.PlayerState;
 	import configs.PlayerStatus;
 	
@@ -38,8 +39,6 @@ package modules.scene.views
 		private var _sceneSpeed:int = 5;
 		protected var lastWuDiTime:int = 0;
 		private var _sceneScore:int = 0;
-		protected var pauseBtn:Image;
-		protected var isPause:Boolean = false;
 		protected var doorLayer:Sprite;
 		protected var addSpeed:int = 0;//增加的速度
 		protected var firstLayer:Sprite;
@@ -79,35 +78,15 @@ package modules.scene.views
 			gameOver.x = GameInstance.instance.sceneWidth - gameOver.width >> 1;
 			gameOver.y = this.sceneHeight - gameOver.height >> 1;
 			interactiveLayer.addEventListener(TouchEvent.TOUCH, onTouch);
-			
-			pauseBtn = new Image(ResManager.assetsManager.getTexture("pausebutton"));
-			this.addChild(pauseBtn);
-			pauseBtn.x = GameInstance.instance.sceneWidth - pauseBtn.width - 80;
-			pauseBtn.y = 10;
-			pauseBtn.addEventListener(TouchEvent.TOUCH, onTouchPause);
 		}
 		
-		private function onTouchPause(e:TouchEvent):void
-		{
-			var touchs:Vector.<Touch> = e.touches;
-			var touch:Touch = touchs[0];
-			if (touch.phase == TouchPhase.ENDED && !this.end)
-			{
-				if (isPause)
-				{
-					restart();
-				}else{
-					pauseGame();
-				}
-			}
-			e.stopImmediatePropagation();
-		}
+		
 		
 		protected function onTouch(event:TouchEvent):void
 		{
 			var touchs:Vector.<Touch> = event.touches;
 			var touch:Touch = touchs[0];
-			if (touch.phase == TouchPhase.ENDED  && touch.target == interactiveLayer && !this.end && !this.isPause)
+			if (touch.phase == TouchPhase.ENDED  && touch.target == interactiveLayer && !this.end && GameInstance.instance.gameState != GameState.PAUSE)
 			{
 				LogManager.logTrace("改变状态"+touch.id+touch.target);
 				mainPlayer.updateState();
@@ -117,7 +96,7 @@ package modules.scene.views
 		public function update():void
 		{
 //			var t:int = getTimer();
-			if (isPause)
+			if (GameInstance.instance.gameState == GameState.PAUSE)
 				return;
 			if (end){
 				mainPlayer.playerStatus = PlayerStatus.COMMON;
@@ -299,20 +278,16 @@ package modules.scene.views
 		}
 		
 		private var pauseTime:int = 0;
-		private function pauseGame():void
+		public function pauseGame():void
 		{
-			isPause = true;
 			mainPlayer.pause();
 			pauseTime = getTimer();
-			pauseBtn.texture = ResManager.assetsManager.getTexture("playbutton");
 		}
 		
-		private function restart():void
+		public function restart():void
 		{
-			isPause = false;
 			mainPlayer.restart();
 			lastWuDiTime += (getTimer() - pauseTime);
-			pauseBtn.texture = ResManager.assetsManager.getTexture("pausebutton");
 		}
 		
 		protected function playHitEffect():void
