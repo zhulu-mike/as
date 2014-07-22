@@ -94,7 +94,7 @@ package
 			GameInstance.instance.YLXD_CLASS = YlxdBmd;
 			if (BaiDu.getInstance().supportDevice)
 			{
-				BaiDu.getInstance().setKeys("ac15d8a4","ac15d8a4");// BaiDu.getInstance().setKeys("appsid","计费id");
+				BaiDu.getInstance().setKeys("debug","debug");// BaiDu.getInstance().setKeys("appsid","计费id");
 				BaiDu.getInstance().cacheInterstitial();
 			}
 			EventCenter.instance.addEventListener(GameEvent.STARLING_CREATE, onStarlingCreated);

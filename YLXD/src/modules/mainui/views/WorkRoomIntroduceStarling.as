@@ -16,7 +16,7 @@ package modules.mainui.views
 		public function WorkRoomIntroduceStarling(w:int, h:int)
 		{
 			this.touchGroup = true;
-			bg = new Quad(w,h,0xcccccc);
+			bg = new Quad(w,h,0x1b1b1b);
 			this.addChild(bg);
 			
 			container = new Sprite();
@@ -26,11 +26,11 @@ package modules.mainui.views
 			container.addChild(bp);
 			bp.x = 500 - bp.width >> 1;
 			
-			var desc:TextField = new TextField(500,40,Language.WORKROOM_DESC,"Verdana",30);
-			desc.y = bp.height + 20;
+			var desc:TextField = new TextField(500,40,Language.WORKROOM_DESC,"Verdana",30,0x00ffff);
+			desc.y = bp.height + 10;
 			container.addChild(desc);
 			
-			var author:TextField = new TextField(500,80,Language.ZHIZUOREN,"Verdana",30);
+			var author:TextField = new TextField(500,40,Language.ZHIZUOREN,"Verdana",20,0x89c997);
 			author.y = desc.y + desc.height + 20;
 			container.addChild(author);
 			

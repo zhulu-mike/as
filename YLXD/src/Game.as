@@ -164,6 +164,7 @@ package
 		
 		protected function onShowIntroduce(event:GameEvent):void
 		{
+			BaiDu.getInstance().hideBanner();
 			secondeLayer.addChild(introduce);
 		}
 		

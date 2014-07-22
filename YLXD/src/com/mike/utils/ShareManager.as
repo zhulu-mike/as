@@ -64,11 +64,11 @@ package com.mike.utils
 		public function xuanYao():void
 		{
 			var shareParams:Object = new Object();
-			shareParams.title = "真疯狂猜你妹";
-			shareParams.text = "我在《真疯狂猜你妹》中得到了"+GameInstance.instance.score+"分，谁敢一战？下载地址：http://www.baidu.com";
-			shareParams.site = "真疯狂猜你妹";
+			shareParams.title = "疯狂猜";
+			shareParams.text = "我在《疯狂猜》中得到了"+GameInstance.instance.score+"分，谁敢一战？下载地址：http://www.baidu.com";
+			shareParams.site = "疯狂猜";
 			shareParams.url = "http://www.baidu.com";
-			shareParams.description = "真疯狂猜你妹";
+			shareParams.description = "疯狂猜";
 			shareParams.imagePath = AirUtil.screenShotAndSave();
 			shareParams.type = ShareType.SHARE_WEBPAGE;
 			sdk.showShareMenu(null, shareParams, 0, 100, ShareMenuArrowDirection.Any);

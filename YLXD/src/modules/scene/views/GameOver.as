@@ -39,7 +39,7 @@ package modules.scene.views
 			patternTxt.x = GameInstance.instance.sceneWidth - patternTxt.width >> 1;
 			patternTxt.y = 10;
 			
-			maxScoreTxt = new TextField(300,40,"","Verdana",30,0xff0000);
+			maxScoreTxt = new TextField(300,40,"","Verdana",30,0x00ffff);
 			this.addChild(maxScoreTxt);
 			maxScoreTxt.hAlign = HAlign.CENTER;
 			maxScoreTxt.x = GameInstance.instance.sceneWidth - maxScoreTxt.width >> 1;
