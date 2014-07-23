@@ -59,5 +59,16 @@ package com.mike.utils
 			fs.close();
 			return img;
 		}
+		
+		/**
+		 * 根据字体大小判断文本框需要的高度
+		 * @param size
+		 * @return 
+		 * 
+		 */		
+		public static function getHeightByFontSize(size:Number):Number
+		{
+			return Math.ceil(size) + 5;
+		}
 	}
 }

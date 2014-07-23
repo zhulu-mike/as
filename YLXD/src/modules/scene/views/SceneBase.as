@@ -1,5 +1,7 @@
 package modules.scene.views
 {
+	import com.mike.utils.AirUtil;
+	
 	import flash.utils.getTimer;
 	
 	import configs.GameInstance;
@@ -13,7 +15,6 @@ package modules.scene.views
 	import managers.SoundManager;
 	
 	import starling.core.Starling;
-	import starling.display.Image;
 	import starling.display.MovieClip;
 	import starling.display.Quad;
 	import starling.display.Sprite;
@@ -46,6 +47,7 @@ package modules.scene.views
 		
 		public function SceneBase($sceneHeight:int)
 		{
+			var ratio:Number = GameInstance.instance.scaleRatio;
 			sceneHeight = $sceneHeight;
 //			touchGroup = true;
 			doorList = new Vector.<Door>();
@@ -60,19 +62,20 @@ package modules.scene.views
 			
 			mainPlayer = new MainPlayer();
 			firstLayer.addChild(mainPlayer);
-			mainPlayer.x = 100;
+			mainPlayer.x = 320*ratio;
 			mainPlayer.y = $sceneHeight * 0.6875 - mainPlayer.height;
 			
 			doorLayer = new Sprite();
 			firstLayer.addChild(doorLayer);
 			
-			scoreTxt = new TextField(300,40,Language.DEFEN.replace("$SCORE",0),"Verdana",24,0xffffff,true);
+			scoreTxt = new TextField(960*ratio,AirUtil.getHeightByFontSize(76*ratio),Language.DEFEN.replace("$SCORE",0),"Verdana",76*ratio,0xffffff,true);
 			scoreTxt.hAlign = HAlign.CENTER;
 			scoreTxt.vAlign = VAlign.CENTER;
 			firstLayer.addChild(scoreTxt);
 			scoreTxt.x = GameInstance.instance.sceneWidth - scoreTxt.width >> 1;
-			gameOver = new TextField(300,40,Language.JIESHU,"Verdana",20,0xffffff);
 			
+			
+			gameOver = new TextField(960*ratio,AirUtil.getHeightByFontSize(64*ratio),Language.JIESHU,"Verdana",64*ratio,0xffffff);
 			firstLayer.addChild(gameOver);
 			gameOver.visible = false;
 			gameOver.x = GameInstance.instance.sceneWidth - gameOver.width >> 1;
@@ -294,11 +297,12 @@ package modules.scene.views
 		{
 			var eff:MovieClip = new MovieClip(ResManager.assetsManager.getTextures("hit"),10);
 			eff.loop = false;
+			eff.scaleX = eff.scaleY = GameInstance.instance.scaleRatio;
 			firstLayer.addChild(eff);
 			Starling.juggler.add(eff);
 			eff.play();
 			eff.x = this.mainPlayer.x + this.mainPlayer.reallyWidth * 0.5;
-			eff.y = this.mainPlayer.y - 20;
+			eff.y = this.mainPlayer.y - 64*GameInstance.instance.scaleRatio;
 			eff.addEventListener(Event.COMPLETE, onPlayerComplete);
 		}
 		

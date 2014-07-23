@@ -26,8 +26,9 @@ package modules.scene.views
 			this.addChildAt(bg,0);
 			bgItem = BackGroundFactory.getInstance().getShape();
 			bgItem.height = sceneHeight;
-			bgItemWidth = bgItem.width;
+			bgItemWidth = bgItem.width-1;
 			scoreTxt.y = 30;
+//			createBackground();
 		}
 		
 		override protected function doUpdate():void
@@ -89,6 +90,12 @@ package modules.scene.views
 		private var bgImages:Array = [];
 		private function createBackground():void
 		{
+			
+//			bgItem.x = -400;
+//			bg.addImage(bgItem);
+//			bgItem.x = 399;
+//			bg.addImage(bgItem);
+//			return;
 			var i:int = 0, len:int = bgImages.length;
 			var img:Object;
 			var totalWidth:int = 0;

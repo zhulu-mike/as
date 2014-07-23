@@ -123,15 +123,15 @@
     <Facebook
         Id="8"
         SortId="8"
-        ConsumerKey="107704292745179"
-        ConsumerSecret="38053202e1a5fe26c80c753071f0b573"
+        ConsumerKey="296398530542978"
+        ConsumerSecret="b976649e5d1fd847207be2dfe6e53512"
         Enable="true" />
 
     <Twitter
         Id="9"
         SortId="9"
-        ConsumerKey="mnTGqtXk0TYMXYTN7qUxg"
-        ConsumerSecret="ROkFqr8c3m1HXqS3rm3TJ0WkAJuwBOSaWhPbZ9Ojuc"
+        ConsumerKey="mD9mW55adcHFhR57vdbJUaCag"
+        ConsumerSecret="tHppzvYXXzD5hzvUMUsWneImuKVqAlH2XpOyQeIKJnE3XuEio1"
         CallbackUrl="http://www.sharesdk.cn"
         Enable="true" />
 

@@ -39,6 +39,7 @@ package modules.scene.views
 		public function MainPlayer()
 		{
 			shape = DoorUtil.getPlayerMC(PlayerState.STONE);
+			shape.scaleX = shape.scaleY = GameInstance.instance.scaleRatio;
 			shape.loop = true;
 			shape.currentFrame = 0;
 			shape.play();
@@ -58,6 +59,7 @@ package modules.scene.views
 			DoorUtil.recyclePlayerMC(state, shape);
 			state = states[currIndex];
 			shape = DoorUtil.getPlayerMC(state);
+			shape.scaleX = shape.scaleY = GameInstance.instance.scaleRatio;
 			shape.currentFrame = 0;
 			shape.fps = frameSpeed;
 			this.addChild(shape);
@@ -122,7 +124,8 @@ package modules.scene.views
 			var str:String = s || GameUtil.randomPlayerWord();
 			if (words == null)
 			{
-				words = new TextField(150,80,str,"Verdana",18,0xffffff);
+				var ratio:Number = GameInstance.instance.scaleRatio;
+				words = new TextField(480*ratio,256*ratio,str,"Verdana",57*ratio,0xffffff);
 				words.hAlign = HAlign.CENTER;
 				this.addChild(words);
 				words.x = this.reallyWidth - words.width >> 1;
@@ -168,6 +171,7 @@ package modules.scene.views
 				if (wuDiEff == null)
 				{
 					wuDiEff = new MovieClip(ResManager.assetsManager.getTextures("wudieff"));
+					wuDiEff.scaleX = wuDiEff.scaleX = GameInstance.instance.scaleRatio;
 					Starling.juggler.add(wuDiEff);
 					this.addChild(wuDiEff);
 					wuDiEff.loop = true;

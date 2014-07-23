@@ -1,5 +1,7 @@
 package modules.scene.views
 {
+	import com.mike.utils.AirUtil;
+	
 	import flash.utils.getTimer;
 	import flash.utils.setTimeout;
 	
@@ -22,6 +24,7 @@ package modules.scene.views
 		private var bg:Quad;
 		private var beyondMax:Boolean = false;
 		private var maxScoreTxt:TextField;
+		private var ratio:Number = GameInstance.instance.scaleRatio;
 		
 		public function ScenePart($sceneHeight:int)
 		{
@@ -30,10 +33,10 @@ package modules.scene.views
 //			bg = new Quad(GameInstance.instance.sceneWidth,$sceneHeight,0xffffff);
 //			bg.alpha = 0;
 //			this.addChildAt(bg,0);
-			scoreTxt.y = 60;
+			scoreTxt.y = 0.125*GameInstance.instance.sceneHeight;
 //			mainPlayer.y = 330 - mainPlayer.height;
 			
-			maxScoreTxt = new TextField(300,40,"","Verdana",24,0x89c997);
+			maxScoreTxt = new TextField(500*ratio,AirUtil.getHeightByFontSize(76*ratio),"","Verdana",76*ratio,0x89c997);
 			this.addChild(maxScoreTxt);
 			maxScoreTxt.x = GameInstance.instance.sceneWidth - maxScoreTxt.width >> 1;
 			maxScoreTxt.y = 0;

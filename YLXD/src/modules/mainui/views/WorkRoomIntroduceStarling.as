@@ -1,5 +1,7 @@
 package modules.mainui.views
 {
+	import com.mike.utils.AirUtil;
+	
 	import configs.GameInstance;
 	
 	import starling.display.Image;
@@ -22,17 +24,26 @@ package modules.mainui.views
 			container = new Sprite();
 			this.addChild(container);
 			
+			var ratio:Number = GameInstance.instance.scaleRatio;
+			
 			var bp:Image = new Image(Texture.fromEmbeddedAsset(GameInstance.instance.LOG_CLASS));
 			container.addChild(bp);
-			bp.x = 500 - bp.width >> 1;
+			bp.scaleX = bp.scaleY = ratio;
+			var bw:Number = bp.width;
+			var nw:int = 1500*ratio;
+			bp.x = nw - bw >> 1;
 			
-			var desc:TextField = new TextField(500,40,Language.WORKROOM_DESC,"Verdana",30,0x00ffff);
-			desc.y = bp.height + 10;
+			var desc:TextField = new TextField(nw,AirUtil.getHeightByFontSize(94*ratio),Language.WORKROOM_DESC,"Verdana",94*ratio,0x00ffff);
+			desc.y = bp.height + 32*ratio;
 			container.addChild(desc);
 			
-			var author:TextField = new TextField(500,40,Language.ZHIZUOREN,"Verdana",20,0x89c997);
-			author.y = desc.y + desc.height + 20;
+			var author:TextField = new TextField(nw,AirUtil.getHeightByFontSize(64*ratio),Language.ZHIZUOREN,"Verdana",64*ratio,0x89c997);
+			author.y = desc.y + desc.height + 64*ratio;
 			container.addChild(author);
+			
+			var weibo:TextField = new TextField(nw,AirUtil.getHeightByFontSize(64*ratio),Language.WEIBO,"Verdana",64*ratio,0x89c997);
+			weibo.y = author.y + author.height + 64*ratio;
+			container.addChild(weibo);
 			
 			container.x = w - container.width >> 1;
 			container.y = h - container.height >> 1;

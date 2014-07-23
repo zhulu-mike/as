@@ -125,6 +125,7 @@ package
 			
 			music = new Image(ResManager.assetsManager.getTextureAtlas(ResManager.YLXD_NAME).getTexture("btn_sound_on.png"));
 			this.addChild(music);
+			music.scaleX = music.scaleY = GameInstance.instance.scaleRatio;
 			music.x = stage.stageWidth - music.width - 20;
 			music.y = 10;
 			music.addEventListener(TouchEvent.TOUCH, onTouchMusic);
@@ -225,6 +226,10 @@ package
 		{
 			if (_gameOverPanel == null){
 				_gameOverPanel = new GameOver();
+				var hh:Number = _gameOverPanel.height;
+				_gameOverPanel.y = GameInstance.instance.sceneHeight - hh >> 1;
+				if (GameInstance.instance.sceneHeight - (_gameOverPanel.y+hh) < 50)
+					_gameOverPanel.y = GameInstance.instance.sceneHeight - 50-hh;
 			}
 			return _gameOverPanel;
 		}
@@ -322,17 +327,9 @@ package
 			gameOverPanel.patternTxt.text = GameUtil.getPatternName(GameInstance.instance.pattern);
 			if (GameInstance.instance.pattern != GamePattern.FIGHT)
 			{
-				gameOverPanel.maxScoreTxt.visible = true;
-				gameOverPanel.scoreTxt.visible = true;
-				gameOverPanel.img.visible = false;
-				gameOverPanel.returnBtn.y = gameOverPanel.scoreTxt.y+ 100;
-				gameOverPanel.againBtn.y = gameOverPanel.xuanYaoBtn.y = gameOverPanel.returnBtn.y;
 				gameOverPanel.scoreTxt.text = Language.FENSHU.replace("$SCORE",GameInstance.instance.score);
 				gameOverPanel.maxScoreTxt.text = Language.MAX_SCORE.replace("$SCORE",GameUtil.getMaxScore(GameInstance.instance.pattern));
 			}else{
-				gameOverPanel.img.visible = true;
-				gameOverPanel.returnBtn.y = gameOverPanel.img.y+ gameOverPanel.img.height + 30;
-				gameOverPanel.againBtn.y = gameOverPanel.xuanYaoBtn.y = gameOverPanel.returnBtn.y;
 				gameOverPanel.maxScoreTxt.visible = false;
 				gameOverPanel.scoreTxt.visible = false;
 			}

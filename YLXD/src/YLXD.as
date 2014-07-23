@@ -1,7 +1,8 @@
 package
 {
 	import com.freshplanet.ane.AirAlert.AirAlert;
-	import com.mike.utils.FlashStatus;
+	import com.mike.utils.DeviceUtil;
+	import com.mike.utils.ResolutionUtil;
 	import com.mike.utils.ShareManager;
 	
 	import flash.desktop.NativeApplication;
@@ -11,6 +12,7 @@ package
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.system.Capabilities;
 	import flash.ui.Keyboard;
@@ -83,10 +85,13 @@ package
 		private function init(event:Event=null):void
 		{
 //			trace(getTimer());
+			GameInstance.instance.isIos = DeviceUtil.isIos();
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.frameRate = 60;
 			stage.setOrientation(StageOrientation.ROTATED_RIGHT);
+			ResolutionUtil.instance.init(new Point(2048,1536));
+			GameInstance.instance.scaleRatio = ResolutionUtil.instance.getBestRatio();
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
 			ShareManager.instance.init();
 			GameInstance.instance.LOG_CLASS = LogAsset;
@@ -100,17 +105,12 @@ package
 			EventCenter.instance.addEventListener(GameEvent.STARLING_CREATE, onStarlingCreated);
 			trace(stage.orientation,Capabilities.screenResolutionX,Capabilities.screenResolutionY);
 			var rect:Rectangle ;
-			if (stage.orientation != StageOrientation.ROTATED_RIGHT){
-				GameInstance.instance.sceneWidth = Capabilities.screenResolutionY;
-				GameInstance.instance.sceneHeight = Capabilities.screenResolutionX;
-				rect = new Rectangle(0,0,Capabilities.screenResolutionY,Capabilities.screenResolutionX);
-			}else{
-				GameInstance.instance.sceneWidth = Capabilities.screenResolutionX;
-				GameInstance.instance.sceneHeight = Capabilities.screenResolutionY;
-				rect = new Rectangle(0,0,Capabilities.screenResolutionX,Capabilities.screenResolutionY);
-			}
+			GameInstance.instance.sceneWidth = Math.max(Capabilities.screenResolutionY,Capabilities.screenResolutionX);
+			GameInstance.instance.sceneHeight = Math.min(Capabilities.screenResolutionY,Capabilities.screenResolutionX);
+			rect = new Rectangle(0,0,GameInstance.instance.sceneWidth,GameInstance.instance.sceneHeight);
 			showIntroduce();
-			Starling.handleLostContext = true;
+			if (!GameInstance.instance.isIos)
+				Starling.handleLostContext = true;
 			app = new Starling(Game,stage,rect,null,"auto","auto");
 			app.start();
 			loadRes(null);

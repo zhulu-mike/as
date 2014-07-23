@@ -39,7 +39,8 @@ package modules.scene.views
 			
 			pauseBtn = new Image(ResManager.assetsManager.getTexture("pausebutton"));
 			this.addChild(pauseBtn);
-			pauseBtn.x = GameInstance.instance.sceneWidth - pauseBtn.width - 150;
+			pauseBtn.scaleX = pauseBtn.scaleY = GameInstance.instance.scaleRatio;
+			pauseBtn.x = GameInstance.instance.sceneWidth - pauseBtn.width - GameInstance.instance.sceneWidth*0.2;
 			pauseBtn.y = 10;
 			pauseBtn.addEventListener(TouchEvent.TOUCH, onTouchPause);
 		}

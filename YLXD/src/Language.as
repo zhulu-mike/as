@@ -6,11 +6,11 @@ package
 		{
 		}
 		
-		public static const PUTONG:String = "普通";
+		public static const PUTONG:String = "普   通";
 		
-		public static const DUIZHAN:String = "对战";
+		public static const DUIZHAN:String = "对   战";
 		
-		public static const NIXIANG:String = "反转";
+		public static const NIXIANG:String = "反   转";
 		
 		public static const FENSHU:String = "本次得分：$SCORE";
 		
@@ -41,6 +41,7 @@ package
 		public static const QUXIAO:String = "取消";
 		
 		public static const ZHIZUOREN:String = "产品：王江林        美术：止戈blue";
+		public static const WEIBO:String = "新浪微博：杭州鲲鹏工作室";
 		
 		public static const NIXIANGWORDS:String = "赢了我开启5秒无敌模式哦";
 		public static const WUDIWORDS:String = "无敌模式，冲啊！$COUNT";

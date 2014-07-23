@@ -18,6 +18,8 @@ package configs
 			return _instance;
 		}
 		
+		public var isIos:Boolean = false;
+		
 		public var sceneWidth:int;
 		
 		public var sceneHeight:int;
@@ -47,7 +49,7 @@ package configs
 		 */		
 		public var leftShowFullAd:int = 5;
 		/**
-		 *每10局显示一次 
+		 *每5局显示一次 
 		 */		
 		public static const FULLE_AD:int = 5;
 		
@@ -73,6 +75,11 @@ package configs
 		public static const ACCERATE_SPEED:Number = 0.1333333333;
 		
 		public var gameState:int = 0;
+		
+		/**
+		 * 适应多分辨率，缩放资源大小
+		 */		
+		public var scaleRatio:Number = 1.0;
 		
 	}
 }
