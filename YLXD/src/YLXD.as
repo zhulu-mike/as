@@ -86,7 +86,7 @@ package
 			GameInstance.instance.isIos = DeviceUtil.isIos();
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
-			stage.frameRate = 60;
+			stage.frameRate = 30;
 			stage.setOrientation(StageOrientation.ROTATED_LEFT);
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
 			ResolutionUtil.instance.init(new Point(2048,1536));

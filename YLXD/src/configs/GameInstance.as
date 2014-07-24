@@ -53,7 +53,7 @@ package configs
 		 */		
 		public static const FULLE_AD:int = 5;
 		
-		public static const INIT_SPEED:int = 5;
+		public static const INIT_SPEED:int = 10;
 		
 		public var soundEnable:Boolean = true;
 		
@@ -72,7 +72,7 @@ package configs
 		/**
 		 * 加速度
 		 */		
-		public static const ACCERATE_SPEED:Number = 0.1333333333;
+		public static var  ACCERATE_SPEED:Number = 0.266666666;
 		
 		public var gameState:int = 0;
 		
