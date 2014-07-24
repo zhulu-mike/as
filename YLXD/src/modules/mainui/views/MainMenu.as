@@ -41,6 +41,7 @@ package modules.mainui.views
 			menuContainer.addChild(niXiangTxt);
 			niXiangTxt.y = beginTxt.y + beginTxt.height + 30;
 			
+			f = 120;
 			duizhan = new TextField(200,AirUtil.getHeightByFontSize(f),Language.DUIZHAN,"Verdaba",f,0xffffff);
 			duizhan.hAlign = HAlign.CENTER;
 			duizhan.vAlign = VAlign.CENTER;

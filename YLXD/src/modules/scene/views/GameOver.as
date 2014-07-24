@@ -101,7 +101,7 @@ package modules.scene.views
 			if (touch.phase == TouchPhase.ENDED)
 			{
 				this.removeFromParent();
-				BaiDu.getInstance().hideBanner();
+//				BaiDu.getInstance().hideBanner();
 				EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.RUNNING, pattern:GameInstance.instance.pattern});
 			}
 		}
@@ -112,7 +112,7 @@ package modules.scene.views
 			if (touch.phase == TouchPhase.ENDED)
 			{
 				this.removeFromParent();
-				BaiDu.getInstance().hideBanner();
+//				BaiDu.getInstance().hideBanner();
 				EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.BEGIN});
 			}
 		}

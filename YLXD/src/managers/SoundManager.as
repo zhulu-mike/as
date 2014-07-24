@@ -1,5 +1,7 @@
 package managers
 {
+	import com.mike.utils.SoundUtil;
+	
 	import flash.media.Sound;
 	import flash.net.URLRequest;
 	
@@ -15,8 +17,7 @@ package managers
 		{
 			if (!GameInstance.instance.soundEnable)
 				return;
-			var sound:Sound = new Sound(new URLRequest(url));
-			sound.play();
+			SoundUtil.playSound(url);
 		}
 	}
 }

@@ -75,13 +75,8 @@ package managers
 			GameInstance.instance.leftShowFullAd--;
 			if (GameInstance.instance.leftShowFullAd <= 0)
 			{
-				if (BaiDu.getInstance().isInterstitialReady())
-				{
-					//延迟1秒显示
-					BaiDu.getInstance().showInterstitial();
-					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialDismiss, onCloseFullAd);
-					GameInstance.instance.leftShowFullAd = GameInstance.FULLE_AD;
-				}
+				GameUtil.showFullSceenAd();
+				GameInstance.instance.leftShowFullAd = GameInstance.FULLE_AD;
 			}
 		}
 		
@@ -90,11 +85,11 @@ package managers
 		 * @param event
 		 * 
 		 */		
-		private static function onCloseFullAd(event:BaiDuAdEvent):void
+		/*private static function onCloseFullAd(event:BaiDuAdEvent):void
 		{
 			BaiDu.getInstance().removeEventListener(BaiDuAdEvent.onInterstitialDismiss, onCloseFullAd);
 			BaiDu.getInstance().cacheInterstitial();
-		}
+		}*/
 		
 	}
 }

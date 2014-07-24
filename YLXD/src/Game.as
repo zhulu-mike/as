@@ -101,7 +101,7 @@ package
 			ResManager.assetsManager = am;
 			am.addTexture("background",Texture.fromEmbeddedAsset(BackGroundBG));
 			ResManager.backGroundBmd = new BackGroundBG().bitmapData;
-			var ta:TextureAtlas = new TextureAtlas(Texture.fromEmbeddedAsset(GameInstance.instance.YLXD_CLASS),GameInstance.instance.YLXD_XML);
+			var ta:TextureAtlas = new TextureAtlas(Texture.fromBitmap(ResManager.resLoader.getContent(ResManager.YLXD)),GameInstance.instance.YLXD_XML);
 			am.addTextureAtlas(ResManager.YLXD_NAME,ta);
 			initUI();
 			EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.BEGIN});
@@ -165,7 +165,7 @@ package
 		
 		protected function onShowIntroduce(event:GameEvent):void
 		{
-			BaiDu.getInstance().hideBanner();
+//			BaiDu.getInstance().hideBanner();
 			secondeLayer.addChild(introduce);
 		}
 		
@@ -282,7 +282,7 @@ package
 		
 		private function begin():void
 		{
-			BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
+//			BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
 			secondeLayer.addChild(mainMenu);
 		}
 		
@@ -293,7 +293,7 @@ package
 		 */		
 		private function gameRun(pattern:int):void
 		{
-			BaiDu.getInstance().hideBanner();
+//			BaiDu.getInstance().hideBanner();
 			GameInstance.instance.score = 0;
 			GameInstance.instance.pattern = pattern;
 			secondeLayer.addChild(gameScene);
@@ -306,7 +306,7 @@ package
 			GameInstance.instance.gameState = GameState.OVER;
 			this.removeEventListener(Event.ENTER_FRAME, onRender);
 			beginLater();
-			GameUtil.showFullSceenAd();
+//			GameUtil.showFullSceenAd();
 		}
 		/**
 		 * 显示全屏广告
@@ -323,7 +323,7 @@ package
 		{
 			gameScene.removeFromParent();
 			secondeLayer.addChild(gameOverPanel);
-			BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
+//			BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
 			gameOverPanel.patternTxt.text = GameUtil.getPatternName(GameInstance.instance.pattern);
 			if (GameInstance.instance.pattern != GamePattern.FIGHT)
 			{

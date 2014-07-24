@@ -95,7 +95,7 @@ package modules.scene.views
 				case GamePattern.PUTONG:
 				case GamePattern.NIXIANG:
 					makePuTong();
-					BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
+//					BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
 					break;
 				case GamePattern.FIGHT:
 					makeDuiZhan();

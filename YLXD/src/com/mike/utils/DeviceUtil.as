@@ -8,6 +8,11 @@ package com.mike.utils
 		{
 		}
 		
+		public static function getDeviceID():String
+		{
+			return "";
+		}
+		
 		public static function getDevice():String {
 			var info:Array = Capabilities.os.split(" ");
 			if (info[0] + " " + info[1] != "iPhone OS") {

@@ -42,11 +42,11 @@ package com.mike.utils
 		 * @return 
 		 * 
 		 */		
-		public function getBestRatio():Number
+		public function getBestRatio(x:Number, y:Number):Number
 		{
 			var ratio:Number = 1.0;
-			var rw:int = designWidth > designHeight ? Math.max(Capabilities.screenResolutionX,Capabilities.screenResolutionY) : Math.min(Capabilities.screenResolutionX,Capabilities.screenResolutionY);
-			var rh:int = designWidth > designHeight ? Math.min(Capabilities.screenResolutionX,Capabilities.screenResolutionY) : Math.max(Capabilities.screenResolutionX,Capabilities.screenResolutionY);
+			var rw:int = designWidth > designHeight ? Math.max(x,y) : Math.min(x,y);
+			var rh:int = designWidth > designHeight ? Math.min(x,y) : Math.max(x,y);
 			ratio = Math.min(rw/designWidth,rh/designHeight);
 			return ratio;
 		}

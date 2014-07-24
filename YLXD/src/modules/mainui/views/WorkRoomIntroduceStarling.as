@@ -9,6 +9,7 @@ package modules.mainui.views
 	import starling.display.Sprite;
 	import starling.text.TextField;
 	import starling.textures.Texture;
+	import starling.utils.VAlign;
 	
 	public class WorkRoomIntroduceStarling extends Sprite
 	{
@@ -33,16 +34,18 @@ package modules.mainui.views
 			var nw:int = 1500*ratio;
 			bp.x = nw - bw >> 1;
 			
-			var desc:TextField = new TextField(nw,AirUtil.getHeightByFontSize(94*ratio),Language.WORKROOM_DESC,"Verdana",94*ratio,0x00ffff);
+			var s:int = 94*ratio;
+			var desc:TextField = new TextField(nw,AirUtil.getHeightByFontSize(94*ratio),Language.WORKROOM_DESC,"Verdana",s,0x00ffff);
 			desc.y = bp.height + 32*ratio;
 			container.addChild(desc);
 			
-			var author:TextField = new TextField(nw,AirUtil.getHeightByFontSize(64*ratio),Language.ZHIZUOREN,"Verdana",64*ratio,0x89c997);
-			author.y = desc.y + desc.height + 64*ratio;
+			s = 64 * ratio;
+			var author:TextField = new TextField(nw,AirUtil.getHeightByFontSize(64*ratio),Language.ZHIZUOREN,"Verdana",s,0x89c997);
+			author.y = desc.y + desc.height + s;
 			container.addChild(author);
 			
-			var weibo:TextField = new TextField(nw,AirUtil.getHeightByFontSize(64*ratio),Language.WEIBO,"Verdana",64*ratio,0x89c997);
-			weibo.y = author.y + author.height + 64*ratio;
+			var weibo:TextField = new TextField(nw,AirUtil.getHeightByFontSize(64*ratio),Language.WEIBO,"Verdana",s,0x89c997);
+			weibo.y = author.y + author.height + s;
 			container.addChild(weibo);
 			
 			container.x = w - container.width >> 1;

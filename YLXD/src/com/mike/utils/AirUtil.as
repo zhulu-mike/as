@@ -1,7 +1,5 @@
 package com.mike.utils
 {
-	import com.mike.weixin.MicroMessage;
-	
 	import flash.display.BitmapData;
 	import flash.display.JPEGEncoderOptions;
 	import flash.filesystem.File;
@@ -52,7 +50,8 @@ package com.mike.utils
 		public static function screenShotAndSave():String
 		{
 			var bmd:BitmapData = takeScreenshot();
-			var img:String = MicroMessage.instance.screenShot();
+			var img:String = File.userDirectory.url  +"/air.com.kunpeng.cainimei/"+new Date().getTime()+".jpg";
+			img = img.replace("file://","");
 			var fs:FileStream = new FileStream();
 			fs.open(new File(img),FileMode.WRITE);
 			fs.writeBytes(bmd.encode(bmd.rect,new JPEGEncoderOptions(100)));
@@ -68,7 +67,7 @@ package com.mike.utils
 		 */		
 		public static function getHeightByFontSize(size:Number):Number
 		{
-			return Math.ceil(size) + 5;
+			return Math.max(Math.ceil(size) + 8,size*1.2);
 		}
 	}
 }
