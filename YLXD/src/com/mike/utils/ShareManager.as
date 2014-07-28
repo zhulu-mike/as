@@ -65,7 +65,7 @@ package com.mike.utils
 		{
 			var shareParams:Object = new Object();
 			shareParams.title = "疯狂猜";
-			shareParams.text = "我在《疯狂猜》中得到了"+GameInstance.instance.score+"分，谁敢一战？下载地址：http://www.baidu.com";
+			shareParams.text = "我在《疯狂猜》中得到了"+GameInstance.instance.score+"分，谁敢一战？下载地址：http://www.g6game.com/cainimei/";
 			shareParams.site = "疯狂猜";
 			shareParams.url = "http://www.g6game.com/cainimei/";
 			shareParams.description = "疯狂猜";

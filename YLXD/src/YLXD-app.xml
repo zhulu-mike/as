@@ -313,4 +313,10 @@
 
     
 
+<extensions>
+        <extensionID>com.freshplanet.AirAlert</extensionID>
+        <extensionID>so.cuo.platform.baidu</extensionID>
+        <extensionID>com.mike.weixin</extensionID>
+        <extensionID>cn.sharesdk.ane.ShareSDKExtension</extensionID>
+    </extensions>
 </application>

@@ -3,6 +3,8 @@ package
 	
 	import com.mike.utils.AdvertiseUtil;
 	
+	import flash.display.Bitmap;
+	
 	import configs.GameInstance;
 	import configs.GamePattern;
 	import configs.GameState;
@@ -18,6 +20,7 @@ package
 	import modules.scene.views.GameOver;
 	import modules.scene.views.GameScene;
 	
+	import starling.display.BlendMode;
 	import starling.display.Image;
 	import starling.display.QuadBatch;
 	import starling.display.Sprite;
@@ -94,9 +97,9 @@ package
 			ResManager.assetsManager = am;
 			am.addTexture("background",Texture.fromEmbeddedAsset(BackGroundBG));
 			ResManager.backGroundBmd = new BackGroundBG().bitmapData;
-			var ta:TextureAtlas = new TextureAtlas(Texture.fromBitmap(ResManager.resLoader.getContent(ResManager.YLXD)),ResManager.resLoader.getContent(ResManager.YLXDXML));
+			var ta:TextureAtlas = new TextureAtlas(Texture.fromBitmap(ResManager.resLoader.getContent(ResManager.YLXD,true)),ResManager.resLoader.getContent(ResManager.YLXDXML,true));
 			am.addTextureAtlas(ResManager.YLXD_NAME,ta);
-			ta = new TextureAtlas(Texture.fromBitmap(ResManager.resLoader.getContent(ResManager.YLXD2)),ResManager.resLoader.getContent(ResManager.YLXDXML2));
+			ta = new TextureAtlas(Texture.fromBitmap(ResManager.resLoader.getContent(ResManager.YLXD2,true)),ResManager.resLoader.getContent(ResManager.YLXDXML2,true));
 			am.addTextureAtlas(ResManager.YLXD_NAME2,ta);
 			initUI();
 			EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.BEGIN});
@@ -113,6 +116,7 @@ package
 			firstLayer.addChild(bg);
 			bgItem = BackGroundFactory.getInstance().getShape();
 			bgItem.height = GameInstance.instance.sceneHeight;
+			bg.blendMode = BlendMode.NONE;
 			createBackground();
 			
 			secondeLayer = new Sprite();

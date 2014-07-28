@@ -185,7 +185,6 @@ package starling.textures
             // recreate the underlying texture & restore contents
             createBase();
             mOnRestore();
-            
             // if no texture has been uploaded above, we init the texture with transparent pixels.
             if (!mDataUploaded) clear();
         }

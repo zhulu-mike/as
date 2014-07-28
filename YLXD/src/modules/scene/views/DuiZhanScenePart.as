@@ -9,6 +9,7 @@ package modules.scene.views
 	
 	import managers.BackGroundFactory;
 	
+	import starling.display.BlendMode;
 	import starling.display.Image;
 	import starling.display.QuadBatch;
 
@@ -24,6 +25,7 @@ package modules.scene.views
 			super($sceneHeight);
 			bg = new QuadBatch();
 			this.addChildAt(bg,0);
+			bg.blendMode = BlendMode.NONE;
 			bgItem = BackGroundFactory.getInstance().getShape();
 			bgItem.height = sceneHeight;
 			bgItemWidth = bgItem.width-1;

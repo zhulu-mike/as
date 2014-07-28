@@ -54,6 +54,7 @@ package modules.mainui.views
 			
 			container.x = w - container.width >> 1;
 			container.y = h - container.height >> 1;
+			this.flatten();
 		}
 	}
 }
