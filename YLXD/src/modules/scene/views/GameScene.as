@@ -1,7 +1,7 @@
 package modules.scene.views
 {
 	
-	import flash.utils.getTimer;
+	import com.mike.utils.AdvertiseUtil;
 	
 	import configs.GameInstance;
 	import configs.GamePattern;
@@ -11,9 +11,6 @@ package modules.scene.views
 	
 	import managers.ResManager;
 	import managers.SoundManager;
-	
-	import so.cuo.platform.baidu.BaiDu;
-	import so.cuo.platform.baidu.RelationPosition;
 	
 	import starling.display.Image;
 	import starling.display.Sprite;
@@ -95,7 +92,7 @@ package modules.scene.views
 				case GamePattern.PUTONG:
 				case GamePattern.NIXIANG:
 					makePuTong();
-//					BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
+					AdvertiseUtil.showBaiDuBanner();
 					break;
 				case GamePattern.FIGHT:
 					makeDuiZhan();

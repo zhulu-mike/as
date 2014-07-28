@@ -33,14 +33,14 @@ package modules.scene.views
 //			bg = new Quad(GameInstance.instance.sceneWidth,$sceneHeight,0xffffff);
 //			bg.alpha = 0;
 //			this.addChildAt(bg,0);
-			scoreTxt.y = 0.125*GameInstance.instance.sceneHeight;
 //			mainPlayer.y = 330 - mainPlayer.height;
 			
 			maxScoreTxt = new TextField(500*ratio,AirUtil.getHeightByFontSize(76*ratio),"","Verdana",76*ratio,0x89c997);
 			this.addChild(maxScoreTxt);
-			maxScoreTxt.x = GameInstance.instance.sceneWidth - maxScoreTxt.width >> 1;
-			maxScoreTxt.y = 0;
+			maxScoreTxt.x = 10;
+			maxScoreTxt.y = 10;
 			maxScoreTxt.touchable = false;
+			maxScoreTxt.filter = GameUtil.getTextFieldFIlter();
 			
 			showMaxScore();
 		}

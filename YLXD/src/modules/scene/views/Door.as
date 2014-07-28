@@ -40,9 +40,9 @@ package modules.scene.views
 			this.state = state;
 			isReverse = need;
 			shape = DoorUtil.getDoorShape(state,isReverse);
-			shape.scaleX = -1*ratio;
+			shape.scaleX = ratio;
 			shape.scaleY = ratio;
-			shape.x += shape.width;
+//			shape.x += shape.width;
 			container.addChild(shape);
 			dizuo = new Image(ResManager.assetsManager.getTexture("dizuo.png"));
 			dizuo.scaleX = dizuo.scaleY = ratio;
@@ -81,7 +81,8 @@ package modules.scene.views
 			Starling.juggler.add(tween);
 			tween.animate("x",this.x + 640*ratio);
 			tween.animate("y",0);
-			tween.animate("rotation",MathUtil.angleToRadian(1800));
+			tween.animate("alpha",0);
+			tween.animate("rotation",MathUtil.angleToRadian(5760*ratio));
 			tween.repeatCount = 1;
 		}
 		

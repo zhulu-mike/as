@@ -1,8 +1,7 @@
 package
 {
 	
-	import flash.utils.getTimer;
-	import flash.utils.setTimeout;
+	import com.mike.utils.AdvertiseUtil;
 	
 	import configs.GameInstance;
 	import configs.GamePattern;
@@ -19,11 +18,6 @@ package
 	import modules.scene.views.GameOver;
 	import modules.scene.views.GameScene;
 	
-	import so.cuo.platform.baidu.BaiDu;
-	import so.cuo.platform.baidu.BaiDuAdEvent;
-	import so.cuo.platform.baidu.RelationPosition;
-	
-	import starling.display.BlendMode;
 	import starling.display.Image;
 	import starling.display.QuadBatch;
 	import starling.display.Sprite;
@@ -33,7 +27,6 @@ package
 	import starling.events.TouchPhase;
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
-	import starling.textures.TextureSmoothing;
 	import starling.utils.AssetManager;
 	
 	public class Game extends Sprite
@@ -101,8 +94,10 @@ package
 			ResManager.assetsManager = am;
 			am.addTexture("background",Texture.fromEmbeddedAsset(BackGroundBG));
 			ResManager.backGroundBmd = new BackGroundBG().bitmapData;
-			var ta:TextureAtlas = new TextureAtlas(Texture.fromBitmap(ResManager.resLoader.getContent(ResManager.YLXD)),GameInstance.instance.YLXD_XML);
+			var ta:TextureAtlas = new TextureAtlas(Texture.fromBitmap(ResManager.resLoader.getContent(ResManager.YLXD)),ResManager.resLoader.getContent(ResManager.YLXDXML));
 			am.addTextureAtlas(ResManager.YLXD_NAME,ta);
+			ta = new TextureAtlas(Texture.fromBitmap(ResManager.resLoader.getContent(ResManager.YLXD2)),ResManager.resLoader.getContent(ResManager.YLXDXML2));
+			am.addTextureAtlas(ResManager.YLXD_NAME2,ta);
 			initUI();
 			EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.BEGIN});
 			EventCenter.instance.addEventListener(GameEvent.SHOW_INTRODUCE, onShowIntroduce);
@@ -165,7 +160,7 @@ package
 		
 		protected function onShowIntroduce(event:GameEvent):void
 		{
-//			BaiDu.getInstance().hideBanner();
+			AdvertiseUtil.hideBaiDuBanner();
 			secondeLayer.addChild(introduce);
 		}
 		
@@ -282,7 +277,7 @@ package
 		
 		private function begin():void
 		{
-//			BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
+			AdvertiseUtil.showBaiDuBanner();
 			secondeLayer.addChild(mainMenu);
 		}
 		
@@ -293,7 +288,7 @@ package
 		 */		
 		private function gameRun(pattern:int):void
 		{
-//			BaiDu.getInstance().hideBanner();
+			AdvertiseUtil.hideBaiDuBanner();
 			GameInstance.instance.score = 0;
 			GameInstance.instance.pattern = pattern;
 			secondeLayer.addChild(gameScene);
@@ -306,7 +301,7 @@ package
 			GameInstance.instance.gameState = GameState.OVER;
 			this.removeEventListener(Event.ENTER_FRAME, onRender);
 			beginLater();
-//			GameUtil.showFullSceenAd();
+			GameUtil.showFullSceenAd();
 		}
 		/**
 		 * 显示全屏广告
@@ -323,7 +318,7 @@ package
 		{
 			gameScene.removeFromParent();
 			secondeLayer.addChild(gameOverPanel);
-//			BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
+			AdvertiseUtil.hideBaiDuBanner();
 			gameOverPanel.patternTxt.text = GameUtil.getPatternName(GameInstance.instance.pattern);
 			if (GameInstance.instance.pattern != GamePattern.FIGHT)
 			{

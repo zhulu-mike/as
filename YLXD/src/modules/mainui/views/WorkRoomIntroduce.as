@@ -2,6 +2,9 @@ package modules.mainui.views
 {
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
+	import flash.filters.DropShadowFilter;
+	import flash.text.TextField;
+	import flash.text.TextFormat;
 	
 	import configs.GameInstance;
 	
@@ -10,6 +13,7 @@ package modules.mainui.views
 		
 		
 		private var container:Sprite;
+		private var loadTxt:TextField;
 		public function WorkRoomIntroduce()
 		{
 			container = new Sprite();
@@ -18,6 +22,16 @@ package modules.mainui.views
 			var bp:Bitmap = new Bitmap(new GameInstance.instance.LOG_CLASS().bitmapData);
 			bp.scaleX = bp.scaleY = GameInstance.instance.scaleRatio;
 			container.addChild(bp);
+			
+			loadTxt = new TextField();
+			container.addChild(loadTxt);
+			loadTxt.filters = [new DropShadowFilter()];
+			loadTxt.defaultTextFormat = new TextFormat("Verdana",80*GameInstance.instance.scaleRatio,0xffffff,true,null,null,null,null,"center");
+			loadTxt.text = Language.QIDONGZHONG;
+			loadTxt.width = loadTxt.textWidth + 10;
+			loadTxt.height = loadTxt.textHeight + 5;
+			loadTxt.y = bp.height + 10;
+			loadTxt.x = bp.width - loadTxt.width >> 1;
 		}
 		
 		public function resize(w:int, h:int):void

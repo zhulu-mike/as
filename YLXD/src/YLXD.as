@@ -1,5 +1,6 @@
 package
 {
+	import com.freshplanet.ane.AirAlert.AirAlert;
 	import com.mike.utils.AdvertiseUtil;
 	import com.mike.utils.DeviceUtil;
 	import com.mike.utils.FlashStatus;
@@ -26,7 +27,6 @@ package
 	
 	import br.com.stimuli.loading.BulkLoader;
 	import br.com.stimuli.loading.BulkProgressEvent;
-	import br.com.stimuli.loading.loadingtypes.LoadingItem;
 	
 	import configs.GameInstance;
 	import configs.GamePattern;
@@ -74,7 +74,7 @@ package
 				{
 					e.preventDefault();
 				};
-//				AirAlert.getInstance().showAlert(Language.EXIT_DESC,"",Language.QUEDING,okFunc,Language.QUXIAO,cancelFunc);
+				AirAlert.getInstance().showAlert(Language.EXIT_DESC,"",Language.QUEDING,okFunc,Language.QUXIAO,cancelFunc);
 			}
 		}
 		
@@ -87,8 +87,9 @@ package
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.frameRate = 30;
-			stage.setOrientation(StageOrientation.ROTATED_LEFT);
+			stage.setOrientation(StageOrientation.ROTATED_RIGHT);
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
+			
 			ResolutionUtil.instance.init(new Point(2048,1536));
 			AdvertiseUtil.initBaiDu();
 			ShareManager.instance.init();
@@ -97,7 +98,9 @@ package
 			GameInstance.instance.sceneWidth = Math.max(stage.fullScreenWidth, stage.fullScreenHeight);
 			GameInstance.instance.sceneHeight = Math.min(stage.fullScreenWidth, stage.fullScreenHeight);
 			GameInstance.instance.scaleRatio = ResolutionUtil.instance.getBestRatio(GameInstance.instance.sceneWidth,GameInstance.instance.sceneHeight);
-			
+			GameInstance.DOOR_DIS = GameInstance.DOOR_DIS * GameInstance.instance.scaleRatio;
+			GameInstance.INIT_SPEED = GameInstance.INIT_SPEED * GameInstance.instance.scaleRatio;
+			GameInstance.WUDISPEED = GameInstance.WUDISPEED * GameInstance.instance.scaleRatio;
 			
 			GameInstance.instance.LOG_CLASS = LogAsset;
 			
@@ -156,12 +159,13 @@ package
 		{
 			ResManager.resLoader = new BulkLoader("main");
 			
-			var loadData:LoadingItem = ResManager.resLoader.add(ResManager.YLXDXML);
-			loadData =  ResManager.resLoader.add(ResManager.YLXD);
+			ResManager.resLoader.add(ResManager.YLXDXML);
+			ResManager.resLoader.add(ResManager.YLXD);
+			ResManager.resLoader.add(ResManager.YLXDXML2);
+			ResManager.resLoader.add(ResManager.YLXD2);
 			var comp:Function = function(e:flash.events.Event):void
 			{
 				ResManager.resLoader.removeEventListener(BulkProgressEvent.COMPLETE, comp);
-				GameInstance.instance.YLXD_XML =  ResManager.resLoader.getContent(ResManager.YLXDXML,true);
 				GameInstance.instance.resLoadCom = true;
 				starGame();
 			}

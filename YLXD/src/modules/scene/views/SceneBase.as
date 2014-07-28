@@ -10,6 +10,7 @@ package modules.scene.views
 	import configs.PlayerState;
 	import configs.PlayerStatus;
 	
+	import managers.GameUtil;
 	import managers.LogManager;
 	import managers.ResManager;
 	import managers.SoundManager;
@@ -22,6 +23,8 @@ package modules.scene.views
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
+	import starling.filters.BlurFilter;
+	import starling.filters.FragmentFilter;
 	import starling.text.TextField;
 	import starling.utils.HAlign;
 	import starling.utils.VAlign;
@@ -68,16 +71,18 @@ package modules.scene.views
 			doorLayer = new Sprite();
 			firstLayer.addChild(doorLayer);
 			
-			scoreTxt = new TextField(960*ratio,AirUtil.getHeightByFontSize(76*ratio),Language.DEFEN.replace("$SCORE",0),"Verdana",76*ratio,0xffffff,true);
+			scoreTxt = new TextField(960*ratio,AirUtil.getHeightByFontSize(90*ratio),Language.DEFEN.replace("$SCORE",0),"Verdana",90*ratio,0xffffff,true);
 			scoreTxt.hAlign = HAlign.CENTER;
 			scoreTxt.vAlign = VAlign.CENTER;
 			firstLayer.addChild(scoreTxt);
+			scoreTxt.filter = GameUtil.getTextFieldFIlter();
 			scoreTxt.x = GameInstance.instance.sceneWidth - scoreTxt.width >> 1;
-			
+			scoreTxt.y = 10;
 			
 			gameOver = new TextField(960*ratio,AirUtil.getHeightByFontSize(64*ratio),Language.JIESHU,"Verdana",64*ratio,0xffffff);
 			firstLayer.addChild(gameOver);
 			gameOver.visible = false;
+			gameOver.filter = GameUtil.getTextFieldFIlter();
 			gameOver.x = GameInstance.instance.sceneWidth - gameOver.width >> 1;
 			gameOver.y = this.sceneHeight - gameOver.height >> 1;
 			interactiveLayer.addEventListener(TouchEvent.TOUCH, onTouch);

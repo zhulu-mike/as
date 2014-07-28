@@ -127,6 +127,7 @@ package modules.scene.views
 				var ratio:Number = GameInstance.instance.scaleRatio;
 				words = new TextField(480*ratio,256*ratio,str,"Verdana",57*ratio,0xffffff);
 				words.hAlign = HAlign.CENTER;
+				words.filter = GameUtil.getTextFieldFIlter();
 				this.addChild(words);
 				words.x = this.reallyWidth - words.width >> 1;
 				words.y = -words.height - 10;
@@ -171,7 +172,7 @@ package modules.scene.views
 				if (wuDiEff == null)
 				{
 					wuDiEff = new MovieClip(ResManager.assetsManager.getTextures("wudieff"));
-					wuDiEff.scaleX = wuDiEff.scaleX = GameInstance.instance.scaleRatio;
+					wuDiEff.scaleX = wuDiEff.scaleY = GameInstance.instance.scaleRatio;
 					Starling.juggler.add(wuDiEff);
 					this.addChild(wuDiEff);
 					wuDiEff.loop = true;

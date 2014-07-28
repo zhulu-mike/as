@@ -27,7 +27,7 @@ package configs
 		/**
 		 * 两次出拳之间的距离，可用来控制游戏难度
 		 */		
-		public static const DOOR_DIS:int = 400;
+		public static var DOOR_DIS:int = 1600;
 		
 		public var score:int = 0;
 		
@@ -53,7 +53,7 @@ package configs
 		 */		
 		public static const FULLE_AD:int = 5;
 		
-		public static const INIT_SPEED:int = 10;
+		public static var INIT_SPEED:int = 32;
 		
 		public var soundEnable:Boolean = true;
 		
@@ -68,7 +68,7 @@ package configs
 		public var currentSpeed:int = 5;
 		
 		public static const WUDITIME:int = 5000;
-		public static const WUDISPEED:int = 20;
+		public static var WUDISPEED:int = 64;
 		/**
 		 * 加速度
 		 */		
