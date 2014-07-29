@@ -23,8 +23,6 @@ package modules.scene.views
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
-	import starling.filters.BlurFilter;
-	import starling.filters.FragmentFilter;
 	import starling.text.TextField;
 	import starling.utils.HAlign;
 	import starling.utils.VAlign;
@@ -52,7 +50,6 @@ package modules.scene.views
 		{
 			var ratio:Number = GameInstance.instance.scaleRatio;
 			sceneHeight = $sceneHeight;
-//			touchGroup = true;
 			doorList = new Vector.<Door>();
 			
 			interactiveLayer = new Quad(GameInstance.instance.sceneWidth,$sceneHeight,0xffffff);

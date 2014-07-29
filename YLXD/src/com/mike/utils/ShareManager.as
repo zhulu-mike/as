@@ -64,14 +64,14 @@ package com.mike.utils
 		public function xuanYao():void
 		{
 			var shareParams:Object = new Object();
-			shareParams.title = "疯狂猜";
-			shareParams.text = "我在《疯狂猜》中得到了"+GameInstance.instance.score+"分，谁敢一战？下载地址：http://www.g6game.com/cainimei/";
-			shareParams.site = "疯狂猜";
+			shareParams.title = "疯狂之手";
+			shareParams.text = "我在《疯狂之手》中得到了"+GameInstance.instance.score+"分，谁敢一战？下载地址：http://www.g6game.com/cainimei/";
+			shareParams.site = "疯狂之手";
 			shareParams.url = "http://www.g6game.com/cainimei/";
-			shareParams.description = "疯狂猜";
+			shareParams.description = "疯狂之手";
 			shareParams.imagePath = AirUtil.screenShotAndSave();
 			shareParams.type = ShareType.SHARE_WEBPAGE;
-			sdk.showShareMenu(null, shareParams, 0, 100, ShareMenuArrowDirection.Any);
+			sdk.showShareMenu(null, shareParams, 0, GameInstance.instance.sceneHeight - 200, ShareMenuArrowDirection.Any);
 		}
 		
 	}

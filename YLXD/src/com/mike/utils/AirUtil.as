@@ -50,10 +50,13 @@ package com.mike.utils
 		public static function screenShotAndSave():String
 		{
 			var bmd:BitmapData = takeScreenshot();
-			var img:String = File.userDirectory.url  +"/air.com.kunpeng.cainimei/"+new Date().getTime()+".jpg";
+			var img:String = File.userDirectory.url  +"/air.com.kunpeng.cainimei/"+"";
+			trace(File.userDirectory.url);
+			var f:File = File.applicationStorageDirectory.resolvePath("air.com.kunpeng.cainimei").resolvePath(new Date().getTime()+".jpg");
+			img = f.url;
 			img = img.replace("file://","");
 			var fs:FileStream = new FileStream();
-			fs.open(new File(img),FileMode.WRITE);
+			fs.open(f,FileMode.WRITE);
 			fs.writeBytes(bmd.encode(bmd.rect,new JPEGEncoderOptions(100)));
 			fs.close();
 			return img;
