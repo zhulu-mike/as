@@ -14,6 +14,8 @@ package com.mike.utils
 			if (Capabilities.languages.length > 0)
 			{
 				lan = Capabilities.languages[0];
+				if (lan.indexOf("zh") >= 0)
+					lan = LanType.ZHONGGUO;
 			}else{
 				lan = LanType.ENGLISH;
 			}

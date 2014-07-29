@@ -16,6 +16,7 @@ package com.mike.utils
 		{
 			if (BaiDu.getInstance().supportDevice)
 			{
+				//android和ios之分
 				BaiDu.getInstance().setKeys("debug","debug");// BaiDu.getInstance().setKeys("appsid","计费id");
 				BaiDu.getInstance().cacheInterstitial();
 			}

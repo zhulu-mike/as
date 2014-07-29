@@ -78,7 +78,7 @@ package
 				{
 					e.preventDefault();
 				};
-				AirAlert.getInstance().showAlert(Language.getString("EXIT_DESC"),"",Language.getString("QUEDING"),okFunc,Language.getString("QUXIAO"),cancelFunc);
+//				AirAlert.getInstance().showAlert(Language.getString("EXIT_DESC"),"",Language.getString("QUEDING"),okFunc,Language.getString("QUXIAO"),cancelFunc);
 			}
 		}
 		
@@ -92,6 +92,7 @@ package
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.frameRate = 30;
 			stage.setOrientation(StageOrientation.ROTATED_RIGHT);
+			stage.autoOrients = false;
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
 			
 			
