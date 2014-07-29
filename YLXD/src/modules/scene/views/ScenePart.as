@@ -48,12 +48,12 @@ package modules.scene.views
 		private function showMaxScore():void
 		{
 			var score:int = GameUtil.getMaxScore(GameInstance.instance.pattern);
-			maxScoreTxt.text = Language.MAX_SCORE.replace("$SCORE",score);
+			maxScoreTxt.text = Language.getString("MAX_SCORE").replace("$SCORE",score);
 		}
 		
 		protected function updateMaxScore(value:int):void
 		{
-			maxScoreTxt.text = Language.MAX_SCORE.replace("$SCORE",value);
+			maxScoreTxt.text = Language.getString("MAX_SCORE").replace("$SCORE",value);
 		}
 		
 		override protected function isHit():void

@@ -326,8 +326,8 @@ package
 			gameOverPanel.patternTxt.text = GameUtil.getPatternName(GameInstance.instance.pattern);
 			if (GameInstance.instance.pattern != GamePattern.FIGHT)
 			{
-				gameOverPanel.scoreTxt.text = Language.FENSHU.replace("$SCORE",GameInstance.instance.score);
-				gameOverPanel.maxScoreTxt.text = Language.MAX_SCORE.replace("$SCORE",GameUtil.getMaxScore(GameInstance.instance.pattern));
+				gameOverPanel.scoreTxt.text = Language.getString("FENSHU").replace("$SCORE",GameInstance.instance.score);
+				gameOverPanel.maxScoreTxt.text = Language.getString("MAX_SCORE").replace("$SCORE",GameUtil.getMaxScore(GameInstance.instance.pattern));
 			}else{
 				gameOverPanel.maxScoreTxt.visible = false;
 				gameOverPanel.scoreTxt.visible = false;

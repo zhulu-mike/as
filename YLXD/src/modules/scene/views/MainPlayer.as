@@ -168,7 +168,7 @@ package modules.scene.views
 				timer.reset();
 				timer.start();
 				wuDiCount = 5;
-				speak(Language.WUDIWORDS.replace("$COUNT",wuDiCount));
+				speak(Language.getString("WUDIWORDS").replace("$COUNT",wuDiCount));
 				if (wuDiEff == null)
 				{
 					wuDiEff = new MovieClip(ResManager.assetsManager.getTextures("wudieff"));
@@ -198,7 +198,7 @@ package modules.scene.views
 				return;
 			}
 			wuDiCount--;
-			speak(Language.WUDIWORDS.replace("$COUNT",wuDiCount));
+			speak(Language.getString("WUDIWORDS").replace("$COUNT",wuDiCount));
 		}
 		
 		public function pause():void

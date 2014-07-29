@@ -31,20 +31,20 @@ package modules.mainui.views
 			
 			var ratio:Number = GameInstance.instance.scaleRatio;
 			var f:Number = 120 * ratio;
-			beginTxt = new TextField(640*ratio,AirUtil.getHeightByFontSize(f),Language.PUTONG,"Verdaba",f,0xffffff);
+			beginTxt = new TextField(640*ratio,AirUtil.getHeightByFontSize(f),Language.getString("PUTONG"),"Verdaba",f,0xffffff);
 			beginTxt.hAlign = HAlign.CENTER;
 			beginTxt.vAlign = VAlign.TOP;
 			beginTxt.filter = GameUtil.getTextFieldFIlter();
 			menuContainer.addChild(beginTxt);
 			
-			niXiangTxt = new TextField(640*ratio,AirUtil.getHeightByFontSize(f),Language.NIXIANG,"Verdaba",f,0xffffff);
+			niXiangTxt = new TextField(640*ratio,AirUtil.getHeightByFontSize(f),Language.getString("NIXIANG"),"Verdaba",f,0xffffff);
 			niXiangTxt.hAlign = HAlign.CENTER;
 			niXiangTxt.vAlign = VAlign.TOP;
 			menuContainer.addChild(niXiangTxt);
 			niXiangTxt.filter = GameUtil.getTextFieldFIlter();
 			niXiangTxt.y = beginTxt.y + beginTxt.height + 30;
 			
-			duizhan = new TextField(640*ratio,AirUtil.getHeightByFontSize(f),Language.DUIZHAN,"Verdaba",f,0xffffff);
+			duizhan = new TextField(640*ratio,AirUtil.getHeightByFontSize(f),Language.getString("DUIZHAN"),"Verdaba",f,0xffffff);
 			duizhan.hAlign = HAlign.CENTER;
 			duizhan.vAlign = VAlign.TOP;
 			menuContainer.addChild(duizhan);
@@ -56,7 +56,7 @@ package modules.mainui.views
 			log.scaleX= log.scaleY = ratio;
 			log.x = 5;
 			
-			desc = new TextField(600*ratio,AirUtil.getHeightByFontSize(50*ratio),Language.ADVISE_DESC,"Verdana",50*ratio,0xffffff);
+			desc = new TextField(600*ratio,AirUtil.getHeightByFontSize(50*ratio),Language.getString("ADVISE_DESC"),"Verdana",50*ratio,0xffffff);
 			desc.hAlign = HAlign.LEFT;
 			desc.vAlign = VAlign.TOP;
 			desc.filter = GameUtil.getTextFieldFIlter();

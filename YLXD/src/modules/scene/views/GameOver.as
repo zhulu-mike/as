@@ -64,19 +64,19 @@ package modules.scene.views
 			
 			var rw:Number = 320*ratio;
 			f = 100*ratio;
-			returnBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.FANHUI,"Verdana",f,0xffffff);
+			returnBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("FANHUI"),"Verdana",f,0xffffff);
 			this.addChild(returnBtn);
 			returnBtn.x = (GameInstance.instance.sceneWidth >> 1) - 600*ratio;
 			returnBtn.y = scoreTxt.y + scoreTxt.height + 94*ratio;
 			returnBtn.filter = GameUtil.getTextFieldFIlter();
 			
-			againBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.CHONGLAI,"Verdana",f,0xffffff);
+			againBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("CHONGLAI"),"Verdana",f,0xffffff);
 			this.addChild(againBtn);
 			againBtn.x = (GameInstance.instance.sceneWidth >> 1) + 600*ratio-rw;
 			againBtn.y = returnBtn.y ;
 			againBtn.filter = GameUtil.getTextFieldFIlter();
 			
-			xuanYaoBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.XUANYAO,"Verdana",f,0xffffff);
+			xuanYaoBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("XUANYAO"),"Verdana",f,0xffffff);
 			this.addChild(xuanYaoBtn);
 			xuanYaoBtn.x = GameInstance.instance.sceneWidth - xuanYaoBtn.width >> 1;
 			xuanYaoBtn.y = returnBtn.y ;

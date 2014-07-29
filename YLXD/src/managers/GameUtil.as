@@ -41,11 +41,11 @@ package managers
 		public static function getPatternName(pattern:int):String
 		{
 			if (pattern == GamePattern.PUTONG)
-				return Language.PUTONG;
+				return Language.getString("PUTONG");
 			else if (pattern == GamePattern.NIXIANG)
-				return Language.NIXIANG;
+				return Language.getString("NIXIANG");
 			else
-				return Language.DUIZHAN;
+				return Language.getString("DUIZHAN");
 		}
 		/**
 		 * 获取反向的手型

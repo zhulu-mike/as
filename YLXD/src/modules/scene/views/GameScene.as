@@ -159,15 +159,15 @@ package modules.scene.views
 			{
 				if (sceneList[0].sceneScore > sceneList[1].sceneScore)
 				{
-					sceneList[0].gameOver.text = Language.YINGLE;
-					sceneList[1].gameOver.text = Language.WOSHULE;
+					sceneList[0].gameOver.text = Language.getString("YINGLE");
+					sceneList[1].gameOver.text = Language.getString("WOSHULE");
 				}else if (sceneList[0].sceneScore == sceneList[1].sceneScore)
 				{
-					sceneList[0].gameOver.text = Language.PINGJU;
-					sceneList[1].gameOver.text = Language.PINGJU;
+					sceneList[0].gameOver.text = Language.getString("PINGJU");
+					sceneList[1].gameOver.text = Language.getString("PINGJU");
 				}else{
-					sceneList[0].gameOver.text = Language.WOSHULE;
-					sceneList[1].gameOver.text = Language.YINGLE;
+					sceneList[0].gameOver.text = Language.getString("WOSHULE");
+					sceneList[1].gameOver.text = Language.getString("YINGLE");
 				}
 				GameInstance.instance.gameState = GameState.OVER;
 				this.addEventListener(TouchEvent.TOUCH, onTouch);

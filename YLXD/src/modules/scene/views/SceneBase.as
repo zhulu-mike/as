@@ -68,7 +68,7 @@ package modules.scene.views
 			doorLayer = new Sprite();
 			firstLayer.addChild(doorLayer);
 			
-			scoreTxt = new TextField(960*ratio,AirUtil.getHeightByFontSize(90*ratio),Language.DEFEN.replace("$SCORE",0),"Verdana",90*ratio,0xffffff,true);
+			scoreTxt = new TextField(960*ratio,AirUtil.getHeightByFontSize(90*ratio),Language.getString("DEFEN").replace("$SCORE",0),"Verdana",90*ratio,0xffffff,true);
 			scoreTxt.hAlign = HAlign.CENTER;
 			scoreTxt.vAlign = VAlign.CENTER;
 			firstLayer.addChild(scoreTxt);
@@ -76,7 +76,7 @@ package modules.scene.views
 			scoreTxt.x = GameInstance.instance.sceneWidth - scoreTxt.width >> 1;
 			scoreTxt.y = 10;
 			
-			gameOver = new TextField(960*ratio,AirUtil.getHeightByFontSize(64*ratio),Language.JIESHU,"Verdana",64*ratio,0xffffff);
+			gameOver = new TextField(960*ratio,AirUtil.getHeightByFontSize(64*ratio),Language.getString("JIESHU"),"Verdana",64*ratio,0xffffff);
 			firstLayer.addChild(gameOver);
 			gameOver.visible = false;
 			gameOver.filter = GameUtil.getTextFieldFIlter();
@@ -188,7 +188,7 @@ package modules.scene.views
 						SoundManager.playSound(ResManager.PASS_SOUND);
 						sceneScore += 1;
 						doWhenpass(door);
-						scoreTxt.text = Language.DEFEN.replace("$SCORE",sceneScore);
+						scoreTxt.text = Language.getString("DEFEN").replace("$SCORE",sceneScore);
 						GameInstance.instance.score += 1;
 					}else
 					{

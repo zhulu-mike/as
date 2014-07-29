@@ -4,6 +4,7 @@ package
 	import com.mike.utils.AdvertiseUtil;
 	import com.mike.utils.DeviceUtil;
 	import com.mike.utils.FlashStatus;
+	import com.mike.utils.LanUtil;
 	import com.mike.utils.NetUtil;
 	import com.mike.utils.ResolutionUtil;
 	import com.mike.utils.ShareManager;
@@ -25,8 +26,11 @@ package
 	import flash.utils.getTimer;
 	import flash.utils.setTimeout;
 	
+	import mx.resources.Locale;
+	
 	import br.com.stimuli.loading.BulkLoader;
 	import br.com.stimuli.loading.BulkProgressEvent;
+	import br.com.stimuli.loading.loadingtypes.LoadingItem;
 	
 	import configs.GameInstance;
 	import configs.GamePattern;
@@ -74,7 +78,7 @@ package
 				{
 					e.preventDefault();
 				};
-				AirAlert.getInstance().showAlert(Language.EXIT_DESC,"",Language.QUEDING,okFunc,Language.QUXIAO,cancelFunc);
+				AirAlert.getInstance().showAlert(Language.getString("EXIT_DESC"),"",Language.getString("QUEDING"),okFunc,Language.getString("QUXIAO"),cancelFunc);
 			}
 		}
 		
@@ -89,6 +93,8 @@ package
 			stage.frameRate = 30;
 			stage.setOrientation(StageOrientation.ROTATED_RIGHT);
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
+			
+			
 			
 			ResolutionUtil.instance.init(new Point(2048,1536));
 			AdvertiseUtil.initBaiDu();
@@ -163,12 +169,19 @@ package
 			ResManager.resLoader.add(ResManager.YLXD);
 			ResManager.resLoader.add(ResManager.YLXDXML2);
 			ResManager.resLoader.add(ResManager.YLXD2);
-			var comp:Function = function(e:flash.events.Event):void
+			var item:LoadingItem = ResManager.resLoader.add(ResManager.BASE + LanUtil.getCurrentLangeFile());
+			var lanFunc:Function = function(e:flash.events.Event):void
+			{
+				item.removeEventListener(flash.events.Event.COMPLETE, lanFunc);
+				Language.parse(item.content);
+			};
+			item.addEventListener(flash.events.Event.COMPLETE,lanFunc);
+			var comp:Function = function(e:BulkProgressEvent):void
 			{
 				ResManager.resLoader.removeEventListener(BulkProgressEvent.COMPLETE, comp);
 				GameInstance.instance.resLoadCom = true;
 				starGame();
-			}
+			};
 			ResManager.resLoader.addEventListener(BulkProgressEvent.COMPLETE,comp);
 			ResManager.resLoader.start();
 		}
