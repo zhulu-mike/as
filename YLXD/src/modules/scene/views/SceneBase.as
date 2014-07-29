@@ -52,7 +52,7 @@ package modules.scene.views
 		{
 			var ratio:Number = GameInstance.instance.scaleRatio;
 			sceneHeight = $sceneHeight;
-			touchGroup = true;
+//			touchGroup = true;
 			doorList = new Vector.<Door>();
 			
 			interactiveLayer = new Quad(GameInstance.instance.sceneWidth,$sceneHeight,0xffffff);

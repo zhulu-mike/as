@@ -16,7 +16,7 @@ package com.mike.utils
 		{
 			if (BaiDu.getInstance().supportDevice)
 			{
-				BaiDu.getInstance().setKeys("1003ba05","1003ba05");// BaiDu.getInstance().setKeys("appsid","计费id");
+				BaiDu.getInstance().setKeys("debug","debug");// BaiDu.getInstance().setKeys("appsid","计费id");
 				BaiDu.getInstance().cacheInterstitial();
 			}
 		}
