@@ -17,7 +17,10 @@ package com.mike.utils
 			if (BaiDu.getInstance().supportDevice)
 			{
 				//android和ios之分
-				BaiDu.getInstance().setKeys("1003ba05","1003ba05");// BaiDu.getInstance().setKeys("appsid","计费id");
+				if (DeviceUtil.isIos())
+					BaiDu.getInstance().setKeys("1003c358","1003c358");
+				else
+					BaiDu.getInstance().setKeys("1003ba05","1003ba05");// BaiDu.getInstance().setKeys("appsid","计费id");
 				BaiDu.getInstance().cacheInterstitial();
 			}
 		}
