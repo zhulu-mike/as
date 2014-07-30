@@ -271,8 +271,8 @@
 			   	<uses-permission android:name="android.permission.CAMERA" />
 			   
 			    <application android:enabled="true">
-			    	<meta-data android:name="BaiduMobAd_APP_ID" android:value="debug" /> 
-    				<meta-data android:name="BaiduMobAd_APP_SEC" android:value="debug" />
+			    	<meta-data android:name="BaiduMobAd_APP_ID" android:value="1003ba05" /> 
+    				<meta-data android:name="BaiduMobAd_APP_SEC" android:value="1003ba05" />
     				<activity
 			    		android:windowSoftInputMode="stateHidden|adjustResize"
 			    		android:theme="@android:style/Theme.Translucent.NoTitleBar"
@@ -291,7 +291,7 @@
 			            </intent-filter>
 			        </activity>
 			        <activity
-			        //此处要记得加上包名
+			        
 			            android:name="air.com.kenpeng.cainimei.wxapi.WXEntryActivity"
 			            android:theme="@android:style/Theme.Translucent.NoTitleBar"
 			            android:exported="true" />
