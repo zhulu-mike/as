@@ -92,7 +92,6 @@ package
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.frameRate = 30;
 			stage.setOrientation(StageOrientation.ROTATED_RIGHT);
-			stage.autoOrients = false;
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
 			
 			
@@ -143,7 +142,14 @@ package
 			_introduce = new WorkRoomIntroduce();
 			_introduce.resize(GameInstance.instance.sceneWidth,GameInstance.instance.sceneHeight);
 			this.addChild(_introduce);
-			setTimeout(starGame, 2000);
+			setTimeout(timeOut, 2000);
+		}
+		
+		private var timeBool:Boolean = false;
+		private function timeOut():void
+		{
+			timeBool = true;
+			starGame();
 		}
 		
 		
@@ -191,7 +197,7 @@ package
 		{
 			if (_introduce.parent == null)
 				return;
-			if (GameInstance.instance.resLoadCom && GameInstance.instance.haveStarlingCreate && (getTimer()-GameInstance.instance.introduceTime >= 2000))
+			if (GameInstance.instance.resLoadCom && GameInstance.instance.haveStarlingCreate && timeBool)
 			{
 				this.removeChild(_introduce);
 				EventCenter.instance.dispatchEvent(new GameEvent(GameEvent.START_GAME));

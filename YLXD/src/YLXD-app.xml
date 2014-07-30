@@ -291,7 +291,7 @@
 			            </intent-filter>
 			        </activity>
 			        <activity
-			            android:name=".wxapi.WXEntryActivity"
+			            android:name="air.com.kenpeng.cainimei.wxapi.WXEntryActivity"
 			            android:theme="@android:style/Theme.Translucent.NoTitleBar"
 			            android:exported="true" />
         			<activity android:name="com.baidu.mobads.AppActivity" android:configChanges="keyboard|keyboardHidden|orientation"/>
