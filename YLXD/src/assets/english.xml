@@ -1,0 +1,42 @@
+<data>
+	<common>
+		<key id="PUTONG"><![CDATA[General Pattern]]></key>
+		<key id="DUIZHAN"><![CDATA[Fight   Pattern]]></key>
+		<key id="NIXIANG"><![CDATA[Reverse Pattern]]></key>
+		<key id="FENSHU"><![CDATA[Score：$SCORE]]></key>
+		<key id="DEFEN"><![CDATA[Score：$SCORE]]></key>
+		<key id="JIESHU"><![CDATA[GAME OVER]]></key>
+		<key id="YINGLE"><![CDATA[I WIN]]></key>
+		<key id="WOSHULE"><![CDATA[Do More Practise!]]></key>
+		<key id="PINGJU"><![CDATA[No Win No Lose，Once Again！]]></key>
+		<key id="MAX_SCORE"><![CDATA[Max Score：$SCORE]]></key>
+		<key id="ADVISE_DESC"><![CDATA[HangZhou Roc Game Publish]]></key>
+		<key id="WORKROOM_DESC"><![CDATA[Colorful Feeling，In Roc！]]></key>
+		<key id="WORKROOM_DESC2"><![CDATA[Roc Game]]></key>
+		<key id="FANHUI"><![CDATA[Back]]></key>
+		<key id="CHONGLAI"><![CDATA[Again]]></key>
+		<key id="XUANYAO"><![CDATA[Share]]></key>
+		<key id="EXIT_DESC"><![CDATA[Are you sure exit to have a rest？]]></key>
+		<key id="QUEDING"><![CDATA[Ok]]></key>
+		<key id="QUXIAO"><![CDATA[Cancel]]></key>
+		<key id="ZHIZUOREN"><![CDATA[Product：Jianglin Wang      Art：ZhigeBlue]]></key>
+		<key id="WEIBO"><![CDATA[SinaWeiBo：杭州鲲鹏工作室]]></key>
+		<key id="NIXIANGWORDS"><![CDATA[赢了我开启5秒无敌模式哦]]></key>
+		<key id="WUDIWORDS"><![CDATA[Invincibling，GoGoGo！$COUNT]]></key>
+		<key id="QIDONGZHONG"><![CDATA[Game Begin Soon...]]></key>
+	</common>
+	<player>
+		<key><![CDATA[reverse pattern too difficult]]></key>
+		<key><![CDATA[don't forget to share for your friends!]]></key>
+		<key><![CDATA[touch sceen to switch my shape!]]></key>
+		<key><![CDATA[after 50 score, fight the red shape can get 5 seconds invincible time!]]></key>
+		<key><![CDATA[you must switch to smaller when you meet red shape!]]></key>
+		<key><![CDATA[you don't pass 100 today！]]></key>
+		<key><![CDATA[i like girl，how about you？]]></key>
+		<key><![CDATA[i have a donkey，but i never ride it......]]></key>
+		<key><![CDATA[you are wonderful]]></key>
+		<key><![CDATA[hoho！]]></key>
+		<key><![CDATA[i am speaking all the time，do you to bother？]]></key>
+		<key><![CDATA[]]></key>
+	</player>
+</data>

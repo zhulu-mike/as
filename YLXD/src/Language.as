@@ -57,6 +57,8 @@ package
 		
 		public static function parse(data:XML):void
 		{
+			PLAYER_WORDS.length = 0;
+			MONSTER_WORDS.length = 0;
 			var xmls:XMLList = data.common;
 			var xml:XML = xmls[0];
 			xmls = xml.key;

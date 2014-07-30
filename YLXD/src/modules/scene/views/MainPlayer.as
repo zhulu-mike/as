@@ -121,6 +121,7 @@ package modules.scene.views
 		
 		private function speak(s:String=null):void
 		{
+			return;
 			var str:String = s || GameUtil.randomPlayerWord();
 			if (words == null)
 			{
