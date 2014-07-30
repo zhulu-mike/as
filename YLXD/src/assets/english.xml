@@ -1,8 +1,8 @@
 <data>
 	<common>
-		<key id="PUTONG"><![CDATA[General Pattern]]></key>
-		<key id="DUIZHAN"><![CDATA[Fight   Pattern]]></key>
-		<key id="NIXIANG"><![CDATA[Reverse Pattern]]></key>
+		<key id="PUTONG"><![CDATA[General]]></key>
+		<key id="DUIZHAN"><![CDATA[Fight]]></key>
+		<key id="NIXIANG"><![CDATA[Reverse]]></key>
 		<key id="FENSHU"><![CDATA[Score：$SCORE]]></key>
 		<key id="DEFEN"><![CDATA[Score：$SCORE]]></key>
 		<key id="JIESHU"><![CDATA[GAME OVER]]></key>
@@ -19,7 +19,7 @@
 		<key id="EXIT_DESC"><![CDATA[Are you sure exit to have a rest？]]></key>
 		<key id="QUEDING"><![CDATA[Ok]]></key>
 		<key id="QUXIAO"><![CDATA[Cancel]]></key>
-		<key id="ZHIZUOREN"><![CDATA[Product：Jianglin Wang      Art：ZhigeBlue]]></key>
+		<key id="ZHIZUOREN"><![CDATA[Product：mike      Art：ZhigeBlue]]></key>
 		<key id="WEIBO"><![CDATA[SinaWeiBo：杭州鲲鹏工作室]]></key>
 		<key id="NIXIANGWORDS"><![CDATA[赢了我开启5秒无敌模式哦]]></key>
 		<key id="WUDIWORDS"><![CDATA[Invincibling，GoGoGo！$COUNT]]></key>

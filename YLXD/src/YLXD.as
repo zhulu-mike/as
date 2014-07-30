@@ -17,6 +17,7 @@ package
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.system.Capabilities;
@@ -141,8 +142,14 @@ package
 		{
 			_introduce = new WorkRoomIntroduce();
 			_introduce.resize(GameInstance.instance.sceneWidth,GameInstance.instance.sceneHeight);
+			_introduce.addEventListener(MouseEvent.CLICK, onClick);
 			this.addChild(_introduce);
 			setTimeout(timeOut, 2000);
+		}
+		
+		protected function onClick(event:MouseEvent):void
+		{
+			starGame();
 		}
 		
 		private var timeBool:Boolean = false;
@@ -197,6 +204,8 @@ package
 		{
 			if (_introduce.parent == null)
 				return;
+			_introduce.removeEventListener(MouseEvent.CLICK, onClick);
+			trace(GameInstance.instance.resLoadCom,GameInstance.instance.haveStarlingCreate,timeBool);
 			if (GameInstance.instance.resLoadCom && GameInstance.instance.haveStarlingCreate && timeBool)
 			{
 				this.removeChild(_introduce);

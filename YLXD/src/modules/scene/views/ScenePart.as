@@ -18,6 +18,7 @@ package modules.scene.views
 	
 	import starling.display.Quad;
 	import starling.text.TextField;
+	import starling.utils.HAlign;
 	import starling.utils.VAlign;
 	
 	public class ScenePart extends SceneBase
@@ -41,6 +42,7 @@ package modules.scene.views
 			maxScoreTxt.x = 10;
 			maxScoreTxt.y = 10;
 			maxScoreTxt.vAlign = VAlign.TOP;
+			maxScoreTxt.hAlign = HAlign.LEFT;
 			maxScoreTxt.touchable = false;
 			maxScoreTxt.filter = GameUtil.getTextFieldFIlter();
 			

@@ -291,6 +291,7 @@
 			            </intent-filter>
 			        </activity>
 			        <activity
+			        //此处要记得加上包名
 			            android:name="air.com.kenpeng.cainimei.wxapi.WXEntryActivity"
 			            android:theme="@android:style/Theme.Translucent.NoTitleBar"
 			            android:exported="true" />
