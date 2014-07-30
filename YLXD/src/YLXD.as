@@ -122,10 +122,10 @@ package
 			app.start();
 			loadRes(null);
 			initData();
-			var fs:FlashStatus = new FlashStatus();
-			addChild(fs);
-			fs.init(stage);
-			trace(getTimer());
+//			var fs:FlashStatus = new FlashStatus();
+//			addChild(fs);
+//			fs.init(stage);
+//			trace(getTimer());
 		}
 		
 		protected function onStarlingCreated(event:GameEvent):void
