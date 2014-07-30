@@ -33,7 +33,7 @@ package com.mike.utils
 			sdk = new ShareSDKExtension();
 			//android和ios之分
 			if (DeviceUtil.isIos())
-				sdk.open("iosv1101",true);
+				sdk.open("iosv1101",true);//280d5fcaa51f
 			else
 				sdk.open("258aa287ebe5",true);
 			sdk.setPlatformActionListener(shareComplete,shareError,sharecancel);
@@ -76,16 +76,6 @@ package com.mike.utils
 			shareParams.imagePath = AirUtil.screenShotAndSave();
 			shareParams.type = ShareType.SHARE_WEBPAGE;
 			sdk.showShareMenu(null, shareParams, GameInstance.instance.sceneWidth>>2, 50, ShareMenuArrowDirection.Up);
-//			var shareParams:Object = new Object();
-//			shareParams.title = "ShareSDK for ANE发布";
-//			shareParams.titleUrl = "http://sharesdk.cn";
-//			shareParams.text = "好耶～好高兴啊～";
-//			shareParams.imageUrl = "http://f1.sharesdk.cn/imgs/2014/02/26/owWpLZo_638x960.jpg";
-//			shareParams.site = "ShareSDK";
-//			shareParams.siteUrl = "http://sharesdk.cn";
-//			shareParams.description = "asdfdsafsadf";
-//			shareParams.type = ShareType.SHARE_WEBPAGE;
-//			sdk.showShareMenu(null, shareParams, 320, 460, ShareMenuArrowDirection.Any);
 		}
 		
 	}

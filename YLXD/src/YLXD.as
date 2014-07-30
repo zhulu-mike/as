@@ -17,6 +17,7 @@ package
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.system.Capabilities;
@@ -78,7 +79,7 @@ package
 				{
 					e.preventDefault();
 				};
-//				AirAlert.getInstance().showAlert(Language.getString("EXIT_DESC"),"",Language.getString("QUEDING"),okFunc,Language.getString("QUXIAO"),cancelFunc);
+				AirAlert.getInstance().showAlert(Language.getString("EXIT_DESC"),"",Language.getString("QUEDING"),okFunc,Language.getString("QUXIAO"),cancelFunc);
 			}
 		}
 		
@@ -92,7 +93,6 @@ package
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.frameRate = 30;
 			stage.setOrientation(StageOrientation.ROTATED_RIGHT);
-			stage.autoOrients = false;
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
 			
 			
@@ -123,10 +123,10 @@ package
 			app.start();
 			loadRes(null);
 			initData();
-			var fs:FlashStatus = new FlashStatus();
-			addChild(fs);
-			fs.init(stage);
-			trace(getTimer());
+//			var fs:FlashStatus = new FlashStatus();
+//			addChild(fs);
+//			fs.init(stage);
+//			trace(getTimer());
 		}
 		
 		protected function onStarlingCreated(event:GameEvent):void
@@ -142,8 +142,21 @@ package
 		{
 			_introduce = new WorkRoomIntroduce();
 			_introduce.resize(GameInstance.instance.sceneWidth,GameInstance.instance.sceneHeight);
+			_introduce.addEventListener(MouseEvent.CLICK, onClick);
 			this.addChild(_introduce);
-			setTimeout(starGame, 2000);
+			setTimeout(timeOut, 2000);
+		}
+		
+		protected function onClick(event:MouseEvent):void
+		{
+			starGame();
+		}
+		
+		private var timeBool:Boolean = false;
+		private function timeOut():void
+		{
+			timeBool = true;
+			starGame();
 		}
 		
 		
@@ -191,7 +204,9 @@ package
 		{
 			if (_introduce.parent == null)
 				return;
-			if (GameInstance.instance.resLoadCom && GameInstance.instance.haveStarlingCreate && (getTimer()-GameInstance.instance.introduceTime >= 2000))
+			_introduce.removeEventListener(MouseEvent.CLICK, onClick);
+			trace(GameInstance.instance.resLoadCom,GameInstance.instance.haveStarlingCreate,timeBool);
+			if (GameInstance.instance.resLoadCom && GameInstance.instance.haveStarlingCreate && timeBool)
 			{
 				this.removeChild(_introduce);
 				EventCenter.instance.dispatchEvent(new GameEvent(GameEvent.START_GAME));

@@ -18,6 +18,8 @@ package modules.scene.views
 	
 	import starling.display.Quad;
 	import starling.text.TextField;
+	import starling.utils.HAlign;
+	import starling.utils.VAlign;
 	
 	public class ScenePart extends SceneBase
 	{
@@ -35,10 +37,12 @@ package modules.scene.views
 //			this.addChildAt(bg,0);
 //			mainPlayer.y = 330 - mainPlayer.height;
 			
-			maxScoreTxt = new TextField(500*ratio,AirUtil.getHeightByFontSize(76*ratio),"","Verdana",76*ratio,0x89c997);
+			maxScoreTxt = new TextField(600*ratio,AirUtil.getHeightByFontSize(76*ratio),"","Verdana",76*ratio,0x89c997);
 			this.addChild(maxScoreTxt);
 			maxScoreTxt.x = 10;
 			maxScoreTxt.y = 10;
+			maxScoreTxt.vAlign = VAlign.TOP;
+			maxScoreTxt.hAlign = HAlign.LEFT;
 			maxScoreTxt.touchable = false;
 			maxScoreTxt.filter = GameUtil.getTextFieldFIlter();
 			

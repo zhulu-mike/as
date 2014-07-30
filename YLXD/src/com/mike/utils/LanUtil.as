@@ -16,6 +16,10 @@ package com.mike.utils
 				lan = Capabilities.languages[0];
 				if (lan.indexOf("zh") >= 0)
 					lan = LanType.ZHONGGUO;
+				else if (lan.indexOf("en") >= 0)
+					lan = LanType.ENGLISH;
+				else if (lan.indexOf("ja") >= 0)
+					lan = LanType.JAPANESE;
 			}else{
 				lan = LanType.ENGLISH;
 			}
@@ -34,6 +38,7 @@ package com.mike.utils
 				default:
 					break;
 			}
+			file = "english";
 			return file + ".xml";
 		}
 		

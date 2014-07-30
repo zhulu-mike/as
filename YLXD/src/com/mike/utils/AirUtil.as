@@ -50,10 +50,17 @@ package com.mike.utils
 		public static function screenShotAndSave():String
 		{
 			var bmd:BitmapData = takeScreenshot();
-			var img:String = File.userDirectory.url  +"/air.com.kunpeng.cainimei/"+"";
+			var img:String;
+			if (!DeviceUtil.isIos())
+			{
+				img = File.userDirectory.url  +"/air.com.kunpeng.cainimei/"+new Date().getTime()+".jpg";
+			}else{
+				img = File.applicationStorageDirectory.nativePath +"/" +new Date().getTime()+".jpg";
+			}
 			trace(File.userDirectory.url);
-			var f:File = File.applicationStorageDirectory.resolvePath("air.com.kunpeng.cainimei").resolvePath(new Date().getTime()+".jpg");
-			img = f.url;
+			trace(img);
+			trace(File.applicationStorageDirectory.nativePath);
+			var f:File = new File(img);
 			img = img.replace("file://","");
 			var fs:FileStream = new FileStream();
 			fs.open(f,FileMode.WRITE);
