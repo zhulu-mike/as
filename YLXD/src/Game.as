@@ -84,6 +84,7 @@ package
 		
 		private function onResize(event:Event):void
 		{
+			trace("添加到舞台");
 			GameInstance.instance.sceneWidth = stage.stageWidth;
 			GameInstance.instance.sceneHeight = stage.stageHeight;
 			EventCenter.instance.addEventListener(GameEvent.START_GAME, beginAfterRes);

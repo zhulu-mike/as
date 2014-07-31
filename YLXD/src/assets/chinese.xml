@@ -24,6 +24,7 @@
 		<key id="NIXIANGWORDS"><![CDATA[赢了我开启5秒无敌模式哦]]></key>
 		<key id="WUDIWORDS"><![CDATA[无敌模式，冲啊！$COUNT]]></key>
 		<key id="QIDONGZHONG"><![CDATA[游戏马上开始...]]></key>
+		<key id="ERROR1"><![CDATA[网络错误，请开启网络再试。]]></key>
 	</common>
 	<player>
 		<key><![CDATA[反转模式好难啊]]></key>

@@ -24,6 +24,7 @@
 		<key id="NIXIANGWORDS"><![CDATA[赢了我开启5秒无敌模式哦]]></key>
 		<key id="WUDIWORDS"><![CDATA[Invincibling，GoGoGo！$COUNT]]></key>
 		<key id="QIDONGZHONG"><![CDATA[Game Begin Soon...]]></key>
+		<key id="ERROR1"><![CDATA[can't connect internet]]></key>
 	</common>
 	<player>
 		<key><![CDATA[reverse pattern too difficult]]></key>
