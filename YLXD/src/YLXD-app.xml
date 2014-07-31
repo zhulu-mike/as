@@ -86,9 +86,9 @@
 		<!-- The window's initial maximum size, specified as a width/height pair in pixels, such as "1600 1200". Optional. -->
 		<!-- <maxSize></maxSize> -->
 
-        <!-- The aspect ratio of the app ("portrait" or "landscape" or "any"). Optional. Mobile only. Default is the natural orientation of the device -->
-
-        <!-- <aspectRatio></aspectRatio> -->
+        <!-- The aspect ratio of the app ("portrait"竖屏 or "landscape"横屏 or "any"). Optional. Mobile only. Default is the natural orientation of the device -->
+	
+       <aspectRatio>landscape</aspectRatio>
 
         <!-- Whether the app will begin auto-orienting on launch. Optional. Mobile only. Default false -->
 
@@ -133,15 +133,16 @@
 	<!-- The icon the system uses for the application. For at least one resolution,
 	specify the path to a PNG file included in the AIR package. Optional. -->
 	<icon>
-		<image16x16>assets/icon_16x16.png</image16x16>
-		<image32x32>assets/icon_32x32.png</image32x32>
-		<image48x48>assets/icon_48x48.png</image48x48>
+		<image16x16>assets/logo16.png</image16x16>
+		<image32x32>assets/logo32.png</image32x32>
+		<image48x48>assets/logo48.png</image48x48>
 		<image29x29>assets/logo29.png</image29x29>
 		<image40x40>assets/logo40.png</image40x40>
 		<image58x58>assets/logo58.png</image58x58>
 		<image76x76>assets/logo76.png</image76x76>
 		<image80x80>assets/logo80.png</image80x80>
 		<image120x120>assets/logo120.png</image120x120>
+		<image128x128>assets/logo128.png</image128x128>
 		<image152x152>assets/logo152.png</image152x152>
 	</icon>
 	<!-- <icon>
@@ -271,8 +272,8 @@
 			   	<uses-permission android:name="android.permission.CAMERA" />
 			   
 			    <application android:enabled="true">
-			    	<meta-data android:name="BaiduMobAd_APP_ID" android:value="1003ba05" /> 
-    				<meta-data android:name="BaiduMobAd_APP_SEC" android:value="1003ba05" />
+			    	<!--<meta-data android:name="BaiduMobAd_APP_ID" android:value="1003ba05" /> 
+    				<meta-data android:name="BaiduMobAd_APP_SEC" android:value="1003ba05" />-->
     				<activity
 			    		android:windowSoftInputMode="stateHidden|adjustResize"
 			    		android:theme="@android:style/Theme.Translucent.NoTitleBar"
@@ -291,7 +292,6 @@
 			            </intent-filter>
 			        </activity>
 			        <activity
-			        
 			            android:name="air.com.kenpeng.cainimei.wxapi.WXEntryActivity"
 			            android:theme="@android:style/Theme.Translucent.NoTitleBar"
 			            android:exported="true" />
@@ -330,15 +330,16 @@
 					<key>CFBundleTypeRole</key>
 					<string>Editor</string>
 					<key>CFBundleURLName</key>
-					<string>SinaWeibo</string>
+					<string></string>
 					<key>CFBundleURLSchemes</key>
 					<array>
 						<string>wb329844495</string>
-						<string>wb801307650</string>
-						<string>tencent100371282</string>
 						<string>wx580dc9f6d9dcdda3</string>
+						<string>wb801528511</string>
+						<string>tencent100371282</string>
 						<string>QQ100371282</string>
 						<string>fb296398530542978</string>
+						<string>rm226427cn.appgo.sharebyone</string>
 					</array>
 				</dict>
 			</array>
@@ -356,5 +357,6 @@
     <extensionID>com.freshplanet.AirAlert</extensionID>
         <extensionID>so.cuo.platform.baidu</extensionID>
     <extensionID>com.mike.weixin</extensionID>
+    <extensionID>so.cuo.platform.admob</extensionID>
     </extensions>
 </application>

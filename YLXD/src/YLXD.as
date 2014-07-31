@@ -18,9 +18,13 @@ package
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
+	import flash.events.StageOrientationEvent;
+	import flash.events.ThrottleEvent;
+	import flash.events.ThrottleType;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.system.Capabilities;
+	import flash.text.engine.BreakOpportunity;
 	import flash.ui.Keyboard;
 	import flash.ui.Multitouch;
 	import flash.ui.MultitouchInputMode;
@@ -98,7 +102,7 @@ package
 			
 			
 			ResolutionUtil.instance.init(new Point(2048,1536));
-			AdvertiseUtil.initBaiDu();
+			AdvertiseUtil.initBaiDu(stage);
 			ShareManager.instance.init();
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			
@@ -127,6 +131,25 @@ package
 //			addChild(fs);
 //			fs.init(stage);
 //			trace(getTimer());
+//			stage.addEventListener(StageOrientationEvent.ORIENTATION_CHANGE, onChange);
+//			stage.addEventListener(Event.DEACTIVATE, onThrottle);
+//			stage.addEventListener(Event.ACTIVATE, onThrottle);
+		}
+		
+		protected function onThrottle(event:Event):void
+		{
+			stage.setOrientation(StageOrientation.ROTATED_RIGHT);
+			trace("焦点失效");
+		}
+		
+		protected function onChange(event:StageOrientationEvent):void
+		{
+			// TODO Auto-generated method stub
+			if (event.afterOrientation != StageOrientation.ROTATED_RIGHT){
+				event.preventDefault();
+				stage.setOrientation(StageOrientation.ROTATED_RIGHT);
+			}
+			trace(event.afterOrientation,event.beforeOrientation);
 		}
 		
 		protected function onStarlingCreated(event:GameEvent):void
