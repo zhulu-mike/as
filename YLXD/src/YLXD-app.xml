@@ -330,7 +330,7 @@
 					<key>CFBundleTypeRole</key>
 					<string>Editor</string>
 					<key>CFBundleURLName</key>
-					<string>SinaWeibo</string>
+					<string></string>
 					<key>CFBundleURLSchemes</key>
 					<array>
 						<string>wb329844495</string>
