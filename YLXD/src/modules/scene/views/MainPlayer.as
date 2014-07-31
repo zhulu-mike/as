@@ -21,6 +21,7 @@ package modules.scene.views
 	import starling.display.Sprite;
 	import starling.text.TextField;
 	import starling.utils.HAlign;
+	import starling.utils.VAlign;
 	
 	public class MainPlayer extends Sprite
 	{
@@ -121,13 +122,13 @@ package modules.scene.views
 		
 		private function speak(s:String=null):void
 		{
-			return;
 			var str:String = s || GameUtil.randomPlayerWord();
 			if (words == null)
 			{
 				var ratio:Number = GameInstance.instance.scaleRatio;
 				words = new TextField(480*ratio,256*ratio,str,"Verdana",57*ratio,0xffffff);
 				words.hAlign = HAlign.CENTER;
+				words.vAlign = VAlign.TOP;
 				words.filter = GameUtil.getTextFieldFIlter();
 				this.addChild(words);
 				words.x = this.reallyWidth - words.width >> 1;

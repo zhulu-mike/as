@@ -77,11 +77,11 @@ package managers
 			GameInstance.instance.leftShowFullAd--;
 			if (GameInstance.instance.leftShowFullAd <= 0)
 			{
-				if (AdvertiseUtil.isInterstitialReady())
-				{
+//				if (AdvertiseUtil.isInterstitialReady())
+//				{
 					AdvertiseUtil.showInterstitial();
 					GameInstance.instance.leftShowFullAd = GameInstance.FULLE_AD;
-				}
+//				}
 			}
 		}
 		
