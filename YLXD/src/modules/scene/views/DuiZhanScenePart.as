@@ -50,10 +50,11 @@ package modules.scene.views
 			if (door.isReverse && mainPlayer.playerStatus == PlayerStatus.COMMON)
 			{
 				//加速
+				addSpeed = 0;
 				mainPlayer.playerStatus = PlayerStatus.WUDI;
 				lastWuDiTime = getTimer();
-				sceneSpeed += GameInstance.WUDISPEED;
-				mainPlayer.setSpeed(sceneSpeed);
+//				sceneSpeed += GameInstance.WUDISPEED;
+//				mainPlayer.setSpeed(sceneSpeed);
 			}
 		}
 		

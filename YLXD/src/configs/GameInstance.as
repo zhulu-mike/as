@@ -18,6 +18,8 @@ package configs
 			return _instance;
 		}
 		
+		public static const REVERSE_DELAY:int = 5000;
+		
 		public var isIos:Boolean = false;
 		
 		public var sceneWidth:int;
@@ -72,7 +74,7 @@ package configs
 		/**
 		 * 加速度
 		 */		
-		public static var  ACCERATE_SPEED:Number = 0.266666666;
+		public static var  ACCERATE_SPEED:Number = 0.53333332;
 		
 		public var gameState:int = 0;
 		
