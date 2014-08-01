@@ -1,6 +1,7 @@
 package modules.scene.views
 {
 	import com.mike.utils.AirUtil;
+	import com.mike.utils.TimeUtil;
 	
 	import flash.utils.getTimer;
 	
@@ -131,8 +132,8 @@ package modules.scene.views
 		
 		private function needAddSpeed():void
 		{
-			var speed:int = int(sceneScore / 100);
-			speed = speed > 5 ? 5 : speed;
+			var speed:int = int(sceneScore / 50)*2;
+			speed = speed > 10 ? 10 : speed;
 			if (mainPlayer.playerStatus == PlayerStatus.COMMON){
 				sceneSpeed  = GameInstance.INIT_SPEED + speed;
 				mainPlayer.setSpeed(sceneSpeed);
@@ -141,6 +142,7 @@ package modules.scene.views
 				c = c > 150 ? (150 - c + 150) : c;
 				addSpeed = GameInstance.ACCERATE_SPEED * c;
 				sceneSpeed  = GameInstance.INIT_SPEED + speed+ addSpeed;
+				mainPlayer.setSpeed(sceneSpeed);
 			}
 		}
 		
@@ -217,6 +219,7 @@ package modules.scene.views
 			}
 		}
 		
+		private var lastReverseTime:int = 0;
 		protected function makeDoor():void
 		{
 			var state:int ;
@@ -225,13 +228,15 @@ package modules.scene.views
 			else
 				state = PlayerState.randomState();
 			var needReverse:Boolean = false;
-			if (sceneScore > 50 && GameInstance.instance.pattern != GamePattern.NIXIANG)
+			var now:int = getTimer();;
+			if (sceneScore > 50 && GameInstance.instance.pattern != GamePattern.NIXIANG )
 			{
 				//50关后，有反转率
-				var reverse:int = int(sceneScore / 50)*5 ;
-				reverse = reverse > 30 ? 30 : reverse;
+				var reverse:int = int(sceneScore / 50)*4 ;
+				reverse = reverse > 20 ? 20 : reverse;
 				var random:int = Math.random() * 100;
-				if (random <= reverse){
+				if (random <= reverse && now - lastReverseTime > GameInstance.REVERSE_DELAY){
+					lastReverseTime = now;
 					needReverse = true;
 				}
 			}else if (GameInstance.instance.pattern == GamePattern.NIXIANG)
