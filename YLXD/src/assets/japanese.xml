@@ -1,5 +1,6 @@
 <data>
 	<common>
+		<key id="GAMENAME"><![CDATA[CrazyHand]]></key>
 		<key id="PUTONG"><![CDATA[普   通]]></key>
 		<key id="DUIZHAN"><![CDATA[戦争のために]]></key>
 		<key id="NIXIANG"><![CDATA[アンチターン]]></key>
@@ -25,6 +26,7 @@
 		<key id="WUDIWORDS"><![CDATA[无敌模式，冲啊！$COUNT]]></key>
 		<key id="QIDONGZHONG"><![CDATA[Game Begin Soon...]]></key>
 		<key id="ERROR1"><![CDATA[网络错误，请开启网络再试。]]></key>
+		<key id="SHARECONTENT"><![CDATA[我在《CrazyHand》中得到了$SCORE分，谁敢一战？下载地址：http://www.g6game.com/fkzs/]]></key>
 	</common>
 	<player>
 		<key><![CDATA[反轉模式好難啊]]></key>

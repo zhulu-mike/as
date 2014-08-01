@@ -1,5 +1,6 @@
 <data>
 	<common>
+		<key id="GAMENAME"><![CDATA[CrazyHand]]></key>
 		<key id="PUTONG"><![CDATA[General]]></key>
 		<key id="DUIZHAN"><![CDATA[Fight]]></key>
 		<key id="NIXIANG"><![CDATA[Reverse]]></key>
@@ -25,6 +26,7 @@
 		<key id="WUDIWORDS"><![CDATA[Invincibling，GoGoGo！$COUNT]]></key>
 		<key id="QIDONGZHONG"><![CDATA[Game Begin Soon...]]></key>
 		<key id="ERROR1"><![CDATA[can't connect internet]]></key>
+		<key id="SHARECONTENT"><![CDATA[I get $SCORE score from 《CrazyHand》，who can fight me？Down  URL：http://www.g6game.com/fkzs/]]></key>
 	</common>
 	<player>
 		<key><![CDATA[reverse pattern too difficult]]></key>
