@@ -1,0 +1,43 @@
+<data>
+	<common>
+		<key id="PUTONG"><![CDATA[普   通]]></key>
+		<key id="DUIZHAN"><![CDATA[戦争のために]]></key>
+		<key id="NIXIANG"><![CDATA[アンチターン]]></key>
+		<key id="FENSHU"><![CDATA[スコア：$SCORE]]></key>
+		<key id="DEFEN"><![CDATA[スコア：$SCORE]]></key>
+		<key id="JIESHU"><![CDATA[GAME OVER]]></key>
+		<key id="YINGLE"><![CDATA[私は勝った]]></key>
+		<key id="WOSHULE"><![CDATA[次の努力]]></key>
+		<key id="PINGJU"><![CDATA[不分上下，再来一局！]]></key>
+		<key id="MAX_SCORE"><![CDATA[最高得点：$SCORE]]></key>
+		<key id="ADVISE_DESC"><![CDATA[杭州鯤鵬遊戲工作室出品]]></key>
+		<key id="WORKROOM_DESC"><![CDATA[多彩体验，尽在鯤鵬！]]></key>
+		<key id="WORKROOM_DESC2"><![CDATA[鯤鵬遊戲]]></key>
+		<key id="FANHUI"><![CDATA[返す]]></key>
+		<key id="CHONGLAI"><![CDATA[リスタート]]></key>
+		<key id="XUANYAO"><![CDATA[炫耀]]></key>
+		<key id="EXIT_DESC"><![CDATA[あなたが休憩を取るために辞めしてもよろしい？]]></key>
+		<key id="QUEDING"><![CDATA[確認]]></key>
+		<key id="QUXIAO"><![CDATA[キャンセル]]></key>
+		<key id="ZHIZUOREN"><![CDATA[製品：mike        美術：止戈blue]]></key>
+		<key id="WEIBO"><![CDATA[新浪微博：杭州鲲鹏工作室]]></key>
+		<key id="NIXIANGWORDS"><![CDATA[赢了我开启5秒无敌模式哦]]></key>
+		<key id="WUDIWORDS"><![CDATA[无敌模式，冲啊！$COUNT]]></key>
+		<key id="QIDONGZHONG"><![CDATA[Game Begin Soon...]]></key>
+		<key id="ERROR1"><![CDATA[网络错误，请开启网络再试。]]></key>
+	</common>
+	<player>
+		<key><![CDATA[反轉模式好難啊]]></key>
+		<key><![CDATA[别忘了分享给你的小伙伴哦]]></key>
+		<key><![CDATA[点击屏幕切换我的手型]]></key>
+		<key><![CDATA[分数超过50后猜赢红色手型可得到5秒的无敌时间哦]]></key>
+		<key><![CDATA[遇到红色手型，要比它小才能赢哦！]]></key>
+		<key><![CDATA[我今天还没赢过，好衰啊！]]></key>
+		<key><![CDATA[我喜欢妹子，你呢？]]></key>
+		<key><![CDATA[我有一只小毛驴，我从来也不骑......]]></key>
+		<key><![CDATA[二货主人太菜了！]]></key>
+		<key><![CDATA[呵呵！]]></key>
+		<key><![CDATA[我一直说的不停，主人你烦吗？]]></key>
+		<key><![CDATA[]]></key>
+	</player>
+</data>

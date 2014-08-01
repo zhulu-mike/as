@@ -29,31 +29,30 @@ package com.mike.utils
 			
 				//android和ios之分
 			isIos = DeviceUtil.isIos();
-				if (isIos)
+			if (isIos)
+			{
+				if (Admob.getInstance().supportDevice)
 				{
-					if (Admob.getInstance().supportDevice)
-					{
-						Admob.getInstance().setKeys("ca-app-pub-7801284693895243/1462394619","ca-app-pub-7801284693895243/4415861017");
-						Admob.getInstance().cacheInterstitial();
-						Admob.getInstance().addEventListener(AdmobEvent.onInterstitialDismiss, onFullMiss);
-						Admob.getInstance().addEventListener(AdmobEvent.onInterstitialReceive, onFullReveive);
-						Admob.getInstance().addEventListener(AdmobEvent.onInterstitialFailedReceive, onFullFailedReveive);
-						Admob.getInstance().addEventListener(AdmobEvent.onInterstitialLeaveApplication, onFullLeave);
-						Admob.getInstance().addEventListener(AdmobEvent.onInterstitialPresent, onFullPresent);
-					}
-//					BaiDu.getInstance().setKeys("1003c358","1003c358");
-				}else{
-					if (BaiDu.getInstance().supportDevice)
-					{
-						BaiDu.getInstance().setKeys("1003ba05","1003ba05");// BaiDu.getInstance().setKeys("appsid","计费id");
-						BaiDu.getInstance().cacheInterstitial();
-						BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialDismiss, onFullMiss);
-						BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialReceive, onFullReveive);
-						BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialFailedReceive, onFullFailedReveive);
-						BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialLeaveApplication, onFullLeave);
-						BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialPresent, onFullPresent);
-					}
+					Admob.getInstance().setKeys("ca-app-pub-7801284693895243/1462394619","ca-app-pub-7801284693895243/4415861017");
+					Admob.getInstance().cacheInterstitial();
+					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialDismiss, onFullMiss);
+					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialReceive, onFullReveive);
+					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialFailedReceive, onFullFailedReveive);
+					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialLeaveApplication, onFullLeave);
+					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialPresent, onFullPresent);
 				}
+			}else{
+				if (BaiDu.getInstance().supportDevice)
+				{
+					BaiDu.getInstance().setKeys("1003ba05","1003ba05");// BaiDu.getInstance().setKeys("appsid","计费id");
+					BaiDu.getInstance().cacheInterstitial();
+					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialDismiss, onFullMiss);
+					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialReceive, onFullReveive);
+					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialFailedReceive, onFullFailedReveive);
+					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialLeaveApplication, onFullLeave);
+					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialPresent, onFullPresent);
+				}
+			}
 		}
 		
 		protected static function onFullPresent(event:Event):void
@@ -71,7 +70,6 @@ package com.mike.utils
 		{
 			// TODO Auto-t method stub
 			trace("全屏广告接收失败");
-			BaiDu.getInstance().cacheInterstitial();
 		}
 		
 		protected static function onFullReveive(event:Event):void

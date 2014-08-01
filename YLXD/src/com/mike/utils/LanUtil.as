@@ -38,7 +38,6 @@ package com.mike.utils
 				default:
 					break;
 			}
-			file = "english";
 			return file + ".xml";
 		}
 		
