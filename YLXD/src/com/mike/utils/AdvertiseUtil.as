@@ -1,7 +1,6 @@
 package com.mike.utils
 {
 	import flash.display.Stage;
-	import flash.display.StageOrientation;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	
@@ -29,11 +28,14 @@ package com.mike.utils
 			
 				//android和ios之分
 			isIos = DeviceUtil.isIos();
-			if (isIos)
+			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 			{
 				if (Admob.getInstance().supportDevice)
 				{
-					Admob.getInstance().setKeys("ca-app-pub-7801284693895243/1462394619","ca-app-pub-7801284693895243/4415861017");
+					if (isIos)
+						Admob.getInstance().setKeys("ca-app-pub-7801284693895243/1462394619","ca-app-pub-7801284693895243/4415861017");
+					else
+						Admob.getInstance().setKeys("ca-app-pub-7801284693895243/1419878615","ca-app-pub-7801284693895243/5850078219");
 					Admob.getInstance().cacheInterstitial();
 					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialDismiss, onFullMiss);
 					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialReceive, onFullReveive);
@@ -80,7 +82,7 @@ package com.mike.utils
 		protected static function onFullMiss(event:Event):void
 		{
 			trace("全屏广告关闭");
-			if (isIos)
+			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 				Admob.getInstance().cacheInterstitial();
 			else
 				BaiDu.getInstance().cacheInterstitial();
@@ -91,7 +93,7 @@ package com.mike.utils
 		public static function showBaiDuBanner():void
 		{
 			trace(stage.orientation);
-			if (isIos)
+			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 				Admob.getInstance().showBanner(Admob.BANNER,AdmobPosition.BOTTOM_CENTER);
 			else
 				BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
@@ -99,7 +101,7 @@ package com.mike.utils
 		
 		public static function hideBaiDuBanner():void
 		{
-			if (isIos)
+			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 				Admob.getInstance().hideBanner();
 			else
 				BaiDu.getInstance().hideBanner();
@@ -107,7 +109,7 @@ package com.mike.utils
 		
 		public static function cacheInterstitial():void
 		{
-			if (isIos)
+			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 				Admob.getInstance().cacheInterstitial();
 			else
 				BaiDu.getInstance().cacheInterstitial();
@@ -115,7 +117,7 @@ package com.mike.utils
 		
 		public static function isInterstitialReady():Boolean
 		{
-			if (isIos)
+			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 				return Admob.getInstance().isInterstitialReady();
 			else
 				return BaiDu.getInstance().isInterstitialReady();
@@ -125,7 +127,7 @@ package com.mike.utils
 		public static function showInterstitial():void
 		{
 			trace(GameInstance.instance.sceneWidth, GameInstance.instance.sceneHeight,stage.orientation,stage.autoOrients);
-			if (isIos)
+			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 				Admob.getInstance().showInterstitial();
 			else
 				BaiDu.getInstance().showInterstitial();
@@ -133,7 +135,7 @@ package com.mike.utils
 		
 		public static function getBaiDuInstance():EventDispatcher
 		{
-			if (isIos)
+			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 				return Admob.getInstance();
 			else
 				return BaiDu.getInstance();
