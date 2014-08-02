@@ -35,7 +35,7 @@ package com.mike.utils
 					if (isIos)
 						Admob.getInstance().setKeys("ca-app-pub-7801284693895243/1462394619","ca-app-pub-7801284693895243/4415861017");
 					else
-						Admob.getInstance().setKeys("ca-app-pub-7801284693895243/1419878615","ca-app-pub-7801284693895243/5850078219");
+						Admob.getInstance().setKeys("ca-app-pub-7801284693895243/8332539819","ca-app-pub-7801284693895243/3762739414");
 					Admob.getInstance().cacheInterstitial();
 					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialDismiss, onFullMiss);
 					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialReceive, onFullReveive);
