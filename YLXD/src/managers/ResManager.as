@@ -17,15 +17,19 @@ package managers
 		
 		public static const BASE:String = "assets/";
 		
-		public static const YLXD:String = BASE + "ylxd.png";
+		public static const YLXD:String = BASE + "ylxd1.png";
 		
-		public static const YLXDXML:String = BASE + "ylxd.xml";
+		public static const YLXDXML:String = BASE + "ylxd1.xml";
+		public static const YLXD2:String = BASE + "ylxd2.png";
+		
+		public static const YLXDXML2:String = BASE + "ylxd2.xml";
 		
 		public static var assetsManager:AssetManager;
 		
 		public static var resLoader:BulkLoader;
 		
 		public static var YLXD_NAME:String = "ylxd";
+		public static var YLXD_NAME2:String = "ylxd2";
 		
 		public static const PASS_SOUND:String = BASE + "pass.mp3";
 		

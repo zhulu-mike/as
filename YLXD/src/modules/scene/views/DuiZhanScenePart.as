@@ -9,6 +9,7 @@ package modules.scene.views
 	
 	import managers.BackGroundFactory;
 	
+	import starling.display.BlendMode;
 	import starling.display.Image;
 	import starling.display.QuadBatch;
 
@@ -24,10 +25,12 @@ package modules.scene.views
 			super($sceneHeight);
 			bg = new QuadBatch();
 			this.addChildAt(bg,0);
+			bg.blendMode = BlendMode.NONE;
 			bgItem = BackGroundFactory.getInstance().getShape();
 			bgItem.height = sceneHeight;
-			bgItemWidth = bgItem.width;
+			bgItemWidth = bgItem.width-1;
 			scoreTxt.y = 30;
+//			createBackground();
 		}
 		
 		override protected function doUpdate():void
@@ -47,10 +50,11 @@ package modules.scene.views
 			if (door.isReverse && mainPlayer.playerStatus == PlayerStatus.COMMON)
 			{
 				//加速
+				addSpeed = 0;
 				mainPlayer.playerStatus = PlayerStatus.WUDI;
 				lastWuDiTime = getTimer();
-				sceneSpeed += GameInstance.WUDISPEED;
-				mainPlayer.setSpeed(sceneSpeed);
+//				sceneSpeed += GameInstance.WUDISPEED;
+//				mainPlayer.setSpeed(sceneSpeed);
 			}
 		}
 		
@@ -89,6 +93,12 @@ package modules.scene.views
 		private var bgImages:Array = [];
 		private function createBackground():void
 		{
+			
+//			bgItem.x = -400;
+//			bg.addImage(bgItem);
+//			bgItem.x = 399;
+//			bg.addImage(bgItem);
+//			return;
 			var i:int = 0, len:int = bgImages.length;
 			var img:Object;
 			var totalWidth:int = 0;

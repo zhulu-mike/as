@@ -1,8 +1,14 @@
 package
 {
 	import com.freshplanet.ane.AirAlert.AirAlert;
+	import com.mike.utils.AdvertiseUtil;
+	import com.mike.utils.DeviceUtil;
 	import com.mike.utils.FlashStatus;
+	import com.mike.utils.LanUtil;
+	import com.mike.utils.NetUtil;
+	import com.mike.utils.ResolutionUtil;
 	import com.mike.utils.ShareManager;
+	import com.mike.utils.TimeUtil;
 	
 	import flash.desktop.NativeApplication;
 	import flash.display.Sprite;
@@ -11,17 +17,25 @@ package
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
+	import flash.events.StageOrientationEvent;
+	import flash.events.ThrottleEvent;
+	import flash.events.ThrottleType;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.system.Capabilities;
+	import flash.text.engine.BreakOpportunity;
 	import flash.ui.Keyboard;
 	import flash.ui.Multitouch;
 	import flash.ui.MultitouchInputMode;
 	import flash.utils.getTimer;
 	import flash.utils.setTimeout;
 	
+	import mx.resources.Locale;
+	
 	import br.com.stimuli.loading.BulkLoader;
+	import br.com.stimuli.loading.BulkProgressEvent;
 	import br.com.stimuli.loading.loadingtypes.LoadingItem;
-	import br.com.stimuli.loading.loadingtypes.XMLItem;
 	
 	import configs.GameInstance;
 	import configs.GamePattern;
@@ -35,17 +49,12 @@ package
 	
 	import modules.mainui.views.WorkRoomIntroduce;
 	
-	import so.cuo.platform.baidu.BaiDu;
-	
 	import starling.core.Starling;
 	
 	public class YLXD extends Sprite
 	{
 		
 		private var app:Starling;
-		
-		[Embed(source="assets/ylxd.png")]
-		public var YlxdBmd:Class;
 		
 		[Embed(source="assets/logo.png")]
 		public var LogAsset:Class;
@@ -74,7 +83,7 @@ package
 				{
 					e.preventDefault();
 				};
-				AirAlert.getInstance().showAlert(Language.EXIT_DESC,"",Language.QUEDING,okFunc,Language.QUXIAO,cancelFunc);
+				AirAlert.getInstance().showAlert(Language.getString("EXIT_DESC"),"",Language.getString("QUEDING"),okFunc,Language.getString("QUXIAO"),cancelFunc);
 			}
 		}
 		
@@ -83,34 +92,37 @@ package
 		private function init(event:Event=null):void
 		{
 //			trace(getTimer());
+			GameInstance.instance.isIos = DeviceUtil.isIos();
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
-			stage.frameRate = 60;
+			stage.frameRate = 30;
 			stage.setOrientation(StageOrientation.ROTATED_RIGHT);
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
+			
+			
+			
+			ResolutionUtil.instance.init(new Point(2048,1536));
+			AdvertiseUtil.initBaiDu(stage);
 			ShareManager.instance.init();
-			GameInstance.instance.LOG_CLASS = LogAsset;
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-			GameInstance.instance.YLXD_CLASS = YlxdBmd;
-			if (BaiDu.getInstance().supportDevice)
-			{
-				BaiDu.getInstance().setKeys("ac15d8a4","ac15d8a4");// BaiDu.getInstance().setKeys("appsid","计费id");
-				BaiDu.getInstance().cacheInterstitial();
-			}
+			
+			GameInstance.instance.sceneWidth = Math.max(stage.fullScreenWidth, stage.fullScreenHeight);
+			GameInstance.instance.sceneHeight = Math.min(stage.fullScreenWidth, stage.fullScreenHeight);
+			GameInstance.instance.scaleRatio = ResolutionUtil.instance.getBestRatio(GameInstance.instance.sceneWidth,GameInstance.instance.sceneHeight);
+			GameInstance.DOOR_DIS = GameInstance.DOOR_DIS * GameInstance.instance.scaleRatio;
+			GameInstance.INIT_SPEED = GameInstance.INIT_SPEED * GameInstance.instance.scaleRatio;
+			GameInstance.WUDISPEED = GameInstance.WUDISPEED * GameInstance.instance.scaleRatio;
+			
+			GameInstance.instance.LOG_CLASS = LogAsset;
+			
 			EventCenter.instance.addEventListener(GameEvent.STARLING_CREATE, onStarlingCreated);
 			trace(stage.orientation,Capabilities.screenResolutionX,Capabilities.screenResolutionY);
+			trace(stage.fullScreenWidth, stage.fullScreenHeight);
 			var rect:Rectangle ;
-			if (stage.orientation != StageOrientation.ROTATED_RIGHT){
-				GameInstance.instance.sceneWidth = Capabilities.screenResolutionY;
-				GameInstance.instance.sceneHeight = Capabilities.screenResolutionX;
-				rect = new Rectangle(0,0,Capabilities.screenResolutionY,Capabilities.screenResolutionX);
-			}else{
-				GameInstance.instance.sceneWidth = Capabilities.screenResolutionX;
-				GameInstance.instance.sceneHeight = Capabilities.screenResolutionY;
-				rect = new Rectangle(0,0,Capabilities.screenResolutionX,Capabilities.screenResolutionY);
-			}
+			rect = new Rectangle(0,0,GameInstance.instance.sceneWidth,GameInstance.instance.sceneHeight);
 			showIntroduce();
-			Starling.handleLostContext = true;
+			if (!GameInstance.instance.isIos)
+				Starling.handleLostContext = true;
 			app = new Starling(Game,stage,rect,null,"auto","auto");
 			app.start();
 			loadRes(null);
@@ -119,6 +131,25 @@ package
 //			addChild(fs);
 //			fs.init(stage);
 //			trace(getTimer());
+//			stage.addEventListener(StageOrientationEvent.ORIENTATION_CHANGE, onChange);
+//			stage.addEventListener(Event.DEACTIVATE, onThrottle);
+//			stage.addEventListener(Event.ACTIVATE, onThrottle);
+		}
+		
+		protected function onThrottle(event:Event):void
+		{
+			stage.setOrientation(StageOrientation.ROTATED_RIGHT);
+			trace("焦点失效");
+		}
+		
+		protected function onChange(event:StageOrientationEvent):void
+		{
+			// TODO Auto-generated method stub
+			if (event.afterOrientation != StageOrientation.ROTATED_RIGHT){
+				event.preventDefault();
+				stage.setOrientation(StageOrientation.ROTATED_RIGHT);
+			}
+			trace(event.afterOrientation,event.beforeOrientation);
 		}
 		
 		protected function onStarlingCreated(event:GameEvent):void
@@ -134,40 +165,71 @@ package
 		{
 			_introduce = new WorkRoomIntroduce();
 			_introduce.resize(GameInstance.instance.sceneWidth,GameInstance.instance.sceneHeight);
+			_introduce.addEventListener(MouseEvent.CLICK, onClick);
 			this.addChild(_introduce);
-			setTimeout(starGame, 2000);
+			setTimeout(timeOut, 2000);
+		}
+		
+		protected function onClick(event:MouseEvent):void
+		{
+			starGame();
+		}
+		
+		private var timeBool:Boolean = false;
+		private function timeOut():void
+		{
+			timeBool = true;
+			starGame();
 		}
 		
 		
 		private function initData():void
 		{
-			GameInstance.instance.so = new LocalSO("ylxd_game");
+			GameInstance.instance.so = new LocalSO("com.kunpeng.cainimei");
 			if(GameInstance.instance.so.hasKey("pattern_"+GamePattern.PUTONG))
 				GameUtil.setMaxScore(GamePattern.PUTONG,int(GameInstance.instance.so.getAt("pattern_"+GamePattern.PUTONG)));
 			if(GameInstance.instance.so.hasKey("pattern_"+GamePattern.NIXIANG))
 				GameUtil.setMaxScore(GamePattern.NIXIANG,int(GameInstance.instance.so.getAt("pattern_"+GamePattern.NIXIANG)));
+			var lastLoginTime:int = int(GameInstance.instance.so.getAt("last_login_time"));
+			if (lastLoginTime == 0 || lastLoginTime < TimeUtil.getTodayZeroTime())
+			{
+				GameInstance.instance.so.setAt("last_login_time",TimeUtil.getNowTime());
+				NetUtil.sendLogin(DeviceUtil.getDeviceID());
+			}
 		}
 		
 		public function loadRes(e:GameEvent):void
 		{
 			ResManager.resLoader = new BulkLoader("main");
-			var loadData:LoadingItem = ResManager.resLoader.add(ResManager.YLXDXML);
-			var comp:Function = function(e:flash.events.Event):void
+			
+			ResManager.resLoader.add(ResManager.YLXDXML);
+			ResManager.resLoader.add(ResManager.YLXD);
+			ResManager.resLoader.add(ResManager.YLXDXML2);
+			ResManager.resLoader.add(ResManager.YLXD2);
+			var item:LoadingItem = ResManager.resLoader.add(ResManager.BASE + LanUtil.getCurrentLangeFile());
+			var lanFunc:Function = function(e:flash.events.Event):void
 			{
-				loadData.removeEventListener(flash.events.Event.COMPLETE, comp);
-				GameInstance.instance.YLXD_XML =  (loadData as XMLItem).content;
+				item.removeEventListener(flash.events.Event.COMPLETE, lanFunc);
+				Language.parse(item.content);
+			};
+			item.addEventListener(flash.events.Event.COMPLETE,lanFunc);
+			var comp:Function = function(e:BulkProgressEvent):void
+			{
+				ResManager.resLoader.removeEventListener(BulkProgressEvent.COMPLETE, comp);
 				GameInstance.instance.resLoadCom = true;
 				starGame();
-			}
-			loadData.addEventListener(flash.events.Event.COMPLETE, comp);
-			ResManager.resLoader.loadNow(loadData);
+			};
+			ResManager.resLoader.addEventListener(BulkProgressEvent.COMPLETE,comp);
+			ResManager.resLoader.start();
 		}
 		
 		private function starGame():void
 		{
 			if (_introduce.parent == null)
 				return;
-			if (GameInstance.instance.resLoadCom && GameInstance.instance.haveStarlingCreate && (getTimer()-GameInstance.instance.introduceTime >= 2000))
+			_introduce.removeEventListener(MouseEvent.CLICK, onClick);
+			trace(GameInstance.instance.resLoadCom,GameInstance.instance.haveStarlingCreate,timeBool);
+			if (GameInstance.instance.resLoadCom && GameInstance.instance.haveStarlingCreate && timeBool)
 			{
 				this.removeChild(_introduce);
 				EventCenter.instance.dispatchEvent(new GameEvent(GameEvent.START_GAME));

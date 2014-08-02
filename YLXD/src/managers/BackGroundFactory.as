@@ -3,6 +3,7 @@ package managers
 	import com.mike.utils.BaseFactory;
 	
 	import starling.display.Image;
+	import starling.textures.TextureSmoothing;
 	
 	public class BackGroundFactory extends BaseFactory
 	{
@@ -10,10 +11,12 @@ package managers
 		{
 			if (!instance)
 			{
-				var i:int = 0;
+				var i:int = 0,vo:Image;
 				for (i;i<2;i++)
 				{
-					freePools.push(new Image(ResManager.assetsManager.getTexture("background")));
+					vo = new Image(ResManager.assetsManager.getTexture("background"));
+					freePools.push(vo);
+					vo.smoothing = TextureSmoothing.NONE;
 				}
 			}
 		}
@@ -33,6 +36,7 @@ package managers
 			if (freePools.length <= 0)
 			{
 				voo = new Image(ResManager.assetsManager.getTexture("background"));
+				voo.smoothing = TextureSmoothing.NONE;
 			}
 			else
 			{

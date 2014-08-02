@@ -1,5 +1,7 @@
 package modules.scene.views
 {
+	import com.mike.utils.AirUtil;
+	
 	import flash.utils.getTimer;
 	import flash.utils.setTimeout;
 	
@@ -16,12 +18,15 @@ package modules.scene.views
 	
 	import starling.display.Quad;
 	import starling.text.TextField;
+	import starling.utils.HAlign;
+	import starling.utils.VAlign;
 	
 	public class ScenePart extends SceneBase
 	{
 		private var bg:Quad;
 		private var beyondMax:Boolean = false;
 		private var maxScoreTxt:TextField;
+		private var ratio:Number = GameInstance.instance.scaleRatio;
 		
 		public function ScenePart($sceneHeight:int)
 		{
@@ -30,14 +35,16 @@ package modules.scene.views
 //			bg = new Quad(GameInstance.instance.sceneWidth,$sceneHeight,0xffffff);
 //			bg.alpha = 0;
 //			this.addChildAt(bg,0);
-			scoreTxt.y = 60;
 //			mainPlayer.y = 330 - mainPlayer.height;
 			
-			maxScoreTxt = new TextField(300,40,"","Verdana",24,0x89c997);
+			maxScoreTxt = new TextField(600*ratio,AirUtil.getHeightByFontSize(76*ratio),"","Verdana",76*ratio,0x89c997);
 			this.addChild(maxScoreTxt);
-			maxScoreTxt.x = GameInstance.instance.sceneWidth - maxScoreTxt.width >> 1;
-			maxScoreTxt.y = 0;
+			maxScoreTxt.x = 10;
+			maxScoreTxt.y = 10;
+			maxScoreTxt.vAlign = VAlign.TOP;
+			maxScoreTxt.hAlign = HAlign.LEFT;
 			maxScoreTxt.touchable = false;
+			maxScoreTxt.filter = GameUtil.getTextFieldFIlter();
 			
 			showMaxScore();
 		}
@@ -45,12 +52,12 @@ package modules.scene.views
 		private function showMaxScore():void
 		{
 			var score:int = GameUtil.getMaxScore(GameInstance.instance.pattern);
-			maxScoreTxt.text = Language.MAX_SCORE.replace("$SCORE",score);
+			maxScoreTxt.text = Language.getString("MAX_SCORE").replace("$SCORE",score);
 		}
 		
 		protected function updateMaxScore(value:int):void
 		{
-			maxScoreTxt.text = Language.MAX_SCORE.replace("$SCORE",value);
+			maxScoreTxt.text = Language.getString("MAX_SCORE").replace("$SCORE",value);
 		}
 		
 		override protected function isHit():void

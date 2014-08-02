@@ -1,7 +1,5 @@
 package com.mike.utils
 {
-	import com.mike.weixin.MicroMessage;
-	
 	import flash.display.BitmapData;
 	import flash.display.JPEGEncoderOptions;
 	import flash.filesystem.File;
@@ -52,12 +50,34 @@ package com.mike.utils
 		public static function screenShotAndSave():String
 		{
 			var bmd:BitmapData = takeScreenshot();
-			var img:String = MicroMessage.instance.screenShot();
+			var img:String;
+			if (!DeviceUtil.isIos())
+			{
+				img = File.userDirectory.url  +"/air.com.kunpeng.cainimei/"+new Date().getTime()+".jpg";
+			}else{
+				img = File.applicationStorageDirectory.nativePath +"/" +new Date().getTime()+".jpg";
+			}
+			trace(File.userDirectory.url);
+			trace(img);
+			trace(File.applicationStorageDirectory.nativePath);
+			var f:File = new File(img);
+			img = img.replace("file://","");
 			var fs:FileStream = new FileStream();
-			fs.open(new File(img),FileMode.WRITE);
+			fs.open(f,FileMode.WRITE);
 			fs.writeBytes(bmd.encode(bmd.rect,new JPEGEncoderOptions(100)));
 			fs.close();
 			return img;
+		}
+		
+		/**
+		 * 根据字体大小判断文本框需要的高度
+		 * @param size
+		 * @return 
+		 * 
+		 */		
+		public static function getHeightByFontSize(size:Number):Number
+		{
+			return Math.max(Math.ceil(size) + 8,size*1.2);
 		}
 	}
 }

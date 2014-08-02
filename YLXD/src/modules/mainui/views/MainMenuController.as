@@ -31,6 +31,7 @@ package modules.mainui.views
 			panel.beginTxt.addEventListener(TouchEvent.TOUCH, onBegin);
 			panel.duizhan.addEventListener(TouchEvent.TOUCH, onBegin);
 			panel.niXiangTxt.addEventListener(TouchEvent.TOUCH, onBegin);
+			panel.log.addEventListener(TouchEvent.TOUCH, onShowIntroduce);
 			panel.desc.addEventListener(TouchEvent.TOUCH, onShowIntroduce);
 		}
 		

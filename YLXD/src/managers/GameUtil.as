@@ -1,11 +1,13 @@
 package managers
 {
+	import com.mike.utils.AdvertiseUtil;
+	
 	import configs.GameInstance;
 	import configs.GamePattern;
 	import configs.PlayerState;
 	
-	import so.cuo.platform.baidu.BaiDu;
-	import so.cuo.platform.baidu.BaiDuAdEvent;
+	import starling.filters.BlurFilter;
+	import starling.filters.FragmentFilter;
 
 	public class GameUtil
 	{
@@ -39,11 +41,11 @@ package managers
 		public static function getPatternName(pattern:int):String
 		{
 			if (pattern == GamePattern.PUTONG)
-				return Language.PUTONG;
+				return Language.getString("PUTONG");
 			else if (pattern == GamePattern.NIXIANG)
-				return Language.NIXIANG;
+				return Language.getString("NIXIANG");
 			else
-				return Language.DUIZHAN;
+				return Language.getString("DUIZHAN");
 		}
 		/**
 		 * 获取反向的手型
@@ -75,25 +77,18 @@ package managers
 			GameInstance.instance.leftShowFullAd--;
 			if (GameInstance.instance.leftShowFullAd <= 0)
 			{
-				if (BaiDu.getInstance().isInterstitialReady())
-				{
-					//延迟1秒显示
-					BaiDu.getInstance().showInterstitial();
-					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialDismiss, onCloseFullAd);
+//				if (AdvertiseUtil.isInterstitialReady())
+//				{
+					AdvertiseUtil.showInterstitial();
 					GameInstance.instance.leftShowFullAd = GameInstance.FULLE_AD;
-				}
+//				}
 			}
 		}
 		
-		/**
-		 * 关闭全屏广告后，再次缓冲 
-		 * @param event
-		 * 
-		 */		
-		private static function onCloseFullAd(event:BaiDuAdEvent):void
+		
+		public static function getTextFieldFIlter():FragmentFilter
 		{
-			BaiDu.getInstance().removeEventListener(BaiDuAdEvent.onInterstitialDismiss, onCloseFullAd);
-			BaiDu.getInstance().cacheInterstitial();
+			return BlurFilter.createDropShadow();
 		}
 		
 	}

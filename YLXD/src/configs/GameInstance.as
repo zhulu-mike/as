@@ -18,6 +18,10 @@ package configs
 			return _instance;
 		}
 		
+		public static const REVERSE_DELAY:int = 5000;
+		
+		public var isIos:Boolean = false;
+		
 		public var sceneWidth:int;
 		
 		public var sceneHeight:int;
@@ -25,7 +29,7 @@ package configs
 		/**
 		 * 两次出拳之间的距离，可用来控制游戏难度
 		 */		
-		public static const DOOR_DIS:int = 400;
+		public static var DOOR_DIS:int = 1600;
 		
 		public var score:int = 0;
 		
@@ -47,11 +51,11 @@ package configs
 		 */		
 		public var leftShowFullAd:int = 5;
 		/**
-		 *每10局显示一次 
+		 *每5局显示一次 
 		 */		
 		public static const FULLE_AD:int = 5;
 		
-		public static const INIT_SPEED:int = 5;
+		public static var INIT_SPEED:int = 32;
 		
 		public var soundEnable:Boolean = true;
 		
@@ -66,13 +70,18 @@ package configs
 		public var currentSpeed:int = 5;
 		
 		public static const WUDITIME:int = 5000;
-		public static const WUDISPEED:int = 20;
+		public static var WUDISPEED:int = 64;
 		/**
 		 * 加速度
 		 */		
-		public static const ACCERATE_SPEED:Number = 0.1333333333;
+		public static var  ACCERATE_SPEED:Number = 0.53333332;
 		
 		public var gameState:int = 0;
+		
+		/**
+		 * 适应多分辨率，缩放资源大小
+		 */		
+		public var scaleRatio:Number = 1.0;
 		
 	}
 }

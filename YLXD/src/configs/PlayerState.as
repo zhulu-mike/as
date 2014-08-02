@@ -30,15 +30,15 @@ package configs
 			prev--;
 			var index:int = Math.random()*98;
 			var unit:int = 99 / stateList.length;
-			if (int(index / unit) == prev)
-			{
-				LogManager.logTrace(prev+","+index);
-				var three:int = unit / 3;
-				var rand:int = Math.random()*10;
-				if (rand >= 5)
-					three *= -1;
-				index += three;
-			}
+//			if (int(index / unit) == prev)
+//			{
+//				LogManager.logTrace(prev+","+index);
+//				var three:int = unit / 3;
+//				var rand:int = Math.random()*10;
+//				if (rand >= 5)
+//					three *= -1;
+//				index += three;
+//			}
 			index = index > 98 ? 98 : index;
 			index = index / unit;
 			return stateList[index];

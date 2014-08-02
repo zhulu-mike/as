@@ -1,8 +1,9 @@
 package
 {
 	
-	import flash.utils.getTimer;
-	import flash.utils.setTimeout;
+	import com.mike.utils.AdvertiseUtil;
+	
+	import flash.display.Bitmap;
 	
 	import configs.GameInstance;
 	import configs.GamePattern;
@@ -19,10 +20,6 @@ package
 	import modules.scene.views.GameOver;
 	import modules.scene.views.GameScene;
 	
-	import so.cuo.platform.baidu.BaiDu;
-	import so.cuo.platform.baidu.BaiDuAdEvent;
-	import so.cuo.platform.baidu.RelationPosition;
-	
 	import starling.display.BlendMode;
 	import starling.display.Image;
 	import starling.display.QuadBatch;
@@ -33,7 +30,6 @@ package
 	import starling.events.TouchPhase;
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
-	import starling.textures.TextureSmoothing;
 	import starling.utils.AssetManager;
 	
 	public class Game extends Sprite
@@ -88,6 +84,7 @@ package
 		
 		private function onResize(event:Event):void
 		{
+			trace("添加到舞台");
 			GameInstance.instance.sceneWidth = stage.stageWidth;
 			GameInstance.instance.sceneHeight = stage.stageHeight;
 			EventCenter.instance.addEventListener(GameEvent.START_GAME, beginAfterRes);
@@ -101,8 +98,10 @@ package
 			ResManager.assetsManager = am;
 			am.addTexture("background",Texture.fromEmbeddedAsset(BackGroundBG));
 			ResManager.backGroundBmd = new BackGroundBG().bitmapData;
-			var ta:TextureAtlas = new TextureAtlas(Texture.fromEmbeddedAsset(GameInstance.instance.YLXD_CLASS),GameInstance.instance.YLXD_XML);
+			var ta:TextureAtlas = new TextureAtlas(Texture.fromBitmap(ResManager.resLoader.getContent(ResManager.YLXD,true)),ResManager.resLoader.getContent(ResManager.YLXDXML,true));
 			am.addTextureAtlas(ResManager.YLXD_NAME,ta);
+			ta = new TextureAtlas(Texture.fromBitmap(ResManager.resLoader.getContent(ResManager.YLXD2,true)),ResManager.resLoader.getContent(ResManager.YLXDXML2,true));
+			am.addTextureAtlas(ResManager.YLXD_NAME2,ta);
 			initUI();
 			EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.BEGIN});
 			EventCenter.instance.addEventListener(GameEvent.SHOW_INTRODUCE, onShowIntroduce);
@@ -118,6 +117,7 @@ package
 			firstLayer.addChild(bg);
 			bgItem = BackGroundFactory.getInstance().getShape();
 			bgItem.height = GameInstance.instance.sceneHeight;
+			bg.blendMode = BlendMode.NONE;
 			createBackground();
 			
 			secondeLayer = new Sprite();
@@ -125,6 +125,7 @@ package
 			
 			music = new Image(ResManager.assetsManager.getTextureAtlas(ResManager.YLXD_NAME).getTexture("btn_sound_on.png"));
 			this.addChild(music);
+			music.scaleX = music.scaleY = GameInstance.instance.scaleRatio;
 			music.x = stage.stageWidth - music.width - 20;
 			music.y = 10;
 			music.addEventListener(TouchEvent.TOUCH, onTouchMusic);
@@ -164,6 +165,7 @@ package
 		
 		protected function onShowIntroduce(event:GameEvent):void
 		{
+			AdvertiseUtil.hideBaiDuBanner();
 			secondeLayer.addChild(introduce);
 		}
 		
@@ -224,6 +226,10 @@ package
 		{
 			if (_gameOverPanel == null){
 				_gameOverPanel = new GameOver();
+				var hh:Number = _gameOverPanel.height;
+				_gameOverPanel.y = GameInstance.instance.sceneHeight - hh >> 1;
+				if (GameInstance.instance.sceneHeight - (_gameOverPanel.y+hh) < 50)
+					_gameOverPanel.y = GameInstance.instance.sceneHeight - 50-hh;
 			}
 			return _gameOverPanel;
 		}
@@ -276,7 +282,7 @@ package
 		
 		private function begin():void
 		{
-			BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
+			AdvertiseUtil.showBaiDuBanner();
 			secondeLayer.addChild(mainMenu);
 		}
 		
@@ -287,7 +293,7 @@ package
 		 */		
 		private function gameRun(pattern:int):void
 		{
-			BaiDu.getInstance().hideBanner();
+			AdvertiseUtil.hideBaiDuBanner();
 			GameInstance.instance.score = 0;
 			GameInstance.instance.pattern = pattern;
 			secondeLayer.addChild(gameScene);
@@ -317,21 +323,13 @@ package
 		{
 			gameScene.removeFromParent();
 			secondeLayer.addChild(gameOverPanel);
-			BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
+			AdvertiseUtil.hideBaiDuBanner();
 			gameOverPanel.patternTxt.text = GameUtil.getPatternName(GameInstance.instance.pattern);
 			if (GameInstance.instance.pattern != GamePattern.FIGHT)
 			{
-				gameOverPanel.maxScoreTxt.visible = true;
-				gameOverPanel.scoreTxt.visible = true;
-				gameOverPanel.img.visible = false;
-				gameOverPanel.returnBtn.y = gameOverPanel.scoreTxt.y+ 100;
-				gameOverPanel.againBtn.y = gameOverPanel.xuanYaoBtn.y = gameOverPanel.returnBtn.y;
-				gameOverPanel.scoreTxt.text = Language.FENSHU.replace("$SCORE",GameInstance.instance.score);
-				gameOverPanel.maxScoreTxt.text = Language.MAX_SCORE.replace("$SCORE",GameUtil.getMaxScore(GameInstance.instance.pattern));
+				gameOverPanel.scoreTxt.text = Language.getString("FENSHU").replace("$SCORE",GameInstance.instance.score);
+				gameOverPanel.maxScoreTxt.text = Language.getString("MAX_SCORE").replace("$SCORE",GameUtil.getMaxScore(GameInstance.instance.pattern));
 			}else{
-				gameOverPanel.img.visible = true;
-				gameOverPanel.returnBtn.y = gameOverPanel.img.y+ gameOverPanel.img.height + 30;
-				gameOverPanel.againBtn.y = gameOverPanel.xuanYaoBtn.y = gameOverPanel.returnBtn.y;
 				gameOverPanel.maxScoreTxt.visible = false;
 				gameOverPanel.scoreTxt.visible = false;
 			}

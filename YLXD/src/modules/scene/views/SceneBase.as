@@ -1,5 +1,8 @@
 package modules.scene.views
 {
+	import com.mike.utils.AirUtil;
+	import com.mike.utils.TimeUtil;
+	
 	import flash.utils.getTimer;
 	
 	import configs.GameInstance;
@@ -8,12 +11,12 @@ package modules.scene.views
 	import configs.PlayerState;
 	import configs.PlayerStatus;
 	
+	import managers.GameUtil;
 	import managers.LogManager;
 	import managers.ResManager;
 	import managers.SoundManager;
 	
 	import starling.core.Starling;
-	import starling.display.Image;
 	import starling.display.MovieClip;
 	import starling.display.Quad;
 	import starling.display.Sprite;
@@ -46,8 +49,8 @@ package modules.scene.views
 		
 		public function SceneBase($sceneHeight:int)
 		{
+			var ratio:Number = GameInstance.instance.scaleRatio;
 			sceneHeight = $sceneHeight;
-//			touchGroup = true;
 			doorList = new Vector.<Door>();
 			
 			interactiveLayer = new Quad(GameInstance.instance.sceneWidth,$sceneHeight,0xffffff);
@@ -60,21 +63,24 @@ package modules.scene.views
 			
 			mainPlayer = new MainPlayer();
 			firstLayer.addChild(mainPlayer);
-			mainPlayer.x = 100;
+			mainPlayer.x = 320*ratio;
 			mainPlayer.y = $sceneHeight * 0.6875 - mainPlayer.height;
 			
 			doorLayer = new Sprite();
 			firstLayer.addChild(doorLayer);
 			
-			scoreTxt = new TextField(300,40,Language.DEFEN.replace("$SCORE",0),"Verdana",24,0xffffff,true);
+			scoreTxt = new TextField(960*ratio,AirUtil.getHeightByFontSize(90*ratio),Language.getString("DEFEN").replace("$SCORE",0),"Verdana",90*ratio,0xffffff,true);
 			scoreTxt.hAlign = HAlign.CENTER;
 			scoreTxt.vAlign = VAlign.CENTER;
 			firstLayer.addChild(scoreTxt);
+			scoreTxt.filter = GameUtil.getTextFieldFIlter();
 			scoreTxt.x = GameInstance.instance.sceneWidth - scoreTxt.width >> 1;
-			gameOver = new TextField(300,40,Language.JIESHU,"Verdana",20,0xffffff);
+			scoreTxt.y = 10;
 			
+			gameOver = new TextField(960*ratio,AirUtil.getHeightByFontSize(64*ratio),Language.getString("JIESHU"),"Verdana",64*ratio,0xffffff);
 			firstLayer.addChild(gameOver);
 			gameOver.visible = false;
+			gameOver.filter = GameUtil.getTextFieldFIlter();
 			gameOver.x = GameInstance.instance.sceneWidth - gameOver.width >> 1;
 			gameOver.y = this.sceneHeight - gameOver.height >> 1;
 			interactiveLayer.addEventListener(TouchEvent.TOUCH, onTouch);
@@ -126,8 +132,8 @@ package modules.scene.views
 		
 		private function needAddSpeed():void
 		{
-			var speed:int = int(sceneScore / 100);
-			speed = speed > 5 ? 5 : speed;
+			var speed:int = int(sceneScore / 50)*2;
+			speed = speed > 10 ? 10 : speed;
 			if (mainPlayer.playerStatus == PlayerStatus.COMMON){
 				sceneSpeed  = GameInstance.INIT_SPEED + speed;
 				mainPlayer.setSpeed(sceneSpeed);
@@ -136,6 +142,7 @@ package modules.scene.views
 				c = c > 150 ? (150 - c + 150) : c;
 				addSpeed = GameInstance.ACCERATE_SPEED * c;
 				sceneSpeed  = GameInstance.INIT_SPEED + speed+ addSpeed;
+				mainPlayer.setSpeed(sceneSpeed);
 			}
 		}
 		
@@ -183,7 +190,7 @@ package modules.scene.views
 						SoundManager.playSound(ResManager.PASS_SOUND);
 						sceneScore += 1;
 						doWhenpass(door);
-						scoreTxt.text = Language.DEFEN.replace("$SCORE",sceneScore);
+						scoreTxt.text = Language.getString("DEFEN").replace("$SCORE",sceneScore);
 						GameInstance.instance.score += 1;
 					}else
 					{
@@ -212,6 +219,7 @@ package modules.scene.views
 			}
 		}
 		
+		private var lastReverseTime:int = 0;
 		protected function makeDoor():void
 		{
 			var state:int ;
@@ -220,13 +228,15 @@ package modules.scene.views
 			else
 				state = PlayerState.randomState();
 			var needReverse:Boolean = false;
-			if (sceneScore > 50 && GameInstance.instance.pattern != GamePattern.NIXIANG)
+			var now:int = getTimer();;
+			if (sceneScore > 50 && GameInstance.instance.pattern != GamePattern.NIXIANG )
 			{
 				//50关后，有反转率
-				var reverse:int = int(sceneScore / 50)*5 ;
-				reverse = reverse > 30 ? 30 : reverse;
+				var reverse:int = int(sceneScore / 50)*4 ;
+				reverse = reverse > 20 ? 20 : reverse;
 				var random:int = Math.random() * 100;
-				if (random <= reverse){
+				if (random <= reverse && now - lastReverseTime > GameInstance.REVERSE_DELAY){
+					lastReverseTime = now;
 					needReverse = true;
 				}
 			}else if (GameInstance.instance.pattern == GamePattern.NIXIANG)
@@ -294,11 +304,12 @@ package modules.scene.views
 		{
 			var eff:MovieClip = new MovieClip(ResManager.assetsManager.getTextures("hit"),10);
 			eff.loop = false;
+			eff.scaleX = eff.scaleY = GameInstance.instance.scaleRatio;
 			firstLayer.addChild(eff);
 			Starling.juggler.add(eff);
 			eff.play();
 			eff.x = this.mainPlayer.x + this.mainPlayer.reallyWidth * 0.5;
-			eff.y = this.mainPlayer.y - 20;
+			eff.y = this.mainPlayer.y - 64*GameInstance.instance.scaleRatio;
 			eff.addEventListener(Event.COMPLETE, onPlayerComplete);
 		}
 		

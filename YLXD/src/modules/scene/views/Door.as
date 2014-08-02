@@ -2,6 +2,8 @@ package modules.scene.views
 {
 	import com.mike.utils.MathUtil;
 	
+	import configs.GameInstance;
+	
 	import managers.DoorUtil;
 	import managers.ResManager;
 	
@@ -28,6 +30,7 @@ package modules.scene.views
 		public var isReverse:Boolean = false;
 		
 		private var container:Sprite;
+		private var ratio:Number = GameInstance.instance.scaleRatio;
 		
 		public function Door(state:int, need:Boolean=false)
 		{
@@ -37,10 +40,12 @@ package modules.scene.views
 			this.state = state;
 			isReverse = need;
 			shape = DoorUtil.getDoorShape(state,isReverse);
-			shape.scaleX = -1;
-			shape.x += shape.width;
+			shape.scaleX = ratio;
+			shape.scaleY = ratio;
+//			shape.x += shape.width;
 			container.addChild(shape);
 			dizuo = new Image(ResManager.assetsManager.getTexture("dizuo.png"));
+			dizuo.scaleX = dizuo.scaleY = ratio;
 			container.addChild(dizuo);
 			dizuo.y = shape.height;
 			dizuo.x = shape.width - dizuo.width >> 1;
@@ -74,9 +79,10 @@ package modules.scene.views
 //			tween.animate("scaleX",0);
 //			tween.animate("scaleY",0);
 			Starling.juggler.add(tween);
-			tween.animate("x",this.x + 200);
+			tween.animate("x",this.x + 640*ratio);
 			tween.animate("y",0);
-			tween.animate("rotation",MathUtil.angleToRadian(1800));
+			tween.animate("alpha",0);
+			tween.animate("rotation",MathUtil.angleToRadian(5760*ratio));
 			tween.repeatCount = 1;
 		}
 		

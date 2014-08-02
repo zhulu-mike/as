@@ -1,7 +1,7 @@
 package modules.scene.views
 {
 	
-	import flash.utils.getTimer;
+	import com.mike.utils.AdvertiseUtil;
 	
 	import configs.GameInstance;
 	import configs.GamePattern;
@@ -11,9 +11,6 @@ package modules.scene.views
 	
 	import managers.ResManager;
 	import managers.SoundManager;
-	
-	import so.cuo.platform.baidu.BaiDu;
-	import so.cuo.platform.baidu.RelationPosition;
 	
 	import starling.display.Image;
 	import starling.display.Sprite;
@@ -39,7 +36,8 @@ package modules.scene.views
 			
 			pauseBtn = new Image(ResManager.assetsManager.getTexture("pausebutton"));
 			this.addChild(pauseBtn);
-			pauseBtn.x = GameInstance.instance.sceneWidth - pauseBtn.width - 150;
+			pauseBtn.scaleX = pauseBtn.scaleY = GameInstance.instance.scaleRatio;
+			pauseBtn.x = GameInstance.instance.sceneWidth - pauseBtn.width - GameInstance.instance.sceneWidth*0.2;
 			pauseBtn.y = 10;
 			pauseBtn.addEventListener(TouchEvent.TOUCH, onTouchPause);
 		}
@@ -94,7 +92,7 @@ package modules.scene.views
 				case GamePattern.PUTONG:
 				case GamePattern.NIXIANG:
 					makePuTong();
-					BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
+					AdvertiseUtil.showBaiDuBanner();
 					break;
 				case GamePattern.FIGHT:
 					makeDuiZhan();
@@ -161,15 +159,15 @@ package modules.scene.views
 			{
 				if (sceneList[0].sceneScore > sceneList[1].sceneScore)
 				{
-					sceneList[0].gameOver.text = Language.YINGLE;
-					sceneList[1].gameOver.text = Language.WOSHULE;
+					sceneList[0].gameOver.text = Language.getString("YINGLE");
+					sceneList[1].gameOver.text = Language.getString("WOSHULE");
 				}else if (sceneList[0].sceneScore == sceneList[1].sceneScore)
 				{
-					sceneList[0].gameOver.text = Language.PINGJU;
-					sceneList[1].gameOver.text = Language.PINGJU;
+					sceneList[0].gameOver.text = Language.getString("PINGJU");
+					sceneList[1].gameOver.text = Language.getString("PINGJU");
 				}else{
-					sceneList[0].gameOver.text = Language.WOSHULE;
-					sceneList[1].gameOver.text = Language.YINGLE;
+					sceneList[0].gameOver.text = Language.getString("WOSHULE");
+					sceneList[1].gameOver.text = Language.getString("YINGLE");
 				}
 				GameInstance.instance.gameState = GameState.OVER;
 				this.addEventListener(TouchEvent.TOUCH, onTouch);
