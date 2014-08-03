@@ -45,16 +45,8 @@ package com.mike.utils
 				sdk.setPlatformConfig(PlatformID.WeChatFav,{app_id:"wx580dc9f6d9dcdda3"});
 				sdk.setPlatformConfig(PlatformID.WeChatSession,{app_id:"wx580dc9f6d9dcdda3"});
 				sdk.setPlatformConfig(PlatformID.Facebook,{api_key:"296398530542978",ConsumerSecret:"b976649e5d1fd847207be2dfe6e53512",RedirectUrl:"http://www.g6game.com/fkzs/"});
-				sdk.setPlatformConfig(PlatformID.Twitter,{consumer_key:"mD9mW55adcHFhR57vdbJUaCag",consumer_secret:"tHppzvYXXzD5hzvUMUsWneImuKVqAlH2XpOyQeIKJnE3XuEio1",redirect_uri:"www.g6game.com/fkzs/"});
+				sdk.setPlatformConfig(PlatformID.Twitter,{consumer_key:"mD9mW55adcHFhR57vdbJUaCag",consumer_secret:"tHppzvYXXzD5hzvUMUsWneImuKVqAlH2XpOyQeIKJnE3XuEio1",redirect_uri:"http://www.g6game.com/fkzs/"});
 				sdk.setPlatformConfig(PlatformID.Renren,{app_key:"d7f5e50e0e444cc7847de08f9ffced82",secret_key:"870d94936f5b43c38b574b80d807a802"});
-//				sdk.authorize(PlatformID.SinaWeibo);
-//				sdk.authorize(PlatformID.TencentWeibo);
-//				sdk.authorize(PlatformID.WeChatTimeline);
-//				sdk.authorize(PlatformID.WeChatFav);
-//				sdk.authorize(PlatformID.WeChatSession);
-//				sdk.authorize(PlatformID.Facebook);
-//				sdk.authorize(PlatformID.Twitter);
-//				sdk.authorize(PlatformID.Renren);
 			}else{
 				sdk.open("258aa287ebe5",true);
 			}
@@ -67,7 +59,7 @@ package com.mike.utils
 			var message:String = "onComplete\nPlatform=" + platform + ", action=" + action + "\nres=" + json;
 //			AirAlert.getInstance().showAlert(message,"");
 //			sdk.toast(message);
-			trace(message);
+//			trace(message);
 		}
 		private function shareError(platform:int, action:int, err:Object):void
 		{
@@ -99,7 +91,7 @@ package com.mike.utils
 			shareParams.url = "http://www.g6game.com/fkzs/";
 			shareParams.description = shareParams.title;
 			shareParams.siteUrl = "http://www.g6game.com/fkzs/";
-			shareParams.imageUrl = AirUtil.screenShotAndSave();
+			shareParams.imagePath = AirUtil.screenShotAndSave();
 			shareParams.type = ShareType.SHARE_WEBPAGE;
 			sdk.showShareMenu(null, shareParams, GameInstance.instance.sceneWidth>>2, 50, ShareMenuArrowDirection.Up);
 		}

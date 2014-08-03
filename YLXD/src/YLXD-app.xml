@@ -356,11 +356,15 @@
 <extensions>
         
         
-        <extensionID>cn.sharesdk.ane.ShareSDKExtension</extensionID>
+        
     
-    <extensionID>com.freshplanet.AirAlert</extensionID>
-        <extensionID>so.cuo.platform.baidu</extensionID>
+    
+        
     <extensionID>com.mike.weixin</extensionID>
+    
     <extensionID>so.cuo.platform.admob</extensionID>
+        <extensionID>com.freshplanet.AirAlert</extensionID>
+        <extensionID>so.cuo.platform.baidu</extensionID>
+        <extensionID>cn.sharesdk.ane.ShareSDKExtension</extensionID>
     </extensions>
 </application>

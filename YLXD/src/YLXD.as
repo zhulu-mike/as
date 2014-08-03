@@ -6,6 +6,8 @@ package
 	import com.mike.utils.FlashStatus;
 	import com.mike.utils.LanUtil;
 	import com.mike.utils.NetUtil;
+	import com.mike.utils.PlatType;
+	import com.mike.utils.PlatUtil;
 	import com.mike.utils.ResolutionUtil;
 	import com.mike.utils.ShareManager;
 	import com.mike.utils.TimeUtil;
@@ -102,6 +104,7 @@ package
 			
 			
 			ResolutionUtil.instance.init(new Point(2048,1536));
+			PlatUtil.initPlat(PlatType.GOOGLE_PLAY);
 			AdvertiseUtil.initBaiDu(stage);
 			ShareManager.instance.init();
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
