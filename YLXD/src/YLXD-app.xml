@@ -277,6 +277,31 @@
 			   	<uses-sdk android:minSdkVersion="9">
 			   	</uses-sdk>
 			    <application android:enabled="true">
+			    <!--360广告平台
+			    <activity
+					android:name="com.pubukeji.diandeows.adviews.DiandeActivity"
+					android:configChanges="orientation|keyboard|keyboardHidden|screenSize" 
+					>
+				</activity>
+				<serviceandroid:name="com.pubukeji.diandeows.services.DownloadService">
+				</service>
+				<service android:name="com.pubukeji.diandeows.services.UploadService" >
+				</service>
+				<receiver android:name="com.pubukeji.diandeows.reciever.AppInstalledReceiver" >
+					<intent-filter>
+						<action android:name="android.intent.action.PACKAGE_ADDED" />
+						<action android:name="android.intent.action.PACKAGE_REMOVED" />
+						<data android:scheme="package" />
+					</intent-filter>
+				</receiver>-->
+			    
+			    <!--4399广告平台-->
+					        <service
+					            android:name="com.unionsy.sdk.SsjjAdService"
+					            android:exported="false" />
+					        <meta-data android:name="IdKey" android:value="310"/> 
+					        <meta-data android:name="AppKey" android:value="672"/>
+					        <!-- 4399广告SDK配置结束 -->
 			    	<!--<meta-data android:name="BaiduMobAd_APP_ID" android:value="1003ba05" /> 
     				<meta-data android:name="BaiduMobAd_APP_SEC" android:value="1003ba05" />-->
     				<activity
@@ -300,9 +325,12 @@
 			            android:name="air.com.kenpeng.cainimei.wxapi.WXEntryActivity"
 			            android:theme="@android:style/Theme.Translucent.NoTitleBar"
 			            android:exported="true" />
-        			<activity android:name="com.baidu.mobads.AppActivity" android:configChanges="keyboard|keyboardHidden|orientation"/>
+			        <!--百度广告
+        			<activity android:name="com.baidu.mobads.AppActivity" android:configChanges="keyboard|keyboardHidden|orientation"/>-->
+					<!--google广告
 					<meta-data android:name="com.google.android.gms.version" android:value="4452000" />
 			  	    <activity android:name="com.google.android.gms.ads.AdActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
+					-->
 					<activity android:excludeFromRecents="false">
 						<intent-filter>
 							<action android:name="android.intent.action.MAIN"/>
@@ -369,5 +397,6 @@
         <extensionID>so.cuo.platform.baidu</extensionID>
         <extensionID>com.mike.weixin</extensionID>
         <extensionID>cn.sharesdk.ane.ShareSDKExtension</extensionID>
+    <extensionID>com.unionsy.ads.ane.android</extensionID>
     </extensions>
 </application>
