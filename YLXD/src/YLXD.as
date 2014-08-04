@@ -109,7 +109,7 @@ package
 			
 			
 			ResolutionUtil.instance.init(new Point(2048,1536));
-			PlatUtil.initPlat(PlatType.ANDROID_4399);
+			PlatUtil.initPlat(PlatType.ANDROID_360);
 			AdvertiseUtil.initBaiDu(stage);
 			ShareManager.instance.init();
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
@@ -177,7 +177,7 @@ package
 			this.addChild(_introduce);
 			var t:int = getTimer();
 			setTimeout(timeOut, 2000);
-			stage.addEventListener(Event.ENTER_FRAME, function():void{trace(getTimer()-t+"已过去");});
+//			stage.addEventListener(Event.ENTER_FRAME, function():void{trace(getTimer()-t+"已过去");});
 		}
 		
 		protected function onClick(event:MouseEvent):void
