@@ -26,7 +26,7 @@
 		<key id="WUDIWORDS"><![CDATA[无敌模式，冲啊！$COUNT]]></key>
 		<key id="QIDONGZHONG"><![CDATA[游戏马上开始...]]></key>
 		<key id="ERROR1"><![CDATA[网络错误，请开启网络再试。]]></key>
-		<key id="SHARECONTENT"><![CDATA[我在《疯狂之手》中得到了$SCORE分，谁敢一战？下载地址：http://www.g6game.com/fkzs/]]></key>
+		<key id="SHARECONTENT"><![CDATA[我的大脑在《疯狂之手》中得到了$SCORE分，太不可思议了！下载地址：http://www.g6game.com/fkzs/]]></key>
 	</common>
 	<player>
 		<key><![CDATA[反转模式好难啊]]></key>

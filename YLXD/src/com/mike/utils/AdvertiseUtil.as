@@ -39,32 +39,22 @@ package com.mike.utils
 			isIos = DeviceUtil.isIos();
 			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 			{
-//				if (Admob.getInstance().supportDevice)
-//				{
-//					if (isIos)
-//						Admob.getInstance().setKeys("ca-app-pub-7801284693895243/1462394619","ca-app-pub-7801284693895243/4415861017");
-//					else
-//						Admob.getInstance().setKeys("ca-app-pub-7801284693895243/8332539819","ca-app-pub-7801284693895243/3762739414");
-//					Admob.getInstance().cacheInterstitial();
-//					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialDismiss, onFullMiss);
-//					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialReceive, onFullReveive);
-//					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialFailedReceive, onFullFailedReveive);
-//					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialLeaveApplication, onFullLeave);
-//					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialPresent, onFullPresent);
-//				}
+				if (Admob.getInstance().supportDevice)
+				{
+					if (isIos)
+						Admob.getInstance().setKeys("ca-app-pub-7801284693895243/1462394619","ca-app-pub-7801284693895243/4415861017");
+					else
+						Admob.getInstance().setKeys("ca-app-pub-7801284693895243/8332539819","ca-app-pub-7801284693895243/3762739414");
+					Admob.getInstance().cacheInterstitial();
+					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialDismiss, onFullMiss);
+					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialReceive, onFullReveive);
+					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialFailedReceive, onFullFailedReveive);
+					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialLeaveApplication, onFullLeave);
+					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialPresent, onFullPresent);
+				}
 			}else if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399)){
 //				SsjjAdsManager.getInstance().init();
 //				SsjjAdsManager.getInstance().addEventListener(Constants.EVENT_TYPE_ADS_CALLBACK, onAdsCallback);
-			}else if (PlatUtil.isCertainPlat(PlatType.ANDROID_360)){
-				Ad360.instance.init("48415163d9dfe2657656da45dc523132","9b826737771399dcc63fa76155db0fa7");
-//				Ad360.instance.init("bb92999153bbc9861de3399be84c3a14","78c5db4fd9bb8367ba26868893847738");
-				Ad360.instance.loadInsert();
-				Ad360.instance.addEventListener(Ad360BannerEvent.REQUEST_SUCCESS, onAd360Banner);
-				Ad360.instance.addEventListener(Ad360BannerEvent.REQUEST_FAILED, onAd360Banner);
-				Ad360.instance.addEventListener(Ad360BannerEvent.SHOW_SUCCESS, onAd360Banner);
-				Ad360.instance.addEventListener(Ad360InsertEvent.SHOW_SUCCESS, onAd360Insert);
-				Ad360.instance.addEventListener(Ad360InsertEvent.REQUEST_FAILED, onAd360Insert);
-				Ad360.instance.addEventListener(Ad360InsertEvent.REQUEST_SUCCESS, onAd360Insert);
 			}else{
 //				if (BaiDu.getInstance().supportDevice)
 //				{
@@ -79,15 +69,6 @@ package com.mike.utils
 			}
 		}
 		
-		protected static function onAd360Insert(event:Ad360InsertEvent):void
-		{
-			trace("insert" + event.type);
-		}
-		
-		protected static function onAd360Banner(event:Ad360BannerEvent):void
-		{
-			trace("banner" + event.type);
-		}
 		
 		/*private static function onAdsCallback(e:AdsCallbackEvent):void{
 			//广告类展示、关闭、失败回调
@@ -138,7 +119,7 @@ package com.mike.utils
 		{
 			trace("全屏广告关闭");
 //			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
-//				Admob.getInstance().cacheInterstitial();
+				Admob.getInstance().cacheInterstitial();
 //			else
 //				BaiDu.getInstance().cacheInterstitial();
 		}
@@ -149,11 +130,9 @@ package com.mike.utils
 		{
 			trace(stage.orientation);
 //			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
-//				Admob.getInstance().showBanner(Admob.BANNER,AdmobPosition.BOTTOM_CENTER);
+				Admob.getInstance().showBanner(Admob.BANNER,AdmobPosition.BOTTOM_CENTER);
 //			else if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399))
 //				SsjjAdsManager.getInstance().showBanner();
-//			else if (PlatUtil.isCertainPlat(PlatType.ANDROID_360)
-				Ad360.instance.showBanner();
 //			else
 //				BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
 		}
@@ -161,11 +140,9 @@ package com.mike.utils
 		public static function hideBaiDuBanner():void
 		{
 //			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
-//				Admob.getInstance().hideBanner();
+				Admob.getInstance().hideBanner();
 //			else if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399))
 //				SsjjAdsManager.getInstance().hideBanner();
-//			else if (PlatUtil.isCertainPlat(PlatType.ANDROID_360)
-					Ad360.instance.hideBanner();
 //			else
 //				BaiDu.getInstance().hideBanner();
 		}
@@ -173,9 +150,7 @@ package com.mike.utils
 		public static function cacheInterstitial():void
 		{
 //			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
-//				Admob.getInstance().cacheInterstitial();
-//			else if (PlatUtil.isCertainPlat(PlatType.ANDROID_360)
-				Ad360.instance.loadInsert();
+				Admob.getInstance().cacheInterstitial();
 //			else
 //				BaiDu.getInstance().cacheInterstitial();
 		}
@@ -183,7 +158,7 @@ package com.mike.utils
 		public static function isInterstitialReady():Boolean
 		{
 //			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
-//				return Admob.getInstance().isInterstitialReady();
+				return Admob.getInstance().isInterstitialReady();
 //			else
 //				return BaiDu.getInstance().isInterstitialReady();
 			return true;
@@ -193,11 +168,9 @@ package com.mike.utils
 		{
 			trace(GameInstance.instance.sceneWidth, GameInstance.instance.sceneHeight,stage.orientation,stage.autoOrients);
 //			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
-//				Admob.getInstance().showInterstitial();
+				Admob.getInstance().showInterstitial();
 //			else if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399))
 //				SsjjAdsManager.getInstance().showFullScreen();
-//			else if (PlatUtil.isCertainPlat(PlatType.ANDROID_360)
-				Ad360.instance.showInsert();
 //			else
 //				BaiDu.getInstance().showInterstitial();
 		}
@@ -205,11 +178,9 @@ package com.mike.utils
 		public static function getBaiDuInstance():EventDispatcher
 		{
 //			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
-//				return Admob.getInstance();
+				return Admob.getInstance();
 //			else if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399))
 //				return SsjjAdsManager.getInstance();
-//			else if (PlatUtil.isCertainPlat(PlatType.ANDROID_360)
-				Ad360.instance;
 //			else
 //				return BaiDu.getInstance();
 			return null;
