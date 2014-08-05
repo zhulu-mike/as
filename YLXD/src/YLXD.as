@@ -76,6 +76,11 @@ package
 		{
 			if (e.keyCode == Keyboard.BACK)
 			{
+				if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399))
+				{
+					AdvertiseUtil.showExitScreen();
+					return;
+				}
 				e.preventDefault();
 				var okFunc:Function = function():void
 				{
@@ -170,7 +175,9 @@ package
 			_introduce.resize(GameInstance.instance.sceneWidth,GameInstance.instance.sceneHeight);
 			_introduce.addEventListener(MouseEvent.CLICK, onClick);
 			this.addChild(_introduce);
+			var t:int = getTimer();
 			setTimeout(timeOut, 2000);
+//			stage.addEventListener(Event.ENTER_FRAME, function():void{trace(getTimer()-t+"已过去");});
 		}
 		
 		protected function onClick(event:MouseEvent):void

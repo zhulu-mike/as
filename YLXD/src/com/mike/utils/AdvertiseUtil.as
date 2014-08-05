@@ -1,8 +1,17 @@
 package com.mike.utils
 {
+	import com.kunpeng.ad360.Ad360;
+	import com.kunpeng.ad360.Ad360BannerEvent;
+	import com.kunpeng.ad360.Ad360InsertEvent;
+	import com.unionsy.sdk.ane.AdsCallbackEvent;
+	import com.unionsy.sdk.ane.Constants;
+	import com.unionsy.sdk.ane.SsjjAdsManager;
+	
+	import flash.desktop.NativeApplication;
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.events.KeyboardEvent;
 	
 	import configs.GameInstance;
 	
@@ -43,19 +52,46 @@ package com.mike.utils
 					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialLeaveApplication, onFullLeave);
 					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialPresent, onFullPresent);
 				}
+			}else if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399)){
+//				SsjjAdsManager.getInstance().init();
+//				SsjjAdsManager.getInstance().addEventListener(Constants.EVENT_TYPE_ADS_CALLBACK, onAdsCallback);
 			}else{
-				if (BaiDu.getInstance().supportDevice)
-				{
-					BaiDu.getInstance().setKeys("1003ba05","1003ba05");// BaiDu.getInstance().setKeys("appsid","计费id");
-					BaiDu.getInstance().cacheInterstitial();
-					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialDismiss, onFullMiss);
-					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialReceive, onFullReveive);
-					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialFailedReceive, onFullFailedReveive);
-					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialLeaveApplication, onFullLeave);
-					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialPresent, onFullPresent);
-				}
+//				if (BaiDu.getInstance().supportDevice)
+//				{
+//					BaiDu.getInstance().setKeys("1003ba05","1003ba05");// BaiDu.getInstance().setKeys("appsid","计费id");
+//					BaiDu.getInstance().cacheInterstitial();
+//					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialDismiss, onFullMiss);
+//					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialReceive, onFullReveive);
+//					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialFailedReceive, onFullFailedReveive);
+//					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialLeaveApplication, onFullLeave);
+//					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialPresent, onFullPresent);
+//				}
 			}
 		}
+		
+		
+		/*private static function onAdsCallback(e:AdsCallbackEvent):void{
+			//广告类展示、关闭、失败回调
+			if(e.adType == Constants.AD_TYPE_BANNER){
+				//banner
+			}else if(e.adType == Constants.AD_TYPE_PAUSE){
+				//插屏
+			}else if(e.adType == Constants.AD_TYPE_FULL){
+				//全屏
+			}else if(e.adType == Constants.AD_TYPE_OFFERS){
+				//积分墙
+			}else if(e.adType == Constants.AD_TYPE_EXIT){
+				//退出时广告显示
+				if(e.status == Constants.STATUS_EXIT_YES){
+					//确定退出
+					clearAdCache();
+					NativeApplication.nativeApplication.exit();
+				}else if(e.status == Constants.STATUS_EXIT_NO){
+					//取消退出
+				} 
+			}
+			trace("4399广告类型："+e.adType,"展示状态"+e.status);
+		}*/
 		
 		protected static function onFullPresent(event:Event):void
 		{
@@ -82,10 +118,10 @@ package com.mike.utils
 		protected static function onFullMiss(event:Event):void
 		{
 			trace("全屏广告关闭");
-			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
+//			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 				Admob.getInstance().cacheInterstitial();
-			else
-				BaiDu.getInstance().cacheInterstitial();
+//			else
+//				BaiDu.getInstance().cacheInterstitial();
 		}
 		
 		
@@ -93,53 +129,80 @@ package com.mike.utils
 		public static function showBaiDuBanner():void
 		{
 			trace(stage.orientation);
-			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
+//			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 				Admob.getInstance().showBanner(Admob.BANNER,AdmobPosition.BOTTOM_CENTER);
-			else
-				BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
+//			else if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399))
+//				SsjjAdsManager.getInstance().showBanner();
+//			else
+//				BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
 		}
 		
 		public static function hideBaiDuBanner():void
 		{
-			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
+//			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 				Admob.getInstance().hideBanner();
-			else
-				BaiDu.getInstance().hideBanner();
+//			else if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399))
+//				SsjjAdsManager.getInstance().hideBanner();
+//			else
+//				BaiDu.getInstance().hideBanner();
 		}
 		
 		public static function cacheInterstitial():void
 		{
-			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
+//			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 				Admob.getInstance().cacheInterstitial();
-			else
-				BaiDu.getInstance().cacheInterstitial();
+//			else
+//				BaiDu.getInstance().cacheInterstitial();
 		}
 		
 		public static function isInterstitialReady():Boolean
 		{
-			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
+//			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 				return Admob.getInstance().isInterstitialReady();
-			else
-				return BaiDu.getInstance().isInterstitialReady();
-			return false;
+//			else
+//				return BaiDu.getInstance().isInterstitialReady();
+			return true;
 		}
 		
 		public static function showInterstitial():void
 		{
 			trace(GameInstance.instance.sceneWidth, GameInstance.instance.sceneHeight,stage.orientation,stage.autoOrients);
-			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
+//			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 				Admob.getInstance().showInterstitial();
-			else
-				BaiDu.getInstance().showInterstitial();
+//			else if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399))
+//				SsjjAdsManager.getInstance().showFullScreen();
+//			else
+//				BaiDu.getInstance().showInterstitial();
 		}
 		
 		public static function getBaiDuInstance():EventDispatcher
 		{
-			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
+//			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 				return Admob.getInstance();
-			else
-				return BaiDu.getInstance();
+//			else if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399))
+//				return SsjjAdsManager.getInstance();
+//			else
+//				return BaiDu.getInstance();
 			return null;
+		}
+		
+		/**
+		 * 4399显示退出插屏广告
+		 * 
+		 */		
+		public static function showExitScreen():void
+		{
+//			SsjjAdsManager.getInstance().showExitScreen(); 
+		}
+		
+		/**
+		 * 清除广告缓存
+		 * 
+		 */		
+		public static function clearAdCache():void
+		{
+//			if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399))
+//					SsjjAdsManager.getInstance().clearAdsCache();
 		}
 		
 	}
