@@ -92,6 +92,7 @@ package com.mike.utils
 			shareParams.description = shareParams.title;
 			shareParams.siteUrl = "http://www.g6game.com/fkzs/";
 			shareParams.imagePath = AirUtil.screenShotAndSave();
+			shareParams.comment = shareParams.text;
 			shareParams.type = ShareType.SHARE_TEXT;
 			sdk.showShareMenu(null, shareParams, GameInstance.instance.sceneWidth>>2, 50, ShareMenuArrowDirection.Up);
 		}
