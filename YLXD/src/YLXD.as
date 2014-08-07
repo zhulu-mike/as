@@ -103,7 +103,7 @@ package
 			
 			
 			ResolutionUtil.instance.init(new Point(2048,1536));
-			PlatUtil.initPlat(PlatType.GOOGLE_PLAY);
+			PlatUtil.initPlat(PlatType.BAUDU);
 			AdvertiseUtil.initBaiDu(stage);
 			ShareManager.instance.init();
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
