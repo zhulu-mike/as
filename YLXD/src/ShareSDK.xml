@@ -125,6 +125,7 @@
         SortId="8"
         ConsumerKey="296398530542978"
         ConsumerSecret="b976649e5d1fd847207be2dfe6e53512"
+        RedirectUri="http://www.g6game.com/fkzs/"
         Enable="true" />
 
     <Twitter

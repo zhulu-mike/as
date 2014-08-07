@@ -1,7 +1,6 @@
 package com.mike.utils
 {
 	import flash.geom.Point;
-	import flash.system.Capabilities;
 	
 	/**
 	 * 屏幕分辨率类

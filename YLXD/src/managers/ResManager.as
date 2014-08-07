@@ -4,9 +4,6 @@ package managers
 	
 	import br.com.stimuli.loading.BulkLoader;
 	
-	import configs.GameInstance;
-	
-	import starling.textures.Texture;
 	import starling.utils.AssetManager;
 
 	public class ResManager

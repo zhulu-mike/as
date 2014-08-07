@@ -3,7 +3,6 @@ package
 	import com.freshplanet.ane.AirAlert.AirAlert;
 	import com.mike.utils.AdvertiseUtil;
 	import com.mike.utils.DeviceUtil;
-	import com.mike.utils.FlashStatus;
 	import com.mike.utils.LanUtil;
 	import com.mike.utils.NetUtil;
 	import com.mike.utils.PlatType;
@@ -21,19 +20,14 @@ package
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.events.StageOrientationEvent;
-	import flash.events.ThrottleEvent;
-	import flash.events.ThrottleType;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.system.Capabilities;
-	import flash.text.engine.BreakOpportunity;
 	import flash.ui.Keyboard;
 	import flash.ui.Multitouch;
 	import flash.ui.MultitouchInputMode;
 	import flash.utils.getTimer;
 	import flash.utils.setTimeout;
-	
-	import mx.resources.Locale;
 	
 	import br.com.stimuli.loading.BulkLoader;
 	import br.com.stimuli.loading.BulkProgressEvent;
