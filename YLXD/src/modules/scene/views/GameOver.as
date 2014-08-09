@@ -76,7 +76,7 @@ package modules.scene.views
 			againBtn.y = returnBtn.y ;
 			againBtn.filter = GameUtil.getTextFieldFIlter();
 			
-			xuanYaoBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("XUANYAO"),"Verdana",f,0xffffff);
+			xuanYaoBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("XUANYAO"),"Verdana",f,0xff0000);
 			this.addChild(xuanYaoBtn);
 			xuanYaoBtn.x = GameInstance.instance.sceneWidth - xuanYaoBtn.width >> 1;
 			xuanYaoBtn.y = returnBtn.y ;

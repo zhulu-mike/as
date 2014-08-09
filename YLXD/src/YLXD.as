@@ -203,8 +203,11 @@ package
 			var lastLoginTime:int = int(GameInstance.instance.so.getAt("last_login_time"));
 			if (lastLoginTime == 0 || lastLoginTime < TimeUtil.getTodayZeroTime())
 			{
-				GameInstance.instance.so.setAt("last_login_time",TimeUtil.getNowTime());
-				NetUtil.sendLogin(DeviceUtil.getDeviceID());
+				var comFunc:Function = function():void
+				{
+					GameInstance.instance.so.setAt("last_login_time",TimeUtil.getNowTime());
+				};
+				NetUtil.sendLogin(DeviceUtil.getDeviceID(),DeviceUtil.getDeviceName(),comFunc);
 			}
 		}
 		

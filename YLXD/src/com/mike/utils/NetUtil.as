@@ -1,10 +1,12 @@
 package com.mike.utils
 {
+	import flash.events.Event;
 	import flash.events.HTTPStatusEvent;
 	import flash.events.IOErrorEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	import flash.net.URLRequestMethod;
+	import flash.net.URLVariables;
 
 	public class NetUtil
 	{
@@ -12,12 +14,27 @@ package com.mike.utils
 		{
 		}
 		
-		public static function sendLogin(id:String):void
+		/**
+		 * 发送活跃用户数据
+		 */		
+		public static const HUOYUE_URL:String = "http://www.g6game.com/fkzs/interfaces/huoyue.php";
+		
+		/**
+		 * 发送用户每日登陆数据
+		 * @param id
+		 * @param callBack
+		 * 
+		 */		
+		public static function sendLogin(id:String, name:String, callBack:Function=null):void
 		{
-			
+			var data:URLVariables = new URLVariables();
+			data['userid'] = id;
+			data['plat'] = PlatUtil.currentPlat;
+			data['name'] = name;
+			sendData(HUOYUE_URL,data,callBack);
 		}
 		
-		private static function sendData(url:String, data:Object):void
+		private static function sendData(url:String, data:Object,callBack:Function=null):void
 		{
 			var loader:URLLoader = new URLLoader();
 			var req:URLRequest = new URLRequest(url);
@@ -25,6 +42,7 @@ package com.mike.utils
 			req.data = data;
 			loader.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
 			loader.addEventListener(HTTPStatusEvent.HTTP_STATUS, onHttpStatus);
+			loader.addEventListener(Event.COMPLETE, function():void{if (callBack != null) callBack();});
 			loader.load(req);
 		}
 		
