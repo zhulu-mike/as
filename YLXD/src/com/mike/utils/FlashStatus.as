@@ -35,9 +35,10 @@ package com.mike.utils
 			this.addChild(scCount);
 		}
 		
-		public function init(s:Stage):void
+		public function init(s:Stage):FlashStatus
 		{
 			s.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			return this;
 		}
 		
 		protected function onEnterFrame(event:Event):void
@@ -51,6 +52,15 @@ package com.mike.utils
 				frame = 0;
 				scCount.text = (System.privateMemory / 1024) + "";
 			}
+		}
+		
+		private static var _instance:FlashStatus;
+		
+		public static function get instance():FlashStatus
+		{
+			if (_instance == null)
+				_instance = new FlashStatus();
+			return _instance;
 		}
 	}
 }
