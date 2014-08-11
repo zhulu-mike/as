@@ -6,12 +6,12 @@ package com.mike.utils
 		{
 		}
 		
-		public static const GOOGLE_PLAY:String = "GOOGLE_PLAY";
+		public static const GOOGLE_PLAY:int = 1;
 		
-		public static const BAUDU:String = "BAIDU";
+		public static const BAUDU:int = 0;
 		
-		public static const ANDROID_4399:String = "ANDROID_4399";
+		public static const ANDROID_4399:int = 2;
 		
-		public static const ANDROID_360:String = "ANDROID_360";
+		public static const ANDROID_360:int = 3;
 	}
 }

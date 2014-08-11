@@ -37,8 +37,8 @@ package com.mike.utils
 			
 				//android和ios之分
 			isIos = DeviceUtil.isIos();
-			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
-			{
+//			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
+//			{
 //				if (Admob.getInstance().supportDevice)
 //				{
 //					if (isIos)
@@ -52,10 +52,10 @@ package com.mike.utils
 //					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialLeaveApplication, onFullLeave);
 //					Admob.getInstance().addEventListener(AdmobEvent.onInterstitialPresent, onFullPresent);
 //				}
-			}else if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399)){
+//			}else if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399)){
 //				SsjjAdsManager.getInstance().init();
 //				SsjjAdsManager.getInstance().addEventListener(Constants.EVENT_TYPE_ADS_CALLBACK, onAdsCallback);
-			}else{
+//			}else{
 				if (BaiDu.getInstance().supportDevice)
 				{
 					BaiDu.getInstance().setKeys("1003ba05","1003ba05");// BaiDu.getInstance().setKeys("appsid","计费id");
@@ -66,7 +66,7 @@ package com.mike.utils
 					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialLeaveApplication, onFullLeave);
 					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialPresent, onFullPresent);
 				}
-			}
+//			}
 		}
 		
 		
