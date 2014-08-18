@@ -45,7 +45,7 @@ package com.mike.utils
 				sdk.setPlatformConfig(PlatformID.WeChatFav,{app_id:"wx580dc9f6d9dcdda3"});
 				sdk.setPlatformConfig(PlatformID.WeChatSession,{app_id:"wx580dc9f6d9dcdda3"});
 				sdk.setPlatformConfig(PlatformID.Facebook,{api_key:"296398530542978",ConsumerSecret:"b976649e5d1fd847207be2dfe6e53512",RedirectUrl:"http://www.g6game.com/fkzs/"});
-				sdk.setPlatformConfig(PlatformID.Twitter,{consumer_key:"mD9mW55adcHFhR57vdbJUaCag",consumer_secret:"tHppzvYXXzD5hzvUMUsWneImuKVqAlH2XpOyQeIKJnE3XuEio1",redirect_uri:"www.g6game.com/fkzs/"});
+				sdk.setPlatformConfig(PlatformID.Twitter,{consumer_key:"mD9mW55adcHFhR57vdbJUaCag",consumer_secret:"tHppzvYXXzD5hzvUMUsWneImuKVqAlH2XpOyQeIKJnE3XuEio1",redirect_uri:"http://www.g6game.com/fkzs/"});
 				sdk.setPlatformConfig(PlatformID.Renren,{app_key:"d7f5e50e0e444cc7847de08f9ffced82",secret_key:"870d94936f5b43c38b574b80d807a802"});
 			}else{
 				sdk.open("258aa287ebe5",true);

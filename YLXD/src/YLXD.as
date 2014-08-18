@@ -84,7 +84,7 @@ package
 				{
 					e.preventDefault();
 				};
-				AirAlert.getInstance().showAlert(Language.getString("EXIT_DESC"),"",Language.getString("QUEDING"),okFunc,Language.getString("QUXIAO"),cancelFunc);
+//				AirAlert.getInstance().showAlert(Language.getString("EXIT_DESC"),"",Language.getString("QUEDING"),okFunc,Language.getString("QUXIAO"),cancelFunc);
 			}
 		}
 		

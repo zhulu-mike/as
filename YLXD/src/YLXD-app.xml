@@ -387,16 +387,10 @@
 
 <extensions>
         
-        
-        
-    
-    
-        
-    
+    <extensionID>com.mike.weixin</extensionID>
     <extensionID>so.cuo.platform.admob</extensionID>
-    <extensionID>com.freshplanet.AirAlert</extensionID>
+        <extensionID>com.freshplanet.AirAlert</extensionID>
         <extensionID>so.cuo.platform.baidu</extensionID>
-        <extensionID>com.mike.weixin</extensionID>
         <extensionID>cn.sharesdk.ane.ShareSDKExtension</extensionID>
     <extensionID>com.unionsy.ads.ane.android</extensionID>
     <extensionID>com.kunpeng.ad360.Ad360Extension</extensionID>
