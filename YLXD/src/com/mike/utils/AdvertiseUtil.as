@@ -6,9 +6,9 @@ package com.mike.utils
 	
 	import configs.GameInstance;
 	
-	import so.cuo.platform.admob.Admob;
-	import so.cuo.platform.admob.AdmobEvent;
-	import so.cuo.platform.admob.AdmobPosition;
+	import so.cuo.platform.baidu.BaiDu;
+	import so.cuo.platform.baidu.BaiDuAdEvent;
+	import so.cuo.platform.baidu.RelationPosition;
 
 	public class AdvertiseUtil
 	{
