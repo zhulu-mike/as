@@ -55,7 +55,7 @@ package configs
 		 */		
 		public static const FULLE_AD:int = 5;
 		
-		public static var INIT_SPEED:int = 32;
+		public static var INIT_SPEED:int = 48;
 		
 		public var soundEnable:Boolean = true;
 		
