@@ -101,10 +101,8 @@ package
 			
 			GameInstance.instance.sceneWidth = Math.min(stage.fullScreenWidth, stage.fullScreenHeight);
 			GameInstance.instance.sceneHeight = Math.max(stage.fullScreenWidth, stage.fullScreenHeight);
-			GameInstance.instance.scaleRatio = ResolutionUtil.instance.getBestRatio(GameInstance.instance.sceneWidth,GameInstance.instance.sceneHeight);
+			GameInstance.instance.scaleRatio = 1;//ResolutionUtil.instance.getBestRatio(GameInstance.instance.sceneWidth,GameInstance.instance.sceneHeight);
 			GameInstance.INIT_SPEED = GameInstance.INIT_SPEED * GameInstance.instance.scaleRatio;
-			GameConfig.maxWidth = (GameInstance.instance.sceneWidth - GameConfig.horizalGap) * 0.8;
-			GameConfig.minWidth = GameInstance.instance.sceneWidth - GameConfig.horizalGap - GameConfig.maxWidth;
 			
 			GameInstance.instance.LOG_CLASS = LogAsset;
 			
@@ -115,6 +113,8 @@ package
 			if (!GameInstance.instance.isIos)
 				Starling.handleLostContext = true;
 			app = new Starling(Game,stage,rect,null,"auto","auto");
+			app.stage.stageWidth = 640;
+			app.stage.stageHeight = 960;
 			app.showStats = true;
 			app.start();
 			loadRes(null);

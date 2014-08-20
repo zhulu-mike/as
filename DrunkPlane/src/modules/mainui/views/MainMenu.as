@@ -31,20 +31,20 @@ package modules.mainui.views
 			
 			var ratio:Number = GameInstance.instance.scaleRatio;
 			var f:Number = 60 * ratio;
-			beginTxt = new TextField(320*ratio,AirUtil.getHeightByFontSize(f),Language.getString("KAISHI"),"Verdaba",f,0xffffff);
+			beginTxt = new TextField(320*ratio,AirUtil.getHeightByFontSize(f),Language.getString("KAISHI"),"Verdaba",f,0);
 			beginTxt.hAlign = HAlign.CENTER;
 			beginTxt.vAlign = VAlign.TOP;
 			beginTxt.filter = GameUtil.getTextFieldFIlter();
 			menuContainer.addChild(beginTxt);
 			
-			niXiangTxt = new TextField(320*ratio,AirUtil.getHeightByFontSize(f),Language.getString("HELP"),"Verdaba",f,0xffffff);
+			niXiangTxt = new TextField(320*ratio,AirUtil.getHeightByFontSize(f),Language.getString("GUANYU"),"Verdaba",f,0);
 			niXiangTxt.hAlign = HAlign.CENTER;
 			niXiangTxt.vAlign = VAlign.TOP;
 			menuContainer.addChild(niXiangTxt);
 			niXiangTxt.filter = GameUtil.getTextFieldFIlter();
 			niXiangTxt.y = beginTxt.y + beginTxt.height + 30;
 			
-			duizhan = new TextField(320*ratio,AirUtil.getHeightByFontSize(f),Language.getString("MOREGAME"),"Verdaba",f,0xffffff);
+			duizhan = new TextField(320*ratio,AirUtil.getHeightByFontSize(f),Language.getString("MOREGAME"),"Verdaba",f,0);
 			duizhan.hAlign = HAlign.CENTER;
 			duizhan.vAlign = VAlign.TOP;
 			menuContainer.addChild(duizhan);

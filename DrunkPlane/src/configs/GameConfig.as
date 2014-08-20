@@ -8,13 +8,13 @@ package configs
 		
 		public static var pipeHeight:int;
 		
-		public static var horizalGap:int = 100;
+		public static var horizalGap:int = 320;
 		
-		public static var verticalGap:int = 200;
+		public static var verticalGap:int = 400;
 		
-		public static var minWidth:int = 200;
+		public static var minWidth:int = 60;
 		
-		public static var maxWidth:int = 400;
+		public static var maxWidth:int = 260;
 		
 		public static var hspeed:int = 2;
 		

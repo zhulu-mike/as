@@ -30,7 +30,7 @@ package modules.mainui.views
 		{
 			panel.beginTxt.addEventListener(TouchEvent.TOUCH, onBegin);
 			panel.duizhan.addEventListener(TouchEvent.TOUCH, onBegin);
-			panel.niXiangTxt.addEventListener(TouchEvent.TOUCH, onBegin);
+			panel.niXiangTxt.addEventListener(TouchEvent.TOUCH, onShowIntroduce);
 //			panel.log.addEventListener(TouchEvent.TOUCH, onShowIntroduce);
 			panel.desc.addEventListener(TouchEvent.TOUCH, onShowIntroduce);
 		}
@@ -56,10 +56,8 @@ package modules.mainui.views
 				panel.parent.removeChild(panel);
 				if (touch.target == panel.beginTxt)
 					EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE,{state:GameState.RUNNING});
-				else if (touch.target == panel.niXiangTxt)
-					EventCenter.instance.dispatchGameEvent(GameEvent.SHOW_MORE_GAME);
 				else if (touch.target == panel.duizhan)
-					EventCenter.instance.dispatchGameEvent(GameEvent.SHOW_HELP_PANEL);
+					EventCenter.instance.dispatchGameEvent(GameEvent.SHOW_MORE_GAME);
 			}
 		}
 	}

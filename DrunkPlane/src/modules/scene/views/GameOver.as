@@ -33,52 +33,41 @@ package modules.scene.views
 		
 		public function GameOver()
 		{
-			var ratio:Number = GameInstance.instance.scaleRatio;
-			var f:Number = 80 * ratio;
-			patternTxt = new TextField(640*ratio,AirUtil.getHeightByFontSize(f),"","Verdana",f,0xffffff,true);
-			patternTxt.hAlign = HAlign.CENTER;
-			this.addChild(patternTxt);
-			patternTxt.x = GameInstance.instance.sceneWidth - patternTxt.width >> 1;
-			patternTxt.filter = GameUtil.getTextFieldFIlter();
-			
-			img = new Image(ResManager.assetsManager.getTexture("logo"));
+			var ratio:Number = 1;
+			img = new Image(ResManager.assetsManager.getTexture("swing_base_score.png"));
 			this.addChild(img);
-			img.scaleX = img.scaleY = ratio;
-			img.x = GameInstance.instance.sceneWidth - img.width >> 1;
-			img.y = patternTxt.y + patternTxt.height;
 			
-			maxScoreTxt = new TextField(960*ratio,AirUtil.getHeightByFontSize(f),"","Verdana",f,0x00ffff);
+			maxScoreTxt = new TextField(240*ratio,AirUtil.getHeightByFontSize(30),"","Verdana",30,0x000000);
 			this.addChild(maxScoreTxt);
 			maxScoreTxt.hAlign = HAlign.CENTER;
-			maxScoreTxt.x = GameInstance.instance.sceneWidth - maxScoreTxt.width >> 1;
-			maxScoreTxt.y = img.y + img.height + 20;
+			maxScoreTxt.x = img.width - maxScoreTxt.width >> 1;
+			maxScoreTxt.y = img.y + 290;
 			maxScoreTxt.filter = GameUtil.getTextFieldFIlter();
 			
-			scoreTxt = new TextField(960*ratio,AirUtil.getHeightByFontSize(f),"","Verdana",f,0xffffff);
+			scoreTxt = new TextField(240*ratio,AirUtil.getHeightByFontSize(30),"","Verdana",30,0x000000);
 			this.addChild(scoreTxt);
 			scoreTxt.hAlign = HAlign.CENTER;
-			scoreTxt.x = GameInstance.instance.sceneWidth - scoreTxt.width >> 1;
-			scoreTxt.y = maxScoreTxt.y + maxScoreTxt.height + 32*ratio;
+			scoreTxt.x = img.width - scoreTxt.width >> 1;
+			scoreTxt.y = img.y + 166;
 			scoreTxt.filter = GameUtil.getTextFieldFIlter();
 			
 			
-			var rw:Number = 320*ratio;
-			f = 100*ratio;
-			returnBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("FANHUI"),"Verdana",f,0xffffff);
+			var rw:Number = 160*ratio;
+			var f:Number = 50*ratio;
+			returnBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("FANHUI"),"Verdana",f,0x00ffff);
 			this.addChild(returnBtn);
-			returnBtn.x = (GameInstance.instance.sceneWidth >> 1) - 600*ratio;
-			returnBtn.y = scoreTxt.y + scoreTxt.height + 94*ratio;
+			returnBtn.y = 430;
 			returnBtn.filter = GameUtil.getTextFieldFIlter();
 			
-			againBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("CHONGLAI"),"Verdana",f,0xffffff);
+			againBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("CHONGLAI"),"Verdana",f,0x00ffff);
 			this.addChild(againBtn);
-			againBtn.x = (GameInstance.instance.sceneWidth >> 1) + 600*ratio-rw;
+			againBtn.x = img.width - rw;
 			againBtn.y = returnBtn.y ;
 			againBtn.filter = GameUtil.getTextFieldFIlter();
 			
-			xuanYaoBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("XUANYAO"),"Verdana",f,0xffffff);
+			xuanYaoBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("XUANYAO"),"Verdana",f,0xff0000);
 			this.addChild(xuanYaoBtn);
-			xuanYaoBtn.x = GameInstance.instance.sceneWidth - xuanYaoBtn.width >> 1;
+			xuanYaoBtn.x = img.width - rw >> 1;
 			xuanYaoBtn.y = returnBtn.y ;
 			xuanYaoBtn.filter = GameUtil.getTextFieldFIlter();
 			
