@@ -1,0 +1,41 @@
+<setting>
+		<!--
+		  飞行速度 
+		 -->	
+		<flySpeed>2</flySpeed>
+				
+		<!--
+		 * 地心引力 
+		 -->		
+		<gravitation>0.9</gravitation>
+		
+		<!--
+		 * 向上飞行的力量 
+		 -->			
+		<flyPower>0.2</flyPower>
+		
+		<!--
+		 * 水管水平间隙 
+		 -->			
+		<pipeGapX>200</pipeGapX>
+		
+		<!--
+		 * 水管垂直间隙 
+		 -->			
+		<pipeGapY>100</pipeGapY>
+		
+		<!--
+		 * 水管最小高度 
+		 -->			
+		<minPipePos>50</minPipePos>
+		
+		<!--
+		 * 水管最大高度 
+		 -->			
+		<maxPipePos>250</maxPipePos>
+		
+		<!--
+		 * 自由飞行速度 
+		 -->			
+		<freeFlySpeed>0.5</freeFlySpeed>
+</setting>
