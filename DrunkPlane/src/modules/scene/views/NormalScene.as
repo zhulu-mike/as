@@ -3,6 +3,7 @@ package modules.scene.views
 	import com.components.ArrowGriphic;
 	import com.mike.utils.AirUtil;
 	import com.mike.utils.MathUtil;
+	import com.mike.utils.SoundUtil;
 	
 	import flash.geom.Point;
 	
@@ -10,6 +11,8 @@ package modules.scene.views
 	import configs.GameConfig;
 	import configs.GameInstance;
 	import configs.PipeDirection;
+	
+	import infos.GameRecord;
 	
 	import managers.GameUtil;
 	import managers.ResManager;
@@ -47,7 +50,7 @@ package modules.scene.views
 		protected var pipeList:Array;
 		protected var hammerList:Array = [];
 		private var baseY:Number = 0;
-		private var _mainSpeed:int = 5;
+		private var _mainSpeed:int = 10;
 		private var nextPipeDis:int = 0;
 		private var currentDis:int = 0;
 		private var _score:int = 0;
@@ -58,6 +61,7 @@ package modules.scene.views
 		private var cloudItem:Image;
 		private var cloudWidth:int;
 		private var cloudList:Array = [];
+		private var guideImage:Image;
 		
 		public function NormalScene($sceneWidth:int)
 		{
@@ -72,8 +76,6 @@ package modules.scene.views
 			cloudBatch = new QuadBatch();
 			this.addChild(cloudBatch);
 			cloudItem = new Image(ResManager.assetsManager.getTexture("swing_cloud.png"));
-			cloudItem.scaleX = ratio;
-			cloudItem.scaleY = ratio;
 			cloudItem.blendMode = BlendMode.SCREEN;
 			cloudWidth = cloudItem.width;
 			
@@ -87,18 +89,23 @@ package modules.scene.views
 			mainPlayer = new MainPlayer();
 			this.addChild(mainPlayer);
 			mainPlayer.x = $sceneWidth - mainPlayer.width >> 1;
-			mainPlayer.y = GameInstance.instance.sceneHeight - ResManager.assetsManager.getTexture("swing_floor.png").height*ratio;
+			mainPlayer.y = GameInstance.instance.sceneHeight - ResManager.assetsManager.getTexture("swing_floor.png").height-mainPlayer.reallyHeight;
 			mainPlayer.originy = mainPlayer.y;
 			currentDis = nextPipeDis = mainPlayer.y - GameConfig.verticalGap ;
 			
+			guideImage = new Image(ResManager.assetsManager.getTexture("swing_guide.png"));
+			this.addChild(guideImage);
+			guideImage.x = sceneWidth - guideImage.width >> 1;
+			guideImage.y = GameInstance.instance.sceneHeight - guideImage.height >> 1;
+			
 			baseY = $sceneWidth * 0.6875;
 			
-			scoreTxt = new TextField(480*ratio,AirUtil.getHeightByFontSize(45*ratio),Language.getString("DEFEN").replace("$SCORE",0),"Verdana",45*ratio,0xffffff,true);
+			scoreTxt = new TextField(480*ratio,AirUtil.getHeightByFontSize(45*ratio),Language.getString("DEFEN").replace("$SCORE",0),"Verdana",45*ratio,0x00ff00,true);
 			scoreTxt.hAlign = HAlign.CENTER;
 			scoreTxt.vAlign = VAlign.CENTER;
 			this.addChild(scoreTxt);
 			scoreTxt.filter = GameUtil.getTextFieldFIlter();
-			scoreTxt.x = GameInstance.instance.sceneWidth - scoreTxt.width-200 >> 1;
+			scoreTxt.x = sceneWidth - scoreTxt.width >> 1;
 			scoreTxt.y = 10;
 			this.addEventListener(TouchEvent.TOUCH, onTouch);
 			
@@ -118,8 +125,11 @@ package modules.scene.views
 			var touch:Touch = touchs[0];
 			if (touch.target == this && !this.end && !GameInstance.isPause() && touch.phase == TouchPhase.ENDED)
 			{
-				if (!mainPlayer.begin)
+				if (!mainPlayer.begin){
+					guideImage.removeFromParent(true);
 					mainPlayer.begin = true;
+					SoundManager.playLoop(ResManager.BASE+"bladeloop.mp3");
+				}
 				jump();
 			}
 		}
@@ -142,6 +152,8 @@ package modules.scene.views
 				return;
 			mainPlayer.update();
 			if (mainPlayer.x >= sceneWidth){
+				mainPlayer.x = 0;
+			}else if (mainPlayer.x < 0){
 				mainPlayer.x = sceneWidth;
 			}
 			updaetPipes();
@@ -249,6 +261,16 @@ package modules.scene.views
 					gameOver();
 				}
 			}
+			var hammer:Hammer;
+			for each (hammer in hammerList)
+			{
+				if (hammer.isPassed)
+					continue;
+				if (hammer.contentRect.intersects(mainPlayer.contentRect))
+				{
+					gameOver();
+				}
+			}
 		}
 		
 		/**
@@ -328,7 +350,7 @@ package modules.scene.views
 					makePipe();
 				}else{
 					var pipe:Pipe = pipeList[pipeList.length- 1];
-					if (pipe.y - GameConfig.pipeHeight-GameConfig.verticalGap>=-50)
+					if (pipe.y - GameConfig.pipeHeight-GameConfig.verticalGap>=-200)
 					{
 						nextPipeDis = pipe.y - GameConfig.pipeHeight-GameConfig.verticalGap;
 						makePipe();
@@ -352,7 +374,7 @@ package modules.scene.views
 			pipeList.push(pipe);
 			
 			var hammer:Hammer = new Hammer();
-			hammer.x = h - 14;
+			hammer.x = h - 28;
 			hammer.y = pipe.y + GameConfig.pipeHeight;
 			hammerLayer.addChild(hammer);
 			hammerList.push(hammer);
@@ -374,6 +396,8 @@ package modules.scene.views
 		{
 			end = true;
 			mainPlayer.playDead();
+			SoundUtil.stopSound(ResManager.BASE+"bladeloop.mp3");
+			SoundManager.playSound(ResManager.BASE+"crash.mp3");
 		}
 		
 		public function destroy():void
@@ -423,6 +447,11 @@ package modules.scene.views
 		{
 			_score = value;
 			scoreTxt.text = Language.getString("DEFEN").replace("$SCORE",value);
+			GameInstance.instance.score = value;
+			if (GameInstance.instance.scoreRecord.maxScores < value)
+			{
+				GameUtil.setMaxScore(value);
+			}
 		}
 
 

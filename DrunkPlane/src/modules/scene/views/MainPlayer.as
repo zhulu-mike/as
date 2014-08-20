@@ -8,8 +8,11 @@ package modules.scene.views
 	import configs.FlyDirection;
 	import configs.GameConfig;
 	import configs.GameInstance;
+	import configs.GameState;
 	import configs.PipeDirection;
 	import configs.PlayerStatus;
+	
+	import events.GameEvent;
 	
 	import managers.GameUtil;
 	import managers.ResManager;
@@ -17,6 +20,8 @@ package modules.scene.views
 	import starling.animation.Transitions;
 	import starling.animation.Tween;
 	import starling.core.Starling;
+	import starling.display.BlendMode;
+	import starling.display.Image;
 	import starling.display.MovieClip;
 	import starling.display.Sprite;
 	import starling.text.TextField;
@@ -35,32 +40,50 @@ package modules.scene.views
 		public var begin:Boolean = false;
 		private var _direct:int = 0;
 		private var _dead:Boolean = false;
+		private var luoXuanJiang:Sprite;
+		private var body:Sprite;
 		
 		public function MainPlayer()
 		{
-			shape = new MovieClip(ResManager.assetsManager.getTextures("swing_fly_boby"));
-//			shape.scaleX = shape.scaleY = GameInstance.instance.scaleRatio;
+			body = new Sprite();
+			this.addChild(body);
+			shape = new MovieClip(ResManager.assetsManager.getTextures("swing_fly_boby"),2);
 			shape.loop = true;
-			shape.currentFrame = 0;
-			shape.play();
 			Starling.juggler.add(shape);
+			shape.blendMode = BlendMode.NORMAL;
 			cr.width = shape.width;
-			cr.height = shape.height;
-			this.addChild(shape);
+			body.addChild(shape);
 			
+			luoXuanJiang = new Sprite();
+			this.addChild(luoXuanJiang);
+			var l1:Image = new Image(ResManager.assetsManager.getTexture("swing_fly_wing.png"));
+			l1.x = 25;
+			luoXuanJiang.addChild(l1);
+			l1 = new Image(ResManager.assetsManager.getTexture("swing_fly_wing_01.png"));
+			l1.x = 0;
+			l1.y = 9;
+			luoXuanJiang.addChild(l1);
+			l1 = new Image(ResManager.assetsManager.getTexture("swing_fly_wing_02.png"));
+			l1.x = 39;
+			l1.y = 9;
+			luoXuanJiang.addChild(l1);
+			l1 = new Image(ResManager.assetsManager.getTexture("swing_fly_eye.png"));
+			l1.x = 21;
+			l1.y = 40;
+			body.addChild(l1);
+			luoXuanJiang.x = cr.width - luoXuanJiang.width >> 1;
+			body.y = luoXuanJiang.height;
+			cr.height = shape.y +  shape.height;
 		}
 		
 		
-		public function flyOut(h:int):void
+		public function flyOut():void
 		{
 			hideSpeak();
 			var tween:Tween = new Tween(this,0.8,Transitions.EASE_OUT);
 			Starling.juggler.add(tween);
-			tween.animate("y", h);
-			this.rotation = MathUtil.angleToRadian(90);
-			this.x += this.width;
+			tween.animate("y", GameInstance.instance.sceneHeight);
 			tween.onComplete = destroy;
-			this.shape.stop();
 		}
 		
 		public function destroy():void
@@ -69,6 +92,7 @@ package modules.scene.views
 			{
 				this.removeFromParent();
 			}
+			EventCenter.instance.dispatchGameEvent(GameEvent.GAME_STATE_CHANGE, {state:GameState.OVER});
 		}
 		
 		public function update():void
@@ -120,7 +144,7 @@ package modules.scene.views
 		}
 		public function get reallyHeight():int
 		{
-			return shape.height;
+			return shape.height+luoXuanJiang.height;
 		}
 
 		public function get playerStatus():int
@@ -136,13 +160,10 @@ package modules.scene.views
 		
 		public function pause():void
 		{
-			shape.pause();
 		}
 		
 		public function restart():void
 		{
-			shape.play();
-			lastTime = getTimer();
 		}
 		
 		/**
@@ -152,6 +173,7 @@ package modules.scene.views
 		public function playDead():void
 		{
 			dead = true;	
+			flyOut();
 		}
 		
 		public var originy:int = 0;
@@ -201,12 +223,12 @@ package modules.scene.views
 			}else{
 				hSpeed = -GameConfig.hspeed;
 			}
-			shape.scaleX *= -1;
-			if (shape.scaleX < 0)
+			body.scaleX *= -1;
+			if (body.scaleX < 0)
 			{
-				shape.x += shape.width;
+				body.x += shape.width;
 			}else{
-				shape.x -= shape.width;
+				body.x -= shape.width;
 			}
 		}
 

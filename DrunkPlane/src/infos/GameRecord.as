@@ -1,6 +1,6 @@
 package infos
 {
-	import flash.utils.Dictionary;
+	
 
 	public class GameRecord
 	{
@@ -8,7 +8,7 @@ package infos
 		{
 		}
 		
-		public var maxScores:Dictionary = new Dictionary();
+		public var maxScores:int = 0;
 		
 		
 		

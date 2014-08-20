@@ -23,9 +23,9 @@ package managers
 		 * @return 
 		 * 
 		 */		
-		public static function getMaxScore(pattern:int):int
+		public static function getMaxScore():int
 		{
-			return GameInstance.instance.scoreRecord.maxScores[pattern] as int;
+			return GameInstance.instance.scoreRecord.maxScores;
 		}
 		
 		/**
@@ -34,9 +34,9 @@ package managers
 		 * @param score
 		 * 
 		 */		
-		public static function setMaxScore(pattern:int, score:int):void
+		public static function setMaxScore( score:int):void
 		{
-			GameInstance.instance.scoreRecord.maxScores[pattern] = score;
+			GameInstance.instance.scoreRecord.maxScores = score;
 			GameInstance.instance.so.setAt("score",score);
 		}
 		/**

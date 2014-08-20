@@ -77,7 +77,7 @@ package com.mike.utils
 		 */		
 		public static function getHeightByFontSize(size:Number):Number
 		{
-			return Math.max(Math.ceil(size) + 8,size*1.2);
+			return Math.max(Math.ceil(size) + 8,size*1.5);
 		}
 	}
 }

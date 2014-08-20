@@ -195,6 +195,7 @@ package
 				_gameOverPanel = new GameOver();
 				var hh:Number = _gameOverPanel.height;
 				_gameOverPanel.y = GameInstance.instance.sceneHeight - hh >> 1;
+				_gameOverPanel.x = GameInstance.instance.sceneWidth - _gameOverPanel.width >> 1;
 				if (GameInstance.instance.sceneHeight - (_gameOverPanel.y+hh) < 50)
 					_gameOverPanel.y = GameInstance.instance.sceneHeight - 50-hh;
 			}
@@ -250,6 +251,8 @@ package
 		private function begin():void
 		{
 			AdvertiseUtil.showBaiDuBanner();
+			firstLayer.addChild(bg);
+			gameScene.removeFromParent();
 			secondeLayer.addChild(mainMenu);
 		}
 		
@@ -287,11 +290,10 @@ package
 		
 		private function beginLater():void
 		{
-			gameScene.removeFromParent();
 			secondeLayer.addChild(gameOverPanel);
 			AdvertiseUtil.hideBaiDuBanner();
 			gameOverPanel.scoreTxt.text = Language.getString("FENSHU").replace("$SCORE",GameInstance.instance.score);
-			gameOverPanel.maxScoreTxt.text = Language.getString("MAX_SCORE").replace("$SCORE",GameUtil.getMaxScore(GameInstance.instance.pattern));
+			gameOverPanel.maxScoreTxt.text = Language.getString("MAX_SCORE").replace("$SCORE",GameUtil.getMaxScore());
 		}
 		
 		private function onControlBackGround(event:GameEvent):void

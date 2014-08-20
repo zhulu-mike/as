@@ -13,6 +13,8 @@ package modules.scene.views
 	{
 		private var bg:QuadBatch;
 		public var mainSpeed:int = 0;
+		private var floor:Image;
+		private var build:Image;
 		public function BackGroundSprite($sceneWidth:Number)
 		{
 			bg = new QuadBatch();
@@ -21,10 +23,40 @@ package modules.scene.views
 			bgItem = new Image(ResManager.assetsManager.getTexture("swing_bg.png"));
 			bgItem.width = $sceneWidth;
 			bgItemHeight = bgItem.height-1;
+			
+			floor = new Image(ResManager.assetsManager.getTexture("swing_floor.png"));
+			this.addChild(floor);
+			floor.y = GameInstance.instance.sceneHeight - floor.height;
+			
+			build = new Image(ResManager.assetsManager.getTexture("swing_building.png"));
+			this.addChild(build);
+			build.y = floor.y - build.height;
+			build.blendMode = BlendMode.SCREEN;
 		}
 		
 		public function update(dis:int):void
 		{
+			if (floor)
+			{
+				if (floor.y >= GameInstance.instance.sceneHeight)
+				{
+					floor.removeFromParent(true);
+					floor = null;
+				}else{
+					floor.y += dis;
+				}
+			}
+			if (build)
+			{
+				if (build.y >= GameInstance.instance.sceneHeight)
+				{
+					build.removeFromParent(true);
+					build = null;
+				}else{
+					build.y += dis;
+				}
+			}
+			
 			bg.reset();
 			var i:int = 0, len:int = bgImages.length;
 			var img:Object;
