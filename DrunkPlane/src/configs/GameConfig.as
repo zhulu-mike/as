@@ -12,7 +12,7 @@ package configs
 		
 		public static var verticalGap:int = 200;
 		
-		public static var minWidth:int = 200;
+		public static var minWidth:int = 140;
 		
 		public static var maxWidth:int = 400;
 		

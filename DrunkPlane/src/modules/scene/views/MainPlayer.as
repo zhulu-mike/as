@@ -39,7 +39,7 @@ package modules.scene.views
 		public function MainPlayer()
 		{
 			shape = new MovieClip(ResManager.assetsManager.getTextures("swing_fly_boby"));
-			shape.scaleX = shape.scaleY = GameInstance.instance.scaleRatio;
+//			shape.scaleX = shape.scaleY = GameInstance.instance.scaleRatio;
 			shape.loop = true;
 			shape.currentFrame = 0;
 			shape.play();
