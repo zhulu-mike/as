@@ -353,7 +353,7 @@ package modules.scene.views
 			
 			var hammer:Hammer = new Hammer();
 			hammer.x = h - 7;
-			hammer.y = pipe.y - GameConfig.pipeHeight;
+			hammer.y = pipe.y + GameConfig.pipeHeight;
 			hammerLayer.addChild(hammer);
 			hammerList.push(hammer);
 			
@@ -364,7 +364,7 @@ package modules.scene.views
 			pipeList.push(pipe);
 			hammer = new Hammer();
 			hammer.x = pipe.x + 7;
-			hammer.y = pipe.y - GameConfig.pipeHeight;
+			hammer.y = pipe.y + GameConfig.pipeHeight;
 			hammerLayer.addChild(hammer);
 			hammerList.push(hammer);
 		}
