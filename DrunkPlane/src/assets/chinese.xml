@@ -1,0 +1,44 @@
+<data>
+	<common>
+		<key id="GAMENAME"><![CDATA[FlappyQQ]]></key>
+		<key id="KAISHI"><![CDATA[开始游戏]]></key>
+		<key id="HELP"><![CDATA[帮助]]></key>
+		<key id="GUANYU"><![CDATA[关于]]></key>
+		<key id="MOREGAME"><![CDATA[更多游戏]]></key>
+		<key id="FENSHU"><![CDATA[本次得分：$SCORE]]></key>
+		<key id="DEFEN"><![CDATA[得分：$SCORE]]></key>
+		<key id="JIESHU"><![CDATA[GAME OVER]]></key>
+		<key id="YINGLE"><![CDATA[不好意思，略胜一筹]]></key>
+		<key id="WOSHULE"><![CDATA[还得再练练啊。]]></key>
+		<key id="PINGJU"><![CDATA[不分上下，再来一局！]]></key>
+		<key id="MAX_SCORE"><![CDATA[最高得分：$SCORE]]></key>
+		<key id="ADVISE_DESC"><![CDATA[杭州鲲鹏游戏工作室出品]]></key>
+		<key id="WORKROOM_DESC"><![CDATA[多彩体验，尽在鲲鹏！]]></key>
+		<key id="WORKROOM_DESC2"><![CDATA[鲲鹏游戏]]></key>
+		<key id="FANHUI"><![CDATA[返回]]></key>
+		<key id="CHONGLAI"><![CDATA[重来]]></key>
+		<key id="XUANYAO"><![CDATA[炫耀]]></key>
+		<key id="EXIT_DESC"><![CDATA[您确定要退出休息一会吗？]]></key>
+		<key id="QUEDING"><![CDATA[确定]]></key>
+		<key id="QUXIAO"><![CDATA[取消]]></key>
+		<key id="ZHIZUOREN"><![CDATA[产品：roc        美术：止戈blue]]></key>
+		<key id="WEIBO"><![CDATA[新浪微博：杭州鲲鹏工作室]]></key>
+		<key id="NIXIANGWORDS"><![CDATA[赢了我开启5秒无敌模式哦]]></key>
+		<key id="WUDIWORDS"><![CDATA[无敌模式，冲啊！$COUNT]]></key>
+		<key id="QIDONGZHONG"><![CDATA[游戏马上开始...]]></key>
+		<key id="ERROR1"><![CDATA[网络错误，请开启网络再试。]]></key>
+		<key id="SHARECONTENT"><![CDATA[我在《FlappyQQ》中得到了$SCORE分，太不可思议了！下载地址：http://www.g6game.com/flappyqq/]]></key>
+	</common>
+	<player>
+		<key><![CDATA[反转模式好难啊]]></key>
+		<key><![CDATA[别忘了分享给你的小伙伴哦]]></key>
+		<key><![CDATA[点击屏幕切换我的方向]]></key>
+		<key><![CDATA[我今天一定要突破10分]]></key>
+		<key><![CDATA[我要飞得更高，飞得更高]]></key>
+		<key><![CDATA[我有一只小毛驴，我从来也不骑......]]></key>
+		<key><![CDATA[二货主人太菜了！]]></key>
+		<key><![CDATA[呵呵！]]></key>
+		<key><![CDATA[我一直说的不停，主人你烦吗？]]></key>
+		<key><![CDATA[]]></key>
+	</player>
+</data>
