@@ -36,6 +36,7 @@ package
 	
 	import infos.data.LocalSO;
 	
+	import managers.GameUtil;
 	import managers.ResManager;
 	
 	import modules.mainui.views.WorkRoomIntroduce;
@@ -94,8 +95,7 @@ package
 			
 			
 			ResolutionUtil.instance.init(new Point(640,960));
-			PlatUtil.initPlat(PlatType.BAUDU);
-			AdvertiseUtil.initBaiDu(stage);
+			
 			ShareManager.instance.init();
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			
@@ -120,7 +120,6 @@ package
 			app.stage.stageHeight = 960;
 			app.start();
 			loadRes(null);
-			initData();
 		}
 		
 		protected function onStarlingCreated(event:GameEvent):void
@@ -158,11 +157,15 @@ package
 		private function initData():void
 		{
 			GameInstance.instance.so = new LocalSO("com.kunpeng.drunkplane");
+			GameInstance.instance.scoreRecord.maxScores = GameInstance.instance.so.getAt("score") as int;
 			var lastLoginTime:int = int(GameInstance.instance.so.getAt("last_login_time"));
 			if (lastLoginTime == 0 || lastLoginTime < TimeUtil.getTodayZeroTime())
 			{
-				GameInstance.instance.so.setAt("last_login_time",TimeUtil.getNowTime());
-				NetUtil.sendLogin(DeviceUtil.getDeviceID());
+				var comFunc:Function = function():void
+				{
+					GameInstance.instance.so.setAt("last_login_time",TimeUtil.getNowTime());
+				};
+				NetUtil.sendLogin(DeviceUtil.getDeviceID(),DeviceUtil.getDeviceName(),comFunc);
 			}
 		}
 		
@@ -195,6 +198,8 @@ package
 		{
 			if (_introduce.parent == null)
 				return;
+			AdvertiseUtil.initBaiDu(stage);
+			initData();
 			_introduce.removeEventListener(MouseEvent.CLICK, onClick);
 			trace(GameInstance.instance.resLoadCom,GameInstance.instance.haveStarlingCreate,timeBool);
 			if (GameInstance.instance.resLoadCom && GameInstance.instance.haveStarlingCreate && timeBool)

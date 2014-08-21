@@ -28,6 +28,7 @@
 		<key id="QIDONGZHONG"><![CDATA[Game Begin Soon...]]></key>
 		<key id="ERROR1"><![CDATA[can't connect internet]]></key>
 		<key id="SHARECONTENT"><![CDATA[I get $SCORE score from 《CrazyHand》，who can fight me？Down  URL：http://www.g6game.com/fkzs/]]></key>
+		<key id="PLAT"><![CDATA[8]]></key>
 	</common>
 	<player>
 		<key><![CDATA[reverse pattern too difficult]]></key>

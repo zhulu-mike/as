@@ -22,6 +22,8 @@ package com.mike.utils
 		
 		public static const RENREN:int = 7;
 		
+		public static const ANDROID_MARKET:int = 8;
+		
 		
 	}
 }

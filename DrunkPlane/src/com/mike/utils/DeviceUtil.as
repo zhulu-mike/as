@@ -1,6 +1,8 @@
 package com.mike.utils
 {
 	import flash.system.Capabilities;
+	
+	import org.zengrong.ane.ANEToolkit;
 
 	public class DeviceUtil
 	{
@@ -10,7 +12,14 @@ package com.mike.utils
 		
 		public static function getDeviceID():String
 		{
+			return ANEToolkit.systemInfo.getBuildInfo()["DEVICEID"];
 			return "";
+		}
+		
+		public static function getDeviceName():String
+		{
+			var obj:Object = ANEToolkit.systemInfo.getBuildInfo();
+			return obj["MANUFACTURER"]+obj["DEVICE"];
 		}
 		
 		public static function getDevice():String {

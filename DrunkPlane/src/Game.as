@@ -96,12 +96,12 @@ package
 			secondeLayer = new Sprite();
 			this.addChild(secondeLayer);
 			
-//			music = new Image(ResManager.assetsManager.getTextureAtlas(ResManager.YLXD_NAME).getTexture("btn_sound_on.png"));
-//			this.addChild(music);
-//			music.scaleX = music.scaleY = GameInstance.instance.scaleRatio;
-//			music.x = stage.stageWidth - music.width - 20;
-//			music.y = 10;
-//			music.addEventListener(TouchEvent.TOUCH, onTouchMusic);
+			music = new Image(ResManager.assetsManager.getTexture("btn_sound_on.png"));
+			this.addChild(music);
+			music.scaleX = music.scaleY = GameInstance.instance.scaleRatio;
+			music.x = stage.stageWidth - music.width - 20;
+			music.y = 10;
+			music.addEventListener(TouchEvent.TOUCH, onTouchMusic);
 		}
 		
 		private var bgImages:Array = [];
@@ -153,9 +153,9 @@ package
 			{
 				GameInstance.instance.soundEnable = !GameInstance.instance.soundEnable;
 				if (GameInstance.instance.soundEnable)
-					music.texture = ResManager.assetsManager.getTextureAtlas(ResManager.YLXD_NAME).getTexture("btn_sound_on.png");
+					music.texture = ResManager.assetsManager.getTexture("btn_sound_on.png");
 				else
-					music.texture = ResManager.assetsManager.getTextureAtlas(ResManager.YLXD_NAME).getTexture("btn_sound_off.png");
+					music.texture = ResManager.assetsManager.getTexture("btn_sound_off.png");
 			}
 		}
 		
@@ -276,14 +276,6 @@ package
 			this.removeEventListener(Event.ENTER_FRAME, onRender);
 			beginLater();
 			GameUtil.showFullSceenAd();
-		}
-		/**
-		 * 显示全屏广告
-		 * 
-		 */		
-		private function showFullAdvise():void
-		{
-			
 		}
 		
 		

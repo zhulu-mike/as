@@ -64,16 +64,25 @@ package managers
 			return Language.MONSTER_WORDS[Math.random()*(Language.MONSTER_WORDS.length-1)];
 		}
 		
+		private static var noFullCount:int = 0;
 		public static function showFullSceenAd():void
 		{
 			GameInstance.instance.leftShowFullAd--;
 			if (GameInstance.instance.leftShowFullAd <= 0)
 			{
-//				if (AdvertiseUtil.isInterstitialReady())
-//				{
+				if (AdvertiseUtil.isInterstitialReady())
+				{
+					noFullCount = 0;
 					AdvertiseUtil.showInterstitial();
 					GameInstance.instance.leftShowFullAd = GameInstance.FULLE_AD;
-//				}
+				}else{
+					noFullCount++;
+					if (noFullCount > 5)
+					{
+						AdvertiseUtil.cacheInterstitial();
+						noFullCount = 0;
+					}
+				}
 			}
 		}
 		

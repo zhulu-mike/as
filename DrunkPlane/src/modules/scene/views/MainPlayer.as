@@ -2,7 +2,10 @@ package modules.scene.views
 {
 	import com.mike.utils.MathUtil;
 	
+	import flash.events.TransformGestureEvent;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.net.dns.AAAARecord;
 	import flash.utils.getTimer;
 	
 	import configs.FlyDirection;
@@ -41,7 +44,11 @@ package modules.scene.views
 		private var _direct:int = 0;
 		private var _dead:Boolean = false;
 		private var luoXuanJiang:Sprite;
+		private var luoXuanJiang2:Sprite;
 		private var body:Sprite;
+		private var mainWing:Image;
+		private var leftWing:Image;
+		private var rightWing:Image;
 		
 		public function MainPlayer()
 		{
@@ -54,36 +61,96 @@ package modules.scene.views
 			cr.width = shape.width;
 			body.addChild(shape);
 			
+			luoXuanJiang2 = new Sprite();
+			this.addChild(luoXuanJiang2);
 			luoXuanJiang = new Sprite();
-			this.addChild(luoXuanJiang);
-			var l1:Image = new Image(ResManager.assetsManager.getTexture("swing_fly_wing.png"));
-			l1.x = 25;
-			luoXuanJiang.addChild(l1);
-			l1 = new Image(ResManager.assetsManager.getTexture("swing_fly_wing_01.png"));
-			l1.x = 0;
-			l1.y = 9;
-			luoXuanJiang.addChild(l1);
-			l1 = new Image(ResManager.assetsManager.getTexture("swing_fly_wing_02.png"));
-			l1.x = 39;
-			l1.y = 9;
-			luoXuanJiang.addChild(l1);
-			l1 = new Image(ResManager.assetsManager.getTexture("swing_fly_eye.png"));
+			luoXuanJiang2.addChild(luoXuanJiang);
+			mainWing = new Image(ResManager.assetsManager.getTexture("swing_fly_wing.png"));
+			mainWing.x = 25;
+			luoXuanJiang.addChild(mainWing);
+			leftWing = new Image(ResManager.assetsManager.getTexture("swing_fly_wing_01.png"));
+			leftWing.x = 0;
+			leftWing.y = 9;
+			luoXuanJiang.addChild(leftWing);
+			rightWing = new Image(ResManager.assetsManager.getTexture("swing_fly_wing_02.png"));
+			rightWing.x = 39;
+			rightWing.y = 9;
+			luoXuanJiang.addChild(rightWing);
+			var l1:Image = new Image(ResManager.assetsManager.getTexture("swing_fly_eye.png"));
 			l1.x = 21;
 			l1.y = 40;
 			body.addChild(l1);
-			luoXuanJiang.x = cr.width - luoXuanJiang.width >> 1;
-			body.y = luoXuanJiang.height;
+			luoXuanJiang.x = -luoXuanJiang.width >> 1;
+			luoXuanJiang2.x = (cr.width - luoXuanJiang2.width >> 1)+(luoXuanJiang.width >> 1);
+			body.y = luoXuanJiang2.height;
 			cr.height = shape.y +  shape.height;
+			
+			lxjRotate();
+		}
+		
+		private var lxjTween:Tween;
+		
+		private function lxjRotate():void
+		{
+			if (lxjTween)
+			{
+				Starling.juggler.remove(lxjTween);
+			}
+			lxjTween = new Tween(luoXuanJiang2,0.1);
+			lxjTween.animate("scaleX",0.4);
+			Starling.juggler.add(lxjTween);
+			lxjTween.repeatCount = 1;
+			lxjTween.onComplete = lxjRotate2;
+		}
+		
+		private function lxjRotate2():void
+		{
+			if (lxjTween)
+			{
+				Starling.juggler.remove(lxjTween);
+			}
+			lxjTween = new Tween(luoXuanJiang2,0.1);
+			lxjTween.animate("scaleX",1);
+			Starling.juggler.add(lxjTween);
+			lxjTween.repeatCount = 1;
+			lxjTween.onComplete = lxjRotate;
 		}
 		
 		
 		public function flyOut():void
 		{
 			hideSpeak();
-			var tween:Tween = new Tween(this,0.8,Transitions.EASE_OUT);
+			var tween:Tween = new Tween(body,0.8,Transitions.EASE_OUT);
 			Starling.juggler.add(tween);
-			tween.animate("y", GameInstance.instance.sceneHeight);
+			var p:Point = this.globalToLocal(new Point(0,GameInstance.instance.sceneHeight));
+			tween.animate("y", p.y);
 			tween.onComplete = destroy;
+			if (lxjTween)
+			{
+				Starling.juggler.removeTweens(luoXuanJiang2);
+			}
+			var rx:int = MathUtil.random(-200,GameInstance.instance.sceneWidth+200);
+			var ry:int = GameInstance.instance.sceneHeight;
+			p = new Point(rx,ry);
+			p = luoXuanJiang.globalToLocal(p);
+			var t:Tween = new Tween(leftWing,0.6,Transitions.EASE_OUT);
+			Starling.juggler.add(t);
+			t.animate("x",p.x);
+			t.animate("y",p.y);
+			rx = MathUtil.random(-200,GameInstance.instance.sceneWidth+200);
+			p = new Point(rx,ry);
+			p = luoXuanJiang.globalToLocal(p);
+			t = new Tween(mainWing,0.6,Transitions.EASE_OUT);
+			Starling.juggler.add(t);
+			t.animate("x",p.x);
+			t.animate("y",p.y);
+			rx = MathUtil.random(-200,GameInstance.instance.sceneWidth+200);
+			p = new Point(rx,ry);
+			p = luoXuanJiang.globalToLocal(p);
+			t = new Tween(rightWing,0.6,Transitions.EASE_OUT);
+			Starling.juggler.add(t);
+			t.animate("x",p.x);
+			t.animate("y",p.y);
 		}
 		
 		public function destroy():void

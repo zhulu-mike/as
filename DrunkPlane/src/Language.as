@@ -1,5 +1,7 @@
 package
 {
+	import com.mike.utils.PlatUtil;
+	
 	import flash.utils.Dictionary;
 
 	public class Language
@@ -34,6 +36,7 @@ package
 			{
 				PLAYER_WORDS.push(xml.text().toString());
 			}
+			PlatUtil.initPlat(int(getString("PLAT")));
 		}
 		
 		public static function getString(key:String):String

@@ -65,6 +65,7 @@
 			} else {
 				delete _shareObject.data[key];
 			}
+			_shareObject.flush();
 		}
 
 		/**

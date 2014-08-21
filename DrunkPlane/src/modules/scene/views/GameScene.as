@@ -33,7 +33,7 @@ package modules.scene.views
 			middleLayer = new Sprite();
 			this.addChild(middleLayer);
 			
-			pauseBtn = new Image(ResManager.assetsManager.getTexture("swing_hammer.png"));
+			pauseBtn = new Image(ResManager.assetsManager.getTexture("pausebutton"));
 			this.addChild(pauseBtn);
 			pauseBtn.scaleX = pauseBtn.scaleY = GameInstance.instance.scaleRatio;
 			pauseBtn.x = GameInstance.instance.sceneWidth - pauseBtn.width - GameInstance.instance.sceneWidth*0.2;
