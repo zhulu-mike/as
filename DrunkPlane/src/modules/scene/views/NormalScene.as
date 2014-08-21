@@ -3,6 +3,7 @@ package modules.scene.views
 	import com.components.ArrowGriphic;
 	import com.mike.utils.AirUtil;
 	import com.mike.utils.MathUtil;
+	import com.mike.utils.SoundUtil;
 	
 	import flash.geom.Point;
 	
@@ -10,6 +11,8 @@ package modules.scene.views
 	import configs.GameConfig;
 	import configs.GameInstance;
 	import configs.PipeDirection;
+	
+	import infos.GameRecord;
 	
 	import managers.GameUtil;
 	import managers.ResManager;
@@ -47,7 +50,7 @@ package modules.scene.views
 		protected var pipeList:Array;
 		protected var hammerList:Array = [];
 		private var baseY:Number = 0;
-		private var _mainSpeed:int = 5;
+		private var _mainSpeed:int = 10;
 		private var nextPipeDis:int = 0;
 		private var currentDis:int = 0;
 		private var _score:int = 0;
@@ -125,6 +128,7 @@ package modules.scene.views
 				if (!mainPlayer.begin){
 					guideImage.removeFromParent(true);
 					mainPlayer.begin = true;
+					SoundManager.playLoop(ResManager.BASE+"bladeloop.mp3");
 				}
 				jump();
 			}
@@ -148,6 +152,8 @@ package modules.scene.views
 				return;
 			mainPlayer.update();
 			if (mainPlayer.x >= sceneWidth){
+				mainPlayer.x = 0;
+			}else if (mainPlayer.x < 0){
 				mainPlayer.x = sceneWidth;
 			}
 			updaetPipes();
@@ -390,7 +396,8 @@ package modules.scene.views
 		{
 			end = true;
 			mainPlayer.playDead();
-			
+			SoundUtil.stopSound(ResManager.BASE+"bladeloop.mp3");
+			SoundManager.playSound(ResManager.BASE+"crash.mp3");
 		}
 		
 		public function destroy():void
@@ -440,6 +447,11 @@ package modules.scene.views
 		{
 			_score = value;
 			scoreTxt.text = Language.getString("DEFEN").replace("$SCORE",value);
+			GameInstance.instance.score = value;
+			if (GameInstance.instance.scoreRecord.maxScores < value)
+			{
+				GameUtil.setMaxScore(value);
+			}
 		}
 
 

@@ -1,5 +1,7 @@
 package modules.mainui.views
 {
+	import com.mike.utils.ResolutionUtil;
+	
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import flash.filters.DropShadowFilter;
@@ -18,15 +20,15 @@ package modules.mainui.views
 		{
 			container = new Sprite();
 			this.addChild(container);
-			
+			var ratio:Number = ResolutionUtil.instance.getBestRatio(GameInstance.instance.sceneWidth,GameInstance.instance.sceneHeight);
 			var bp:Bitmap = new Bitmap(new GameInstance.instance.LOG_CLASS().bitmapData);
-			bp.scaleX = bp.scaleY = GameInstance.instance.scaleRatio;
+			bp.scaleX = bp.scaleY = ratio;
 			container.addChild(bp);
 			
 			loadTxt = new TextField();
 			container.addChild(loadTxt);
 			loadTxt.filters = [new DropShadowFilter()];
-			loadTxt.defaultTextFormat = new TextFormat("Verdana",40*GameInstance.instance.scaleRatio,0xffffff,true,null,null,null,null,"center");
+			loadTxt.defaultTextFormat = new TextFormat("Verdana",40*ratio,0xffffff,true,null,null,null,null,"center");
 			loadTxt.text = Language.QIDONGZHONG;
 			loadTxt.width = loadTxt.textWidth + 10;
 			loadTxt.height = loadTxt.textHeight + 5;

@@ -14,7 +14,7 @@
                 SortId="1"
                 AppKey="568898243"
                 AppSecret="38a4f8204cc784f81f9f0daaf31e02e3"
-                RedirectUrl="http://www.g6game/fkzs/"
+                RedirectUrl="http://www.g6game/kfj/"
                 Enable="true" />
     	其中的SortId是此平台在分享列表中的位置，由开发者自行定义，可以是任何整型数字，数值越大
     	越靠后AppKey、AppSecret和RedirectUrl是您在新浪微博上注册开发者信息和应用后得到的信息
@@ -48,15 +48,15 @@
     -->
     
     <ShareSDK 
-        AppKey = "280d5fcaa51f"/> <!-- 修改成你在sharesdk后台注册的应用的appkey"-->
+        AppKey = "2c9e52abc214"/> <!-- 修改成你在sharesdk后台注册的应用的appkey"-->
     
     <!-- ShareByAppClient标识是否使用微博客户端分享，默认是false -->
     <SinaWeibo
         Id="1"
         SortId="1"
-        AppKey="329844495"
-        AppSecret="d9fd751a9d3702cb58758dff2abdd50c"
-        RedirectUrl="http://www.g6game.com/fkzs/"
+        AppKey="712455475"
+        AppSecret="549a8e0969b28d14addb782dbbde734c"
+        RedirectUrl="http://www.g6game.com/kfj/"
         ShareByAppClient="false"
         Enable="true" />
 
@@ -65,7 +65,7 @@
         SortId="2"
         AppKey="801528511"
         AppSecret="22ce70d59639dc10210744d732d4c3b1"
-        RedirectUri="http://www.g6game.com/fkzs/"
+        RedirectUri="http://www.g6game.com/kfj/"
         Enable="true" />
 
     <!-- ShareByAppClient标识是否使用微博客户端分享，默认是false -->
@@ -125,15 +125,15 @@
         SortId="8"
         ConsumerKey="296398530542978"
         ConsumerSecret="b976649e5d1fd847207be2dfe6e53512"
-        RedirectUri="http://www.g6game.com/fkzs/"
+        RedirectUri="http://www.g6game.com/kfj/"
         Enable="true" />
 
     <Twitter
         Id="9"
         SortId="9"
-        ConsumerKey="mD9mW55adcHFhR57vdbJUaCag"
-        ConsumerSecret="tHppzvYXXzD5hzvUMUsWneImuKVqAlH2XpOyQeIKJnE3XuEio1"
-        CallbackUrl="http://www.g6game/fkzs/"
+        ConsumerKey="LOURMdQrOmjgJna4bUBGToG8c"
+        ConsumerSecret="oqh7vD8O4lxiXfcfNDJNJlAcvPCD52QwAPdhnQGPUBixDiyqZH"
+        CallbackUrl="http://www.g6game/kfj/"
         Enable="true" />
 
     <Renren
@@ -149,7 +149,7 @@
         SortId="11"
         AppKey="358443394194887cee81ff5890870c7c"
         AppSecret="da32179d859c016169f66d90b6db2a23"
-        RedirectUri="http://www.g6game/fkzs/"
+        RedirectUri="http://www.g6game/kfj/"
         Enable="true" />
     
     <Email
@@ -168,7 +168,7 @@
         ApiKey="q70QBQM9T0COxzYpGLj9"
         ConsumerKey="q70QBQM9T0COxzYpGLj9"
         ConsumerSecret="XXYrx%QXbS!uA^m2$8TaD4T1HQoRPUH0gaG2BgBd"
-        CallbackUrl="http://www.g6game/fkzs/"
+        CallbackUrl="http://www.g6game/kfj/"
         Enable="true" />
 	
     <NetEaseMicroBlog
@@ -176,7 +176,7 @@
         SortId="15"
         ConsumerKey="T5EI7BXe13vfyDuy"
         ConsumerSecret="gZxwyNOvjFYpxwwlnuizHRRtBRZ2lV1j"
-        RedirectUri="http://www.g6game/fkzs/"
+        RedirectUri="http://www.g6game/kfj/"
         Enable="true" />
     
     <Douban
@@ -184,7 +184,7 @@
         SortId="16"
         ApiKey="02e2cbe5ca06de5908a863b15e149b0b"
         Secret="9f1e7b4f71304f2f"
-        RedirectUri="http://www.g6game/fkzs/"
+        RedirectUri="http://www.g6game/kfj/"
         Enable="true" />
     
     <YouDao
@@ -193,7 +193,7 @@
         HostType="product"
         ConsumerKey="dcde25dca105bcc36884ed4534dab940"
         ConsumerSecret="d98217b4020e7f1874263795f44838fe"
-        RedirectUri="http://www.g6game/fkzs/"
+        RedirectUri="http://www.g6game/kfj/"
         Enable="true" />
         
 	<SohuSuishenkan
@@ -201,7 +201,7 @@
         SortId="18"
         AppKey="e16680a815134504b746c86e08a19db0"
         AppSecret="b8eec53707c3976efc91614dd16ef81c"
-        RedirectUri="http://www.g6game.com/fkzs/"
+        RedirectUri="http://www.g6game.com/kfj/"
         Enable="true" />
         
     <!-- 
@@ -228,7 +228,7 @@
         SortId="20"
         ApiKey="ejo5ibkye3vo"
         SecretKey="cC7B2jpxITqPLZ5M" 
-        RedirectUrl="http://www.g6game.com/fkzs/"
+        RedirectUrl="http://www.g6game.com/kfj/"
         Enable="true" />
     
      <GooglePlus
@@ -241,7 +241,7 @@
         SortId="22"
         ClientID="G0ZI20FM30SJAJTX2RIBGD05QV1NE2KVIM2SPXML2XUJNXEU"
         ClientSecret="3XHQNSMMHIFBYOLWEPONNV4DOTCDBQH0AEMVGCBG0MZ32XNU"
-        RedirectUrl="http://www.g6game/fkzs/"
+        RedirectUrl="http://www.g6game/kfj/"
         Enable="true" />
         
 	<Pinterest
@@ -255,7 +255,7 @@
         SortId="24"
         ApiKey="33d833ee6b6fca49943363282dd313dd"
         ApiSecret="3a2c5b42a8fbb8bb"
-        RedirectUri="http://www.g6game/fkzs/"
+        RedirectUri="http://www.g6game/kfj/"
         Enable="true" />
         
     <Tumblr
@@ -263,7 +263,7 @@
         SortId="25"
         OAuthConsumerKey="2QUXqO9fcgGdtGG1FcvML6ZunIQzAEL8xY6hIaxdJnDti2DYwM"
 		SecretKey="3Rt0sPFj7u2g39mEVB3IBpOzKnM3JnTtxX2bao2JKk4VV1gtNo"
-		CallbackUrl="http://www.g6game.com/fkzs/"
+		CallbackUrl="http://www.g6game.com/kfj/"
         Enable="true" />
  
 	<Dropbox
@@ -284,7 +284,7 @@
         SortId="28"
         ClientId="ff68e3216b4f4f989121aa1c2962d058"
 		ClientSecret="1b2e82f110264869b3505c3fe34e31a1"
-		RedirectUri="http://www.g6game.com/fkzs/"
+		RedirectUri="http://www.g6game.com/kfj/"
         Enable="true" />
     
     <!-- 
@@ -318,7 +318,7 @@
         SortId="31"
         AppKey="EEEE9578D1D431D3215D8C21BF5357E3"
         AppSecret="5EDE59F37B3EFA8F65EEFB9976A4E933"
-        RedirectUri="http://www.g6game.com/fkzs/"
+        RedirectUri="http://www.g6game.com/kfj/"
         Enable="true" />
 	
 	<Line

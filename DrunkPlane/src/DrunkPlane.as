@@ -1,5 +1,6 @@
 package
 {
+	import com.freshplanet.ane.AirAlert.AirAlert;
 	import com.mike.utils.AdvertiseUtil;
 	import com.mike.utils.DeviceUtil;
 	import com.mike.utils.LanUtil;
@@ -29,7 +30,6 @@ package
 	import br.com.stimuli.loading.BulkProgressEvent;
 	import br.com.stimuli.loading.loadingtypes.LoadingItem;
 	
-	import configs.GameConfig;
 	import configs.GameInstance;
 	
 	import events.GameEvent;
@@ -77,7 +77,7 @@ package
 				{
 					e.preventDefault();
 				};
-				//				AirAlert.getInstance().showAlert(Language.getString("EXIT_DESC"),"",Language.getString("QUEDING"),okFunc,Language.getString("QUXIAO"),cancelFunc);
+								AirAlert.getInstance().showAlert(Language.getString("EXIT_DESC"),"",Language.getString("QUEDING"),okFunc,Language.getString("QUXIAO"),cancelFunc);
 			}
 		}
 		private var _introduce:WorkRoomIntroduce;
@@ -108,14 +108,16 @@ package
 			
 			EventCenter.instance.addEventListener(GameEvent.STARLING_CREATE, onStarlingCreated);
 			var rect:Rectangle ;
-			rect = new Rectangle(0,0,GameInstance.instance.sceneWidth,GameInstance.instance.sceneHeight);
+			rect = new Rectangle(0,0,Math.min(stage.fullScreenWidth, stage.fullScreenHeight),Math.max(stage.fullScreenWidth, stage.fullScreenHeight));
 			showIntroduce();
 			if (!GameInstance.instance.isIos)
 				Starling.handleLostContext = true;
 			app = new Starling(Game,stage,rect,null,"auto","auto");
 			app.stage.stageWidth = 640;
 			app.stage.stageHeight = 960;
-			app.showStats = true;
+			app.showStats = false;
+			app.stage.stageWidth = 640;
+			app.stage.stageHeight = 960;
 			app.start();
 			loadRes(null);
 			initData();

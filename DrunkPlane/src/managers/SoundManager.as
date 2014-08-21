@@ -2,9 +2,6 @@ package managers
 {
 	import com.mike.utils.SoundUtil;
 	
-	import flash.media.Sound;
-	import flash.net.URLRequest;
-	
 	import configs.GameInstance;
 
 	public class SoundManager
@@ -18,6 +15,13 @@ package managers
 			if (!GameInstance.instance.soundEnable)
 				return;
 			SoundUtil.playSound(url);
+		}
+		
+		public static function playLoop(url:String):void
+		{
+			if (!GameInstance.instance.soundEnable)
+				return;
+			SoundUtil.playLoopSound(url);
 		}
 	}
 }

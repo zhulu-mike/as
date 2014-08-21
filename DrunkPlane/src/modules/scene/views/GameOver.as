@@ -54,12 +54,12 @@ package modules.scene.views
 			
 			var rw:Number = 160*ratio;
 			var f:Number = 50*ratio;
-			returnBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("FANHUI"),"Verdana",f,0x00ffff);
+			returnBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("FANHUI"),"Verdana",f,0);
 			this.addChild(returnBtn);
 			returnBtn.y = 430;
 			returnBtn.filter = GameUtil.getTextFieldFIlter();
 			
-			againBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("CHONGLAI"),"Verdana",f,0x00ffff);
+			againBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("CHONGLAI"),"Verdana",f,0);
 			this.addChild(againBtn);
 			againBtn.x = img.width - rw;
 			againBtn.y = returnBtn.y ;

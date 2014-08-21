@@ -3,8 +3,6 @@ package
 	
 	import com.mike.utils.AdvertiseUtil;
 	
-	import flash.display.Bitmap;
-	
 	import configs.GameInstance;
 	import configs.GamePattern;
 	import configs.GameState;

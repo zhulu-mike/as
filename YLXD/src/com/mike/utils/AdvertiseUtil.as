@@ -1,23 +1,11 @@
 package com.mike.utils
 {
-	import com.kunpeng.ad360.Ad360;
-	import com.kunpeng.ad360.Ad360BannerEvent;
-	import com.kunpeng.ad360.Ad360InsertEvent;
-	import com.unionsy.sdk.ane.AdsCallbackEvent;
-	import com.unionsy.sdk.ane.Constants;
-	import com.unionsy.sdk.ane.SsjjAdsManager;
-	
-	import flash.desktop.NativeApplication;
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import flash.events.KeyboardEvent;
 	
 	import configs.GameInstance;
 	
-	import so.cuo.platform.admob.Admob;
-	import so.cuo.platform.admob.AdmobEvent;
-	import so.cuo.platform.admob.AdmobPosition;
 	import so.cuo.platform.baidu.BaiDu;
 	import so.cuo.platform.baidu.BaiDuAdEvent;
 	import so.cuo.platform.baidu.RelationPosition;

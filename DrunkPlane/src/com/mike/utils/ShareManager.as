@@ -27,7 +27,7 @@ package com.mike.utils
 				_instance = new ShareManager();
 			return _instance;
 		}
-//		private var sdk:ShareSDKExtension;
+		private var sdk:ShareSDKExtension;
 		
 		/**
 		 * 初始化ShareSDK
@@ -35,7 +35,7 @@ package com.mike.utils
 		 */		
 		public function init():void
 		{
-//			sdk = new ShareSDKExtension();
+			sdk = new ShareSDKExtension();
 			//android和ios之分
 //			if (DeviceUtil.ios){
 //				sdk.open("284c24ba9586",true);//284c24ba9586//iosv1101
@@ -48,9 +48,9 @@ package com.mike.utils
 //				sdk.setPlatformConfig(PlatformID.Twitter,{consumer_key:"mD9mW55adcHFhR57vdbJUaCag",consumer_secret:"tHppzvYXXzD5hzvUMUsWneImuKVqAlH2XpOyQeIKJnE3XuEio1",redirect_uri:"www.g6game.com/fkzs/"});
 //				sdk.setPlatformConfig(PlatformID.Renren,{app_key:"d7f5e50e0e444cc7847de08f9ffced82",secret_key:"870d94936f5b43c38b574b80d807a802"});
 //			}else{
-//				sdk.open("258aa287ebe5",true);
+				sdk.open("2c9e52abc214",true);
 //			}
-//			sdk.setPlatformActionListener(shareComplete,shareError,sharecancel);
+			sdk.setPlatformActionListener(shareComplete,shareError,sharecancel);
 		}
 		private function shareComplete(platform:int, action:int, res:Object):void
 		{
@@ -59,7 +59,7 @@ package com.mike.utils
 			var message:String = "onComplete\nPlatform=" + platform + ", action=" + action + "\nres=" + json;
 //			AirAlert.getInstance().showAlert(message,"");
 //			sdk.toast(message);
-//			trace(message);
+			trace(message);
 		}
 		private function shareError(platform:int, action:int, err:Object):void
 		{
@@ -85,16 +85,16 @@ package com.mike.utils
 		{
 			var shareParams:Object = new Object();
 			shareParams.title = Language.getString("GAMENAME");
-			shareParams.titleUrl = "http://www.g6game.com/fkzs/";
+			shareParams.titleUrl = "http://www.g6game.com/kfj/";
 			shareParams.text = Language.getString("SHARECONTENT").replace("$SCORE",GameInstance.instance.score);
 			shareParams.site = shareParams.title;
-			shareParams.url = "http://www.g6game.com/fkzs/";
+			shareParams.url = "http://www.g6game.com/kfj/";
 			shareParams.description = shareParams.title;
-			shareParams.siteUrl = "http://www.g6game.com/fkzs/";
+			shareParams.siteUrl = "http://www.g6game.com/kfj/";
 			shareParams.imagePath = AirUtil.screenShotAndSave();
 			shareParams.comment = shareParams.text;
-//			shareParams.type = ShareType.SHARE_TEXT;
-//			sdk.showShareMenu(null, shareParams, GameInstance.instance.sceneWidth>>2, 50, ShareMenuArrowDirection.Up);
+			shareParams.type = ShareType.SHARE_WEBPAGE;
+			sdk.showShareMenu(null, shareParams, GameInstance.instance.sceneWidth>>2, 50, ShareMenuArrowDirection.Up);
 		}
 		
 	}

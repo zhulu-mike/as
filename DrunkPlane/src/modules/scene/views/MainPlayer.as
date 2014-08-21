@@ -30,7 +30,7 @@ package modules.scene.views
 	
 	public class MainPlayer extends Sprite
 	{
-		private var shape:Image;
+		private var shape:MovieClip;
 		private var frameSpeed:int = 12;
 		private var words:TextField;
 		private var lastSpeakTime:int = 0;
@@ -41,13 +41,18 @@ package modules.scene.views
 		private var _direct:int = 0;
 		private var _dead:Boolean = false;
 		private var luoXuanJiang:Sprite;
+		private var body:Sprite;
 		
 		public function MainPlayer()
 		{
-			shape = new Image(ResManager.assetsManager.getTexture("swing_fly_boby.png"));
+			body = new Sprite();
+			this.addChild(body);
+			shape = new MovieClip(ResManager.assetsManager.getTextures("swing_fly_boby"),2);
+			shape.loop = true;
+			Starling.juggler.add(shape);
 			shape.blendMode = BlendMode.NORMAL;
 			cr.width = shape.width;
-			this.addChild(shape);
+			body.addChild(shape);
 			
 			luoXuanJiang = new Sprite();
 			this.addChild(luoXuanJiang);
@@ -63,11 +68,11 @@ package modules.scene.views
 			l1.y = 9;
 			luoXuanJiang.addChild(l1);
 			l1 = new Image(ResManager.assetsManager.getTexture("swing_fly_eye.png"));
-			l1.x = 32;
-			l1.y = 22;
-			luoXuanJiang.addChild(l1);
+			l1.x = 21;
+			l1.y = 40;
+			body.addChild(l1);
 			luoXuanJiang.x = cr.width - luoXuanJiang.width >> 1;
-			shape.y = luoXuanJiang.height;
+			body.y = luoXuanJiang.height;
 			cr.height = shape.y +  shape.height;
 		}
 		
@@ -218,12 +223,12 @@ package modules.scene.views
 			}else{
 				hSpeed = -GameConfig.hspeed;
 			}
-			shape.scaleX *= -1;
-			if (shape.scaleX < 0)
+			body.scaleX *= -1;
+			if (body.scaleX < 0)
 			{
-				shape.x += shape.width;
+				body.x += shape.width;
 			}else{
-				shape.x -= shape.width;
+				body.x -= shape.width;
 			}
 		}
 
