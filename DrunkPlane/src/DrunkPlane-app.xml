@@ -89,7 +89,7 @@
 
         <!-- The aspect ratio of the app ("portrait" or "landscape" or "any"). Optional. Mobile only. Default is the natural orientation of the device -->
 
-        <aspectRatio>landscape</aspectRatio>
+        <aspectRatio>portrait</aspectRatio>
 
         <!-- Whether the app will begin auto-orienting on launch. Optional. Mobile only. Default false -->
 
@@ -267,7 +267,6 @@
 			    <!--See the Adobe AIR documentation for more information about setting Google Android permissions-->
 			    <!--Removing the permission android.permission.INTERNET will have the side effect
 		of preventing you from debugging your application on your device-->
-			    <uses-permission android:name="android.permission.INTERNET"/>
 			    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>-->
 			    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE"/>-->
 			    <!--<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>-->
@@ -281,6 +280,52 @@
 		together in order to use AIR's NetworkInfo APIs-->
 			    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>-->
 			    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>-->
+			    <uses-permission android:name="android.permission.GET_TASKS" />
+			    <uses-permission android:name="android.permission.INTERNET" />
+			    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+			    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+			    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+			    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+			    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+			    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+			    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
+			    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+			   	<uses-permission android:name="android.permission.CAMERA" />
+			   	<uses-sdk android:minSdkVersion="9">
+			   	</uses-sdk>
+			   	<application android:enabled="true">
+			   	<activity
+			    		android:windowSoftInputMode="stateHidden|adjustResize"
+			    		android:theme="@android:style/Theme.Translucent.NoTitleBar"
+			            android:name="cn.sharesdk.framework.ShareSDKUIShell" >
+			            <intent-filter>
+			                <data android:scheme="db-7janx53ilz11gbs" />
+			                <action android:name="android.intent.action.VIEW" />
+			                <category android:name="android.intent.category.BROWSABLE" />
+			                <category android:name="android.intent.category.DEFAULT" />
+			            </intent-filter>
+			            <intent-filter>
+			                <data android:scheme="tencent100371282" />
+			                <action android:name="android.intent.action.VIEW" />
+			                <category android:name="android.intent.category.BROWSABLE" />
+			                <category android:name="android.intent.category.DEFAULT" />
+			            </intent-filter>
+			    </activity>
+			    <activity
+			            android:name="air.com.kunpeng.drunkplane.wxapi.WXEntryActivity"
+			            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+			            android:exported="true" />
+			   	<meta-data android:name="BaiduMobAd_APP_ID" android:value="debug" /> 
+    			<meta-data android:name="BaiduMobAd_APP_SEC" android:value="debug" />
+			   	<!--百度广告-->
+        		<activity android:name="com.baidu.mobads.AppActivity" android:configChanges="keyboard|keyboardHidden|orientation"/>
+				<activity android:excludeFromRecents="false">
+						<intent-filter>
+							<action android:name="android.intent.action.MAIN"/>
+							<category android:name="android.intent.category.LAUNCHER"/>
+						</intent-filter>
+				</activity>
+				</application>
 			</manifest>
 			
 		]]></manifestAdditions>
@@ -295,4 +340,9 @@
 		]]></InfoAdditions>
         <requestedDisplayResolution>high</requestedDisplayResolution>
     </iPhone>
+<extensions>
+        <extensionID>so.cuo.platform.baidu</extensionID>
+    <extensionID>com.freshplanet.AirAlert</extensionID>
+    <extensionID>cn.sharesdk.ane.ShareSDKExtension</extensionID>
+    </extensions>
 </application>

@@ -1,5 +1,6 @@
 package
 {
+	import com.freshplanet.ane.AirAlert.AirAlert;
 	import com.mike.utils.AdvertiseUtil;
 	import com.mike.utils.DeviceUtil;
 	import com.mike.utils.LanUtil;
@@ -76,7 +77,7 @@ package
 				{
 					e.preventDefault();
 				};
-				//				AirAlert.getInstance().showAlert(Language.getString("EXIT_DESC"),"",Language.getString("QUEDING"),okFunc,Language.getString("QUXIAO"),cancelFunc);
+								AirAlert.getInstance().showAlert(Language.getString("EXIT_DESC"),"",Language.getString("QUEDING"),okFunc,Language.getString("QUXIAO"),cancelFunc);
 			}
 		}
 		private var _introduce:WorkRoomIntroduce;
@@ -114,7 +115,7 @@ package
 			app = new Starling(Game,stage,rect,null,"auto","auto");
 			app.stage.stageWidth = 640;
 			app.stage.stageHeight = 960;
-			app.showStats = true;
+			app.showStats = false;
 			app.stage.stageWidth = 640;
 			app.stage.stageHeight = 960;
 			app.start();

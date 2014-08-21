@@ -44,16 +44,16 @@ package com.mike.utils
 //				SsjjAdsManager.getInstance().init();
 //				SsjjAdsManager.getInstance().addEventListener(Constants.EVENT_TYPE_ADS_CALLBACK, onAdsCallback);
 			}else{
-//				if (BaiDu.getInstance().supportDevice)
-//				{
-//					BaiDu.getInstance().setKeys("1003ba05","1003ba05");// BaiDu.getInstance().setKeys("appsid","计费id");
-//					BaiDu.getInstance().cacheInterstitial();
-//					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialDismiss, onFullMiss);
-//					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialReceive, onFullReveive);
-//					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialFailedReceive, onFullFailedReveive);
-//					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialLeaveApplication, onFullLeave);
-//					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialPresent, onFullPresent);
-//				}
+				if (BaiDu.getInstance().supportDevice)
+				{
+					BaiDu.getInstance().setKeys("debug","debug");// BaiDu.getInstance().setKeys("appsid","计费id");
+					BaiDu.getInstance().cacheInterstitial();
+					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialDismiss, onFullMiss);
+					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialReceive, onFullReveive);
+					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialFailedReceive, onFullFailedReveive);
+					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialLeaveApplication, onFullLeave);
+					BaiDu.getInstance().addEventListener(BaiDuAdEvent.onInterstitialPresent, onFullPresent);
+				}
 			}
 			cacheMoreGame();
 		}
@@ -110,7 +110,7 @@ package com.mike.utils
 //			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 //				Admob.getInstance().cacheInterstitial();
 //			else
-//				BaiDu.getInstance().cacheInterstitial();
+				BaiDu.getInstance().cacheInterstitial();
 		}
 		
 		
@@ -123,7 +123,7 @@ package com.mike.utils
 //			else if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399))
 //				SsjjAdsManager.getInstance().showBanner();
 //			else
-//				BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
+				BaiDu.getInstance().showBanner(BaiDu.BANNER,RelationPosition.BOTTOM_CENTER);
 		}
 		
 		public static function hideBaiDuBanner():void
@@ -133,7 +133,7 @@ package com.mike.utils
 //			else if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399))
 //				SsjjAdsManager.getInstance().hideBanner();
 //			else
-//				BaiDu.getInstance().hideBanner();
+				BaiDu.getInstance().hideBanner();
 		}
 		
 		public static function cacheInterstitial():void
@@ -141,7 +141,7 @@ package com.mike.utils
 //			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 //				Admob.getInstance().cacheInterstitial();
 //			else
-//				BaiDu.getInstance().cacheInterstitial();
+				BaiDu.getInstance().cacheInterstitial();
 		}
 		
 		public static function isInterstitialReady():Boolean
@@ -149,7 +149,7 @@ package com.mike.utils
 //			if (isIos || PlatUtil.isCertainPlat(PlatType.GOOGLE_PLAY))
 //				return Admob.getInstance().isInterstitialReady();
 //			else
-//				return BaiDu.getInstance().isInterstitialReady();
+				return BaiDu.getInstance().isInterstitialReady();
 			return true;
 		}
 		
@@ -161,7 +161,7 @@ package com.mike.utils
 //			else if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399))
 //				SsjjAdsManager.getInstance().showFullScreen();
 //			else
-//				BaiDu.getInstance().showInterstitial();
+				BaiDu.getInstance().showInterstitial();
 		}
 		
 		public static function getBaiDuInstance():EventDispatcher
@@ -171,7 +171,7 @@ package com.mike.utils
 //			else if (PlatUtil.isCertainPlat(PlatType.ANDROID_4399))
 //				return SsjjAdsManager.getInstance();
 //			else
-//				return BaiDu.getInstance();
+				return BaiDu.getInstance();
 			return null;
 		}
 		

@@ -53,7 +53,7 @@ package com.mike.utils
 			var img:String;
 			if (!DeviceUtil.isIos())
 			{
-				img = File.userDirectory.url  +"/air.com.kunpeng.cainimei/"+new Date().getTime()+".jpg";
+				img = File.userDirectory.url  +"/air.com.kunpeng.drunkplane/"+new Date().getTime()+".jpg";
 			}else{
 				img = File.applicationStorageDirectory.nativePath +"/" +new Date().getTime()+".jpg";
 			}

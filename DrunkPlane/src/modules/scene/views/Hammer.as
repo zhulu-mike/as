@@ -24,7 +24,6 @@ package modules.scene.views
 		public function Hammer()
 		{
 			line = new Image(ResManager.assetsManager.getTexture("swing_line.png"));
-			line.blendMode = BlendMode.ADD;
 			this.addChild(line);
 			hammer = new Image(ResManager.assetsManager.getTexture("swing_hammer.png"));
 			this.addChild(hammer);

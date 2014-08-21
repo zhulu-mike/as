@@ -31,7 +31,6 @@ package modules.scene.views
 			build = new Image(ResManager.assetsManager.getTexture("swing_building.png"));
 			this.addChild(build);
 			build.y = floor.y - build.height;
-			build.blendMode = BlendMode.SCREEN;
 		}
 		
 		public function update(dis:int):void

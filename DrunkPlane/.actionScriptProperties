@@ -34,6 +34,9 @@
           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_agent.swc" useDefaultLinkType="false"/>
         </excludedEntries>
       </libraryPathEntry>
+      <libraryPathEntry kind="5" linkType="2" path="anes/baidu1.0.ane"/>
+      <libraryPathEntry kind="5" linkType="2" path="anes/AirAlert.ane"/>
+      <libraryPathEntry kind="5" linkType="2" path="anes/ShareSDK.ane"/>
     </libraryPath>
     <sourceAttachmentPath/>
   </compiler>
@@ -61,9 +64,13 @@
     </buildTarget>
     <buildTarget airDownloadURL="https://market.android.com/details?id=com.adobe.air" androidSettingsVersion="2" buildTargetName="device" isCurrent="true" platformId="com.adobe.flexide.multiplatform.android.platform">
       <multiPlatformSettings enabled="true" hideAneLibSymbols="0" includePlatformLibs="false" platformID="com.adobe.flexide.multiplatform.android.platform" reducedSizePackaging="false" version="1"/>
-      <airSettings airCertificatePath="/Users/jianglinwang/worklibrary/移动开发/adobe证书/android.p12" airTimestamp="true" anePathSet="true" version="1">
+      <airSettings airCertificatePath="G:/AS/ylxd.p12" airTimestamp="true" anePathSet="true" version="1">
         <airExcludes/>
-        <anePaths/>
+        <anePaths>
+          <anePathEntry path="anes/baidu1.0.ane"/>
+          <anePathEntry path="anes/AirAlert.ane"/>
+          <anePathEntry path="anes/ShareSDK.ane"/>
+        </anePaths>
         <newLaunchParams/>
         <modifiedLaunchParams/>
         <newPackagingParams/>

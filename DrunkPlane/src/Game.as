@@ -291,7 +291,7 @@ package
 		private function beginLater():void
 		{
 			secondeLayer.addChild(gameOverPanel);
-			AdvertiseUtil.hideBaiDuBanner();
+			AdvertiseUtil.showBaiDuBanner();
 			gameOverPanel.scoreTxt.text = Language.getString("FENSHU").replace("$SCORE",GameInstance.instance.score);
 			gameOverPanel.maxScoreTxt.text = Language.getString("MAX_SCORE").replace("$SCORE",GameUtil.getMaxScore());
 		}
