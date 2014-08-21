@@ -133,6 +133,13 @@
 	<!-- The subpath of the Programs menu to use. (Ignored on operating systems without a Programs menu.) Optional. -->
 	<!-- <programMenuFolder></programMenuFolder> -->
 
+	<icon>
+		<image32x32>assets/icon_32x32.png</image32x32>
+		<image48x48>assets/icon_48x48.png</image48x48>
+		<image72x72>assets/icon_72x72.png</image72x72>
+		<image96x96>assets/icon_96x96.png</image96x96>
+		<image144x144>assets/icon_144x144.png</image144x144>
+	</icon>
 	<!-- The icon the system uses for the application. For at least one resolution,
 	specify the path to a PNG file included in the AIR package. Optional. -->
 	<!-- <icon>
@@ -315,10 +322,14 @@
 			            android:name="air.com.kunpeng.drunkplane.wxapi.WXEntryActivity"
 			            android:theme="@android:style/Theme.Translucent.NoTitleBar"
 			            android:exported="true" />
+			    <!--百度广告
 			   	<meta-data android:name="BaiduMobAd_APP_ID" android:value="debug" /> 
     			<meta-data android:name="BaiduMobAd_APP_SEC" android:value="debug" />
-			   	<!--百度广告-->
-        		<activity android:name="com.baidu.mobads.AppActivity" android:configChanges="keyboard|keyboardHidden|orientation"/>
+        		<activity android:name="com.baidu.mobads.AppActivity" android:configChanges="keyboard|keyboardHidden|orientation"/>-->
+				<!--google广告-->
+					<meta-data android:name="com.google.android.gms.version" android:value="4452000" />
+			  	    <activity android:name="com.google.android.gms.ads.AdActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
+					
 				<activity android:excludeFromRecents="false">
 						<intent-filter>
 							<action android:name="android.intent.action.MAIN"/>
@@ -344,5 +355,7 @@
         <extensionID>so.cuo.platform.baidu</extensionID>
     <extensionID>com.freshplanet.AirAlert</extensionID>
     <extensionID>cn.sharesdk.ane.ShareSDKExtension</extensionID>
+    <extensionID>so.cuo.platform.admob</extensionID>
+    <extensionID>org.zengrong.ane.ANEToolkit</extensionID>
     </extensions>
 </application>

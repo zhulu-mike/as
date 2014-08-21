@@ -43,7 +43,7 @@ package com.mike.utils
 		
 		public static function stopSound(url:String):void
 		{
-			if (soundList[url] != 1){
+			if (soundList.hasOwnProperty(url) && soundList[url] != undefined && soundList[url] != 1 && soundList[url].channel!=null){
 				soundList[url].channel.stop();
 			}
 		}

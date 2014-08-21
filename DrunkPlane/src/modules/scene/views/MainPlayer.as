@@ -41,6 +41,7 @@ package modules.scene.views
 		private var _direct:int = 0;
 		private var _dead:Boolean = false;
 		private var luoXuanJiang:Sprite;
+		private var luoXuanJiang2:Sprite;
 		private var body:Sprite;
 		
 		public function MainPlayer()
@@ -54,8 +55,10 @@ package modules.scene.views
 			cr.width = shape.width;
 			body.addChild(shape);
 			
+			luoXuanJiang2 = new Sprite();
+			this.addChild(luoXuanJiang2);
 			luoXuanJiang = new Sprite();
-			this.addChild(luoXuanJiang);
+			luoXuanJiang2.addChild(luoXuanJiang);
 			var l1:Image = new Image(ResManager.assetsManager.getTexture("swing_fly_wing.png"));
 			l1.x = 25;
 			luoXuanJiang.addChild(l1);
@@ -71,9 +74,30 @@ package modules.scene.views
 			l1.x = 21;
 			l1.y = 40;
 			body.addChild(l1);
-			luoXuanJiang.x = cr.width - luoXuanJiang.width >> 1;
-			body.y = luoXuanJiang.height;
+			luoXuanJiang.x = -luoXuanJiang.width >> 1;
+			luoXuanJiang2.x = (cr.width - luoXuanJiang2.width >> 1)+(luoXuanJiang.width >> 1);
+			body.y = luoXuanJiang2.height;
 			cr.height = shape.y +  shape.height;
+			
+			lxjRotate();
+		}
+		
+		private function lxjRotate():void
+		{
+			var t:Tween = new Tween(luoXuanJiang2,0.1);
+			t.animate("scaleX",0.4);
+			Starling.juggler.add(t);
+			t.repeatCount = 1;
+			t.onComplete = lxjRotate2;
+		}
+		
+		private function lxjRotate2():void
+		{
+			var t:Tween = new Tween(luoXuanJiang2,0.1);
+			t.animate("scaleX",1);
+			Starling.juggler.add(t);
+			t.repeatCount = 1;
+			t.onComplete = lxjRotate;
 		}
 		
 		

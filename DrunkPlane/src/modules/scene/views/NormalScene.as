@@ -6,6 +6,7 @@ package modules.scene.views
 	import com.mike.utils.SoundUtil;
 	
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	
 	import configs.FlyDirection;
 	import configs.GameConfig;
@@ -100,9 +101,9 @@ package modules.scene.views
 			
 			baseY = $sceneWidth * 0.6875;
 			
-			scoreTxt = new TextField(480*ratio,AirUtil.getHeightByFontSize(45*ratio),Language.getString("DEFEN").replace("$SCORE",0),"Verdana",45*ratio,0x00ff00,true);
+			scoreTxt = new TextField(480*ratio,AirUtil.getHeightByFontSize(45*ratio),Language.getString("DEFEN").replace("$SCORE",0),"Verdana",45*ratio,0xffffff,true);
 			scoreTxt.hAlign = HAlign.CENTER;
-			scoreTxt.vAlign = VAlign.CENTER;
+			scoreTxt.vAlign = VAlign.TOP;
 			this.addChild(scoreTxt);
 			scoreTxt.filter = GameUtil.getTextFieldFIlter();
 			scoreTxt.x = sceneWidth - scoreTxt.width >> 1;
@@ -157,9 +158,9 @@ package modules.scene.views
 				mainPlayer.x = sceneWidth;
 			}
 			updaetPipes();
+			isHitIce();
 			updaetHammers();
 			updaetClouds();
-			isHitIce();
 			movePipes();
 			makeClouds();
 			makePipess();
@@ -261,14 +262,21 @@ package modules.scene.views
 					gameOver();
 				}
 			}
-			var hammer:Hammer;
+			var hammer:Hammer, cr:Rectangle;
+			var keyPoints:Array, point:Point;
 			for each (hammer in hammerList)
 			{
 				if (hammer.isPassed)
 					continue;
-				if (hammer.contentRect.intersects(mainPlayer.contentRect))
+				keyPoints = hammer.keyPoints;
+				cr = mainPlayer.contentRect;
+				for each (point in keyPoints)
 				{
-					gameOver();
+					if (cr.containsPoint(point))
+					{
+						gameOver();
+						return;
+					}
 				}
 			}
 		}

@@ -94,7 +94,7 @@ package
 			
 			
 			ResolutionUtil.instance.init(new Point(640,960));
-			PlatUtil.initPlat(PlatType.BAUDU);
+			PlatUtil.initPlat(PlatType.RENREN);
 			AdvertiseUtil.initBaiDu(stage);
 			ShareManager.instance.init();
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
@@ -161,8 +161,11 @@ package
 			var lastLoginTime:int = int(GameInstance.instance.so.getAt("last_login_time"));
 			if (lastLoginTime == 0 || lastLoginTime < TimeUtil.getTodayZeroTime())
 			{
-				GameInstance.instance.so.setAt("last_login_time",TimeUtil.getNowTime());
-				NetUtil.sendLogin(DeviceUtil.getDeviceID());
+				var comFunc:Function = function():void
+				{
+					GameInstance.instance.so.setAt("last_login_time",TimeUtil.getNowTime());
+				};
+				NetUtil.sendLogin(DeviceUtil.getDeviceID(),DeviceUtil.getDeviceName(),comFunc);
 			}
 		}
 		

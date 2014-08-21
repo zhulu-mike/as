@@ -42,14 +42,14 @@ package modules.scene.views
 			maxScoreTxt.hAlign = HAlign.CENTER;
 			maxScoreTxt.x = img.width - maxScoreTxt.width >> 1;
 			maxScoreTxt.y = img.y + 290;
-			maxScoreTxt.filter = GameUtil.getTextFieldFIlter();
+//			maxScoreTxt.filter = GameUtil.getTextFieldFIlter();
 			
 			scoreTxt = new TextField(240*ratio,AirUtil.getHeightByFontSize(30),"","Verdana",30,0x000000);
 			this.addChild(scoreTxt);
 			scoreTxt.hAlign = HAlign.CENTER;
 			scoreTxt.x = img.width - scoreTxt.width >> 1;
 			scoreTxt.y = img.y + 166;
-			scoreTxt.filter = GameUtil.getTextFieldFIlter();
+//			scoreTxt.filter = GameUtil.getTextFieldFIlter();
 			
 			
 			var rw:Number = 160*ratio;
@@ -57,19 +57,19 @@ package modules.scene.views
 			returnBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("FANHUI"),"Verdana",f,0);
 			this.addChild(returnBtn);
 			returnBtn.y = 430;
-			returnBtn.filter = GameUtil.getTextFieldFIlter();
+//			returnBtn.filter = GameUtil.getTextFieldFIlter();
 			
 			againBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("CHONGLAI"),"Verdana",f,0);
 			this.addChild(againBtn);
 			againBtn.x = img.width - rw;
 			againBtn.y = returnBtn.y ;
-			againBtn.filter = GameUtil.getTextFieldFIlter();
+//			againBtn.filter = GameUtil.getTextFieldFIlter();
 			
 			xuanYaoBtn = new TextField(rw,AirUtil.getHeightByFontSize(f),Language.getString("XUANYAO"),"Verdana",f,0xff0000);
 			this.addChild(xuanYaoBtn);
 			xuanYaoBtn.x = img.width - rw >> 1;
 			xuanYaoBtn.y = returnBtn.y ;
-			xuanYaoBtn.filter = GameUtil.getTextFieldFIlter();
+//			xuanYaoBtn.filter = GameUtil.getTextFieldFIlter();
 			
 			this.returnBtn.addEventListener(TouchEvent.TOUCH, onReturn);
 			this.againBtn.addEventListener(TouchEvent.TOUCH, onPlayAgain);

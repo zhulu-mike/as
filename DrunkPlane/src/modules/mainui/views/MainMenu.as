@@ -26,28 +26,41 @@ package modules.mainui.views
 		public function MainMenu()
 		{
 			
+			
+			
+			var img:Image = new Image(ResManager.assetsManager.getTexture("swing_bg.png"));
+			this.addChild(img);
+			
+			var floor:Image = new Image(ResManager.assetsManager.getTexture("swing_floor.png"));
+			this.addChild(floor);
+			floor.y = GameInstance.instance.sceneHeight - floor.height;
+			
+			var build:Image = new Image(ResManager.assetsManager.getTexture("swing_building.png"));
+			this.addChild(build);
+			build.y = floor.y - build.height;
+			
 			menuContainer = new Sprite();
 			this.addChild(menuContainer);
 			
 			var ratio:Number = GameInstance.instance.scaleRatio;
 			var f:Number = 60 * ratio;
-			beginTxt = new TextField(320*ratio,AirUtil.getHeightByFontSize(f),Language.getString("KAISHI"),"Verdaba",f,0);
+			beginTxt = new TextField(320*ratio,AirUtil.getHeightByFontSize(f),Language.getString("KAISHI"),"Verdaba",f,0xffffff);
 			beginTxt.hAlign = HAlign.CENTER;
 			beginTxt.vAlign = VAlign.TOP;
 			beginTxt.filter = GameUtil.getTextFieldFIlter();
 			menuContainer.addChild(beginTxt);
 			
-			niXiangTxt = new TextField(320*ratio,AirUtil.getHeightByFontSize(f),Language.getString("GUANYU"),"Verdaba",f,0);
+			niXiangTxt = new TextField(320*ratio,AirUtil.getHeightByFontSize(f),Language.getString("GUANYU"),"Verdaba",f,0xffffff);
 			niXiangTxt.hAlign = HAlign.CENTER;
 			niXiangTxt.vAlign = VAlign.TOP;
 			menuContainer.addChild(niXiangTxt);
 			niXiangTxt.filter = GameUtil.getTextFieldFIlter();
 			niXiangTxt.y = beginTxt.y + beginTxt.height + 30;
 			
-			duizhan = new TextField(320*ratio,AirUtil.getHeightByFontSize(f),Language.getString("MOREGAME"),"Verdaba",f,0);
+			duizhan = new TextField(320*ratio,AirUtil.getHeightByFontSize(f),Language.getString("MOREGAME"),"Verdaba",f,0xffffff);
 			duizhan.hAlign = HAlign.CENTER;
 			duizhan.vAlign = VAlign.TOP;
-			menuContainer.addChild(duizhan);
+//			menuContainer.addChild(duizhan);
 			duizhan.filter = GameUtil.getTextFieldFIlter();
 			duizhan.y = niXiangTxt.y + niXiangTxt.height + 30;
 			
@@ -59,7 +72,8 @@ package modules.mainui.views
 			desc = new TextField(300*ratio,AirUtil.getHeightByFontSize(50*ratio),Language.getString("ADVISE_DESC"),"Verdana",25*ratio,0xffffff);
 			desc.hAlign = HAlign.LEFT;
 			desc.vAlign = VAlign.TOP;
-			desc.filter = GameUtil.getTextFieldFIlter();
+			desc.y = 10;
+//			desc.filter = GameUtil.getTextFieldFIlter();
 			this.addChild(desc);
 			var descH:Number = desc.height;
 //			var logH:Number = log.height;
