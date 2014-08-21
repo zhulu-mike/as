@@ -109,7 +109,7 @@ package
 			
 			
 			ResolutionUtil.instance.init(new Point(2048,1536));
-			PlatUtil.initPlat(PlatType.BAUDU);
+			PlatUtil.initPlat(PlatType.ANDROID_360);
 			AdvertiseUtil.initBaiDu(stage);
 			ShareManager.instance.init();
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
