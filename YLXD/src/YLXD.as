@@ -84,7 +84,7 @@ package
 				{
 					e.preventDefault();
 				};
-//				AirAlert.getInstance().showAlert(Language.getString("EXIT_DESC"),"",Language.getString("QUEDING"),okFunc,Language.getString("QUXIAO"),cancelFunc);
+				AirAlert.getInstance().showAlert(Language.getString("EXIT_DESC"),"",Language.getString("QUEDING"),okFunc,Language.getString("QUXIAO"),cancelFunc);
 			}
 		}
 		
@@ -103,7 +103,7 @@ package
 			
 			
 			ResolutionUtil.instance.init(new Point(2048,1536));
-			PlatUtil.initPlat(PlatType.BAUDU);
+			PlatUtil.initPlat(PlatType.GOOGLE_PLAY);
 			AdvertiseUtil.initBaiDu(stage);
 			ShareManager.instance.init();
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);

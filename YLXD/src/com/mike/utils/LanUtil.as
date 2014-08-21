@@ -24,20 +24,20 @@ package com.mike.utils
 				lan = LanType.ENGLISH;
 			}
 			var file:String = "english";
-//			switch (lan)
-//			{
-//				case LanType.ZHONGGUO:
-//					file = "chinese";
-//					break;
-//				case LanType.JAPANESE:
-//					file = "japanese";
-//					break;
-//				case LanType.HANYU:
-//					file = "hanyu";
-//					break;
-//				default:
-//					break;
-//			}
+			switch (lan)
+			{
+				case LanType.ZHONGGUO:
+					file = "chinese";
+					break;
+				case LanType.JAPANESE:
+					file = "japanese";
+					break;
+				case LanType.HANYU:
+					file = "hanyu";
+					break;
+				default:
+					break;
+			}
 			return file + ".xml";
 		}
 		

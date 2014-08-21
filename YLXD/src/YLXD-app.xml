@@ -21,7 +21,7 @@
 
 	<!-- The name that is displayed in the AIR application installer. 
 	May have multiple values for each language. See samples or xsd schema file. Optional. -->
-	<name>疯狂之手</name>
+	<name>CrazyHand</name>
 	
 	<!-- A string value of the format <0-999>.<0-999>.<0-999> that represents application version which can be used to check for application upgrade. 
 	Values can also be 1-part or 2-part. It is not necessary to have a 3-part value.
@@ -322,16 +322,16 @@
 			            </intent-filter>
 			        </activity>
 			        <activity
-			            android:name="air.com.kenpeng.cainimei.wxapi.WXEntryActivity"
+			            android:name="air.com.kunpeng.cainimei.wxapi.WXEntryActivity"
 			            android:theme="@android:style/Theme.Translucent.NoTitleBar"
 			            android:exported="true" />
-			        <!--百度广告-->
+			        <!--百度广告
         			<activity android:name="com.baidu.mobads.AppActivity" android:configChanges="keyboard|keyboardHidden|orientation"/>
-					
-					<!--google广告
+					-->
+					<!--google广告-->
 					<meta-data android:name="com.google.android.gms.version" android:value="4452000" />
 			  	    <activity android:name="com.google.android.gms.ads.AdActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
-					-->
+					
 					<activity android:excludeFromRecents="false">
 						<intent-filter>
 							<action android:name="android.intent.action.MAIN"/>

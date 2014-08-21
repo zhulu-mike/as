@@ -131,8 +131,8 @@
     <Twitter
         Id="9"
         SortId="9"
-        ConsumerKey="mD9mW55adcHFhR57vdbJUaCag"
-        ConsumerSecret="tHppzvYXXzD5hzvUMUsWneImuKVqAlH2XpOyQeIKJnE3XuEio1"
+        ConsumerKey="LOURMdQrOmjgJna4bUBGToG8c"
+        ConsumerSecret="oqh7vD8O4lxiXfcfNDJNJlAcvPCD52QwAPdhnQGPUBixDiyqZH"
         CallbackUrl="http://www.g6game/fkzs/"
         Enable="true" />
 
